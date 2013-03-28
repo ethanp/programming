@@ -1,0 +1,78 @@
+
+From Homework 3:
+;; (calc (parse '5) )
+;; (calc (parse '{+ 5 5}) )
+;; (calc (parse '{with {x {+ 5 5}} {+ x x}}) )
+;; (calc (parse '{with {x 5} {+ x x}}) )
+;; (calc (parse '{with {x {+ 5 5}} {with {y {- x 3}} {+ y y}}}) )
+;; (calc (parse '{with {x 5} {with {y {- x 3}} {+ y y}}}) )
+;; (calc (parse '{with {x 5} {+ x {with {x 3} 10}}}) )
+;; (calc (parse '{with {x 5} {+ x {with {x 3} x}}}) )
+;; (calc (parse '{with {x 5} {+ x {with {y 3} x}}}) )
+;; (calc (parse '{with {x 5} {with {y x} y}}) )
+;; (calc (parse '{with {x 5} {with {x x} x}}) )
+
+
+;; (calc (parse '5) )!----------------------GOOD-----------------!
+5
+
+;; (calc (parse '{+ 5 5}) )!----------------------GOOD-----------------!
+(+ 5 5)
+
+;; (calc (parse '{with {x {+ 5 5}} {+ x x}}) )!----------------------GOOD-----------------!
+(let (( x (+ 5 5) )) (+ x x))
+
+;; (calc (parse '{with {x 5} {+ x x}}) )!----------------------GOOD-----------------!
+(let ((x 5)) (+ x x))
+
+
+;; (calc (parse '{with {x {+ 5 5}} {with {y {- x 3}} {+ y y}}}) )!----------------------GOOD-----------------!
+(let (( x (+ 5 5) )) (let (( y (- x 3) )) (+ y y) ))
+
+;; (calc (parse '{with {x 5} {with {y {- x 3}} {+ y y}}}) )!----------------------GOOD-----------------!
+(let (( x 5 )) (let (( y (- x 3) )) (+ y y) ))
+
+;; (calc (parse '{with {x 5} {+ x {with {x 3} 10}}}) )!----------------------GOOD-----------------!
+(let (( x 5)) (+ x (let ((x 3)) 10)))
+
+;; (calc (parse '{with {x 5} {+ x {with {x 3} x}}}) )!----------------------GOOD-----------------!
+(let ((x 5)) (+ x (let (( x 3)) x)))
+
+;; (calc (parse '{with {x 5} {+ x {with {y 3} x}}}) )!----------------------GOOD-----------------!
+(let (( x 5)) (+ x (let (( y 3 )) x)))
+((lambda (x) (+ x ((lambda (y) x) 3))) 5)
+
+;; (calc (parse '{with {x 5} {with {y x} y}}) )!----------------------GOOD----------------!
+(let (( x 5)) (let (( y x )) y))
+
+;; (calc (parse '{with {x 5} {with {x x} x}}) )!----------------------GOOD-----------------!
+(let (( x 5 )) (let (( x x )) x))
+((lambda (x) ((lambda (x) x) x)) 5)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

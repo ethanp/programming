@@ -1,0 +1,5 @@
+*.svn-base
+all-wcprops
+*.v1_indexcache
+Python/.metadata
+*.prefs

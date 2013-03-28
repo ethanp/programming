@@ -1,0 +1,422 @@
+/*******************************************************************************
+ Justin Hust
+ Simon Doty
+ Ethan Petuchowski
+
+ Group Project 1A
+ LispParser - Lisp Parser and Interpreter 
+*******************************************************************************/
+options {
+  MULTI=true;
+  VISITOR=true;
+  NODE_DEFAULT_VOID=false;
+  STATIC=false;
+}
+
+PARSER_BEGIN(LispParser)
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Scanner;
+import java.text.DecimalFormat;
+
+
+public class LispParser {
+  static boolean bStaticScoping = true;
+
+  public static void main(String args[]) {
+  
+    System.out.println("Welcome to Lisp Parser. Type commands or quit.");
+
+    boolean bQuit = false;
+    
+    do {
+      System.out.print("> ");      
+      
+      // read a line of input
+      String sInput = "";
+      Scanner scanIn = new Scanner(System.in);
+      sInput = scanIn.nextLine();
+      
+      if(sInput.toLowerCase().equals("quit") || sInput.toLowerCase().equals("q")) {
+        bQuit = true;
+
+      } else if(sInput.toLowerCase().equals("test") || sInput.toLowerCase().equals("t")) {
+        RunTests(); 
+        
+      } else if(sInput.toLowerCase().equals("scoping")) {
+        if(bStaticScoping)
+          System.out.println("SCOPING = STATIC");
+        else      
+          System.out.println("SCOPING = DYNAMIC");
+
+      } else if(sInput.toLowerCase().equals("set scoping static")) {
+        bStaticScoping = true;
+        System.out.println("SCOPING = STATIC");
+        
+      } else if(sInput.toLowerCase().equals("set scoping dynamic")) {
+        bStaticScoping = false;
+        System.out.println("SCOPING = DYNAMIC");
+     
+      } else {                    
+        RunCommand(sInput);
+                   
+      }
+              
+    } while(!bQuit);
+
+    System.out.println("Parse Completed Successfully.");     
+      
+  }
+  
+  // *************************************************************************
+  // try convert all let to lambda
+  public static String PreProcess(String sCommand_) {
+      InputStream parseStream = new ByteArrayInputStream(sCommand_.getBytes());
+  
+      LispParser lp = new LispParser(parseStream);
+  
+      String firstParseRes = null;
+      try
+      {
+
+          firstParseRes = lp.lambdaExpr();
+          System.out.println(firstParseRes);
+      } catch (Exception e)
+      {
+          e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+      }
+      
+      return firstParseRes;
+      
+  }  
+  
+  // *************************************************************************
+  public static void RunCommand(String sCommand_) {
+    try {
+      String sProcessed = PreProcess(sCommand_);
+      // build ast from stream created from the input command
+      InputStream in = new ByteArrayInputStream(sProcessed.getBytes());                
+      LispParser p = new LispParser(in);
+
+
+            
+      ASTProgram root = p.Program();
+      
+      // print the AST
+      LispParserVisitor v = new LispParserDumpVisitor();
+      root.jjtAccept(v, null);
+      
+      System.out.println("----------------------");
+      LispParserVisitor e = new LispParserEnvironmentVisitor();
+      System.out.println(root.jjtAccept(e, null));
+      
+      System.out.println("----------------------");
+      
+      // interpret the AST
+      if(bStaticScoping) { 
+        System.out.println("Interpreting with static scoping.");
+      
+      } else {
+        System.out.println("Interpreting with dynamic scoping.");      
+      
+      }
+      
+      LispParserVisitor i = new LispParserInterpreterVisitor();
+      Object result = root.jjtAccept(i, bStaticScoping);
+      
+      // *** remove trailing zeroes if a number ***
+      if(result instanceof Integer || result instanceof Double) {
+        DecimalFormat df = new DecimalFormat("#.###");  
+        result = df.format(result);
+      
+      }  
+    
+      System.out.println("Interpreted Result: " + result );    
+	  
+	 
+    } catch (Exception e) {
+      System.out.println("Oops.");
+      System.out.println(e.getMessage());
+      e.printStackTrace();
+    }
+    
+  }
+  
+  // **************************************************************************
+  public static void RunTests() {
+    System.out.println("**************** test 1: 5 **************************");
+    RunCommand("5");
+    System.out.println("\n\n**************** test 2: (+ 3 4 5) **************************");    
+    RunCommand("(+ 3 4 5)");
+    System.out.println("\n\n**************** test 3: (- 3 1) **************************");        
+    RunCommand("(- 3 1)");
+    System.out.println("\n\n**************** test 4: (* 7 9) **************************");              
+    RunCommand("(* 7 9)");
+    System.out.println("\n\n**************** test 5: (+ 3 4 (* 7 (- 4 2))) **************************");                  
+    RunCommand("(+ 3 4 (* 7 (- 4 2)))");
+    System.out.println("\n\n**************** test 6: ((lambda (x) (+ 3 x 4)) 5) **************************");                  
+    RunCommand("((lambda (x) (+ 3 x 4)) 5)");
+    System.out.println("\n\n**************** test 7: (lambda (y) (+ 3 (- 4 3))) **************************");                  
+    RunCommand("(lambda (y) (+ 3 (- 4 3)))");
+    System.out.println("\n\n**************** test 8: (let ((x 3)) (+ x 3)) **************************");                  
+    RunCommand("(lambda (y) (+ 3 (- 4 3)))");
+    System.out.println("\n\n**************** test 8: (let ((x 3)) (* x x x x)) **************************");                  
+    RunCommand("(let ((x 3)) (* x x x x))");
+    System.out.println("\n\n**************** test 9: (let ((x 10)) (let ((y 20)) (+ x y)        )) **************************");                  
+    RunCommand("(let ((x 10)) (let ((y 20)) (+ x y)        ))");
+    
+    System.out.println("\n\n**************** test 10: (let (( x (+ 5 5) )) (+ x x)) **************************");                  
+    RunCommand("(let (( x (+ 5 5) )) (+ x x))");
+    
+    System.out.println("\n\n**************** test 11: (let (( x (+ 5 5) )) (let (( y (- x 3) )) (+ y y) ))   )) **************************");                  
+    RunCommand("(let (( x (+ 5 5) )) (let (( y (- x 3) )) (+ y y) ))");
+    
+    System.out.println("\n\n**************** test 12: (let (( x 5 )) (let (( y (- x 3) )) (+ y y) ))   )) **************************");                  
+    RunCommand("(let (( x 5 )) (let (( y (- x 3) )) (+ y y) ))");
+    
+    System.out.println("\n\n**************** test 13: (let (( x 5)) (+ x (let ((x 3)) 10)))      )) **************************");                  
+    RunCommand("(let (( x 5)) (+ x (let ((x 3)) 10)))");
+    
+    System.out.println("\n\n**************** test 14: (let ((x 5)) (+ x (let (( x 3)) x)))   )) **************************");                  
+    RunCommand("(let ((x 5)) (+ x (let (( x 3)) x)))");
+    
+    System.out.println("\n\n**************** test 15: (let (( x 5)) (+ x (let (( y 3 )) x)))    )) **************************");                  
+    RunCommand("(let (( x 5)) (+ x (let (( y 3 )) x)))");
+    
+    System.out.println("\n\n**************** test 16: (let (( x 5)) (let (( y x )) y))   )) **************************");                  
+    RunCommand("(let (( x 5)) (let (( y x )) y))");
+    
+    System.out.println("\n\n**************** test 17: (let (( x 5 )) (let (( x x )) x)))) **************************");                  
+    RunCommand("(let (( x 5 )) (let (( x x )) x))");
+    
+    System.out.println("\n\n**************** test 18: ((let ((f (lambda (x) x))) f) (let ((x 4)) x)) **************************");                  
+    RunCommand("((let ((f (lambda (x) x))) f) (let ((x 4)) x))");
+
+    System.out.println("\n\n**************** test 19: (let (( x 3)) (let ((f (lambda (y) (+ x y)))) (f 4))**************************");                  
+    RunCommand("(let (( x 3)) (let ((f (lambda (y) (+ x y)))) (f 4)))");
+
+    System.out.println("\n\n**************** test 20: (let ((H 0.0001)) (let ((f (lambda (x) (* x x x x)))) (let ((ddx (lambda (x) (/ (- (f (+ x H))(f x)) H)))) (ddx 10)))) ************");
+    RunCommand("(let ((H 0.0001)) (let ((f (lambda (x) (* x x x x)))) (let ((ddx (lambda (x) (/ (- (f (+ x H))(f x)) H)))) (ddx 10))))");
+
+    System.out.println("\n\n**************** test 21: (let ((y 5)) (let ((f (lambda (x) (+ x y)))) (let ((y 3)) (f 5)))) ************");
+    RunCommand("(let ((y 5)) (let ((f (lambda (x) (+ x y)))) (let ((y 3)) (f 5))))");
+  }
+  
+}
+
+PARSER_END(LispParser)
+
+// ***************************************************************************
+SKIP :
+{
+  " "
+| "\t"
+| "\n"
+| "\r"
+| <"//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+| <"/*" (~["*"])* "*" (~["/"] (~["*"])* "*")* "/">
+}
+
+// ***************************************************************************
+TOKEN : /* LITERALS */
+{
+    < LAMBDA : "lambda" >
+  | < LET    : "let" >
+  | < DOUBLE         :  (<DIGIT>)* ["."] (<DIGIT>)+ >  
+  | < INTEGER         :  (<DIGIT>)+ >
+  | < IDENTIFIER    :  <LETTER> (<DIGIT> | <LETTER> | <UNDERSCORE> | <SYMBOL>)* >  
+  
+}
+
+// ***************************************************************************
+TOKEN:
+{
+
+   < LPAR   : "(" >
+  | < RPAR   : ")" >
+  | < SEMI   : ";" >
+  | < OP: ["+", "-", "*", "/"] >
+  | < DIGIT : ["0"-"9"] >
+  | < LETTER        :  (["a"-"z", "A"-"Z"])+ >
+  | < UNDERSCORE    :  ["_"] >      
+  | < SYMBOL        :  ["a"-"z", "A"-"Z", "~", "`", "!", "@", "#", "$", "/", "^", "&",
+                        "*", "_", "-", "=", "+", "{", "}", "[", "]", "|", "\\", ":",
+                        ";", "<", ">", ",", ".", "?", "'", "\""] >
+
+}
+
+// ***************************************************************************
+TOKEN:
+{
+  < ERROR : ~[] >
+}
+
+// ***************************************************************************
+// program entry point
+ASTProgram Program() : {}
+{
+
+(  Num()
+   | (   LOOKAHEAD(2) LambdaExpr() | LOOKAHEAD(3) FunctionExpr() | LOOKAHEAD(2) ArithExpr() | LOOKAHEAD(3) NamedFunctionApp() )
+    
+)
+      
+  { return jjtThis; }
+  
+}
+
+// ***************************************************************************
+/*
+void SExpr():
+{ }
+{
+  (Num() | Identifier() | ArithExpr() | LambdaExpr() | FuncApp() | LetExpr())
+  
+}
+*/
+
+// ***************************************************************************
+/*
+void Body():
+{}
+{
+LOOKAHEAD(2)
+ <LPAR> <LPAR>
+        Lambda()
+ | Expr()
+ | Num()
+}
+
+*/
+/*
+void FunctionApp() :
+{}
+{
+  <LPAR> FunctionExpr() FunctionExpr() <RPAR>
+}
+*/
+// ***************************************************************************
+void FunctionExpr() :
+{}
+{
+ <LPAR> LambdaExpr()
+
+(  Num() | Identifier()
+
+   | (   LOOKAHEAD(2) LambdaExpr() | LOOKAHEAD(3) FunctionExpr() | LOOKAHEAD(2) ArithExpr() | LOOKAHEAD(3) NamedFunctionApp() )
+
+  
+)
+    <RPAR>
+}
+
+
+// ***************************************************************************
+/*
+ Need to be able to parse this: ((lambda (d) (d 10)) (lambda (x) (+ x x) ))
+
+*/
+void NamedFunctionApp() :
+{}
+{
+<LPAR> (Identifier() | FunctionExpr())
+
+//( 
+(Num() | LOOKAHEAD(3) FunctionExpr() | LOOKAHEAD(2) ArithExpr() | LOOKAHEAD(3) NamedFunctionApp() | Identifier())
+
+  //| ( LOOKAHEAD(2) LambdaExpr() | LOOKAHEAD(2) FunctionExpr() | ArithExpr() | Identifier() )
+  
+//)
+   <RPAR>
+}
+
+
+// ***************************************************************************
+void LambdaExpr() :
+{}
+{
+ <LPAR> 
+    <LAMBDA>
+
+    <LPAR>
+    Identifier()
+    <RPAR>
+// get body
+(  Num()
+   | Identifier() |   LOOKAHEAD(2) LambdaExpr() | LOOKAHEAD(3) FunctionExpr() | LOOKAHEAD(2) ArithExpr() | LOOKAHEAD(3) NamedFunctionApp() )
+ 
+
+    <RPAR>
+}
+
+// ***************************************************************************
+void ArithExpr(): { Token t; String s; }
+{
+<LPAR> 
+	t = <OP>{ s = t.image; jjtThis.setOp(s); }
+      (LOOKAHEAD(3) NamedFunctionApp() | LOOKAHEAD(3) FunctionExpr() | LOOKAHEAD(2) ArithExpr()| LOOKAHEAD(2) NamedFunctionApp()| Num() | Identifier() )+
+   
+  <RPAR>
+
+}
+
+// ***************************************************************************
+String Identifier(): 
+{ Token t; }
+{
+  t = <IDENTIFIER> { jjtThis.setIdentifier(t.image); return t.image;}
+
+}
+
+// ***************************************************************************
+void Num(): 
+{ Token t; }
+{
+  t = <INTEGER> { jjtThis.setVal(Integer.parseInt(t.image)); }
+| t = <DOUBLE> {jjtThis.setVal(Double.parseDouble(t.image)); }
+}
+
+String lambdaExpr() #void :
+{
+  Token n; 
+  String v;
+}
+{
+/* CASE : LET; current form: (let (( param  lambdaExpr )) lambdaExpr ) */
+    LOOKAHEAD(2) <LPAR>
+                 <LET>
+                 <LPAR><LPAR>   { String A = "((lambda (" + Identifier() + ") ";
+                                  String B = lambdaExpr(); }
+                 <RPAR><RPAR>   { String C = lambdaExpr(); }
+                 <RPAR>         { A += C + ") " + B + ")"; return A; }
+
+/* CASE : LAMBDA; current form: (lambda ( param ) lambdaExpr )*/
+  | LOOKAHEAD(2) <LPAR>
+                 <LAMBDA>
+                 <LPAR>     { String A = "(lambda (" + Identifier() + ") "; }
+                 <RPAR>     { A += lambdaExpr() + ")"; }
+                 <RPAR>     { return A; }
+
+
+/* CASE : OPeration; current form: ( <OP> lambdaExpr (lambdaExpr)+ )
+            E.g. (+ 3 3) ; (* 3 5 6 8); etc.            */
+  | LOOKAHEAD(2) <LPAR>
+             n = <OP>       { String B = "(" + n.toString() + " " + lambdaExpr(); }
+           ( v = lambdaExpr()     { B += " " + v; }  )+
+                 <RPAR>     { B += ")"; return B; }
+
+/* CASE : Function Application; current form: ( (lambdaExpr)+ ) <== Warning: VERY GENERAL
+            E.g. (F1 2 5) ; (23 ** 2| 3) <-Goes Through! */
+  | LOOKAHEAD(2) <LPAR>
+             v = lambdaExpr()     { String app = "(" + v; }
+           ( v = lambdaExpr()     { app += " " + v; } )*
+                 <RPAR>     { app += ")"; return app; }
+
+/* CASE : NUMBER: could be Positive, Negative, Float, or Integer */
+  |          n = <INTEGER>   { String B = n.toString(); return B; } 
+  |          n = <DOUBLE>    { String D = n.toString(); return D; }
+
+/* CASE : SYMBOL: anything but Parentheses */
+  |          n = <IDENTIFIER>   { String C = n.toString(); return C; }
+}

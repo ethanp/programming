@@ -1,0 +1,170 @@
+
+# The useful thing this file does have is how it
+# Automatically Finds all the relevant c files
+# 	From within the ./src/ dir,
+# Turns them into object files
+#	To put in the ./obj/ dir
+# Links them
+# and Compiles them
+
+#############################################################################
+#############################################################################
+#### 									  ###
+# 		THIS IS A MAKEFILE FOR BUILDING A CUSTOM LIBRARY 	    #
+# 		it came from Learn C the Hard Way Ch: 28 		    #
+# 		One'll need to visit that page to get the dir struct right  #
+# 		http://c.learncodethehardway.org/book/ex28.html 	    #
+#### 									  ###
+#############################################################################
+#############################################################################
+
+#############################################################################
+# FIRST OF ALL one must enter in the name of YOUR_LIBRARY.a on/near line 34 #
+#############################################################################
+
+
+# The flags you'll pretty much always want to use
+CFLAGS=-g -O2 -Wall -Wextra -Isrc -rdynamic -DNEBUG $(OPTFLAGS)
+# E.g: make OPTFLAGS=-pthread
+
+# Options used when linking a library; allows someone to augment the options with the $VAR
+LIBS=-ldl $(OPTLIBS)
+
+# The var $PREFIX will Only have this value if the user didn't specify something else
+PREFIX?=/usr/local
+# E.g: make PREFIX=/tmp install
+
+
+
+# Dynamically create $SOURCES var by doing a wildcard-based search of the src dir and one-dir-down
+SOURCES=$(wildcard src/**/*.c src/*.c)
+
+# Use the $SOURCES list of *.c files and make a New list of Object files by changing the extentions
+OBJECTS=$(patsubst %.c,%.o,$(SOURCES))
+
+
+
+# Similarly, find source files for unit tests
+TEST_SRC=$(wildcard tests/*_tests.c)
+
+# Strip extentions
+TESTS=$(patsubst %.c,%,$(TEST_SRC))
+
+
+
+# The ultimate target is build/libYOUR_LIBRARY.a
+# 	YOU MUST CHANGE THIS TO BE WHATEVER LIBRARY YOU ARE ACTUALLY TRYING TO BUILD!
+TARGET=build/libYOUR_LIBRARY.a
+SO_TARGET=$(patsubst %.a,%.so,$(TARGET))
+
+
+
+
+
+# Build the Target
+# This is run by DEFAULT when MAKE is run with no arguments because it is FIRST
+# First it builds the Library, then the Unit Tests
+all: $(TARGET) $(SO_TARGET) tests
+
+
+# This is for doing "developer builds" with different than default flags and options
+dev: CFLAGS=-g -Wall -Isrc -Wall -Wextra $(OPTFLAGS)
+dev: all
+
+
+# Build the Target Library, make -fPIC a flag only for building the library
+$(TARGET): CFLAGS += -fPIC
+
+# Make the BUILD directory, then compile all the OBJECTS
+# ar makes the target
+# $@ $(OBJECTS) says "put the target, then all the Objects", here $@ maps to $(TARGET) just above, which maps to build/libYOUR_LIBRARY.a, all this 'indirection' allows you to Only change TARGET at the top and build a whole new library
+# run ranlib on the TARGET, and it gets built
+$(TARGET): build $(OBJECTS)
+	ar rcs $@ $(OBJECTS)
+	ranlib $@
+
+
+# Make the build/ or bin/ dirs if they don't exist
+$(SO_TARGET): $(TARGET) $(OBJECTS)
+	$(CC) -shared -o $@ $(OBJECTS)
+
+build:
+	@mkdir -p build
+	@mkdir -p bin
+
+
+
+# Build The Unit Tests
+# .PHONY: is a fake target that allows TESTS to be a target even if there's a file with that name
+.PHONY: tests
+
+# Link the test programs with the TARGET library, i.e. add build/libYOUR_LIBRARY.a to the Linking
+tests: CFLAGS += $(TARGET)
+# depends on all the programs listed in the TESTS var, then make guesses how to build each program in TESTS
+# Then a simple shell-script is called in to run all the TESTS and reports their results
+tests: $(TESTS)
+	sh ./tests/runtests.sh
+
+######################
+# Here is the shell-script called above, it will need to be saved in the proper location
+# echo "Running unit tests:"
+
+# for i in tests/*_tests
+# do
+#    if test -f $i
+#    then
+#        if $VALGRIND ./$i 2>> tests/tests.log
+#        then
+#            echo $i PASS
+#        else
+#            echo "ERROR in test $i: here's tests/tests.log"
+#            echo "------"
+#            tail tests/tests.log
+#            exit 1
+#        fi
+#    fi
+# done
+#
+# echo ""
+#
+######################
+
+
+# Dynamically rerun the tests with Valgrind, storing the valgrind logs into /tmp/valgrind-*.log
+valgrind:
+	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
+
+
+
+# The Cleaner, called in to clean-up the project
+# Cleans most of the junk that various compilers and tools leave behind
+# Gets rid of the build/ directory and the *.dSYM directories Apple's XCode leaves behind for debugging
+# Put whatever else is necessary into this list as well
+clean:
+	rm -rf build $(OBJECTS) $(TESTS)
+	rm -f tests/tests.log
+	find . -name "*.gc*" -exec rm {} \;
+	rm -rf `find . -name "*.dSYM" -print`
+
+
+# The Install
+# Makes install depend on all, so when you run "make install" everything will get built
+# Then uses the install program to make sure permissions are set properly, 
+# 	This means you often have to run "make && sudo make install"
+install: all
+	install -d $(DESTDIR)/$(PREFIX)/lib/
+	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
+
+
+
+# The Checker
+# Looks for "bad functions" that you don't want to use, such as strcpy
+BADFUNCS='[^_.>a-zA-Z0-9](str(n?cpy|n?cat|xfrm|n?dup|str|pbrk|tok|_)|stpn?cpy|a?sn?printf|byte_)'
+
+# run it with "make check"
+# @command says to print the output of the command, but not the command itself
+# egrep is like grep, but it can handle Extended Regular Expressions (EREs)
+# || true means that not finding things is NOT a failure
+check:
+	@echo Files with potentiall dangerous functions.
+	@egrep $(BADFUNCS) $(SOURCES) || true

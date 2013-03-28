@@ -1,0 +1,17 @@
+
+Invoking autoreconf in build directory: /Users/Ethan/Dropbox/CSyStuff/Programming/CtHW/Eclipse
+
+sh -c "autoreconf -i" 
+sh: autoreconf: command not found
+
+Configuration failed with error
+Build stopped
+()
+Invoking autoreconf in build directory: /Users/Ethan/Dropbox/CSyStuff/Programming/CtHW/Eclipse
+
+sh -c "autoreconf -i" 
+sh: autoreconf: command not found
+
+Configuration failed with error
+Build stopped
+()
