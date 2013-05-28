@@ -3,3 +3,5 @@ all-wcprops
 *.v1_indexcache
 Python/.metadata
 *.prefs
+*.zip
+*.tsv
