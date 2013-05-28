@@ -4,35 +4,35 @@
 
 # TODO: save info in files so they don't have to all be gotten every time?
 # in that case you wouldn't be able to enter the info at the start
+# OHH it could just save it in a file according to the numbers
+
+# TODO make it go to the next page and keep going
 
 import urllib2
 import os
 from bs4 import BeautifulSoup
 
-def searchPTOforSerialNums(searchDepthLimit):
-    goQueue = getUserPreferences()
-    searchableSerialNums = []
-    iterations = 0
-    while goQueue and iterations < searchDepthLimit:
-        go = goQueue.pop()
-        print go
-        splines = getHtmlAsListOfLines(go)
-        if go.__contains__('search-bool'):
-            goQueue += getPatentsAndNextPage(splines)
-        else:
-            searchableSerialNums += getNumberToSearchGoogleFor(splines)
+def getNumberToSearchGoogleFor(splines):
+    serialIndex,seriesIndex = 0,0
+    for line in splines:                        # find locations of number and code
+        if line.__contains__('Serial No.'):
+            serialIndex = splines.index(line)
+        if line.__contains__('Series Code'):
+            seriesIndex = splines.index(line)
+            break # just to speed it up a bit
 
-        iterations += 1
+    serialLine = splines[serialIndex+2]
+    startIndex = serialLine.index('>') + 1
+    stopIndex = serialLine.index('/') - 1
+    serialNo = serialLine[startIndex:stopIndex]                 # pull serial# from the webpage
+    seriesLine = splines[seriesIndex+2]
+    startIndex = seriesLine.index('>') + 1
+    seriesNo = seriesLine[startIndex:]
 
-    print searchableSerialNums
-    return searchableSerialNums
+    if serialNo.isdigit() and seriesNo.isdigit():  # needed when you click the "next" page
+        print seriesNo+serialNo
+        return [seriesNo+serialNo]
 
-def getHtmlAsListOfLines(go):
-    uSock = urllib2.urlopen(go)
-    data = uSock.read()
-    uSock.close()
-    soup = BeautifulSoup(data)
-    return str(soup).splitlines()
 
 def getPatentsAndNextPage(splines):
     linkQueue = []
@@ -49,26 +49,14 @@ def getPatentsAndNextPage(splines):
     return [baseURL + link for link in linkQueue]
 
 
-def getNumberToSearchGoogleFor(splines):
-    serialIndex,seriesIndex = 0,0
-    for line in splines:                        # find locations of number and code
-        if line.__contains__('Serial No.'):
-            serialIndex = splines.index(line)
-        if line.__contains__('Series Code'):
-            seriesIndex = splines.index(line)
-            break # just to speed it up a bit
+def getHtmlAsListOfLines(go):
+    uSock = urllib2.urlopen(go)
+    data = uSock.read()
+    uSock.close()
+    soup = BeautifulSoup(data)
+    return str(soup).splitlines()
 
-    serialLine = splines[serialIndex+2]
-    serialNo = serialLine[6:12]                 # pull serial# from the webpage
-    seriesLine = splines[seriesIndex+2]
-    seriesNo = seriesLine[6:8]
-
-    if serialNo.isdigit() and seriesNo.isdigit():  # needed when you click the "next" page
-        print seriesNo+serialNo
-        return [seriesNo+serialNo]
-
-
-def getUserPreferences():
+def getStartingPointFromUserInput():
     classNo    = raw_input("Input Class Number:")
     subclassNo = raw_input("Input Subsclass Number:")
 
@@ -80,11 +68,28 @@ def getUserPreferences():
     return [searchURL]
 
 
+def searchPTOforSerialNums(searchDepthLimit):
+    goQueue = getStartingPointFromUserInput()
+    searchableSerialNums = []
+    while goQueue and (searchableSerialNums < searchDepthLimit):
+        go = goQueue.pop()
+        print go
+        splines = getHtmlAsListOfLines(go)
+        if go.__contains__('Page=Prev'):
+            continue
+        elif go.__contains__('TERM1') or go.__contains__('Page=Next'):
+            goQueue += getPatentsAndNextPage(splines)
+        else:
+            searchableSerialNums += getNumberToSearchGoogleFor(splines)
+
+    print searchableSerialNums
+    return searchableSerialNums
+
 def searchFileForAllowances(transactionHistory, applicationNumber):
     for line in open(transactionHistory,'r'):
         if line[0] is 'D': continue     # skip the first line, column headers
         date = line.split('\t')[0]
-        month = int(date[:2])
+        # month = int(date[:2])           # doesn't use month, but it could
         year = int(date[6:10])
         if year == 2013:
             if line.find("Allowance") > -1:
@@ -105,6 +110,7 @@ def findAllowances(searchableSerialNums):
         ## Download data
         print 'Requesting zip-file from Google'
         gsutil = gsutilPrefix + applicationNumber + gsutilPostfix
+        print gsutil
         os.system(gsutil)
 
         ## unzip transaction history
@@ -120,5 +126,5 @@ if __name__ == '__main__':
     ## TODO: save this list to a file so it doesn't need to be generated every time
     # except if you are going to plug in different classes every time, maybe not
 
-    searchableSerialNums = searchPTOforSerialNums(searchDepthLimit=3)
+    searchableSerialNums = searchPTOforSerialNums(searchDepthLimit=100)
     findAllowances(searchableSerialNums)
