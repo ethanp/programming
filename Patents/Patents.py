@@ -2,12 +2,6 @@
 # May 2013
 #
 
-# TODO: save info in files so they don't have to all be gotten every time?
-# in that case you wouldn't be able to enter the info at the start
-# OHH it could just save it in a file according to the numbers
-
-# TODO make it go to the next page and keep going
-
 import urllib2
 import os
 from bs4 import BeautifulSoup
@@ -19,7 +13,7 @@ def getNumberToSearchGoogleFor(splines):
             serialIndex = splines.index(line)
         if line.__contains__('Series Code'):
             seriesIndex = splines.index(line)
-            break # just to speed it up a bit
+            break  # done with this page
 
     serialLine = splines[serialIndex+2]
     startIndex = serialLine.index('>') + 1
@@ -30,7 +24,7 @@ def getNumberToSearchGoogleFor(splines):
     seriesNo = seriesLine[startIndex:]
 
     if serialNo.isdigit() and seriesNo.isdigit():  # needed when you click the "next" page
-        print seriesNo+serialNo
+        # print seriesNo+serialNo, 'was found on this page'
         return [seriesNo+serialNo]
 
 
@@ -69,18 +63,22 @@ def getStartingPointFromUserInput():
 
 
 def searchPTOforSerialNums(searchDepthLimit):
+    print 'Finding at most', searchDepthLimit, 'listings'
     goQueue = getStartingPointFromUserInput()
     searchableSerialNums = []
-    while goQueue and (searchableSerialNums < searchDepthLimit):
+    while goQueue and (len(searchableSerialNums) < searchDepthLimit):
         go = goQueue.pop()
-        print go
+        # print go
         splines = getHtmlAsListOfLines(go)
         if go.__contains__('Page=Prev'):
             continue
         elif go.__contains__('TERM1') or go.__contains__('Page=Next'):
             goQueue += getPatentsAndNextPage(splines)
+            print 'found another page of listings'
         else:
             searchableSerialNums += getNumberToSearchGoogleFor(splines)
+            if len(searchableSerialNums) % 25 == 0:
+                print len(searchableSerialNums), 'serial numbers found so far'
 
     print searchableSerialNums
     return searchableSerialNums
@@ -92,9 +90,9 @@ def searchFileForAllowances(transactionHistory, applicationNumber):
         # month = int(date[:2])           # doesn't use month, but it could
         year = int(date[6:10])
         if year == 2013:
+            print line
             if line.find("Allowance") > -1:
                 print "found a recent Allowance"
-                print line
                 print "Application Number:", applicationNumber
                 return True
         else:
@@ -103,7 +101,9 @@ def searchFileForAllowances(transactionHistory, applicationNumber):
 
 
 def findAllowances(searchableSerialNums):
-    gsutilPrefix = "/usr/local/bin/gsutil cp -R gs://uspto-pair/applications/"
+    gsutilPrefix = "/usr/local/bin/gsutil cp -R gs://uspto-pair/applications/"  # Dad's
+    # gsutilPrefix = '/Users/Ethan/gsutil/gsutil cp -R gs://uspto-pair/applications/'  # Ethan's
+
     gsutilPostfix = "* ."
     for applicationNumber in searchableSerialNums:
 
@@ -126,5 +126,7 @@ if __name__ == '__main__':
     ## TODO: save this list to a file so it doesn't need to be generated every time
     # except if you are going to plug in different classes every time, maybe not
 
-    searchableSerialNums = searchPTOforSerialNums(searchDepthLimit=100)
+    searchableSerialNums = searchPTOforSerialNums(searchDepthLimit=150)
+    searchableSerialNums = list(set(searchableSerialNums))
+    print 'searching google for', len(searchableSerialNums), 'serial numbers'
     findAllowances(searchableSerialNums)
