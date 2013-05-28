@@ -120,6 +120,7 @@ def findAllowances(searchableSerialNums):
         if os.path.exists(zipfile):
             os.system(unzip)
             searchFileForAllowances(transactionHistory,applicationNumber)
+            os.system('rm -f '+zipfile)
 
 baseURL = 'http://appft.uspto.gov'
 if __name__ == '__main__':
