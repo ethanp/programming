@@ -17,11 +17,11 @@ def getNumberToSearchGoogleFor(splines):
 
     serialLine = splines[serialIndex+2]
     startIndex = serialLine.index('>') + 1
-    stopIndex = serialLine.index('/') - 1
-    serialNo = serialLine[startIndex:stopIndex]                 # pull serial# from the webpage
+    stopIndex  = serialLine.index('/') - 1
+    serialNo   = serialLine[startIndex:stopIndex]            # pull serial# from the webpage
     seriesLine = splines[seriesIndex+2]
     startIndex = seriesLine.index('>') + 1
-    seriesNo = seriesLine[startIndex:]
+    seriesNo   = seriesLine[startIndex:]
 
     if serialNo.isdigit() and seriesNo.isdigit():  # needed when you click the "next" page
         # print seriesNo+serialNo, 'was found on this page'
