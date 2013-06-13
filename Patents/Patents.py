@@ -1,6 +1,6 @@
 # Trawling Specified US Patent Class/Subclass for Recently Allowed Applications
 # May 2013
-#
+# TODO: Untested at this point
 
 import urllib2
 import os
@@ -8,40 +8,39 @@ from bs4 import BeautifulSoup
 
 def getNumberToSearchGoogleFor(splines):
     serialIndex,seriesIndex = 0,0
-    for line in splines:                        # find locations of number and code
-        if line.__contains__('Serial No.'):
+    for line in splines:
+        if 'Serial No.' in line:
             serialIndex = splines.index(line)
-        if line.__contains__('Series Code'):
+        if 'Series Code' in line:
             seriesIndex = splines.index(line)
-            break  # done with this page
-
+            break  # done reading this page
     serialLine = splines[serialIndex+2]
     startIndex = serialLine.index('>') + 1
     stopIndex  = serialLine.index('/') - 1
-    serialNo   = serialLine[startIndex:stopIndex]            # pull serial# from the webpage
+    serialNo   = serialLine[startIndex:stopIndex]
     seriesLine = splines[seriesIndex+2]
     startIndex = seriesLine.index('>') + 1
     seriesNo   = seriesLine[startIndex:]
+    return [seriesNo+serialNo]
 
-    if serialNo.isdigit() and seriesNo.isdigit():  # needed when you click the "next" page
-        # print seriesNo+serialNo, 'was found on this page'
-        return [seriesNo+serialNo]
-
-
-def getPatentsAndNextPage(splines):
+def getPatentsAndNextPage(splines, depthLimit):
+    """ It would be possible to make this one line, but it would be ugly. """
     linkQueue = []
+    serialPages = 0
     for line in splines:
         if len(line) > 3:
-            if line.__contains__('href'):
-                for spl in line.split('"'):
-                    if spl.__contains__('netacgi/nph'):
-                        if spl.__contains__('AND&amp'):
+            if 'href' in line:
+                if serialPages < depthLimit:
+                    for spl in line.split('"'):
+                        if 'netacgi/nph' in spl and 'AND&amp' in spl:
                             spl = spl.replace('&amp', '&')
                             spl = spl.replace(';', '')
                             linkQueue += [spl]
+                            if not 'Page=Next' in spl:
+                                serialPages += 1
+                else: break
     linkQueue = list(set(linkQueue))      # remove duplicates
     return [baseURL + link for link in linkQueue]
-
 
 def getHtmlAsListOfLines(go):
     uSock = urllib2.urlopen(go)
@@ -51,54 +50,38 @@ def getHtmlAsListOfLines(go):
     return str(soup).splitlines()
 
 def getStartingPointFromUserInput():
-    classNo    = raw_input("Input Class Number:")
-    subclassNo = raw_input("Input Subsclass Number:")
-
-    print "Searching in US Class:", classNo, "/", subclassNo
-
+    classNo     = raw_input("Input Class Number:")
+    subclassNo  = raw_input("Input Subclass Number:")
+    searchDepth = raw_input("Input number of patents to search:")
     classTerm = "TERM1="+classNo+"%2F"+subclassNo+"&FIELD1=CCLS&co1=AND&d=PG01"
     searchURL = baseURL+"/netacgi/nph-Parser?Sect1=PTO2&Sect2=HITOFF&p=1&u=%2Fnetahtml%2FPTO%2Fsearch-bool.html&r=0&f=S&l=50&"+classTerm
-    #url1 = 'http://appft.uspto.gov/netacgi/nph-Parser?Sect1=PTO2&Sect2=HITOFF&p=1&u=%2Fnetahtml%2FPTO%2Fsearch-bool.html&r=0&f=S&l=50&TERM1=514%2F290&FIELD1=CCLS&co1=AND&TERM2=&FIELD2=&d=PG01'
-    return [searchURL]
+    return searchDepth, [searchURL]
 
-
-def searchPTOforSerialNums(searchDepthLimit):
-    print 'Finding at most', searchDepthLimit, 'listings'
-    goQueue = getStartingPointFromUserInput()
+def searchPTOforSerialNums():
+    searchDepthLimit, goQueue = getStartingPointFromUserInput()
     searchableSerialNums = []
+    searchDepthLimit = int(searchDepthLimit)
     while goQueue and (len(searchableSerialNums) < searchDepthLimit):
-        go = goQueue.pop()
-        # print go
+        go = goQueue.pop()  # pop(0) is O(n), pop() is O(1)
         splines = getHtmlAsListOfLines(go)
-        if go.__contains__('Page=Prev'):
+        if 'Page=Prev' in go:
             continue
-        elif go.__contains__('TERM1') or go.__contains__('Page=Next'):
-            goQueue += getPatentsAndNextPage(splines)
-            print 'found another page of listings'
+        elif 'TERM1' in go or 'Page=Next' in go:
+            goQueue += getPatentsAndNextPage(splines, searchDepthLimit)
         else:
             searchableSerialNums += getNumberToSearchGoogleFor(splines)
-            if len(searchableSerialNums) % 25 == 0:
-                print len(searchableSerialNums), 'serial numbers found so far'
-
-    print searchableSerialNums
     return searchableSerialNums
 
 def searchFileForAllowances(transactionHistory, applicationNumber):
     for line in open(transactionHistory,'r'):
         if line[0] is 'D': continue     # skip the first line, column headers
         date = line.split('\t')[0]
-        # month = int(date[:2])           # doesn't use month, but it could
         year = int(date[6:10])
         if year == 2013:
-            print line
             if line.find("Allowance") > -1:
-                print "found a recent Allowance"
-                print "Application Number:", applicationNumber
                 return True
         else:
-            print "none found"
             return False
-
 
 def findAllowances(searchableSerialNums):
     gsutilPrefix = "/usr/local/bin/gsutil cp -R gs://uspto-pair/applications/"  # Dad's
@@ -106,14 +89,8 @@ def findAllowances(searchableSerialNums):
 
     gsutilPostfix = "* ."
     for applicationNumber in searchableSerialNums:
-
-        ## Download data
-        print 'Requesting zip-file from Google'
         gsutil = gsutilPrefix + applicationNumber + gsutilPostfix
-        print gsutil
         os.system(gsutil)
-
-        ## unzip transaction history
         zipfile = applicationNumber+".zip"
         transactionHistory = applicationNumber+"/"+applicationNumber+"-transaction_history.tsv"
         unzip = "unzip -n "+zipfile+" "+transactionHistory
@@ -124,10 +101,6 @@ def findAllowances(searchableSerialNums):
 
 baseURL = 'http://appft.uspto.gov'
 if __name__ == '__main__':
-    ## TODO: save this list to a file so it doesn't need to be generated every time
-    # except if you are going to plug in different classes every time, maybe not
-
-    searchableSerialNums = searchPTOforSerialNums(searchDepthLimit=150)
-    searchableSerialNums = list(set(searchableSerialNums))
-    print 'searching google for', len(searchableSerialNums), 'serial numbers'
+    searchableSerialNums = searchPTOforSerialNums()
+    searchableSerialNums = list(set(searchableSerialNums))  # Doesn't do anything, but just in case
     findAllowances(searchableSerialNums)

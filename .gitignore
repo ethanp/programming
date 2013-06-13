@@ -17,3 +17,4 @@ Python/.metadata
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+Patents/.idea
