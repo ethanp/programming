@@ -24,11 +24,11 @@ scalaVersion := "2.10.2"
 organization := "edu.utexas"
 
 libraryDependencies ++= {
-  	Seq(
-		    "org.specs2"    %% "specs2"    % "2.1.1" % "test",
-    		"org.scalatest" %% "scalatest" % "1.9.1" % "test",
-        "com.twitter"   %% "algebird"  % "0.2.0"
-  	)
+  Seq(
+      "org.specs2"    %% "specs2"    % "2.1.1" % "test",
+      "org.scalatest" %% "scalatest" % "1.9.1" % "test",
+      "com.twitter"   %% "algebird-core"  % "0.2.0"
+  )
 }
 
 // if you have more than one main method, you can specify which is used when typing 'run' in sbt
