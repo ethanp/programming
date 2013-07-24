@@ -1,0 +1,27 @@
+<!-- http://en.wikibooks.org/wiki/JavaScript/Functions_and_Objects -->
+<!-- 7/22/2013 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+ <head>
+  <title>Some Page</title>
+    <script type="text/javascript">
+      function stepToFive(number) {
+        if (number > 5) {
+          number -= 1;
+        }
+        if (number < 5) {
+          number += 1;
+        }
+        return number;
+      }
+    </script>
+  </head>
+  <body>
+    <p>
+      <script type="text/javascript">
+        var num = stepToFive(6);
+        alert(num);
+      </script>
+    </p>
+  </body>
+</html>

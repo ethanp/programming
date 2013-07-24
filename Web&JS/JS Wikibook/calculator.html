@@ -1,0 +1,78 @@
+<!-- http://en.wikibooks.org/wiki/JavaScript/DHTML -->
+<!-- 7/22/2013 -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html lang="en">
+  <head>
+    <title>Calculator</title>
+    <script type="text/javascript">
+    function multi() {
+      var a = document.Calculator.no1.value;
+      var b = document.Calculator.no2.value;
+      var p = (a*b);
+      document.Calculator.product.value = p;
+    }
+
+    function divi() {
+      var d = document.Calculator.dividend.value;
+      var e = document.Calculator.divisor.value;
+      var q = (d/e);
+      document.Calculator.quotient.value = q;
+    }
+
+    function circarea() {
+      var r = document.Calculator.radius.value;
+      pi = 3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170679821480865132823066470938446095505822317253594081284811174502841027019385211055596446229489549303819644288109756659334461284756
+48233786783165;
+      var a = pi*(r*r);
+      document.Calculator.area.value = a;
+      var c = 2*pi*r;
+      document.Calculator.circumference.value = c;
+    }
+    </script>
+    <style type="text/css">
+      body {
+        background-color:#00aac5;
+        color:#000
+      }
+
+      label {
+        float:left;
+        width:7em
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Calculator</h1>
+    <form name="Calculator" action="">
+      <fieldset>
+        <legend>Multiply</legend>
+        <input type="text" name="no1"> × <input type="text" name="no2">
+        <input type="button" value="=" onclick="multi()">
+        <input type="text" name="product">
+      </fieldset>
+      <fieldset>
+        <legend>Divide</legend>
+        <input type="text" name="dividend"> ÷ <input type="text" name="divisor">
+        <input type="button" value="=" onclick="divi()">
+        <input type="text" name="quotient">
+      </fieldset>
+      <fieldset>
+        <legend>Area and Circumfrence of Circle</legend>
+        <p>(Uses pi to 240 d.p)</p>
+        <div>
+          <label for="radius">Type in radius</label> <input type="text" name="radius" id="radius" value="">
+        </div>
+        <div>
+          <input type="button" value="=" onclick="circarea()">
+        </div>
+        <div>
+          <label for="area">Area</label> <input type="text" name="area" id="area" value="">
+        </div>
+        <div>
+          <label for="circumference">Circumference</label> <input type="text" name="circumference" id="circumference" value="">
+        </div>
+      </fieldset>
+    </form>
+    <p>Licensed under the <a href="http://www.gnu.org/licenses/gpl.html">GNU GPL</a>.</p>
+  </body>
+</html>

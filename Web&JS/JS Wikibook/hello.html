@@ -1,0 +1,19 @@
+<!-- http://en.wikibooks.org/wiki/JavaScript/Functions_and_Objects -->
+<!-- 7/22/2013 -->
+<html>
+ <head><title>Some Page</title></head>
+ <body>
+  <button id="msg">greeting</button>
+  <script type="text/javascript">
+   function hello() {
+     alert("Hello World!");
+   }
+
+   // calls hello when the button is clicked
+   document.getElementById("msg").onclick = hello;
+
+   // calls hello when page loads
+   hello();
+  </script>
+ </body>
+</html>

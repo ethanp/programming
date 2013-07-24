@@ -8,9 +8,6 @@
  Per:  https://discussions.apple.com/thread/2361809?start=0&tstart=0
   one must type a <C-d> to send the true EOF integer to the Terminal
       I was using <C-c>, but that actually sends an 'interrupt' signal
-
- Yes, this answer could be more compact, but why bother
-    This language is a pain in the butt enough as it is
 */
 
 #include <stdio.h>
@@ -38,15 +35,14 @@ int main()
                 lenThisWord = MAXLEN;
             wordLengths[lenThisWord]++;
             lenThisWord = 0;
-        }
-        else { 
+        } else { 
             lenThisWord++; 
         }
     }
 
     // find max input word length
+    // too terse, but it's kinda cool
     while (!wordLengths[myMaxLen--]);
-    // bit kludgy, but it's kinda cool
     myMaxLen++;
 
     /* print histogram horizontally */
@@ -67,10 +63,9 @@ int main()
     printf("Vertical Representation:\n");
     printf("------------------------\n");
     // find mode length
-    for (i = 1; i <= myMaxLen; i++) {
+    for (i = 1; i <= myMaxLen; i++)
         if (wordLengths[i] > modeLength)
             modeLength = wordLengths[i];
-    }
 
     // print histogram bars
     lenCounter = modeLength;
@@ -88,14 +83,12 @@ int main()
 
     // print bottom label
     printf("    ");
-    for (i = 1; i <= myMaxLen; i++) {
+    for (i = 1; i <= myMaxLen; i++)
         printf("--");
-    }
     printf("\n");
     printf("    ");
-    for (i = 1; i <= myMaxLen; i++) {
+    for (i = 1; i <= myMaxLen; i++)
         printf("%2d", i);
-    }
     printf("\n");
 
     return 0;
