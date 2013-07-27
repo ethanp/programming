@@ -1,19 +1,61 @@
 "Numbers
 set number
 
+" Don't try to be compatible with vi
+set nocompatible
+
+filetype off
+filetype plugin indent on
+
 " Increase the spacing between lines for better readability
 set linespace=4
 " Auto-Indent By Default
 set autoindent
 set smartindent
 
-" round indent to multiple of 'shiftwidth'
-set shiftround
+" http://stevelosh.com/blog/2010/09/coming-home-to-vim/
+" =======================================================================
+set encoding=utf-8
+set wildmenu
+set wildmode=list:longest
+set ttyfast                     " makes vim faster, I guess
+set backspace=indent,eol,start  " Make backspace behave normally
+set laststatus=2                " Always display the status line
+set relativenumber              " line numbers relative to current line
+set undofile                    " save file's undos, load them on re-open
+" =======================================================================
+
+
+" https://github.com/jasoncyu/dotfiles/blob/master/.vimrc
+" =============================================================================
+set clipboard=unnamed " Share system clipboard
+set directory=/tmp// " swap files
+set backupskip=/tmp/*,/private/tmp/*
+set ffs=unix,dos,mac "Default file types
+set nowrap " don't wrap lines
+set showmatch " set show matching parenthesis
+set ignorecase " ignore case when searching
+set smartcase " ignore case if search pattern is all lowercase, case-sensitive otherwise
+set copyindent " copy the previous indentation on autoindenting
+set list listchars=tab:»\ ,trail:· " Characters to show spaces/tabs/etc.
+
+" Make sure we hilight extra whitespace in the most annoying way possible.
+highlight ExtraWhitespace ctermbg=red guibg=red
+match ExtraWhitespace /\s\+$/
+
+" Save when losing focus
+set autowriteall " Auto-save files when switching buffers or leaving vim.
+au FocusLost * silent! :wa
+au TabLeave * silent! :wa
+" =============================================================================
 
 " Tab Size 4
 set shiftwidth=4
 set softtabstop=4
 set tabstop=4
+
+" round indent to multiple of 'shiftwidth'
+set shiftround
 
 " fontsize
 set guifont=Monaco:h18
@@ -129,8 +171,9 @@ if has("mac") || has("macunix")
     vmap <D-k> <M-k>
 endif
 
-
-" Change "\" to "g"
+" TODO: change leader to "," instead of "g",
+"       that would be less inconvenient
+" Change "\" to "gg"
 " map \ g
 " noremap g \
 noremap \ gg
