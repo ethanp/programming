@@ -103,9 +103,6 @@ set directory=~/.vim/vim-tmp,~/.tmp,~/tmp,~/var/tmp,/tmp
 " allow "fj" instead to exit to command mode
 inoremap fj <esc>
 
-" Type before comment to keep it in same indentation in Python
-inoremap  <tab><backspace>
-
 " set "fk" to save in normal mode
 map fk ;w<CR>
 

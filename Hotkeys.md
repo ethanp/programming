@@ -3,13 +3,14 @@ Hotkeys
 
 ## Global
 
-To do this Action       | You must take these Steps
-------------------------|-----------------------------------
-Move window             | Ctrl-Alt-Arrow keys 
-Resize window           | Ctrl-Alt-shift-Arrow keys
-Center window           | Ctrl-Alt-Home
-Render markdown         | drag *.md to `Marked` app in dock
-Open iTerm2 Visor       | ctrl + opt + cmd + space
+To do this Action                       | You must take these Steps
+----------------------------------------|-----------------------------------
+Move window                             | Ctrl-Alt-Arrow keys 
+Resize window                           | Ctrl-Alt-shift-Arrow keys
+Center window                           | Ctrl-Alt-Home
+Render markdown                         | drag *.md to `Marked` app in dock
+Open iTerm2 Visor                       | ctrl + opt + cmd + space
+Show hidden files in Open/Save dialogs  | Cmd + Shift + .
 
 
 
@@ -74,10 +75,17 @@ deff (simpler version)              |
 property (property)                 |
 try (buncha options given)          |
 
-
-INDENTATION GUIDES
-use "gig" to turn them on
+Use `gig` to turn on indentation guides
 
 
 ## iTerm
+To do this Action               | You must take these Steps
+--------------------------------|--------------------------
+Copy text from shell            | Select it with the mouse
+Paste text from clipboard       | middle-click
+Split shell vertically          | Cmd - d
+Paste history                   | Cmd + Shift + H
+Instant replay                  | Cmd + Alt + B
+iTerm2 Exposé                   | Cmd + Alt + E
+Kill text from here to EOL      | Ctrl + k
 
