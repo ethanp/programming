@@ -5,11 +5,11 @@ Hotkeys
 
 To do this Action                       | You must take these Steps
 ----------------------------------------|-----------------------------------
-Move window                             | Ctrl-Alt-Arrow keys 
-Resize window                           | Ctrl-Alt-shift-Arrow keys
 Center window                           | Ctrl-Alt-Home
-Render markdown                         | drag *.md to `Marked` app in dock
+Move window                             | Ctrl-Alt-Arrow keys
 Open iTerm2 Visor                       | ctrl + opt + cmd + space
+Render markdown                         | drag *.md to `Marked` app in dock
+Resize window                           | Ctrl-Alt-shift-Arrow keys
 Show hidden files in Open/Save dialogs  | Cmd + Shift + .
 
 
@@ -26,16 +26,32 @@ System.out.println(\<CARET\>)       | sout\<TAB\>
 ## MacVim
 To do this Action               | You must take these Steps
 --------------------------------|--------------------------
-Toggle comments                 | *line-count* + gci
-Add execute permissions         | gh
-Buffer Next                     | F14 / :bn
+Ack                             | g s a
+Add execute permissions         | g h
+Add surrounding to this LINE    | y s s s
+Add surrounding to this WORD    | y s i w
+Blank lines above / below       | g i o / g o
+Change surrounding              | c s
+Delete surrounding              | d s
+Go-To beginning of line (above) | g s k
+Go-To beginning of line (below) | g s j
+Go-To beginning of word         | g s w
+Go-To beginning of word (strict)| g s W
+Indentation guides              | g s i g
 Insert tab-character `\t`       | Ctrl-v + \<TAB\>
-Open TreeBranch Undo            | gz
-Change surrounding              | cs
-Delete surrounding              | ds
-Add surrounding to this WORD    | ysiw
-Add surrounding to this LINE    | yss
-
+Instantly reload .vimrc         | g s v r
+Open .vimrc in h-split          | g s v s
+Open .vimrc in h-split          | g s v v
+Open .vimrc in new buffer       | g s v w
+Open Command-T                  | z c
+Open Dropbox in Command-T (nice)| z C
+Open TreeBranch Undo            | g z
+Open Undo Tree                  | g z
+Re-hardwrap paragraphs of text  | g s q
+Strip trailing whitespace       | g s l
+Switch between open tabs        | Optn - Cmd - ( left / right )
+Switch buffers in current window| F13 / F14 or "print scrn"
+Toggle comments                 | *line-count* + g c i
 
 
 #### NERDTree
@@ -50,42 +66,40 @@ Open in vertically-split tab    | s
 ##### Good SNIPPETS:
 IN A C FILE type the following, followed by type the \<TAB\> key | s
 ----------------------------|--
-main                        | 
-inc (include <>)            | 
-Inc (include "")            |
 def (define)                |
-if                          |
-do (do/while)               | 
-wh (while)                  |
+do (do/while)               |
+enum (enum declaration)     |
 for (really nice!)          |
 fund (function declaration) |
+if                          |
+inc (include <>)            |
+Inc (include "")            |
+main                        |
+pr (printf)                 |
 td (type definition)        |
 tds (struct declaration)    |
-enum (enum declaration)     |
-pr (printf)                 |
+wh (while)                  |
 
 IN A PYTHON FILE type the following | s
 ------------------------------------|--
-imp (import)                        |
-wh (while)                          |
-for                                 |
 cl (class declaration)              |
 def (function)                      |
 deff (simpler version)              |
+for                                 |
+imp (import)                        |
 property (property)                 |
 try (buncha options given)          |
-
-Use `gig` to turn on indentation guides
+wh (while)                          |
 
 
 ## iTerm
 To do this Action               | You must take these Steps
 --------------------------------|--------------------------
 Copy text from shell            | Select it with the mouse
+Instant replay                  | Cmd + Alt + B
+Kill text from here to EOL      | Ctrl + k
+Paste history                   | Cmd + Shift + H
 Paste text from clipboard       | middle-click
 Split shell vertically          | Cmd - d
-Paste history                   | Cmd + Shift + H
-Instant replay                  | Cmd + Alt + B
 iTerm2 Exposé                   | Cmd + Alt + E
-Kill text from here to EOL      | Ctrl + k
 
