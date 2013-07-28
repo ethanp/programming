@@ -28,7 +28,7 @@ function json {
 
 # change & show
 function cs {
-    cd $1; ls 
+    cd $1; ls
 } # this isn't allowed to be compacted into the line above
 
 # as in Does Directory Have... ( Case insensitive bc -i )
@@ -41,7 +41,7 @@ function dedir {
     if test $# -eq 0
     then
         echo "You must supply a directory to demolish"
-    else 
+    else
         if test -d "$1"
         then
             tree $1
@@ -64,9 +64,11 @@ function dedir {
 # There are almost Too Many ways this could be altered to make it even more
 # useful (and "General"). But there's no reason to do them, unless I find
 # myself using 'C' a lot, which I have not.
-# NOTE: I've removed -O2 & -ffast-math optimization because there are going
-# to be more situations where I don't want something optimized out than where
-# I really care about the speed of program execution.
+
+# NOTE: I've removed -O2 & -ffast-math optimization because there are going to
+# be more situations where I don't want something optimized out than where I
+# really care about the speed of program execution.
+
 function compile {
     if test $# -gt 2
     then
@@ -78,20 +80,20 @@ function compile {
         if test -f "$1"
         then
             echo "Your output is in a.out"
-            # I took out -Wstrict-prototypes -Wmissing-prototypes  
+            # I took out -Wstrict-prototypes -Wmissing-prototypes
             gcc -W -Wall -fno-common -Wcast-align -std=c99 -Wredundant-decls -Wbad-function-cast -Wwrite-strings -Waggregate-return $1
         else
             echo "Usage: compile <inName> (<outName>)?"
             echo "In your case, <inName> wasn't a file."
         fi
     elif test $# -eq 0
-    then 
+    then
         echo "This is a shortcut for compiling simple .c files with a whole lot of warnings enabled"
         echo "Usage: compile <inName> (<outName>)?"
     else
         if [ -f "$1" ]
         then
-            # I took out -Wstrict-prototypes -Wmissing-prototypes  
+            # I took out -Wstrict-prototypes -Wmissing-prototypes
             gcc -W -Wall -fno-common -std=c99 -Wcast-align -Wredundant-decls -Wbad-function-cast -Wwrite-strings -Waggregate-return $1 -o $2
         else
             echo "Usage: compile <inName> (<outName>)?"
@@ -157,15 +159,14 @@ export CLASSPATH
 
 ##############################################################################
 # The Cool Terminal That Guy from Piazza Found (Modified to taste) ##########
+# Modified from  https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
+# All 0 length commands should be matched with \[ and \]
 NC='\033[0m'              # No Color
 yellow='\033[0;33m'
 green='\033[0;32m'
 bright_cyan='\033[0;96m'
 white='\033[0;37m'
 red='\033[0;31m'
-#Make the prompt awesome:
-#Modified from  https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
-#All 0 length commands should be matched with \[ and \]
 PROMPT_COMMAND="let PREV_ERROR=\$?"
 PROMPT_TITLE='\033]0;${USER}@${HOSTNAME}:${DIRSTACK##*/}\007'
 ROOT_NAME="[\[${red}\]${HOSTNAME}"
@@ -180,29 +181,32 @@ POST_PROMPT="\n\[${white}\]\342\224\224\342\224\200\342\224\200\342\225\274 \[${
 #$(if [[ ${EUID} == 0 ]];
 #then echo "${ROOT_NAME}";
 #else echo "${USER_NAME}"; fi)\
-# PS1 is what the user prompt looks like. You know, that thing that's something like ${USER_EMAIL}_${CURRENT_DIR}\$ "
-# The \ at the end of the line means that the next line is interpretted as part of the current line
-#   It basically escapes the \n character
+
+# PS1 is what the user prompt looks like. You know, that thing that's something
+# like ${USER_EMAIL}_${CURRENT_DIR}\$ " The \ at the end of the line means that
+# the next line is interpretted as part of the current line It basically
+# escapes the \n character
+
 PS1="${PROMPT_TITLE}${PRE_PROMPT}${PROMPT}${POST_PROMPT}"
 
-    function promptFill {
-        NOW=$(date +"[%l:%M %p ]")
-        #local string="xx[${USER}@${HOSTNAME}]-[${DIRSTACK}]"
-        #local string="xx[${HOSTNAME}]-[${DIRSTACK}]"
-        #local string="xx-[${DIRSTACK}]"
-        if [[ $PREV_ERROR != 0 ]]; then
-            #local string="xx[x]-[${HOSTNAME}]-[${DIRSTACK}]"
-            local string="xx[x]--[${DIRSTACK}]"
-        fi
-        let length=${#string}+${#NOW}
-        #for ((n=0;n<$(($COLUMNS-$length));n++))
-        #do
-         #   echo -ne " ";
-        #done
-        echo -ne "--"
-        echo -n $NOW
-        return $PREV_ERROR
-    }
+function promptFill {
+    NOW=$(date +"[%l:%M %p ]")
+    #local string="xx[${USER}@${HOSTNAME}]-[${DIRSTACK}]"
+    #local string="xx[${HOSTNAME}]-[${DIRSTACK}]"
+    #local string="xx-[${DIRSTACK}]"
+    if [[ $PREV_ERROR != 0 ]]; then
+        #local string="xx[x]-[${HOSTNAME}]-[${DIRSTACK}]"
+        local string="xx[x]--[${DIRSTACK}]"
+    fi
+    let length=${#string}+${#NOW}
+    #for ((n=0;n<$(($COLUMNS-$length));n++))
+    #do
+        #   echo -ne " ";
+    #done
+    echo -ne "--"
+    echo -n $NOW
+    return $PREV_ERROR
+}
 ### End Cool Terminal #########################################################
 ###############################################################################
 
