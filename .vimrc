@@ -1,79 +1,93 @@
-"Numbers
-set number
+call pathogen#infect()
 
-" Increase the spacing between lines for better readability
-set linespace=4
-" Auto-Indent By Default
-set autoindent
-set smartindent
-
-" round indent to multiple of 'shiftwidth'
-set shiftround
-
-" Tab Size 4
-set shiftwidth=4
-set softtabstop=4
-set tabstop=4
-
-" fontsize
-set guifont=Monaco:h18
-
-"make tabs into spaces
-set expandtab
-
-" HighLight Search
-set hlsearch
-
-"Remove Toolbar
-set guioptions-=T
-
-" incremental search
-set incsearch
-
-" Show command you're typing
-set showcmd
-
-" Swap : and :  Convenient.
-nnoremap ; :
-nnoremap : ;
-
-"Turn off Bell
-set noerrorbells
-set visualbell
-set t_vb=
-
-"Wrap cursor around lines
-inoremap <Down> <C-o>gj
-inoremap <Up> <C-o>gk
-set whichwrap+=<,>,h,l,[,]
-
-"Automatically cd into the directory that the file is in:
-set autochdir
-
-"Highlight current line
-set cul
-hi CursorLine term=none cterm=none ctermbg=3
-
-"Background
-"set background=dark
-
-"Line number on bar
-set ruler
+" TODO: change leader to "," instead of "g",
+"       that would be less inconvenient
+" Change "\" to "gg"
+noremap \ gg
+" set <leader> "g"
+let mapleader = "g"
 
 "fileType detection
 filetype on
 filetype indent on
 
-" keep 5 lines around cursor
-set scrolloff=5
+syntax on
+colorscheme my_colour_scheme
 
-" show invisible characters
-" set list
-" but only show tabs and trailing whitespace
-" set listchars=tab:>·,trail:
+
+" =============================================================================
+
+" General Settings
+set shiftwidth=4        " Tab Size 4
+set softtabstop=4
+set tabstop=4
+set shiftround          " round indent to multiple of 'shiftwidth'
+set guifont=Monaco:h18  " font/size
+set expandtab           " make tabs into spaces
+set hlsearch            " HighLight Search
+set guioptions-=T       " Remove Toolbar
+set incsearch           " incremental search
+set showcmd             " Show command you're typing
+set noerrorbells        " Turn off Bell
+set visualbell
+set t_vb=
+set autochdir           " Automatically cd into the directory that the file is in:
+set cul                 " Highlight current line
+hi CursorLine term=none cterm=none ctermbg=3
+set ruler "Line number on bar
+set linebreak " makes wrapped lines at spaces, not middle of words
+set nocompatible " Don't try to be compatible with vi
+set linespace=4 " Increase the spacing between lines for better readability
+set autoindent " Auto-Indent By Default
+set smartindent
+set encoding=utf-8
+set wildmenu
+set wildmode=list:longest       " not sure what this does
+set ttyfast                     " makes vim faster, I guess
+set backspace=indent,eol,start  " Normalize backspace, I remapped it anyway though
+set laststatus=2                " Always display the status line
+set relativenumber              " line numbers relative to current line
+set undofile                    " save file's undos, load them on re-open
+set gdefault                    " apply global substitutions by default
+set colorcolumn=90
+set clipboard=unnamed " Share system clipboard
+set directory=/tmp// " swap files
+set backupskip=/tmp/*,/private/tmp/*
+set ffs=unix,dos,mac "Default file types
+set nowrap " don't wrap lines
+set showmatch " set show matching parenthesis
+set ignorecase " ignore case when searching
+set smartcase " ignore case if search pattern is all lowercase, case-sensitive otherwise
+set copyindent " copy the previous indentation on autoindenting
+set list listchars=tab:»\ ,trail:· " Characters to show spaces/tabs/etc.
+" set scrolloff=5 " keep 5 lines around cursor
+
+" =============================================================================
+
+" REMAPS
+
+" Swap : and :  Convenient.
+nnoremap ; :
+nnoremap : ;
+
+" allow "fj" instead to exit to command mode
+inoremap fj <esc>
+
+" set "fk" to save in normal mode
+map fk ;w<CR>
 
 " toggle highlight search
 nnoremap <backspace> :set hlsearch!<CR>
+
+" Smart way to move between windows
+map <C-j> <C-W>j
+map <C-k> <C-W>k
+map <C-h> <C-W>h
+map <C-l> <C-W>l
+
+" Insert-blank-line
+map <leader>io Ofjj
+map <leader>o ofjk
 
 " change to jellybeans colors
 nnoremap <F6> :colorscheme wombat<CR>
@@ -82,81 +96,32 @@ nnoremap <F5> :colorscheme my_colour_scheme<CR>
 " change to molokai colors
 nnoremap <F7> :colorscheme molokai<CR>
 
-" open the ~/.vimrc file in a new buffer
-nnoremap <F3> :e ~/.vimrc<CR>
-
-au! BufNewFile,BufRead *.indri set filetype=XML
-au! BufNewFile,BufRead *.param set filetype=XML
-au! BufNewFile,BufRead *.trectext set filetype=XML
-au! BufNewFile,BufRead *.trec set filetype=XML
-
 " set EasyMotion Plugin to <Leader> instead of <Leader><Leader>
 let g:EasyMotion_leader_key = '<Leader>'
 
-" makes wrapped lines at spaces, not middle of words
-set linebreak
+" strip all trailing whitespace in the current file
+nnoremap <leader>l :%s/\s\+$//<cr>:let @/=''<CR>
 
-" makes Vim put all its backup and temporary files in places I don't mind:
-set backupdir=~/.vim/vim-tmp,~/.tmp,~/tmp,~/var/tmp,/tmp
-set directory=~/.vim/vim-tmp,~/.tmp,~/tmp,~/var/tmp,/tmp
-
-" allow "fj" instead to exit to command mode
-inoremap fj <esc>
-
-" Type before comment to keep it in same indentation in Python
-inoremap  <tab><backspace>
-
-" set "fk" to save in normal mode
-map fk ;w<CR>
-
-" DOESN'T WORK \/!
-" set "fl" to exit command mode and save
-" inoremap fl <esc>;w
-
-" Smart way to move between windows
-map <C-j> <C-W>j
-map <C-k> <C-W>k
-map <C-h> <C-W>h
-map <C-l> <C-W>l
-
-" DOESN"T SEEM TO WORK :(
-" Move a line of text using ALT+[jk] or Comamnd+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-if has("mac") || has("macunix")
-    nmap <D-j> <M-j>
-    nmap <D-k> <M-k>
-    vmap <D-j> <M-j>
-    vmap <D-k> <M-k>
-endif
-
-
-" Change "\" to "g"
-" map \ g
-" noremap g \
-noremap \ gg
-let mapleader = "g"
-
-" turn on plugins?
-filetype plugin on
-
-call pathogen#infect()
-syntax on
-filetype plugin indent on
-
+nnoremap <leader>a :Ack
 nnoremap zx :NERDTree<CR>
 
+" re-hardwrap paragraphs of text
+nnoremap <leader>q gqip
+
+" VIMRC STUFF
+" open up ~/.vimrc file in a vertically split window
+nnoremap <leader>vv <C-w><C-v><C-l>:e $MYVIMRC<cr>
+" open up ~/.vimrc file in a horizontally split window
+nnoremap <leader>vs <C-w><C-s><C-l>:e $MYVIMRC<cr>
+" open the ~/.vimrc file in a new buffer
+nnoremap <leader>vw :e ~/.vimrc<CR>
+" Instantly reload vimrc. 'Been waiting for this one...
+" TODO It's broken
+" nnoremap <leader>vr ;source $MYVIMRC<CR>
+
 " save sessions with .vis extension
+" TODO find out what this actually does
 map <leader>s :mksession!  session.vis<CR>
-
-" Insert-blank-line buttons
-map <leader>io Ofjj
-map <leader>o ofjk
-
-" automatically source vim sessions so I can open them with the finder
-au BufRead *.vis so %
 
 " give current file execute permissions
 map <leader>h ;!chmod a+x %<CR><CR>
@@ -166,27 +131,58 @@ map <leader>h ;!chmod a+x %<CR><CR>
 map <F13> <ESC>;bp<CR>
 map <F14> <ESC>;bn<CR>
 
+" I think these are for easier navigation as defined above
 nnoremap j gj
 nnoremap k gk
 
-" Give the Undo Tree easy access
+" Undo Tree
 nnoremap <Leader>z :GundoToggle<CR>
 
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
-
-colorscheme my_colour_scheme
-
-" uses gig to get indent guides
-
-" Instantly reload vimrc. 'Been waiting for this one...
-nnoremap <leader>vr ;source $MYVIMRC<CR>
-
-nnoremap zc :CommandT ~/Dropbox/<CR>
-
-let g:rainbow_active = 1
-let g:rainbow_operators = 1
+nnoremap zC :CommandT ~/Dropbox/<CR>
+nnoremap zc :CommandT<CR>
 
 " make tab switching real easy (esp. using mouse/trackpad)
 map <M-D-Left> <ESC>;tabp<CR>
 map <M-D-Right> <ESC>;tabn<CR>
+
+"Wrap cursor around lines
+inoremap <Down> <C-o>gj
+inoremap <Up> <C-o>gk
+set whichwrap+=<,>,h,l,[,]
+
+" =============================================================================
+
+" RANDOM CRAP
+
+" highlight extra whitespace in blue
+highlight ExtraWhitespace ctermbg=blue guibg=blue
+match ExtraWhitespace /\s\+$/
+
+" Save when losing focus
+set autowriteall " Auto-save files when switching buffers or leaving vim.
+au FocusLost * silent! :wa
+au TabLeave * silent! :wa
+
+" makes Vim put all its backup and temporary files in places I don't mind:
+set backupdir=~/.vim/vim-tmp,~/.tmp,~/tmp,~/var/tmp,/tmp
+set directory=~/.vim/vim-tmp,~/.tmp,~/tmp,~/var/tmp,/tmp
+
+" for Indri files
+au! BufNewFile,BufRead *.indri set filetype=XML
+au! BufNewFile,BufRead *.param set filetype=XML
+au! BufNewFile,BufRead *.trectext set filetype=XML
+au! BufNewFile,BufRead *.trec set filetype=XML
+
+" automatically source vim sessions so I can open them with the finder
+au BufRead *.vis so %
+
+" uses gig to get indent guides
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+
+let g:rainbow_active = 1
+let g:rainbow_operators = 1
+
+" CREDITS
+" http://stevelosh.com/blog/2010/09/coming-home-to-vim/
+" https://github.com/jasoncyu/dotfiles/blob/master/.vimrc
