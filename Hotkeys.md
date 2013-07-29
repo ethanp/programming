@@ -13,16 +13,6 @@ Resize window                           | Ctrl-Alt-shift-Arrow keys
 Show hidden files in Open/Save dialogs  | Cmd + Shift + .
 
 
-
-## Intellij
-
-To do this Action                   | You must take these Steps
-------------------------------------|--------------------------
-Open *Templates* (like snippets)    | Ctrl + j
-System.out.println(\<CARET\>)       | sout\<TAB\>
-
-
-
 ## MacVim
 
 To do this Action                   | You must take these Steps
@@ -55,14 +45,45 @@ Switch buffers in current window    | F13 / F14 or "print scrn"
 Toggle comments                     | *line-count* + g c i
 
 
+## iTerm
+To do this Action               | You must take these Steps
+--------------------------------|--------------------------
+Autocomplete from scrollback    | Cmd + -
+Copy text from shell            | Select it with the mouse
+Drag and drop selected text     | Cmd + Drag + Drop
+Instant replay                  | Cmd + Alt + B
+iTerm2 Exposé                   | Cmd + Alt + E
+Kill text from here to EOL      | Ctrl + k
+Maximize current pane / Revert  | Shift + Cmd + Enter
+Move between panes              | Cmd + ] / Cmd + Alt + Arrow
+Open file                       | Cmd + Click on filename
+Paste history                   | Cmd + Shift + H
+Paste text from clipboard       | middle-click
+Select rectangle                | Cmd + Alt + Drag
+Split shell vertically          | Cmd + d
+
+## Sublime
+To do this Action                   | You must take these Steps
+------------------------------------|--------------------------
+Align selected lines                | Ctrl + Cmd + a
+
+
+## Intellij
+
+To do this Action                   | You must take these Steps
+------------------------------------|--------------------------
+Open *Templates* (like snippets)    | Ctrl + j
+System.out.println(\<CARET\>)       | sout\<TAB\>
+
+
+#### Other nice Vim stuff
+
 #### NERDTree
 To do this Action               | You must take these Steps
 --------------------------------|--------------------------
 Open in horizontally-split tab  | t
 Open in vertically-split tab    | s
 
-
-#### Other nice Vim stuff
 
 ##### Good SNIPPETS:
 IN A C FILE type the following, followed by type the \<TAB\> key | s
@@ -92,15 +113,4 @@ IN A PYTHON FILE type the following | s
 `try`           |  buncha options given
 `wh`            |  while
 
-
-## iTerm
-To do this Action               | You must take these Steps
---------------------------------|--------------------------
-Copy text from shell            | Select it with the mouse
-Instant replay                  | Cmd + Alt + B
-Kill text from here to EOL      | Ctrl + k
-Paste history                   | Cmd + Shift + H
-Paste text from clipboard       | middle-click
-Split shell vertically          | Cmd - d
-iTerm2 Exposé                   | Cmd + Alt + E
 
