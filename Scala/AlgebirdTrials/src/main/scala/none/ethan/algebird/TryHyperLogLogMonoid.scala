@@ -24,9 +24,12 @@ object TryHyperLogLogMonoid extends App {
     approxIntersect(userSets).toInt
   )
 }
-
+/* these functions come from com.twitter.algebird.HyperLogLogTest
+ * not my code, etc. */
 object HLLMUtilityFuncs {
+
   def exactCount[T](it : Iterable[T]) : Int = it.toSet.size
+
   def approxCount[T <% Array[Byte]](it : Iterable[T]) = {
     val hll = new HyperLogLogMonoid(12)
     hll.sizeOf(hll.sum(it.map { hll(_) })).estimate.toDouble
@@ -34,9 +37,8 @@ object HLLMUtilityFuncs {
 
   def aveErrorOf(bits : Int) : Double = 1.04/scala.math.sqrt(1 << bits)
 
-  def exactIntersect[T](it : Seq[Iterable[T]]) : Int = {
+  def exactIntersect[T](it : Seq[Iterable[T]]) : Int =
     it.foldLeft(Set[T]()) { (old, newS) => old ++ (newS.toSet) }.size
-  }
 
   def approxIntersect[T <% Array[Byte]](it : Seq[Iterable[T]]) : Double = {
     val hll = new HyperLogLogMonoid(12)
@@ -46,10 +48,8 @@ object HLLMUtilityFuncs {
   }
 }
 
-/* these tests from from com.twitter.algebird.HyperLogLogTest.scala
-  * to make sure all is functioning normally
-  * used without permission, not my code, etc.
-  */
+/* these tests from from com.twitter.algebird.HyperLogLogTest
+ * to make sure all is functioning normally; not my code, etc. */
 object HyperLogLogMonoidTests {
   import HLLMUtilityFuncs._
 
