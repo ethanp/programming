@@ -9,18 +9,8 @@ Center window                           | Ctrl-Alt-Home
 Move window                             | Ctrl-Alt-Arrow keys
 Open iTerm2 Visor                       | ctrl + opt + cmd + space
 Render markdown                         | drag *.md to `Marked` app in dock
-Resize window                           | Ctrl-Alt-shift-Arrow keys
+Resize window                           | Ctrl + Alt + shift + Arrow keys
 Show hidden files in Open/Save dialogs  | Cmd + Shift + .
-
-
-
-## Intellij
-
-To do this Action                   | You must take these Steps
-------------------------------------|--------------------------
-Open *Templates* (like snippets)    | Ctrl + j
-System.out.println(\<CARET\>)       | sout\<TAB\>
-
 
 
 ## MacVim
@@ -50,10 +40,56 @@ Open TreeBranch Undo                | g z
 Open Undo Tree                      | g z
 Re-hardwrap paragraphs of text      | g q
 Strip trailing whitespace           | g l
-Switch between open tabs            | Optn - Cmd - ( left / right )
+Switch between open tabs            | Optn + Cmd + ( left / right )
 Switch buffers in current window    | F13 / F14 or "print scrn"
 Toggle comments                     | *line-count* + g c i
 
+
+## iTerm
+
+To do this Action               | You must take these Steps
+--------------------------------|--------------------------
+Copy text from shell            | Select it with the mouse
+Instant replay                  | Cmd + Alt + B
+Kill text from here to EOL      | Ctrl + k
+Paste history                   | Cmd + Shift + H
+Paste text from clipboard       | middle-click
+Split shell vertically          | Cmd + d
+iTerm2 Exposé                   | Cmd + Alt + E
+
+
+## Bash
+
+To do this Action                 | You must take these Steps
+----------------------------------|--------------------------
+Delete Directory $1               | `dedir $DIR`
+Does Directory $1 Have grep $2?   | `ddh $DIR $PATTERN`
+less json file $1 with formatting | `json $RAWJSON`
+compile a file.c                  | `compile $FILE ($OUTPUT)?`
+
+### Aliases
+
+Command                         | Name
+--------------------------------|------
+`cd ~`                          | `h`
+`ls | grep`                     | `lg`
+`ls -l | grep`                  | `llg`
+`history | grep`                | `hg`
+`cs ~/Dropbox/MLease`           | `mlease`
+`mvim ~/.vimrc`                 | `vimrc`
+`mvim ~/.bash_profile`          | `bprof`
+`export PATH="${PATH}:."`       | `this`
+Open with Sublime Text 2        | `sb`
+`ssh charity.cs.utexas.edu`     | `ut`
+
+## Intellij
+
+To do this Action                   | You must take these Steps
+------------------------------------|--------------------------
+Open *Templates* (like snippets)    | Ctrl + j
+`System.out.println(\<CARET\>)`     | `sout\<TAB\>`
+
+## Other nice Vim stuff
 
 #### NERDTree
 To do this Action               | You must take these Steps
@@ -62,11 +98,13 @@ Open in horizontally-split tab  | t
 Open in vertically-split tab    | s
 
 
-#### Other nice Vim stuff
 
 ##### Good SNIPPETS:
-IN A C FILE type the following, followed by type the \<TAB\> key | s
-----------------------------|--
+
+**IN a C file:**
+
+prefix      | result
+------------|--
 `def`       |  define
 `do`        |  do/while
 `enum`      |  enum declaration
@@ -81,8 +119,10 @@ IN A C FILE type the following, followed by type the \<TAB\> key | s
 `tds`       |  struct declaration
 `wh`        |  while
 
-IN A PYTHON FILE type the following | s
-------------------------------------|--
+**IN a PYTHON file:**
+
+prefix          |  result
+----------------|--
 `cl`            |  class declaration
 `def`           |  function
 `deff`          |  simpler version
@@ -93,14 +133,4 @@ IN A PYTHON FILE type the following | s
 `wh`            |  while
 
 
-## iTerm
-To do this Action               | You must take these Steps
---------------------------------|--------------------------
-Copy text from shell            | Select it with the mouse
-Instant replay                  | Cmd + Alt + B
-Kill text from here to EOL      | Ctrl + k
-Paste history                   | Cmd + Shift + H
-Paste text from clipboard       | middle-click
-Split shell vertically          | Cmd - d
-iTerm2 Exposé                   | Cmd + Alt + E
-
+# TODO: The other vim plugins I have

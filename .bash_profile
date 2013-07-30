@@ -1,7 +1,8 @@
-# Aliases: if you use "quotes", then the substitution is made here in _profile
+# Aliases: if you use "quotes", then the substitution is made here in the _profile
 #           but if you use 'aposts', then the substitution is done at call-time
 #   You probably want 'single quotes' if you're using variables
 #       Or you may just want to use a function instead as I did with cs(){}
+alias h='cd ~'
 alias ls='ls -AFG'
 alias rm='rm -i'
 alias ll='ls -l'
@@ -9,7 +10,6 @@ alias lg='ls | grep'
 alias llg='ls -l | grep'
 alias hg='history | grep'
 alias mlease='cs ~/Dropbox/MLease'
-alias django='cs ~/Dropbox/JRo/Django'
 alias vimrc='mvim ~/.vimrc'
 alias bprof='mvim ~/.bash_profile'
 alias this='export PATH="${PATH}:."'
@@ -19,7 +19,7 @@ alias utx='ssh -o ServerAliveInterval=10 -X ethanp@charity.cs.utexas.edu'
 
 # download movie to Movies dir
 function dlmov {
-    cd ~/Desktop/Movies && youtube-dl -t $1 && cd -
+    cd ~/Desktop/Movies/ && youtube-dl -t $1 && cd -
 }
 
 function json {
@@ -38,11 +38,11 @@ function ddh {
 
 # delete directory
 function dedir {
-    if test $# -eq 0
+    if [ $# -ne 1 ]
     then
-        echo "You must supply a directory to demolish"
+        echo "You must supply a single directory to demolish"
     else
-        if test -d "$1"
+        if [ -d "$1" ]
         then
             tree $1
             echo "Enter 1 to remove ${1} from the face of the Earth: "
@@ -81,7 +81,8 @@ function compile {
         then
             echo "Your output is in a.out"
             # I took out -Wstrict-prototypes -Wmissing-prototypes
-            gcc -W -Wall -fno-common -Wcast-align -std=c99 -Wredundant-decls -Wbad-function-cast -Wwrite-strings -Waggregate-return $1
+            gcc -W -Wall -fno-common -Wcast-align -std=c99 -Wredundant-decls\
+                -Wbad-function-cast -Wwrite-strings -Waggregate-return $1
         else
             echo "Usage: compile <inName> (<outName>)?"
             echo "In your case, <inName> wasn't a file."
@@ -94,7 +95,8 @@ function compile {
         if [ -f "$1" ]
         then
             # I took out -Wstrict-prototypes -Wmissing-prototypes
-            gcc -W -Wall -fno-common -std=c99 -Wcast-align -Wredundant-decls -Wbad-function-cast -Wwrite-strings -Waggregate-return $1 -o $2
+            gcc -W -Wall -fno-common -std=c99 -Wcast-align -Wredundant-decls\
+                -Wbad-function-cast -Wwrite-strings -Waggregate-return $1 -o $2
         else
             echo "Usage: compile <inName> (<outName>)?"
             echo "In your case, <inName> wasn't a file."
@@ -107,18 +109,19 @@ PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
 PATH="/Users/Ethan/Applications/javacc-5.0/bin:${PATH}"
 PATH="/Users/Ethan/Applications/apache-ant-1.8.4/bin:${PATH}"
 PATH="/lusr/opt/pintos/:/lusr/opt/bochs-2.2.6-pintos/bin/:/lusr/opt/qemu-1.1.1/:$PATH"
-PATH="$PATH":~/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools
+PATH="$PATH":~/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools  # don't remember this
 PATH="$PATH":/usr/local/share/scala-2.10.1/bin
 PATH=${PATH}:$HOME/gsutil
 PATH="/usr/local/lib/ruby:${PATH}"
-PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+PATH=$PATH:$HOME/.rvm/bin                               # Add RVM to PATH for scripting
+PATH="~/code/fuzzycd/:$PATH"
 PATH="/usr/local/bin:${PATH}"
 export PATH
 
 # These are the places the "cd" command will LOOK, in this order too
-CDPATH="::" # This means the current directory
-CDPATH="${CDPATH}:$HOME" # HOME is a Global Var set as /Users/Ethan
-CDPATH="${CDPATH}:${HOME}/Dropbox"
+CDPATH="::"                         # Current Directory
+CDPATH="${CDPATH}:$HOME"            # Global Var == /Users/Ethan
+CDPATH="${CDPATH}:${HOME}/Dropbox"  # add Dropbox to the list
 export CDPATH
 
 # These are only saved _this_ session
@@ -143,58 +146,42 @@ export SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermS
 CLASSPATH=.:/usr/share/java/commons-math3-3.2
 export CLASSPATH
 
-# I have set PATH for Python 2.7
-# The orginal version is saved in .oldBashShit
-# PYTHONPATH is the place where Python looks for user-defined MODULES
-#       after searching the current directory
-#   Here's what it looks like to add to it:
-#       SOURCE: http://stackoverflow.com/questions/3387695/add-to-python-path-mac-os-x
-# PYTHONPATH="/Me/Documents/mydir:$PYTHONPATH"
-# export PYTHONPATH
+# Load RVM into a shell session *as a function*
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
-# 6/18/13:
-# Got rid of a bunch of terminal color definitions, and
-# functions called 'mychkquota' and 'duf'
-# I put them in ~/.oldBashShit, in case I miss them later on
+# Must overwrite cd-command after loading rvm bc it redefines cd too
+source ~/code/fuzzycd/fuzzycd_bash_wrapper.sh
 
 ##############################################################################
-# The Cool Terminal That Guy from Piazza Found (Modified to taste) ##########
-# Modified from  https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
-# All 0 length commands should be matched with \[ and \]
+# The Cool Terminal from https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
+
+# Define colornames
 NC='\033[0m'              # No Color
 yellow='\033[0;33m'
 green='\033[0;32m'
 bright_cyan='\033[0;96m'
 white='\033[0;37m'
 red='\033[0;31m'
+
+# Define prompt-area names
 PROMPT_COMMAND="let PREV_ERROR=\$?"
 PROMPT_TITLE='\033]0;${USER}@${HOSTNAME}:${DIRSTACK##*/}\007'
 ROOT_NAME="[\[${red}\]${HOSTNAME}"
 #USER_NAME="[\[${yellow}\]${USER}\[${white}\]@\[${bright_cyan}\]${HOSTNAME}"
 USER_NAME="[\[${yellow}\]\[\[${bright_cyan}\]${HOSTNAME}"
 PROMPT_ERROR="echo \"[\[${red}\]\342\234\227\[${white}\]]\342\224\200\")"
+
+# Compose the parts
 PRE_PROMPT="\[${white}\]\342\224\214\342\224\200\$([[ \$? != 0 ]] && ${PROMPT_ERROR}"
 PROMPT="\[${white}\]\342\224\200[\[${green}\]\${DIRSTACK}\[${white}\]]\$(promptFill)"
-#PROMPT="\[${white}\]]\342\224\200[\[${green}\]\${DIRSTACK}\[${white}\]]\$(promptFill)"
-POST_PROMPT="\n\[${white}\]\342\224\224\342\224\200\342\224\200\342\225\274 \[${NC}\]"
-# This would go between PRE_PROMPT and PROMPT, below
-#$(if [[ ${EUID} == 0 ]];
-#then echo "${ROOT_NAME}";
-#else echo "${USER_NAME}"; fi)\
+POST_PROMPT="\n\[${white}\]\342\224\224\342\224\200\342\224\200\342\225\274\[${NC}\]"
 
-# PS1 is what the user prompt looks like. You know, that thing that's something
-# like ${USER_EMAIL}_${CURRENT_DIR}\$ " The \ at the end of the line means that
-# the next line is interpretted as part of the current line It basically
-# escapes the \n character
-
+# Finale
 PS1="${PROMPT_TITLE}${PRE_PROMPT}${PROMPT}${POST_PROMPT}"
 
 function promptFill {
     NOW=$(date +"[%l:%M %p ]")
-    #local string="xx[${USER}@${HOSTNAME}]-[${DIRSTACK}]"
-    #local string="xx[${HOSTNAME}]-[${DIRSTACK}]"
-    #local string="xx-[${DIRSTACK}]"
-    if [[ $PREV_ERROR != 0 ]]; then
+    if [[ $PREV_ERROR != 0 ]]; then  # add a little 'x' to prompt if the last thing bombed out
         #local string="xx[x]-[${HOSTNAME}]-[${DIRSTACK}]"
         local string="xx[x]--[${DIRSTACK}]"
     fi
@@ -209,7 +196,4 @@ function promptFill {
 }
 ### End Cool Terminal #########################################################
 ###############################################################################
-
-# Load RVM into a shell session *as a function*
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
