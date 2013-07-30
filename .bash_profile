@@ -38,20 +38,16 @@ function ddh {
 
 # delete directory
 function dedir {
-    if [ $# -ne 1 ]
-    then
+    if [ $# -ne 1 ]; then
         echo "You must supply a single directory to demolish"
     else
-        if [ -d "$1" ]
-        then
+        if [ -d "$1" ]; then
             tree $1
             echo "Enter 1 to remove ${1} from the face of the Earth: "
             read response
-            if [ $response -ne 1 ]
-            then
+            if [ $response -ne 1 ]; then
                 echo "Action Cancelled"
-            elif [ $response -eq 1 ]
-            then
+            elif [ $response -eq 1 ]; then
                 rm -fR $1
                 echo "Action Completed"
             fi
@@ -70,15 +66,12 @@ function dedir {
 # really care about the speed of program execution.
 
 function compile {
-    if test $# -gt 2
-    then
+    if test $# -gt 2; then
         echo "You'll have to implement a better compile function to get that to work"
         echo "It can either use a for loop, or it can match *.c & *.h"
 
-    elif test $# -eq 1
-    then
-        if test -f "$1"
-        then
+    elif test $# -eq 1; then
+        if test -f "$1"; then
             echo "Your output is in a.out"
             # I took out -Wstrict-prototypes -Wmissing-prototypes
             gcc -W -Wall -fno-common -Wcast-align -std=c99 -Wredundant-decls\
@@ -87,13 +80,11 @@ function compile {
             echo "Usage: compile <inName> (<outName>)?"
             echo "In your case, <inName> wasn't a file."
         fi
-    elif test $# -eq 0
-    then
+    elif test $# -eq 0; then
         echo "This is a shortcut for compiling simple .c files with a whole lot of warnings enabled"
         echo "Usage: compile <inName> (<outName>)?"
     else
-        if [ -f "$1" ]
-        then
+        if [ -f "$1" ]; then
             # I took out -Wstrict-prototypes -Wmissing-prototypes
             gcc -W -Wall -fno-common -std=c99 -Wcast-align -Wredundant-decls\
                 -Wbad-function-cast -Wwrite-strings -Waggregate-return $1 -o $2
