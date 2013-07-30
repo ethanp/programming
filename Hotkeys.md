@@ -49,13 +49,27 @@ Toggle comments                     | *line-count* + g c i
 
 To do this Action               | You must take these Steps
 --------------------------------|--------------------------
+Autocomplete from scrollback    | Cmd + -
 Copy text from shell            | Select it with the mouse
+Drag and drop selected text     | Cmd + Drag + Drop
 Instant replay                  | Cmd + Alt + B
+iTerm2 Exposé                   | Cmd + Alt + E
 Kill text from here to EOL      | Ctrl + k
+Maximize current pane / Revert  | Shift + Cmd + Enter
+Move between panes              | Cmd + ] / Cmd + Alt + Arrow
+Open file                       | Cmd + Click on filename
 Paste history                   | Cmd + Shift + H
 Paste text from clipboard       | middle-click
+Select rectangle                | Cmd + Alt + Drag
 Split shell vertically          | Cmd + d
-iTerm2 Exposé                   | Cmd + Alt + E
+
+
+
+## Sublime
+To do this Action                   | You must take these Steps
+------------------------------------|--------------------------
+Align selected lines                | Ctrl + Cmd + a
+
 
 
 ## Bash
