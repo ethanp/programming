@@ -103,7 +103,16 @@ To do this Action                   | You must take these Steps
 Open *Templates* (like snippets)    | Ctrl + j
 `System.out.println(\<CARET\>)`     | `sout\<TAB\>`
 
-## Other nice Vim stuff
+
+# UNIX Commands
+
+To Do This                          | Do This
+------------------------------------|----------
+Untar given `.tar.*`                | `tar -xv FILE`
+Copy `STDIN` to file AND `STDOUT`   | `inputSTUFF | tee file[s]` (`-a` to append to file[s])
+
+
+# Other nice Vim stuff
 
 #### NERDTree
 To do this Action               | You must take these Steps
@@ -145,6 +154,8 @@ prefix          |  result
 `property`      |  property
 `try`           |  buncha options given
 `wh`            |  while
+
+
 
 
 # TODO: The other vim plugins I have
