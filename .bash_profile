@@ -40,20 +40,18 @@ function ddh {
 function dedir {
     if [ $# -ne 1 ]; then
         echo "You must supply a single directory to demolish"
-    else
-        if [ -d "$1" ]; then
-            tree $1
-            echo "Enter 1 to remove ${1} from the face of the Earth: "
-            read response
-            if [ $response -ne 1 ]; then
-                echo "Action Cancelled"
-            elif [ $response -eq 1 ]; then
-                rm -fR $1
-                echo "Action Completed"
-            fi
+    elif [ -d "$1" ]; then
+        tree $1
+        echo "Enter 1 to remove ${1} from the face of the Earth: "
+        read response
+        if [ $response -ne 1 ]; then
+            echo "Action Cancelled"
         else
-            echo "$1 is not a directory."
+            rm -fR $1
+            echo "Action Completed"
         fi
+    else
+        echo "$1 is not a directory."
     fi
 }
 
@@ -99,7 +97,6 @@ PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
 # PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}" # can switch to new Python
 PATH="/Users/Ethan/Applications/javacc-5.0/bin:${PATH}"
 PATH="/Users/Ethan/Applications/apache-ant-1.8.4/bin:${PATH}"
-PATH="/lusr/opt/pintos/:/lusr/opt/bochs-2.2.6-pintos/bin/:/lusr/opt/qemu-1.1.1/:$PATH"
 PATH="$PATH":~/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools  # don't remember this
 PATH="$PATH":/usr/local/share/scala-2.10.1/bin
 PATH=${PATH}:$HOME/gsutil
@@ -155,11 +152,8 @@ white='\033[0;37m'
 red='\033[0;31m'
 
 # Define prompt-area names
-PROMPT_COMMAND="let PREV_ERROR=\$?"
 PROMPT_TITLE='\033]0;${USER}@${HOSTNAME}:${DIRSTACK##*/}\007'
-ROOT_NAME="[\[${red}\]${HOSTNAME}"
 #USER_NAME="[\[${yellow}\]${USER}\[${white}\]@\[${bright_cyan}\]${HOSTNAME}"
-USER_NAME="[\[${yellow}\]\[\[${bright_cyan}\]${HOSTNAME}"
 PROMPT_ERROR="echo \"[\[${red}\]\342\234\227\[${white}\]]\342\224\200\")"
 
 # Compose the parts
@@ -167,24 +161,17 @@ PRE_PROMPT="\[${white}\]\342\224\214\342\224\200\$([[ \$? != 0 ]] && ${PROMPT_ER
 PROMPT="\[${white}\]\342\224\200[\[${green}\]\${DIRSTACK}\[${white}\]]\$(promptFill)"
 POST_PROMPT="\n\[${white}\]\342\224\224\342\224\200\342\224\200\342\225\274\[${NC}\]"
 
-# Finale
+# PS1 is the name of the prompt-bar
 PS1="${PROMPT_TITLE}${PRE_PROMPT}${PROMPT}${POST_PROMPT}"
 
 function promptFill {
     NOW=$(date +"[%l:%M %p ]")
     if [[ $PREV_ERROR != 0 ]]; then  # add a little 'x' to prompt if the last thing bombed out
-        #local string="xx[x]-[${HOSTNAME}]-[${DIRSTACK}]"
         local string="xx[x]--[${DIRSTACK}]"
     fi
-    let length=${#string}+${#NOW}
-    #for ((n=0;n<$(($COLUMNS-$length));n++))
-    #do
-        #   echo -ne " ";
-    #done
     echo -ne "--"
     echo -n $NOW
     return $PREV_ERROR
 }
 ### End Cool Terminal #########################################################
-###############################################################################
 
