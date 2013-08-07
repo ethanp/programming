@@ -87,7 +87,7 @@ function compile {
     fi
 }
 
-PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
+# PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
 # PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}" # can switch to new Python
 PATH="/Users/Ethan/Applications/javacc-5.0/bin:${PATH}"
 PATH="/Users/Ethan/Applications/apache-ant-1.8.4/bin:${PATH}"
@@ -110,6 +110,11 @@ export CDPATH
 HISTSIZE=2000
 # These are saved between sessions in .bash_history
 HISTFILESIZE=2000
+
+# PYTHONPATH is where Python looks for user-defined Modules/Packages
+#  after searching the current directory
+PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
+export PYTHONPATH
 
 #JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home
 #export JAVA_HOME
