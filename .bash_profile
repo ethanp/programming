@@ -8,7 +8,7 @@ alias rm='rm -i'
 alias ll='ls -l'
 alias lg='ls | grep'
 alias llg='ls -l | grep'
-alias hg='history | grep'
+alias hisg='history | grep'
 alias mlease='cs ~/Dropbox/MLease'
 alias vimrc='mvim ~/.vimrc'
 alias bprof='mvim ~/.bash_profile'
@@ -55,19 +55,13 @@ function dedir {
     fi
 }
 
-# There are almost Too Many ways this could be altered to make it even more
-# useful (and "General"). But there's no reason to do them, unless I find
-# myself using 'C' a lot, which I have not.
-
-# NOTE: I've removed -O2 & -ffast-math optimization because there are going to
-# be more situations where I don't want something optimized out than where I
+# I've removed -O2 & -ffast-math optimization because I figure there are going
+# to be more situations where I don't want something optimized out than where I
 # really care about the speed of program execution.
-
 function compile {
     if test $# -gt 2; then
         echo "You'll have to implement a better compile function to get that to work"
         echo "It can either use a for loop, or it can match *.c & *.h"
-
     elif test $# -eq 1; then
         if test -f "$1"; then
             echo "Your output is in a.out"
@@ -156,7 +150,7 @@ PROMPT_TITLE='\033]0;${USER}@${HOSTNAME}:${DIRSTACK##*/}\007'
 #USER_NAME="[\[${yellow}\]${USER}\[${white}\]@\[${bright_cyan}\]${HOSTNAME}"
 PROMPT_ERROR="echo \"[\[${red}\]\342\234\227\[${white}\]]\342\224\200\")"
 
-# Compose the parts
+# Compose the parts (the \NUMs are the composable pieces of the 'bar' in the prompt)
 PRE_PROMPT="\[${white}\]\342\224\214\342\224\200\$([[ \$? != 0 ]] && ${PROMPT_ERROR}"
 PROMPT="\[${white}\]\342\224\200[\[${green}\]\${DIRSTACK}\[${white}\]]\$(promptFill)"
 POST_PROMPT="\n\[${white}\]\342\224\224\342\224\200\342\224\200\342\225\274\[${NC}\]"
