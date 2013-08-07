@@ -163,7 +163,7 @@ function promptFill {
     if [[ $PREV_ERROR != 0 ]]; then  # add a little 'x' to prompt if the last thing bombed out
         local string="xx[x]--[${DIRSTACK}]"
     fi
-    echo -ne "--"
+    echo -ne "--"  # -n: no newline at the end; -e: enable interpretation of escape sequences
     echo -n $NOW
     return $PREV_ERROR
 }
