@@ -88,13 +88,14 @@ Command                         | Name
 `cd ~`                          | `h`
 `ls | grep`                     | `lg`
 `ls -l | grep`                  | `llg`
-`history | grep`                | `hg`
+`history | grep`                | `hisg`
 `cs ~/Dropbox/MLease`           | `mlease`
 `mvim ~/.vimrc`                 | `vimrc`
 `mvim ~/.bash_profile`          | `bprof`
 `export PATH="${PATH}:."`       | `this`
 Open with Sublime Text 2        | `sb`
 `ssh charity.cs.utexas.edu`     | `ut`
+`ipython qtconsole --pylab`     | `ipy`
 
 ## Intellij
 

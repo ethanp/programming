@@ -16,25 +16,21 @@ alias this='export PATH="${PATH}:."'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n $@'
 alias ut='ssh -o ServerAliveInterval=30 ethanp@charity.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@charity.cs.utexas.edu'
+alias ipy='ipython qtconsole --pylab'
+
+set -o vi  # 4lolz
 
 # download movie to Movies dir
-function dlmov {
-    cd ~/Desktop/Movies/ && youtube-dl -t $1 && cd -
-}
+function dlmov { cd ~/Desktop/Movies/ && youtube-dl -t $1 && cd -; }
 
-function json {
-   cat $1 | python -mjson.tool | less
-}
+# pretty-print raw JSON
+function json { cat $1 | python -mjson.tool | less; }
 
 # change & show
-function cs {
-    cd $1; ls
-} # this isn't allowed to be compacted into the line above
+function cs { cd $1; ls; }
 
 # as in Does Directory Have... ( Case insensitive bc -i )
-function ddh {
-    ls $1 | grep -i $2
-}
+function ddh { ls $1 | grep -i $2; }
 
 # delete directory
 function dedir {
@@ -92,6 +88,7 @@ function compile {
 PATH="/Users/Ethan/Applications/javacc-5.0/bin:${PATH}"
 PATH="/Users/Ethan/Applications/apache-ant-1.8.4/bin:${PATH}"
 PATH="$PATH":~/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools  # don't remember this
+PATH="/Applications/Anaconda/anaconda/bin:$PATH"  # allows for "conda" command
 PATH="$PATH":/usr/local/share/scala-2.10.1/bin
 PATH=${PATH}:$HOME/gsutil
 PATH="/usr/local/lib/ruby:${PATH}"
@@ -150,9 +147,6 @@ bright_cyan='\033[0;96m'
 white='\033[0;37m'
 red='\033[0;31m'
 
-# Define prompt-area names
-PROMPT_TITLE='\033]0;${USER}@${HOSTNAME}:${DIRSTACK##*/}\007'
-#USER_NAME="[\[${yellow}\]${USER}\[${white}\]@\[${bright_cyan}\]${HOSTNAME}"
 PROMPT_ERROR="echo \"[\[${red}\]\342\234\227\[${white}\]]\342\224\200\")"
 
 # Compose the parts (the \NUMs are the composable pieces of the 'bar' in the prompt)
@@ -161,7 +155,8 @@ PROMPT="\[${white}\]\342\224\200[\[${green}\]\${DIRSTACK}\[${white}\]]\$(promptF
 POST_PROMPT="\n\[${white}\]\342\224\224\342\224\200\342\224\200\342\225\274\[${NC}\]"
 
 # PS1 is the name of the prompt-bar
-PS1="${PROMPT_TITLE}${PRE_PROMPT}${PROMPT}${POST_PROMPT}"
+#PS1="${PROMPT_TITLE}${PRE_PROMPT}${PROMPT}${POST_PROMPT}"
+PS1="${PRE_PROMPT}${PROMPT}${POST_PROMPT}"
 
 function promptFill {
     NOW=$(date +"[%l:%M %p ]")
