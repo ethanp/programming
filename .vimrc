@@ -100,6 +100,9 @@ nnoremap <F7> :colorscheme molokai<CR>
 let g:EasyMotion_leader_key = '<Leader>'
 
 " strip all trailing whitespace in the current file
+"   search for any number of trailing space characters
+"   replace all of them with nothings
+"  not sure what that :let command does
 nnoremap <leader>l :%s/\s\+$//<cr>:let @/=''<CR>
 
 nnoremap <leader>a :Ack

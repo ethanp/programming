@@ -17,32 +17,33 @@ Show hidden files in Open/Save dialogs  | Cmd + Shift + .
 
 To do this Action                   | You must take these Steps
 ------------------------------------|--------------------------
-Ack                                 | g a
-Add execute permissions             | g h
-Add surrounding to this LINE        | y s s
-Add surrounding to this WORD        | y s i w
-Insert blanks above / below         | g i o / g o
-Change surrounding                  | c s
-Delete surrounding                  | d s
-Go-To beginning of line (above)     | g k
-Go-To beginning of line (below)     | g j
-Go-To beginning of word             | g w
-Go-To beginning of word (strict)    | g W
-Indentation guides                  | g i g
-Insert tab-character `\t`           | Ctrl-v + \<TAB\>
-Reload .vimrc                       | g v r (doesnt work)
-Open .vimrc in h-split              | g v s
-Open .vimrc in h-split              | g v v
-Open .vimrc in new buffer           | g v w
-Open Command-T                      | z c
-Open Dropbox in Command-T (nice)    | z C
-Open TreeBranch Undo                | g z
-Open Undo Tree                      | g z
-Re-hardwrap paragraphs of text      | g q
-Strip trailing whitespace           | g l
+Ack                                 | `ga`
+Add execute permissions             | `gh`
+Add surrounding to this LINE        | `yss`
+Add surrounding to this WORD        | `ysiw`
+Insert blanks above / below         | `gio` / `go`
+Change surrounding                  | `cs`
+Delete surrounding                  | `ds`
+Go-To beginning of line (above)     | `gk`
+Go-To beginning of line (below)     | `gj`
+Go-To beginning of word             | `gw`
+Go-To beginning of word (strict)    | `gW`
+Indentation guides                  | `gig`
+Insert tab-character `\t`           | Ctrl-v + \<`TAB`\>
+Reload .vimrc                       | `gvr` (doesnt work)
+Open .vimrc in h-split              | `gvs`
+Open .vimrc in h-split              | `gvv`
+Open .vimrc in new buffer           | `gvw`
+Open Command-T                      | `zc`
+Open Dropbox in Command-T (nice)    | `zC`
+Open TreeBranch Undo                | `gz`
+Open Undo Tree                      | `gz`
+Re-hardwrap paragraphs of text      | `gq`
+Strip trailing whitespace           | `gl`
 Switch between open tabs            | Optn + Cmd + ( left / right )
 Switch buffers in current window    | F13 / F14 or "print scrn"
-Toggle comments                     | *line-count* + g c i
+Toggle comments                     | *line-count* + `gci`
+Print list of `marks` in all files  | `:marks`
 
 
 ## iTerm
