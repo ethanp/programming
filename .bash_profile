@@ -102,15 +102,15 @@ CDPATH="${CDPATH}:$HOME"            # Global Var == /Users/Ethan
 CDPATH="${CDPATH}:${HOME}/Dropbox"  # add Dropbox to the list
 export CDPATH
 
-# These are only saved _this_ session
-HISTSIZE=2000
-# These are saved between sessions in .bash_history
-HISTFILESIZE=2000
-
 # PYTHONPATH is where Python looks for user-defined Modules/Packages
 #  after searching the current directory
 PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 export PYTHONPATH
+
+# tells java where to look for classes referenced by your program
+# e.g: import my.package.Foo
+CLASSPATH=.:/usr/share/java/commons-math3-3.2
+export CLASSPATH
 
 #JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home
 #export JAVA_HOME
@@ -124,10 +124,10 @@ export JAVACMD=drip
 export DRIP_SHUTDOWN=30
 export SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=128M -XX:MaxPermSize=512M"
 
-# tells java where to look for classes referenced by your program
-# e.g: import my.package.Foo
-CLASSPATH=.:/usr/share/java/commons-math3-3.2
-export CLASSPATH
+# These are only saved _this_ session
+HISTSIZE=2000
+# These are saved between sessions in .bash_history
+HISTFILESIZE=2000
 
 # Load RVM into a shell session *as a function*
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
@@ -139,7 +139,7 @@ source ~/code/fuzzycd/fuzzycd_bash_wrapper.sh
 # The Cool Terminal from https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
 
 # Define colornames
-NC='\033[0m'              # No Color
+NC='\033[0m'   # No Color
 yellow='\033[0;33m'
 green='\033[0;32m'
 bright_cyan='\033[0;96m'
@@ -148,13 +148,12 @@ red='\033[0;31m'
 
 PROMPT_ERROR="echo \"[\[${red}\]\342\234\227\[${white}\]]\342\224\200\")"
 
-# Compose the parts (the \NUMs are the composable pieces of the 'bar' in the prompt)
+# the \NUMs are the composable pieces of the 'bar' in the prompt
 PRE_PROMPT="\[${white}\]\342\224\214\342\224\200\$([[ \$? != 0 ]] && ${PROMPT_ERROR}"
 PROMPT="\[${white}\]\342\224\200[\[${green}\]\${DIRSTACK}\[${white}\]]\$(promptFill)"
 POST_PROMPT="\n\[${white}\]\342\224\224\342\224\200\342\224\200\342\225\274\[${NC}\]"
 
-# PS1 is the name of the prompt-bar
-#PS1="${PROMPT_TITLE}${PRE_PROMPT}${PROMPT}${POST_PROMPT}"
+# PS1 := prompt-bar
 PS1="${PRE_PROMPT}${PROMPT}${POST_PROMPT}"
 
 function promptFill {
