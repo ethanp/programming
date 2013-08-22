@@ -18,3 +18,5 @@ Python/.metadata
 /log/*.log
 /tmp
 Patents/.idea
+Java/TryGuava/.idea
+*.iml
