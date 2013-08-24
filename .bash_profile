@@ -16,7 +16,6 @@ alias this='export PATH="${PATH}:."'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n $@'
 alias ut='ssh -o ServerAliveInterval=30 ethanp@charity.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@charity.cs.utexas.edu'
-alias ipy='ipython qtconsole --pylab'
 
 set -o vi  # 4lolz
 shopt -s extglob  # turn on extra metacharacters: (?|*|+|@|!)(pattern)

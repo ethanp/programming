@@ -44,11 +44,4 @@ Command                         | Name
 `export PATH="${PATH}:."`       | `this`
 Open with Sublime Text 2        | `sb`
 `ssh charity.cs.utexas.edu`     | `ut`
-`ipython qtconsole --pylab`     | `ipy`
-
-
-### UNIX Commands
-
-To Do This                          | Do This
-------------------------------------|----------
 
