@@ -176,6 +176,9 @@ au! BufNewFile,BufRead *.param set filetype=XML
 au! BufNewFile,BufRead *.trectext set filetype=XML
 au! BufNewFile,BufRead *.trec set filetype=XML
 
+" for Markdown files
+au! BufNewFile,BufRead *.md set filetype=markdown
+
 " automatically source vim sessions so I can open them with the finder
 au BufRead *.vis so %
 

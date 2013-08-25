@@ -79,5 +79,5 @@ prefix          |  result
 
 
 
-# TODO: The other vim plugins I have
+`TODO:` The other `Vim` plugins I have (esp. **`Ack`**)
 

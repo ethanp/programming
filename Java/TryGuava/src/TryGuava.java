@@ -6,8 +6,8 @@
 import com.google.common.base.Joiner;
 
 public class TryGuava {
-	public static void main(String[] args) {
+	public static void main(String... args) {
 		Joiner joiner = Joiner.on("; ").skipNulls();
-		System.out.println(joiner.join("Someone", null, "SomeoneElse", "ThirdPerson"));
+		System.out.println(joiner.join(null, "SomeoneElse", "ThirdPerson"));
 	}
 }

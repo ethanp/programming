@@ -9,19 +9,19 @@ Align selected lines                | Ctrl + Cmd + a
 
 prefix      | result
 ------------|--
-`def`       |  define
-`do`        |  do/while
-`enum`      |  enum declaration
+`def`       |  `define`
+`do`        |  `do/while`
+`enum`      |  `enum` declaration
 `for`       |  really nice!
 `fund`      |  function declaration
-`if`        |  if
-`inc`       |  include <>
-`Inc`       |  include ""
-`main`      |  main
-`pr`        |  printf
-`td`        |  type definition
-`tds`       |  struct declaration
-`wh`        |  while
+`if`        |  `if`
+`inc`       |  `include <>`
+`Inc`       |  `include ""`
+`main`      |  `main`
+`pr`        |  `printf`
+`td`        |  `type` definition
+`tds`       |  `struct` declaration
+`wh`        |  `while`
 
 **IN a PYTHON file:**
 
@@ -35,6 +35,3 @@ prefix          |  result
 `property`      |  property
 `try`           |  buncha options given
 `wh`            |  while
-
-# TODO: The Sublime Package-Control plugins
-
