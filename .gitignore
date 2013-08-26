@@ -20,3 +20,5 @@ Python/.metadata
 Patents/.idea
 Java/TryGuava/.idea
 *.iml
+*.xlsx
+Java/Minco_XL/.idea

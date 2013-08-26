@@ -5,6 +5,7 @@
 alias h='cd ~'
 alias ls='ls -AFG'
 alias rm='rm -i'
+alias grep='grep --color'
 alias ll='ls -l'
 alias lg='ls | grep'
 alias llg='ls -l | grep'
