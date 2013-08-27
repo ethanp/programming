@@ -1,3 +1,4 @@
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -11,6 +12,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -29,47 +31,24 @@ import java.util.*;
 
 /** TODO
  * Summarize Minco Weekly Summary
- * Parse Args for Date Specs
+ *   Make it find the two most time-intensive activities PER subject
+ *     and throw truncated versions into the activity slots in the XL
  *
+ * Parse Args for Date Specs
  */
 public class xl
 {
-    public static void main(String[] args) throws IOException, InvalidFormatException {
+    public static void main(String[] args)
+            throws IOException, InvalidFormatException, ParseException {
 
 
         /* initializations */
-
-        // subject to change
-        String[] subjectsArray = {"Arch", "AI", "OS", "C++"};
-        String csvFile = "Minco Week 5.csv";  // week# can be easily obtained from the Date object
-        // /Users/Ethan/Library/Application\ Support/Minco/CSV_Files/Documents/Minco/2013/Minco\ Week\ 5.csv
-
-        // might eventually change
-        String excelFile = "SpringCopy.xlsm";
-        Map<String, Integer> mincoLine = new HashMap<>(5);
-        mincoLine.put("Date", 0);
-        mincoLine.put("Minutes", 3);
-        mincoLine.put("Title", 4);
-
-        // not subject to change
-        int lastRowNum, todayRowNum, osColNum;
-        lastRowNum = todayRowNum = osColNum = 0;
-        Boolean todayFound = false;
         String line;
-        List<String> subjects = Arrays.asList(subjectsArray);
-        Map<String, Integer> subjectTotals = new HashMap<>(subjectsArray.length);
-        for (String subject : subjects) {
-            subjectTotals.put(subject, 0);
-        }
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // bc of minco dates
-        String today = dateFormat.format(new Date());
-
-
-
+        Semester s = new Semester();
 
         /* read and calculate Minco Weekly Summary */
 
-        BufferedReader csv = new BufferedReader(new FileReader(csvFile));
+        BufferedReader csv = new BufferedReader(new FileReader(s.csvFile));
 
         // skip headers
         if (csv.readLine() == null) {
@@ -79,77 +58,56 @@ public class xl
 
         while ((line = csv.readLine()) != null) {
             String[] splitLine = line.replaceAll("\"", "").replaceAll("\u0000", "").split(",");
-            System.out.println(splitLine[mincoLine.get("Date")]+" "+splitLine[mincoLine.get("Title")]);
+            System.out.println(
+                    splitLine[s.mincoLine.get("Date")]
+                    + " "
+                    + splitLine[s.mincoLine.get("Title")]);
 
-            // only use the correct date
-            if (){};
+            // parse the date
+            String lineDateString = splitLine[s.mincoLine.get("Date")];
+            // TODO this is no longer what these will look like (works for tests though)
+            DateFormat currentMincoFormat = new SimpleDateFormat("M/dd/yy");
+            Date res = currentMincoFormat.parse(lineDateString);
 
+            // TODO use the correct date (not necessarily 'dateICareAbout')
+            if (DateUtils.isSameDay(res, s.dateObjICareAbout))
+                System.out.println("it's dateICareAbout");
+            else System.out.println("it ain't dateICareAbout");
+
+            // TODO this should all only be done inside the above if (condition)
             // first word of title
-            String thisSubject = splitLine[mincoLine.get("Title")].split("\\s+")[0];
+            String lineSubject = splitLine[s.mincoLine.get("Title")].split("\\s+")[0];
 
-            System.out.println(thisSubject);
-            if (subjectTotals.containsKey(thisSubject)) {
-                String thisTimeString = splitLine[mincoLine.get("Minutes")];
+            System.out.println(lineSubject);
+            if (s.subjectTotals.containsKey(lineSubject)) {
+                String thisTimeString = splitLine[s.mincoLine.get("Minutes")];
                 int thisTime = Integer.parseInt(thisTimeString);
-                int oldTotal = subjectTotals.get(thisSubject);
-                subjectTotals.put(thisSubject, oldTotal + thisTime);
+                int oldTotal = s.subjectTotals.get(lineSubject);
+                s.subjectTotals.put(lineSubject, oldTotal + thisTime);
             }
         }
 
-        for (String s : subjectTotals.keySet()) {
-            System.out.println(s+" => "+subjectTotals.get(s));
+        for (String st : s.subjectTotals.keySet()) {
+            System.out.println(st + " => " + s.subjectTotals.get(st));
         }
-
 
 
 
         /* read and update XL File */
 
         // open the file and worksheet
-        InputStream inputStream = new FileInputStream(excelFile);
-        Workbook workbook = WorkbookFactory.create(inputStream);
-        Sheet sheet = workbook.getSheet("MainSheet");
+        Sheet sheet = getSheet(s.excelFile);
 
-        // find last row number & today's row number
-        for (Row row : sheet) {
+        // find last row number & dateICareAbout's row number
+        setTodayTotalRowNums(s, s.dateICareAbout, sheet);
+//        debugSetRowNums(s);
 
-            // skip header row
-            if (row.getRowNum() == 0) continue;
+        // sample lines
+//        Row row = sheet.getRow(rowNum);
+//        Cell cell = row.getCell(2);
 
-            Cell dateCell = row.getCell(0);
-            if (dateCell != null) {
-                dateCell.setCellType(Cell.CELL_TYPE_NUMERIC); // necessary for getDate
-                Date thisDate = dateCell.getDateCellValue();
-                String dateString = dateFormat.format(thisDate);
-                System.out.println(dateString);
-                lastRowNum++;
-
-                if (dateString.equalsIgnoreCase(today)) {
-                    System.out.println("Found Today's Date");
-                    todayFound = true;
-                }
-
-                if (!todayFound)
-                    todayRowNum++;
-            }
-        }
-
-        // print findings
-        /*
-        System.out.println(lastRowNum);
-        if (!todayFound)
-            System.out.println("Today's date was not found");
-        else System.out.println("Today was on row " + todayRowNum);
-        */
-
-        // FILLER CODE: print column "C" values backwards, excluding header-row
-        /*
-        for (int rowNum = lastRowNum; rowNum > 0; rowNum--) {
-            Row row = sheet.getRow(rowNum);
-            Cell cell = row.getCell(2);
-            System.out.println(cell);
-        }
-        */
+        // set the values that need to be set
+        for (String subject : s.subjectsArray) ;
 
         // find column that contains Operating Systems' times
         //   using this sheet probably means I should switch to having a single column
@@ -158,8 +116,8 @@ public class xl
         Row headers = sheet.getRow(0);
         for (Cell header : headers)
             if (header.getStringCellValue().equals("439 O-Sys's"))
-                osColNum = header.getColumnIndex() - 1;
-        System.out.println(osColNum);
+                s.osColNum = header.getColumnIndex() - 1;
+        System.out.println(s.osColNum);
 
         // Write the output back out (maybe should move the previous version for safe-keeping)
         /*
@@ -167,5 +125,45 @@ public class xl
         wb.write(fileOut);
         fileOut.close();
         */
+    }
+
+    private static void debugSetRowNums(Semester s) {
+        System.out.println(s.lastRowNum);
+        if (!s.todayFound)
+            System.out.println("Today's date was not found");
+        else System.out.println("Today was on row " + s.todayRowNum);
+    }
+
+    private static void setTodayTotalRowNums(Semester s, String today, Sheet sheet) {
+
+        for (Row row : sheet) {
+
+            // skip header row
+            if (row.getRowNum() == 0) continue;
+
+            Cell dateCell = row.getCell(0);
+
+            if (dateCell != null) {
+                dateCell.setCellType(Cell.CELL_TYPE_NUMERIC); // necessary for getDate
+                Date thisDate = dateCell.getDateCellValue();
+                String dateString = s.dateFormat.format(thisDate);
+                System.out.println(dateString);
+                s.lastRowNum++;
+
+                if (dateString.equalsIgnoreCase(today)) {
+                    System.out.println("Found Today's Date");
+                    s.todayFound = true;
+                }
+
+                if (!s.todayFound)
+                    s.todayRowNum++;
+            }
+        }
+    }
+
+    private static Sheet getSheet(String excelFile) throws IOException, InvalidFormatException {
+        InputStream inputStream = new FileInputStream(excelFile);
+        Workbook workbook = WorkbookFactory.create(inputStream);
+        return workbook.getSheet("MainSheet");
     }
 }
