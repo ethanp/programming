@@ -2,16 +2,15 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Workbook;
 
-import java.io.BufferedReader;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Ethan Petuchowski
@@ -68,27 +67,52 @@ public class xl
 
             // TODO this should all only be done inside the above if (condition)
             // first word of title
-            String lineSubject = splitLine[s.mincoLine.get("Title")].split("\\s+")[0];
+            final String[] taskLine = splitLine[s.mincoLine.get("Title")].split("\\s+");
+            String lineSubject = taskLine[0];
+            StringBuilder lineTaskB = new StringBuilder();
+            for (int i = 1; i < taskLine.length; i++)
+                lineTaskB.append(taskLine[i] + " ");
+            String lineTask = lineTaskB.toString().trim();
 
-            System.out.println(lineSubject);
-            if (s.subjectTotals.containsKey(lineSubject)) {
-                updateSubjectTotals(s, splitLine, lineSubject);
+            // time on this task
+            String lineTimeString = splitLine[s.mincoLine.get("Minutes")];
+            int lineTime = Integer.parseInt(lineTimeString);
+
+            if (s.subjectTaskTotals.containsKey(lineSubject)) {
+                System.out.println("Subject: "+lineSubject);
+                putSubjectTaskTotals(s.subjectTaskTotals.get(lineSubject), lineTime, lineTask);
             }
+            else System.out.println("UNKNOWN Subject: "+lineSubject);
         }
 
-        printSubjectTotals(s);
-
+        calcSubjectTotals(s);
+        calcTopTwoSubjectTasks(s);
 
         /* READ AND UPDATE XL FILE */
         setTodayTotalRowNums(s);
-        findSubjectColumns(s);
+        locateSubjectColumns(s);
 
         // TODO the meat goes here...
 
         s.writeOut();
     }
 
-    private static void findSubjectColumns(Semester s) {
+    /*
+     * add the data from one line of the Minco log to the task total
+     * make a new task if necessary
+     */
+    private static void putSubjectTaskTotals(Map<String, Integer> tasks, int newTime, String task) {
+        if (tasks.containsKey(task)) {
+            int oldTime = tasks.get(task);
+            tasks.put(task, oldTime + newTime);
+        }
+        else tasks.put(task, newTime);
+    }
+
+    /*
+     * for each subject, find the column index of the place to put the Total Time
+     */
+    private static void locateSubjectColumns(Semester s) {
         for (String subject : s.subjectsArray) {
             // find column that contains this subject
             for (Cell header : s.headers)
@@ -97,16 +121,45 @@ public class xl
         }
     }
 
-    private static void updateSubjectTotals(Semester s, String[] splitLine, String lineSubject) {
-        String thisTimeString = splitLine[s.mincoLine.get("Minutes")];
-        int thisTime = Integer.parseInt(thisTimeString);
-        int oldTotal = s.subjectTotals.get(lineSubject);
-        s.subjectTotals.put(lineSubject, oldTotal + thisTime);
+    /*
+     * for each subject, find the two tasks with most time spent on them
+     */
+    private static void calcTopTwoSubjectTasks(Semester s) {
+        for (String subject : s.subjectTaskTotals.keySet()) {
+            Map <String, Integer> subjectTaskMap = s.subjectTaskTotals.get(subject);
+            int    max  = 0,  max2 = 0;
+            String top  = "", top2 = "";
+            for (String task : subjectTaskMap.keySet()) {
+                int taskTotal = subjectTaskMap.get(task);
+                if (max < taskTotal) {
+                    max2 = max;
+                    max = taskTotal;
+                    top2 = top;
+                    top = task;
+                }
+                else if (max2 < taskTotal) {
+                    max2 = taskTotal;
+                    top2 = task;
+                }
+            }
+            List<String> tasksList = new ArrayList<>();
+            tasksList.add(top);
+            tasksList.add(top2);
+            s.subjectTasks.put(subject, tasksList);
+        }
     }
 
-    private static void printSubjectTotals(Semester s) {
-        for (String st : s.subjectTotals.keySet()) {
-            System.out.println(st + " => " + s.subjectTotals.get(st));
+    /*
+     * for each subject, find the total time spent in this day
+     */
+    private static void calcSubjectTotals(Semester s) {
+        for (String subject : s.subjectTaskTotals.keySet()) {
+            Map <String, Integer> subjectTaskMap = s.subjectTaskTotals.get(subject);
+            int total = 0;
+            for (String task : subjectTaskMap.keySet()) {
+                total += subjectTaskMap.get(task);
+            }
+            s.subjectTotals.put(subject, total);
         }
     }
 
@@ -117,6 +170,10 @@ public class xl
         else System.out.println("Today was on row " + s.todayRowNum);
     }
 
+    /*
+     * Set the index of today's row in this sheet, and
+     * Set the index of the last row in this sheet
+     */
     private static void setTodayTotalRowNums(Semester s) {
         for (Row row : s.sheet) {
             // skip header row

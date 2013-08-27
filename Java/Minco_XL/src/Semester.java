@@ -4,11 +4,21 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Ethan Petuchowski
@@ -28,21 +38,23 @@ public class Semester
     String dateICareAbout;
     BufferedReader csv;
     int lastRowNum, todayRowNum, osColNum;
-    Row headers;
+    Row      headers;
     Workbook workbook;
+    Sheet    sheet;
 
-    Sheet sheet;
-    String[]             subjectsArray      = {"Arch", "AI", "OS", "C++"};
-    List<String>         subjects           = Arrays.asList(subjectsArray);
-    Map<String, Integer> mincoLine          = new HashMap<>(3);
-    Map<String, Integer> subjectTotals      = new HashMap<>(subjectsArray.length);
-    Map<String, Integer> subjectColumns      = new HashMap<>(subjectsArray.length);
-    String               csvFile            = "Minco Week 5.csv";
-    String               excelName          = "SpringCopy";
-    String               excelFile          = excelName + ".xlsm";
-    String               backupFile         = excelName + "Back.xlsm";
-    DateFormat           newMincoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    Boolean              todayFound         = false;
+    String[]                          subjectsArray      = {"Arch", "AI", "OS", "C++"};
+    List<String>                      subjects           = Arrays.asList(subjectsArray);
+    Map<String, Integer>              mincoLine          = new HashMap<>(3);
+    Map<String, Map<String, Integer>> subjectTaskTotals  = new HashMap<>();
+    Map<String, Integer>              subjectTotals      = new HashMap<>();
+    Map<String, List<String>>         subjectTasks       = new HashMap<>();
+    Map<String, Integer>              subjectColumns     = new HashMap<>();
+    String                            csvFile            = "Minco Week 5.csv";
+    String                            excelName          = "SpringCopy";
+    String                            excelFile          = excelName + ".xlsm";
+    String                            backupFile         = excelName + "Back.xlsm";
+    DateFormat                        newMincoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    Boolean                           todayFound         = false;
 
 
     Semester() throws ParseException, FileNotFoundException {
@@ -51,7 +63,9 @@ public class Semester
         mincoLine.put("Minutes", 3);
         mincoLine.put("Title", 4);
         lastRowNum = todayRowNum = osColNum = 0;
-        for (String subject : subjects) subjectTotals.put(subject, 0); // create counter
+        for (String subject : subjects) {
+            subjectTaskTotals.put(subject, new HashMap<String, Integer>());
+        }
 
         dateObjICareAbout = newMincoDateFormat.parse("2013-01-26"); // TODO use input params
         dateICareAbout = newMincoDateFormat.format(dateObjICareAbout);
@@ -62,11 +76,13 @@ public class Semester
 
     private Sheet getSheet(String excelFile) {
         InputStream inputStream = null;
-        try { inputStream = new FileInputStream(excelFile); }
-        catch (FileNotFoundException e) { e.printStackTrace(); }
+        try { inputStream = new FileInputStream(excelFile); } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
 
-        try { workbook = WorkbookFactory.create(inputStream); }
-        catch (IOException | InvalidFormatException e) { e.printStackTrace(); }
+        try {
+            workbook = WorkbookFactory.create(inputStream);
+        } catch (IOException | InvalidFormatException e) { e.printStackTrace(); }
         assert workbook != null;
 
         return workbook.getSheet("MainSheet");
