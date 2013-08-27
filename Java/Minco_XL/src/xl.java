@@ -1,4 +1,5 @@
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.poi.hssf.util.CellReference;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -45,25 +46,22 @@ public class xl
         String line;
         while ((line = s.csv.readLine()) != null) {
             String[] splitLine = line.replaceAll("\"", "").replaceAll("\u0000", "").split(",");
-            printDateAndTitle(s, splitLine);
             Date res = makeDate(s, splitLine);
 
-            if (DateUtils.isSameDay(res, s.dateObjICareAbout))
-                System.out.println("it's dateICareAbout");
-            else System.out.println("it ain't dateICareAbout");
+            if (DateUtils.isSameDay(res, s.dateObjICareAbout)) {
+                String[] taskLine = splitLine[s.mincoLine.get("Title")].split("\\s+");
 
-            // TODO this should all only be done inside the above if (condition)
-            final String[] taskLine = splitLine[s.mincoLine.get("Title")].split("\\s+");
+                String lineSubject = taskLine[0];
+                String lineTask    = getLineTask(taskLine);
+                int    lineTime    = getLineTime(s, splitLine);
 
-            String lineSubject = taskLine[0];
-            String lineTask    = getLineTask(taskLine);
-            int    lineTime    = getLineTime(s, splitLine);
-
-            if (s.subjectTaskTotals.containsKey(lineSubject)) {
-                System.out.println("Subject: "+lineSubject);
-                putSubjectTaskTotals(s.subjectTaskTotals.get(lineSubject), lineTime, lineTask);
+                if (s.subjectTaskTotals.containsKey(lineSubject)) {
+                    putSubjectTaskTotals(s.subjectTaskTotals.get(lineSubject),
+                                         lineTime,
+                                         lineTask);
+                }
+                else System.out.println("UNKNOWN Subject: "+lineSubject);
             }
-            else System.out.println("UNKNOWN Subject: "+lineSubject);
         }
 
         calcSubjectTotals(s);
@@ -71,6 +69,7 @@ public class xl
 
         /* READ AND UPDATE XL FILE */
         setDayAndTotalRowNums(s);
+        debugSetRowNums(s);
         locateSubjectColumns(s);
         fillInData(s);
         s.writeOut();
@@ -84,10 +83,30 @@ public class xl
             int col = s.subjectColumns.get(subject);
             Row row = s.sheet.getRow(s.theDayRowNum);
             List<String> tasks = s.subjectTasks.get(subject);
+            System.out.println("\nWriting Subject: " + subject);
 
-            row.getCell(col).setCellValue(s.subjectTotals.get(subject));    // total time
-            row.getCell(++col).setCellValue(tasks.get(0));                  // top task
-            row.getCell(++col).setCellValue(tasks.get(1));                  // second task
+            // total time
+            double timeInHours = s.subjectTotals.get(subject) / 60.0;
+            String timeString = String.format("%3.2f", timeInHours);
+            row.getCell(col).setCellValue(timeInHours);
+            printNewCellContent(s.theDayRowNum, col, timeString);
+
+            // top task
+            row.getCell(++col).setCellValue(tasks.get(0));
+            printNewCellContent(s.theDayRowNum, col, tasks.get(0));
+
+            // second task
+            row.getCell(++col).setCellValue(tasks.get(1));
+            printNewCellContent(s.theDayRowNum, col, tasks.get(1));
+        }
+    }
+
+
+
+    private static void printNewCellContent(int row, int col, String val) {
+        if (!val.equals("")) {
+            String colString = CellReference.convertNumToColString(col);
+            System.out.printf("Putting %s in (%d, %s)\n", val, row, colString);
         }
     }
 
@@ -142,7 +161,7 @@ public class xl
         for (String subject : s.subjectsArray) {
             // find column that contains this subject
             for (Cell header : s.headers)
-                if (header.getStringCellValue().equals(subject))
+                if (header.getStringCellValue().equals("c"+subject))
                     s.subjectColumns.put(subject, header.getColumnIndex() - 1);
         }
     }
@@ -190,10 +209,11 @@ public class xl
     }
 
     private static void debugSetRowNums(Semester s) {
-        System.out.println(s.lastRowNum);
-        if (!s.todayFound)
-            System.out.println("Today's date was not found");
-        else System.out.println("Today was on row " + s.theDayRowNum);
+        if (!s.todayFound) {
+            System.out.println("Given Date was not found in Excel Sheet");
+            System.exit(3);
+        }
+        else System.out.println("Given Date was on row " + s.theDayRowNum);
     }
 
     /*
@@ -209,10 +229,8 @@ public class xl
                 dateCell.setCellType(Cell.CELL_TYPE_NUMERIC); // necessary for getDate
                 Date thisDate = dateCell.getDateCellValue();
                 String dateString = s.newMincoDateFormat.format(thisDate);
-                System.out.println(dateString);
                 s.lastRowNum++;
                 if (dateString.equalsIgnoreCase(s.dateICareAbout)) {
-                    System.out.println("Found Today's Date");
                     s.todayFound = true;
                 }
                 if (!s.todayFound)

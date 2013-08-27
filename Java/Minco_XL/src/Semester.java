@@ -67,7 +67,7 @@ public class Semester
             subjectTaskTotals.put(subject, new HashMap<String, Integer>());
         }
 
-        dateObjICareAbout = newMincoDateFormat.parse("2013-01-26"); // TODO use input params
+        dateObjICareAbout = newMincoDateFormat.parse("2013-01-30"); // TODO use input params
         dateICareAbout = newMincoDateFormat.format(dateObjICareAbout);
         sheet = this.getSheet(excelFile);
         headers = sheet.getRow(0);
@@ -90,7 +90,7 @@ public class Semester
 
     public void writeOut() {
         FileOutputStream fileOut = null;
-        try { fileOut = new FileOutputStream(excelName + "out.xlsx"); }
+        try { fileOut = new FileOutputStream(backupFile); }
         catch (FileNotFoundException e) { e.printStackTrace(); }
 
         try { workbook.write(fileOut); }
