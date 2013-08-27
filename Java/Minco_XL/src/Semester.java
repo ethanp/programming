@@ -37,7 +37,7 @@ public class Semester
     Date   dateObjICareAbout;
     String dateICareAbout;
     BufferedReader csv;
-    int lastRowNum, todayRowNum, osColNum;
+    int lastRowNum, theDayRowNum, osColNum;
     Row      headers;
     Workbook workbook;
     Sheet    sheet;
@@ -62,7 +62,7 @@ public class Semester
         mincoLine.put("Date", 0);
         mincoLine.put("Minutes", 3);
         mincoLine.put("Title", 4);
-        lastRowNum = todayRowNum = osColNum = 0;
+        lastRowNum = theDayRowNum = osColNum = 0;
         for (String subject : subjects) {
             subjectTaskTotals.put(subject, new HashMap<String, Integer>());
         }

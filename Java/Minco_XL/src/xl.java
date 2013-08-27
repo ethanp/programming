@@ -41,42 +41,23 @@ public class xl
 
         /* read and calculate Minco Weekly Summary */
 
-        // skip headers
-        if (s.csv.readLine() == null) {
-            System.out.println("This Minco File is empty or missing or something");
-            System.exit(1);
-        }
-
+        skipheaders(s);
         String line;
         while ((line = s.csv.readLine()) != null) {
             String[] splitLine = line.replaceAll("\"", "").replaceAll("\u0000", "").split(",");
-            System.out.println(
-                splitLine[s.mincoLine.get("Date")] + " " +
-                splitLine[s.mincoLine.get("Title")]);
-
-            // parse the date
-            String lineDateString = splitLine[s.mincoLine.get("Date")];
-
-            // TODO this is no longer what these will look like (works for tests though)
-            DateFormat currentMincoFormat = new SimpleDateFormat("M/dd/yy");
-            Date res = currentMincoFormat.parse(lineDateString);
+            printDateAndTitle(s, splitLine);
+            Date res = makeDate(s, splitLine);
 
             if (DateUtils.isSameDay(res, s.dateObjICareAbout))
                 System.out.println("it's dateICareAbout");
             else System.out.println("it ain't dateICareAbout");
 
             // TODO this should all only be done inside the above if (condition)
-            // first word of title
             final String[] taskLine = splitLine[s.mincoLine.get("Title")].split("\\s+");
-            String lineSubject = taskLine[0];
-            StringBuilder lineTaskB = new StringBuilder();
-            for (int i = 1; i < taskLine.length; i++)
-                lineTaskB.append(taskLine[i] + " ");
-            String lineTask = lineTaskB.toString().trim();
 
-            // time on this task
-            String lineTimeString = splitLine[s.mincoLine.get("Minutes")];
-            int lineTime = Integer.parseInt(lineTimeString);
+            String lineSubject = taskLine[0];
+            String lineTask    = getLineTask(taskLine);
+            int    lineTime    = getLineTime(s, splitLine);
 
             if (s.subjectTaskTotals.containsKey(lineSubject)) {
                 System.out.println("Subject: "+lineSubject);
@@ -89,12 +70,57 @@ public class xl
         calcTopTwoSubjectTasks(s);
 
         /* READ AND UPDATE XL FILE */
-        setTodayTotalRowNums(s);
+        setDayAndTotalRowNums(s);
         locateSubjectColumns(s);
-
-        // TODO the meat goes here...
-
+        fillInData(s);
         s.writeOut();
+    }
+
+    /*
+     * on the excel sheet, for each subject, write the total time spent, and top two tasks
+     */
+    private static void fillInData(Semester s) {
+        for (String subject : s.subjects) {
+            int col = s.subjectColumns.get(subject);
+            Row row = s.sheet.getRow(s.theDayRowNum);
+            List<String> tasks = s.subjectTasks.get(subject);
+
+            row.getCell(col).setCellValue(s.subjectTotals.get(subject));    // total time
+            row.getCell(++col).setCellValue(tasks.get(0));                  // top task
+            row.getCell(++col).setCellValue(tasks.get(1));                  // second task
+        }
+    }
+
+    private static int getLineTime(Semester s, String[] splitLine) {
+        String lineTimeString = splitLine[s.mincoLine.get("Minutes")];
+        return Integer.parseInt(lineTimeString);
+    }
+
+    private static String getLineTask(String[] taskLine) {
+        StringBuilder lineTaskB = new StringBuilder();
+        for (int i = 1; i < taskLine.length; i++)
+            lineTaskB.append(taskLine[i] + " ");
+        return lineTaskB.toString().trim();
+    }
+
+    private static Date makeDate(Semester s, String[] splitLine) throws ParseException {
+        String lineDateString = splitLine[s.mincoLine.get("Date")];
+        // TODO this is no longer what these will look like (works for tests though)
+        DateFormat currentMincoFormat = new SimpleDateFormat("M/dd/yy");
+        return currentMincoFormat.parse(lineDateString);
+    }
+
+    private static void printDateAndTitle(Semester s, String[] splitLine) {
+        System.out.println(
+            splitLine[s.mincoLine.get("Date")] + " " +
+            splitLine[s.mincoLine.get("Title")]);
+    }
+
+    private static void skipheaders(Semester s) throws IOException {
+        if (s.csv.readLine() == null) {
+            System.out.println("This Minco File is empty or missing or something");
+            System.exit(1);
+        }
     }
 
     /*
@@ -167,14 +193,14 @@ public class xl
         System.out.println(s.lastRowNum);
         if (!s.todayFound)
             System.out.println("Today's date was not found");
-        else System.out.println("Today was on row " + s.todayRowNum);
+        else System.out.println("Today was on row " + s.theDayRowNum);
     }
 
     /*
      * Set the index of today's row in this sheet, and
      * Set the index of the last row in this sheet
      */
-    private static void setTodayTotalRowNums(Semester s) {
+    private static void setDayAndTotalRowNums(Semester s) {
         for (Row row : s.sheet) {
             // skip header row
             if (row.getRowNum() == 0) continue;
@@ -190,7 +216,7 @@ public class xl
                     s.todayFound = true;
                 }
                 if (!s.todayFound)
-                    s.todayRowNum++;
+                    s.theDayRowNum++;
             }
         }
     }
