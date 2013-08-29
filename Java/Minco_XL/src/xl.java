@@ -26,13 +26,7 @@ import java.util.Map;
  * The first Col ("A") is number 0
  */
 
-/** TODO
- * Summarize Minco Weekly Summary
- *   Make it find the two most time-intensive activities PER subject
- *     and throw truncated versions into the activity slots in the XL
- *
- * Parse Args for Date Specs
- */
+/** TODO only works on "Today" */
 public class xl
 {
     public static void main(String[] args)
@@ -41,29 +35,7 @@ public class xl
         Semester s = new Semester();
 
         /* read and calculate Minco Weekly Summary */
-
-        skipheaders(s);
-        String line;
-        while ((line = s.csv.readLine()) != null) {
-            String[] splitLine = line.replaceAll("\"", "").replaceAll("\u0000", "").split(",");
-            Date res = makeDate(s, splitLine);
-
-            if (DateUtils.isSameDay(res, s.dateObjICareAbout)) {
-                String[] taskLine = splitLine[s.mincoLine.get("Title")].split("\\s+");
-
-                String lineSubject = taskLine[0];
-                String lineTask    = getLineTask(taskLine);
-                int    lineTime    = getLineTime(s, splitLine);
-
-                if (s.subjectTaskTotals.containsKey(lineSubject)) {
-                    putSubjectTaskTotals(s.subjectTaskTotals.get(lineSubject),
-                                         lineTime,
-                                         lineTask);
-                }
-                else System.out.println("UNKNOWN Subject: "+lineSubject);
-            }
-        }
-
+        readMincoLog(s);
         calcSubjectTotals(s);
         calcTopTwoSubjectTasks(s);
 
@@ -73,6 +45,24 @@ public class xl
         locateSubjectColumns(s);
         fillInData(s);
         s.writeOut();
+    }
+
+    private static void readMincoLog(Semester s) throws IOException, ParseException {
+        skipheaders(s);
+        String line;
+        while ((line = s.csv.readLine()) != null) {
+            String[] splitLine = line.replaceAll("\"", "").replaceAll("\u0000", "").split(",");
+            Date res = makeDate(s, splitLine);
+            if (DateUtils.isSameDay(res, s.dateObjICareAbout)) {
+                String[] taskLine  = splitLine[s.mincoLine.get("Title")].split("\\s+");
+                String lineSubject = taskLine[0];
+                String lineTask    = getLineTask(taskLine);
+                int    lineTime    = getLineTime(s, splitLine);
+                if (s.subjectTaskTotals.containsKey(lineSubject))
+                    addToTask(s.subjectTaskTotals.get(lineSubject), lineTime, lineTask);
+                else System.out.println("UNKNOWN Subject: "+lineSubject);
+            }
+        }
     }
 
     /*
@@ -87,7 +77,7 @@ public class xl
 
             // total time
             double timeInHours = s.subjectTotals.get(subject) / 60.0;
-            String timeString = String.format("%3.2f", timeInHours);
+            String timeString  = String.format("%3.2f", timeInHours);
             row.getCell(col).setCellValue(timeInHours);
             printNewCellContent(s.theDayRowNum, col, timeString);
 
@@ -101,12 +91,10 @@ public class xl
         }
     }
 
-
-
     private static void printNewCellContent(int row, int col, String val) {
         if (!val.equals("")) {
             String colString = CellReference.convertNumToColString(col);
-            System.out.printf("Putting %s in (%d, %s)\n", val, row, colString);
+            System.out.printf("Putting %s in (%d, %s)\n", val, row + 1, colString);
         }
     }
 
@@ -146,7 +134,7 @@ public class xl
      * add the data from one line of the Minco log to the task total
      * make a new task if necessary
      */
-    private static void putSubjectTaskTotals(Map<String, Integer> tasks, int newTime, String task) {
+    private static void addToTask(Map<String, Integer> tasks, int newTime, String task) {
         if (tasks.containsKey(task)) {
             int oldTime = tasks.get(task);
             tasks.put(task, oldTime + newTime);
@@ -159,7 +147,6 @@ public class xl
      */
     private static void locateSubjectColumns(Semester s) {
         for (String subject : s.subjectsArray) {
-            // find column that contains this subject
             for (Cell header : s.headers)
                 if (header.getStringCellValue().equals("c"+subject))
                     s.subjectColumns.put(subject, header.getColumnIndex() - 1);
@@ -178,9 +165,9 @@ public class xl
                 int taskTotal = subjectTaskMap.get(task);
                 if (max < taskTotal) {
                     max2 = max;
-                    max = taskTotal;
+                    max  = taskTotal;
                     top2 = top;
-                    top = task;
+                    top  = task;
                 }
                 else if (max2 < taskTotal) {
                     max2 = taskTotal;
@@ -201,9 +188,8 @@ public class xl
         for (String subject : s.subjectTaskTotals.keySet()) {
             Map <String, Integer> subjectTaskMap = s.subjectTaskTotals.get(subject);
             int total = 0;
-            for (String task : subjectTaskMap.keySet()) {
+            for (String task : subjectTaskMap.keySet())
                 total += subjectTaskMap.get(task);
-            }
             s.subjectTotals.put(subject, total);
         }
     }
@@ -211,7 +197,7 @@ public class xl
     private static void debugSetRowNums(Semester s) {
         if (!s.todayFound) {
             System.out.println("Given Date was not found in Excel Sheet");
-            System.exit(3);
+            System.exit(2);
         }
         else System.out.println("Given Date was on row " + s.theDayRowNum);
     }
@@ -222,17 +208,15 @@ public class xl
      */
     private static void setDayAndTotalRowNums(Semester s) {
         for (Row row : s.sheet) {
-            // skip header row
-            if (row.getRowNum() == 0) continue;
+            if (row.getRowNum() == 0) continue;  // skip header row
             Cell dateCell = row.getCell(0);
             if (dateCell != null) {
                 dateCell.setCellType(Cell.CELL_TYPE_NUMERIC); // necessary for getDate
                 Date thisDate = dateCell.getDateCellValue();
                 String dateString = s.newMincoDateFormat.format(thisDate);
                 s.lastRowNum++;
-                if (dateString.equalsIgnoreCase(s.dateICareAbout)) {
+                if (dateString.equalsIgnoreCase(s.dateICareAbout))
                     s.todayFound = true;
-                }
                 if (!s.todayFound)
                     s.theDayRowNum++;
             }

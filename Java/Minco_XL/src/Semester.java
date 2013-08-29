@@ -25,22 +25,19 @@ import java.util.Map;
  * 8/26/13
  *
  * NOTES:
- *
- *  week# can be easily obtained from the Date object
- *
- *  Minco files can be found at:
- *      /Users/Ethan/Library/Application\ Support/Minco/CSV_Files/Documents/Minco/2013/Minco\
- *      Week\ 5.csv
+ * - week# can be easily obtained from the Date object
+ * - Minco files can be found at: /Users/Ethan/Library/Application\
+ *      Support/Minco/CSV_Files/Documents/Minco/2013/Minco\ Week\ 5.csv
  */
 public class Semester
 {
-    Date   dateObjICareAbout;
-    String dateICareAbout;
+    int            lastRowNum, theDayRowNum, osColNum;
+    Row            headers;
+    Date           dateObjICareAbout;
+    Sheet          sheet;
+    String         dateICareAbout;
+    Workbook       workbook;
     BufferedReader csv;
-    int lastRowNum, theDayRowNum, osColNum;
-    Row      headers;
-    Workbook workbook;
-    Sheet    sheet;
 
     String[]                          subjectsArray      = {"Arch", "AI", "OS", "C++"};
     List<String>                      subjects           = Arrays.asList(subjectsArray);
@@ -49,7 +46,7 @@ public class Semester
     Map<String, Integer>              subjectTotals      = new HashMap<>();
     Map<String, List<String>>         subjectTasks       = new HashMap<>();
     Map<String, Integer>              subjectColumns     = new HashMap<>();
-    String                            csvFile            = "Minco Week 5.csv";
+    String                            csvFile            = "Minco Week 5.csv"; // TODO make dynamic
     String                            excelName          = "SpringCopy";
     String                            excelFile          = excelName + ".xlsm";
     String                            backupFile         = excelName + "Back.xlsm";
@@ -63,10 +60,8 @@ public class Semester
         mincoLine.put("Minutes", 3);
         mincoLine.put("Title", 4);
         lastRowNum = theDayRowNum = osColNum = 0;
-        for (String subject : subjects) {
+        for (String subject : subjects)
             subjectTaskTotals.put(subject, new HashMap<String, Integer>());
-        }
-
         dateObjICareAbout = newMincoDateFormat.parse("2013-01-30"); // TODO use input params
         dateICareAbout = newMincoDateFormat.format(dateObjICareAbout);
         sheet = this.getSheet(excelFile);
@@ -76,13 +71,11 @@ public class Semester
 
     private Sheet getSheet(String excelFile) {
         InputStream inputStream = null;
-        try { inputStream = new FileInputStream(excelFile); } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        try { inputStream = new FileInputStream(excelFile); }
+        catch (FileNotFoundException e) { e.printStackTrace(); }
 
-        try {
-            workbook = WorkbookFactory.create(inputStream);
-        } catch (IOException | InvalidFormatException e) { e.printStackTrace(); }
+        try { workbook = WorkbookFactory.create(inputStream); }
+        catch (IOException | InvalidFormatException e) { e.printStackTrace(); }
         assert workbook != null;
 
         return workbook.getSheet("MainSheet");
