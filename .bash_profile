@@ -15,14 +15,42 @@ alias vimrc='mvim ~/.vimrc'
 alias bprof='mvim ~/.bash_profile'
 alias this='export PATH="${PATH}:."'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n $@'
-alias ut='ssh -o ServerAliveInterval=30 ethanp@charity.cs.utexas.edu'
-alias utx='ssh -o ServerAliveInterval=10 -X ethanp@charity.cs.utexas.edu'
+alias ut='ssh -o ServerAliveInterval=30 ethanp@almond-joy.cs.utexas.edu'
+alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
 
 set -o vi  # 4lolz
 shopt -s extglob  # turn on extra metacharacters: (?|*|+|@|!)(pattern)
 
 # download movie to Movies dir
 function dlmov { cd ~/Desktop/Movies/ && youtube-dl -t $1 && cd -; }
+
+# run xl script (TODO command-line args)
+function xlj {
+    LJH="/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home"
+    EJM="/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Java/Minco_XL"
+    JL="jre/lib"
+    /Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/bin/java \
+        -Didea.launcher.port=7536 \
+        "-Didea.launcher.bin.path=/Applications/IntelliJ IDEA 12 CE.app/bin" \
+        -Dfile.encoding=UTF-8 -classpath \
+        "/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/lib/ant-javafx.jar"\
+":$LJH/lib/dt.jar:$LJH/lib/javafx-doclet.jar"\
+":$LJH/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/lib/javafx-mx.jar"\
+":$LJH/lib/jconsole.jar:$LJH/lib/sa-jdi.jar:$LJH/lib/tools.jar"\
+":$LJH/$JL/charsets.jar:$LJH/$JL/jce.jar:$LJH/$JL/jfr.jar"\
+":$LJH/$JL/jfxrt.jar:$LJH/$JL/JObjC.jar:$LJH/$JL/jsse.jar"\
+":$LJH/$JL/management-agent.jar:$LJH/$JL/resources.jar:$LJH/$JL/rt.jar"\
+":$LJH/$JL/ext/dnsns.jar:$LJH/$JL/ext/localedata.jar:$LJH/$JL/ext/sunec.jar"\
+":$LJH/$JL/ext/sunjce_provider.jar:$LJH/$JL/ext/sunpkcs11.jar"\
+":$LJH/$JL/ext/zipfs.jar:$EJM/out/production/Minco_XL:$EJM/lib/poi-3.9.jar"\
+":$EJM/lib/commons-codec-1.5.jar:$EJM/lib/poi-examples-3.10-beta1.jar"\
+":$EJM/lib/poi-3.10-beta1.jar:$EJM/lib/poi-scratchpad-3.10-beta1.jar"\
+":$EJM/lib/poi-ooxml-3.10-beta1.jar:$EJM/lib/poi-ooxml-schemas-3.10-beta1.jar"\
+":$EJM/lib/xmlbeans-2.3.0.jar:$EJM/lib/stax-api-1.0.1.jar:$EJM/lib/dom4j-1.6.1.jar"\
+":$EJM/lib/xml-apis-1.0.b2.jar:$EJM/lib/commons-lang3-3.1.jar"\
+":/Applications/IntelliJ IDEA 12 CE.app/lib/idea_rt.jar"\
+    com.intellij.rt.execution.application.AppMain xl
+}
 
 # pretty-print raw JSON
 function json { cat $1 | python -mjson.tool | less; }

@@ -5,9 +5,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -40,8 +38,8 @@ public class xl
         calcTopTwoSubjectTasks(s);
 
         /* READ AND UPDATE XL FILE */
-        setDayAndTotalRowNums(s);
-        debugSetRowNums(s);
+        setDayRowNum(s);
+        System.out.println("Date was on row " + s.theDayRowNum);
         locateSubjectColumns(s);
         fillInData(s);
         s.writeOut();
@@ -51,6 +49,7 @@ public class xl
         skipheaders(s);
         String line;
         while ((line = s.csv.readLine()) != null) {
+            if (line.equals("\u0000")) continue;
             String[] splitLine = line.replaceAll("\"", "").replaceAll("\u0000", "").split(",");
             Date res = makeDate(s, splitLine);
             if (DateUtils.isSameDay(res, s.dateObjICareAbout)) {
@@ -81,13 +80,15 @@ public class xl
             row.getCell(col).setCellValue(timeInHours);
             printNewCellContent(s.theDayRowNum, col, timeString);
 
-            // top task
-            row.getCell(++col).setCellValue(tasks.get(0));
-            printNewCellContent(s.theDayRowNum, col, tasks.get(0));
-
-            // second task
-            row.getCell(++col).setCellValue(tasks.get(1));
-            printNewCellContent(s.theDayRowNum, col, tasks.get(1));
+            // print tasks (don't overwrite what's there if there's nothing to write)
+            if (!tasks.get(0).equals("")) {
+                row.getCell(++col).setCellValue(tasks.get(0));
+                printNewCellContent(s.theDayRowNum, col, tasks.get(0));
+                if (!tasks.get(1).equals("")) {
+                    row.getCell(++col).setCellValue(tasks.get(1));
+                    printNewCellContent(s.theDayRowNum, col, tasks.get(1));
+                }
+            }
         }
     }
 
@@ -111,10 +112,7 @@ public class xl
     }
 
     private static Date makeDate(Semester s, String[] splitLine) throws ParseException {
-        String lineDateString = splitLine[s.mincoLine.get("Date")];
-        // TODO this is no longer what these will look like (works for tests though)
-        DateFormat currentMincoFormat = new SimpleDateFormat("M/dd/yy");
-        return currentMincoFormat.parse(lineDateString);
+        return s.newMincoDateFormat.parse(splitLine[s.mincoLine.get("Date")]);
     }
 
     private static void printDateAndTitle(Semester s, String[] splitLine) {
@@ -194,19 +192,11 @@ public class xl
         }
     }
 
-    private static void debugSetRowNums(Semester s) {
-        if (!s.todayFound) {
-            System.out.println("Given Date was not found in Excel Sheet");
-            System.exit(2);
-        }
-        else System.out.println("Given Date was on row " + s.theDayRowNum);
-    }
-
     /*
      * Set the index of today's row in this sheet, and
      * Set the index of the last row in this sheet
      */
-    private static void setDayAndTotalRowNums(Semester s) {
+    private static void setDayRowNum(Semester s) {
         for (Row row : s.sheet) {
             if (row.getRowNum() == 0) continue;  // skip header row
             Cell dateCell = row.getCell(0);
@@ -214,11 +204,8 @@ public class xl
                 dateCell.setCellType(Cell.CELL_TYPE_NUMERIC); // necessary for getDate
                 Date thisDate = dateCell.getDateCellValue();
                 String dateString = s.newMincoDateFormat.format(thisDate);
-                s.lastRowNum++;
-                if (dateString.equalsIgnoreCase(s.dateICareAbout))
-                    s.todayFound = true;
-                if (!s.todayFound)
-                    s.theDayRowNum++;
+                s.theDayRowNum++;
+                if (dateString.equalsIgnoreCase(s.dateICareAbout)) break;
             }
         }
     }
