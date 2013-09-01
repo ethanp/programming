@@ -1,3 +1,4 @@
+import org.apache.commons.cli.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -7,7 +8,6 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import java.io.*;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -29,7 +29,7 @@ public class Semester
     String         dateICareAbout;
     String         rightNow;
     String         backupFile;
-    Workbook       workbook;
+    String         csvFile;
     BufferedReader csv;
 
     String[]                          subjectsArray     = {"Alg", "NN", "LrngThry", "Geo"};
@@ -39,10 +39,8 @@ public class Semester
     Map<String, Integer>              subjectTotals     = new HashMap<>();
     Map<String, List<String>>         subjectTasks      = new HashMap<>();
     Map<String, Integer>              subjectColumns    = new HashMap<>();
+    Workbook                          workbook          = null;
 
-    // TODO make dynamic
-    String csvFile = "/Users/Ethan/Library/Application Support/Minco/" +
-                     "CSV_Files/Documents/Minco/2013/Minco Week 35.csv";
 
     String     excelName          = "Fall '13";
     String     xlDir              = "/Users/Ethan/Dropbox/School Help Files/";
@@ -52,8 +50,15 @@ public class Semester
     Boolean    todayFound         = false;
 
 
-    Semester() throws ParseException, IOException {
-        workbook = null;
+    Semester(String[] args) throws Exception {
+
+        /* argument parsing */
+        Options options = new Options();
+        options.addOption("y", "yesterday", false, "fill in yesterday's data");
+
+        CommandLineParser cli = new GnuParser();
+        CommandLine cl = cli.parse(options, args, true);
+
         mincoLine.put("Date", 0);
         mincoLine.put("Minutes", 3);
         mincoLine.put("Title", 4);
@@ -61,7 +66,14 @@ public class Semester
         for (String subject : subjects)
             subjectTaskTotals.put(subject, new HashMap<String, Integer>());
 //        dateObjICareAbout = newMincoDateFormat.parse("2013-01-30"); // TODO use input params
-        dateObjICareAbout = new Date();  // TODAY
+
+        Calendar cal = Calendar.getInstance();
+        dateObjICareAbout = cal.getTime();  // use today
+        if (cl.hasOption("y")) {
+            // if yesterday was wanted use that instead
+            cal.add(Calendar.DATE, -1);
+            dateObjICareAbout = cal.getTime();
+        }
         dateICareAbout = newMincoDateFormat.format(dateObjICareAbout);
         rightNow = new SimpleDateFormat("_MM-dd-HH-mm-ss").format(new Date());
         backupFile = backupDir + excelName + rightNow + ".xlsm";
@@ -72,6 +84,9 @@ public class Semester
         System.out.println("Looking for "+dateICareAbout);
         sheet = this.getSheet(excelFile);
         headers = sheet.getRow(0);
+        int week = cal.get(Calendar.WEEK_OF_YEAR);
+        csvFile = "/Users/Ethan/Library/Application Support/Minco/" +
+                  "CSV_Files/Documents/Minco/2013/Minco Week "+week+".csv";
         csv = new BufferedReader(new FileReader(csvFile));
     }
 

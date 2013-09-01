@@ -1,6 +1,5 @@
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.poi.hssf.util.CellReference;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 
@@ -27,10 +26,9 @@ import java.util.Map;
 /** TODO only works on "Today" */
 public class xl
 {
-    public static void main(String[] args)
-            throws IOException, InvalidFormatException, ParseException {
+    public static void main(String[] args) throws Exception {
 
-        Semester s = new Semester();
+        Semester s = new Semester(args);
 
         /* read and calculate Minco Weekly Summary */
         readMincoLog(s);
@@ -77,6 +75,7 @@ public class xl
             // total time
             double timeInHours = s.subjectTotals.get(subject) / 60.0;
             String timeString  = String.format("%3.2f", timeInHours);
+            // TODO looks like the referenced cells don't update automatically!...
             row.getCell(col).setCellValue(timeInHours);
             printNewCellContent(s.theDayRowNum, col, timeString);
 
@@ -197,6 +196,7 @@ public class xl
      * Set the index of the last row in this sheet
      */
     private static void setDayRowNum(Semester s) {
+        boolean foundIt = false;
         for (Row row : s.sheet) {
             if (row.getRowNum() == 0) continue;  // skip header row
             Cell dateCell = row.getCell(0);
@@ -205,8 +205,15 @@ public class xl
                 Date thisDate = dateCell.getDateCellValue();
                 String dateString = s.newMincoDateFormat.format(thisDate);
                 s.theDayRowNum++;
-                if (dateString.equalsIgnoreCase(s.dateICareAbout)) break;
+                if (dateString.equals(s.dateICareAbout)) {
+                    foundIt = true;
+                    break;
+                }
             }
+        }
+        if (!foundIt) {
+            System.out.println("Requested date wasn't found in XL sheet");
+            System.exit(2);
         }
     }
 }

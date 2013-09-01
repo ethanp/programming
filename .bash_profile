@@ -24,11 +24,12 @@ shopt -s extglob  # turn on extra metacharacters: (?|*|+|@|!)(pattern)
 # download movie to Movies dir
 function dlmov { cd ~/Desktop/Movies/ && youtube-dl -t $1 && cd -; }
 
-# run xl script (TODO command-line args)
+# run xl script
 function xlj {
     LJH="/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home"
+    LJL="$LJH/jre/lib"
     EJM="/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Java/Minco_XL"
-    JL="jre/lib"
+    EJML="$EJM/lib"
     /Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/bin/java \
         -Didea.launcher.port=7536 \
         "-Didea.launcher.bin.path=/Applications/IntelliJ IDEA 12 CE.app/bin" \
@@ -37,19 +38,19 @@ function xlj {
 ":$LJH/lib/dt.jar:$LJH/lib/javafx-doclet.jar"\
 ":$LJH/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/lib/javafx-mx.jar"\
 ":$LJH/lib/jconsole.jar:$LJH/lib/sa-jdi.jar:$LJH/lib/tools.jar"\
-":$LJH/$JL/charsets.jar:$LJH/$JL/jce.jar:$LJH/$JL/jfr.jar"\
-":$LJH/$JL/jfxrt.jar:$LJH/$JL/JObjC.jar:$LJH/$JL/jsse.jar"\
-":$LJH/$JL/management-agent.jar:$LJH/$JL/resources.jar:$LJH/$JL/rt.jar"\
-":$LJH/$JL/ext/dnsns.jar:$LJH/$JL/ext/localedata.jar:$LJH/$JL/ext/sunec.jar"\
-":$LJH/$JL/ext/sunjce_provider.jar:$LJH/$JL/ext/sunpkcs11.jar"\
-":$LJH/$JL/ext/zipfs.jar:$EJM/out/production/Minco_XL:$EJM/lib/poi-3.9.jar"\
-":$EJM/lib/commons-codec-1.5.jar:$EJM/lib/poi-examples-3.10-beta1.jar"\
-":$EJM/lib/poi-3.10-beta1.jar:$EJM/lib/poi-scratchpad-3.10-beta1.jar"\
-":$EJM/lib/poi-ooxml-3.10-beta1.jar:$EJM/lib/poi-ooxml-schemas-3.10-beta1.jar"\
-":$EJM/lib/xmlbeans-2.3.0.jar:$EJM/lib/stax-api-1.0.1.jar:$EJM/lib/dom4j-1.6.1.jar"\
-":$EJM/lib/xml-apis-1.0.b2.jar:$EJM/lib/commons-lang3-3.1.jar"\
+":$LJL/charsets.jar:$LJL/jce.jar:$LJL/jfr.jar"\
+":$LJL/jfxrt.jar:$LJL/JObjC.jar:$LJL/jsse.jar"\
+":$LJL/management-agent.jar:$LJL/resources.jar:$LJL/rt.jar"\
+":$LJL/ext/dnsns.jar:$LJL/ext/localedata.jar:$LJL/ext/sunec.jar"\
+":$LJL/ext/sunjce_provider.jar:$LJL/ext/sunpkcs11.jar"\
+":$LJL/ext/zipfs.jar:$EJM/out/production/Minco_XL:$EJML/poi-3.9.jar"\
+":$EJML/commons-codec-1.5.jar:$EJML/poi-examples-3.10-beta1.jar"\
+":$EJML/poi-3.10-beta1.jar:$EJML/poi-scratchpad-3.10-beta1.jar"\
+":$EJML/poi-ooxml-3.10-beta1.jar:$EJML/poi-ooxml-schemas-3.10-beta1.jar"\
+":$EJML/xmlbeans-2.3.0.jar:$EJML/stax-api-1.0.1.jar:$EJML/dom4j-1.6.1.jar"\
+":$EJML/xml-apis-1.0.b2.jar:$EJML/commons-lang3-3.1.jar:$EJML/commons-cli-1.2.jar"\
 ":/Applications/IntelliJ IDEA 12 CE.app/lib/idea_rt.jar"\
-    com.intellij.rt.execution.application.AppMain xl
+    com.intellij.rt.execution.application.AppMain xl $1
 }
 
 # pretty-print raw JSON
