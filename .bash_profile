@@ -11,6 +11,7 @@ alias lg='ls | grep'
 alias llg='ls -l | grep'
 alias hisg='history | grep'
 alias mlease='cs ~/Dropbox/MLease'
+alias nn='cs ~/Dropbox/nn394nNeuralNetworks'
 alias vimrc='mvim ~/.vimrc'
 alias bprof='mvim ~/.bash_profile'
 alias this='export PATH="${PATH}:."'
@@ -18,40 +19,17 @@ alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n 
 alias ut='ssh -o ServerAliveInterval=30 ethanp@almond-joy.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
 
-set -o vi  # 4lolz
-shopt -s extglob  # turn on extra metacharacters: (?|*|+|@|!)(pattern)
+# 4lolz
+set -o vi
+
+# turn on extra metacharacters: (?|*|+|@|!)(pattern)
+shopt -s extglob
+
+# send file to ut
+function uts { scp "$1" ethanp@almond-joy.cs.utexas.edu: ; }
 
 # download movie to Movies dir
 function dlmov { cd ~/Desktop/Movies/ && youtube-dl -t $1 && cd -; }
-
-# run xl script
-function xlj {
-    LJH="/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home"
-    LJL="$LJH/jre/lib"
-    EJM="/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Java/Minco_XL"
-    EJML="$EJM/lib"
-    /Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/bin/java \
-        -Didea.launcher.port=7536 \
-        "-Didea.launcher.bin.path=/Applications/IntelliJ IDEA 12 CE.app/bin" \
-        -Dfile.encoding=UTF-8 -classpath \
-        "/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/lib/ant-javafx.jar"\
-":$LJH/lib/dt.jar:$LJH/lib/javafx-doclet.jar"\
-":$LJH/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/lib/javafx-mx.jar"\
-":$LJH/lib/jconsole.jar:$LJH/lib/sa-jdi.jar:$LJH/lib/tools.jar"\
-":$LJL/charsets.jar:$LJL/jce.jar:$LJL/jfr.jar"\
-":$LJL/jfxrt.jar:$LJL/JObjC.jar:$LJL/jsse.jar"\
-":$LJL/management-agent.jar:$LJL/resources.jar:$LJL/rt.jar"\
-":$LJL/ext/dnsns.jar:$LJL/ext/localedata.jar:$LJL/ext/sunec.jar"\
-":$LJL/ext/sunjce_provider.jar:$LJL/ext/sunpkcs11.jar"\
-":$LJL/ext/zipfs.jar:$EJM/out/production/Minco_XL:$EJML/poi-3.9.jar"\
-":$EJML/commons-codec-1.5.jar:$EJML/poi-examples-3.10-beta1.jar"\
-":$EJML/poi-3.10-beta1.jar:$EJML/poi-scratchpad-3.10-beta1.jar"\
-":$EJML/poi-ooxml-3.10-beta1.jar:$EJML/poi-ooxml-schemas-3.10-beta1.jar"\
-":$EJML/xmlbeans-2.3.0.jar:$EJML/stax-api-1.0.1.jar:$EJML/dom4j-1.6.1.jar"\
-":$EJML/xml-apis-1.0.b2.jar:$EJML/commons-lang3-3.1.jar:$EJML/commons-cli-1.2.jar"\
-":/Applications/IntelliJ IDEA 12 CE.app/lib/idea_rt.jar"\
-    com.intellij.rt.execution.application.AppMain xl $1
-}
 
 # pretty-print raw JSON
 function json { cat $1 | python -mjson.tool | less; }
@@ -111,8 +89,37 @@ function compile {
     fi
 }
 
+# run xl script (opt: -y, --yesterday)
+function xlj {
+    LJH="/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home"
+    LJL="$LJH/jre/lib"
+    EJM="/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Java/Minco_XL"
+    EJML="$EJM/lib"
+    /Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/bin/java \
+        -Didea.launcher.port=7536 \
+        "-Didea.launcher.bin.path=/Applications/IntelliJ IDEA 12 CE.app/bin" \
+        -Dfile.encoding=UTF-8 -classpath \
+        "/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/lib/ant-javafx.jar"\
+":$LJH/lib/dt.jar:$LJH/lib/javafx-doclet.jar"\
+":$LJH/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/lib/javafx-mx.jar"\
+":$LJH/lib/jconsole.jar:$LJH/lib/sa-jdi.jar:$LJH/lib/tools.jar"\
+":$LJL/charsets.jar:$LJL/jce.jar:$LJL/jfr.jar"\
+":$LJL/jfxrt.jar:$LJL/JObjC.jar:$LJL/jsse.jar"\
+":$LJL/management-agent.jar:$LJL/resources.jar:$LJL/rt.jar"\
+":$LJL/ext/dnsns.jar:$LJL/ext/localedata.jar:$LJL/ext/sunec.jar"\
+":$LJL/ext/sunjce_provider.jar:$LJL/ext/sunpkcs11.jar"\
+":$LJL/ext/zipfs.jar:$EJM/out/production/Minco_XL:$EJML/poi-3.9.jar"\
+":$EJML/commons-codec-1.5.jar:$EJML/poi-examples-3.10-beta1.jar"\
+":$EJML/poi-3.10-beta1.jar:$EJML/poi-scratchpad-3.10-beta1.jar"\
+":$EJML/poi-ooxml-3.10-beta1.jar:$EJML/poi-ooxml-schemas-3.10-beta1.jar"\
+":$EJML/xmlbeans-2.3.0.jar:$EJML/stax-api-1.0.1.jar:$EJML/dom4j-1.6.1.jar"\
+":$EJML/xml-apis-1.0.b2.jar:$EJML/commons-lang3-3.1.jar:$EJML/commons-cli-1.2.jar"\
+":/Applications/IntelliJ IDEA 12 CE.app/lib/idea_rt.jar"\
+    com.intellij.rt.execution.application.AppMain xl $1
+}
+
 # PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
-# PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}" # can switch to new Python
+# PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}" # switch to new Python
 PATH="/Users/Ethan/Applications/javacc-5.0/bin:${PATH}"
 PATH="/Users/Ethan/Applications/apache-ant-1.8.4/bin:${PATH}"
 PATH="$PATH":~/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools  # don't remember this
@@ -120,7 +127,7 @@ PATH="/Applications/Anaconda/anaconda/bin:$PATH"  # allows for "conda" command
 PATH="$PATH":/usr/local/share/scala-2.10.1/bin
 PATH=${PATH}:$HOME/gsutil
 PATH="/usr/local/lib/ruby:${PATH}"
-PATH=$PATH:$HOME/.rvm/bin                               # Add RVM to PATH for scripting
+PATH=$PATH:$HOME/.rvm/bin                         # allows for "rvm" command
 PATH="~/code/fuzzycd/:$PATH"
 PATH="/usr/local/bin:${PATH}"
 export PATH
@@ -161,7 +168,7 @@ HISTFILESIZE=2000
 # Load RVM into a shell session *as a function*
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
-# Must overwrite cd-command after loading rvm bc it redefines cd too
+# Must overwrite cd-command after loading rvm bc rvm redefines cd too
 source ~/code/fuzzycd/fuzzycd_bash_wrapper.sh
 
 ##############################################################################

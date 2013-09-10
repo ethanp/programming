@@ -1,11 +1,12 @@
+
+" INITIALS
+
 call pathogen#infect()
 
-" TODO: change leader to "," instead of "g",
-"       that would be less inconvenient
 " Change "\" to "gg"
 noremap \ gg
 " set <leader> "g"
-let mapleader = "g"
+let mapleader = ","
 
 "fileType detection
 filetype on
@@ -17,7 +18,8 @@ colorscheme my_colour_scheme
 
 " =============================================================================
 
-" General Settings
+" GENERAL SETTINGS
+
 set shiftwidth=4        " Tab Size 4
 set softtabstop=4
 set tabstop=4
@@ -66,9 +68,9 @@ set list listchars=tab:»\ ,trail:· " Characters to show spaces/tabs/etc.
 
 " REMAPS
 
-" Swap : and :  Convenient.
+" Assign ; -> : but DON'T go the other way
 nnoremap ; :
-nnoremap : ;
+" nnoremap : ;
 
 " allow "fj" instead to exit to command mode
 inoremap fj <esc>
@@ -79,7 +81,7 @@ map fk ;w<CR>
 " toggle highlight search
 nnoremap <backspace> :set hlsearch!<CR>
 
-" Smart way to move between windows
+" Simplified way to move between windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
@@ -89,11 +91,9 @@ map <C-l> <C-W>l
 map <leader>io Ofjj
 map <leader>o ofjk
 
-" change to jellybeans colors
+" Simple colorscheme switching
 nnoremap <F6> :colorscheme wombat<CR>
-" change to pablo colors
 nnoremap <F5> :colorscheme my_colour_scheme<CR>
-" change to molokai colors
 nnoremap <F7> :colorscheme molokai<CR>
 
 " set EasyMotion Plugin to <Leader> instead of <Leader><Leader>
@@ -111,16 +111,22 @@ nnoremap zx :NERDTree<CR>
 " re-hardwrap paragraphs of text
 nnoremap <leader>q gqip
 
+
 " VIMRC STUFF
+
 " open up ~/.vimrc file in a vertically split window
 nnoremap <leader>vv <C-w><C-v><C-l>:e $MYVIMRC<cr>
+
 " open up ~/.vimrc file in a horizontally split window
 nnoremap <leader>vs <C-w><C-s><C-l>:e $MYVIMRC<cr>
+
 " open the ~/.vimrc file in a new buffer
 nnoremap <leader>vw :e ~/.vimrc<CR>
+
 " Instantly reload vimrc. 'Been waiting for this one...
 " TODO It's broken
 " nnoremap <leader>vr ;source $MYVIMRC<CR>
+
 
 " save sessions with .vis extension
 " TODO find out what this actually does
@@ -134,24 +140,22 @@ map <leader>h ;!chmod a+x %<CR><CR>
 map <F13> <ESC>;bp<CR>
 map <F14> <ESC>;bn<CR>
 
-" I think these are for easier navigation as defined above
-nnoremap j gj
-nnoremap k gk
-
 " Undo Tree
 nnoremap <Leader>z :GundoToggle<CR>
 
 nnoremap zC :CommandT ~/Dropbox/<CR>
 nnoremap zc :CommandT<CR>
 
-" make tab switching real easy (esp. using mouse/trackpad)
+" Assign tab switching to global norm (also for using mouse/trackpad)
 map <M-D-Left> <ESC>;tabp<CR>
 map <M-D-Right> <ESC>;tabn<CR>
 
-"Wrap cursor around lines
+" Wrap cursor around lines
 inoremap <Down> <C-o>gj
 inoremap <Up> <C-o>gk
 set whichwrap+=<,>,h,l,[,]
+nnoremap j gj
+nnoremap k gk
 
 " =============================================================================
 
@@ -166,7 +170,6 @@ set autowriteall " Auto-save files when switching buffers or leaving vim.
 au FocusLost * silent! :wa
 au TabLeave * silent! :wa
 
-" makes Vim put all its backup and temporary files in places I don't mind:
 set backupdir=~/.vim/vim-tmp,~/.tmp,~/tmp,~/var/tmp,/tmp
 set directory=~/.vim/vim-tmp,~/.tmp,~/tmp,~/var/tmp,/tmp
 
@@ -186,9 +189,10 @@ au BufRead *.vis so %
 let g:indent_guides_start_level = 2
 let g:indent_guides_guide_size = 1
 
+" probably turns RainbowParentheses on by default
 let g:rainbow_active = 1
 let g:rainbow_operators = 1
 
-" CREDITS
-" http://stevelosh.com/blog/2010/09/coming-home-to-vim/
-" https://github.com/jasoncyu/dotfiles/blob/master/.vimrc
+" SOME CREDITS
+"   * http://stevelosh.com/blog/2010/09/coming-home-to-vim/
+"   * https://github.com/jasoncyu/dotfiles/blob/master/.vimrc

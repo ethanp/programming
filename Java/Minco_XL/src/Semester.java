@@ -30,6 +30,7 @@ public class Semester
     String         rightNow;
     String         backupFile;
     String         csvFile;
+    Workbook       workbook;
     BufferedReader csv;
 
     String[]                          subjectsArray     = {"Alg", "NN", "LrngThry", "Geo"};
@@ -39,15 +40,12 @@ public class Semester
     Map<String, Integer>              subjectTotals     = new HashMap<>();
     Map<String, List<String>>         subjectTasks      = new HashMap<>();
     Map<String, Integer>              subjectColumns    = new HashMap<>();
-    Workbook                          workbook          = null;
-
 
     String     excelName          = "Fall '13";
     String     xlDir              = "/Users/Ethan/Dropbox/School Help Files/";
     String     backupDir          = xlDir + "Fall '13 Backups/";
     String     excelFile          = xlDir + excelName + ".xlsm";
     DateFormat newMincoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    Boolean    todayFound         = false;
 
 
     Semester(String[] args) throws Exception {
@@ -55,11 +53,11 @@ public class Semester
         /* argument parsing */
         Options options = new Options();
         options.addOption("y", "yesterday", false, "fill in yesterday's data");
-
         CommandLineParser cli = new GnuParser();
         CommandLine cl = cli.parse(options, args, true);
 
-        mincoLine.put("Date", 0);
+        /* everything else */
+        mincoLine.put("Date", 0); // TODO this should be an ENUM
         mincoLine.put("Minutes", 3);
         mincoLine.put("Title", 4);
         lastRowNum = theDayRowNum = osColNum = 0;
@@ -68,12 +66,9 @@ public class Semester
 //        dateObjICareAbout = newMincoDateFormat.parse("2013-01-30"); // TODO use input params
 
         Calendar cal = Calendar.getInstance();
-        dateObjICareAbout = cal.getTime();  // use today
-        if (cl.hasOption("y")) {
-            // if yesterday was wanted use that instead
+        if (cl.hasOption("y"))// if yesterday was wanted use that instead
             cal.add(Calendar.DATE, -1);
-            dateObjICareAbout = cal.getTime();
-        }
+        dateObjICareAbout = cal.getTime();
         dateICareAbout = newMincoDateFormat.format(dateObjICareAbout);
         rightNow = new SimpleDateFormat("_MM-dd-HH-mm-ss").format(new Date());
         backupFile = backupDir + excelName + rightNow + ".xlsm";
@@ -110,23 +105,22 @@ public class Semester
         try { workbook.write(fileOut); }
         catch (IOException e) { e.printStackTrace(); }
 
-        try { fileOut.close(); }
+        try { if (fileOut != null)  fileOut.close(); }
         catch (IOException e) { e.printStackTrace(); }
     }
 
     /** https://gist.github.com/mrenouf/889747 */
     public static void copyFile(File sourceFile, File destFile) throws IOException {
-        if (!destFile.exists()) {
+        if (!destFile.exists())
             destFile.createNewFile();
-        }
         FileInputStream fIn = null;
         FileOutputStream fOut = null;
         FileChannel source = null;
         FileChannel destination = null;
         try {
-            fIn = new FileInputStream(sourceFile);
-            source = fIn.getChannel();
+            fIn  = new FileInputStream(sourceFile);
             fOut = new FileOutputStream(destFile);
+            source = fIn.getChannel();
             destination = fOut.getChannel();
             long transferred = 0;
             long bytes = source.size();
@@ -135,16 +129,11 @@ public class Semester
                 destination.position(transferred);
             }
         } finally {
-            if (source != null) {
-                source.close();
-            } else if (fIn != null) {
-                fIn.close();
-            }
-            if (destination != null) {
-                destination.close();
-            } else if (fOut != null) {
-                fOut.close();
-            }
+            if (source != null)      source.close();
+            else if (fIn != null)    fIn.close();
+
+            if (destination != null) destination.close();
+            else if (fOut != null)   fOut.close();
         }
     }
 }

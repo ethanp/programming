@@ -23,7 +23,8 @@ import java.util.Map;
  * The first Col ("A") is number 0
  */
 
-/** TODO only works on "Today" */
+/** TODO allow arbitrary date input */
+/** TODO print total time for each activity within each subject */
 public class xl
 {
     public static void main(String[] args) throws Exception {
@@ -66,6 +67,7 @@ public class xl
      * on the excel sheet, for each subject, write the total time spent, and top two tasks
      */
     private static void fillInData(Semester s) {
+        double hwTime = 0;
         for (String subject : s.subjects) {
             int col = s.subjectColumns.get(subject);
             Row row = s.sheet.getRow(s.theDayRowNum);
@@ -74,8 +76,8 @@ public class xl
 
             // total time
             double timeInHours = s.subjectTotals.get(subject) / 60.0;
+            hwTime += timeInHours;
             String timeString  = String.format("%3.2f", timeInHours);
-            // TODO looks like the referenced cells don't update automatically!...
             row.getCell(col).setCellValue(timeInHours);
             printNewCellContent(s.theDayRowNum, col, timeString);
 
@@ -89,6 +91,7 @@ public class xl
                 }
             }
         }
+        System.out.printf("\nTotal Time: %.2f\n", hwTime);
     }
 
     private static void printNewCellContent(int row, int col, String val) {
