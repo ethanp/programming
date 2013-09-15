@@ -93,31 +93,9 @@ function compile {
 
 # run xl script (opt: -y, --yesterday)
 function xlj {
-    LJH="/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home"
-    LJL="$LJH/jre/lib"
-    EJM="/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Java/Minco_XL"
-    EJML="$EJM/lib"
-    /Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/bin/java \
-        -Didea.launcher.port=7536 \
-        "-Didea.launcher.bin.path=/Applications/IntelliJ IDEA 12 CE.app/bin" \
-        -Dfile.encoding=UTF-8 -classpath \
-        "/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/lib/ant-javafx.jar"\
-":$LJH/lib/dt.jar:$LJH/lib/javafx-doclet.jar"\
-":$LJH/Library/Java/JavaVirtualMachines/1.7.0.jdk/Contents/Home/lib/javafx-mx.jar"\
-":$LJH/lib/jconsole.jar:$LJH/lib/sa-jdi.jar:$LJH/lib/tools.jar"\
-":$LJL/charsets.jar:$LJL/jce.jar:$LJL/jfr.jar"\
-":$LJL/jfxrt.jar:$LJL/JObjC.jar:$LJL/jsse.jar"\
-":$LJL/management-agent.jar:$LJL/resources.jar:$LJL/rt.jar"\
-":$LJL/ext/dnsns.jar:$LJL/ext/localedata.jar:$LJL/ext/sunec.jar"\
-":$LJL/ext/sunjce_provider.jar:$LJL/ext/sunpkcs11.jar"\
-":$LJL/ext/zipfs.jar:$EJM/out/production/Minco_XL:$EJML/poi-3.9.jar"\
-":$EJML/commons-codec-1.5.jar:$EJML/poi-examples-3.10-beta1.jar"\
-":$EJML/poi-3.10-beta1.jar:$EJML/poi-scratchpad-3.10-beta1.jar"\
-":$EJML/poi-ooxml-3.10-beta1.jar:$EJML/poi-ooxml-schemas-3.10-beta1.jar"\
-":$EJML/xmlbeans-2.3.0.jar:$EJML/stax-api-1.0.1.jar:$EJML/dom4j-1.6.1.jar"\
-":$EJML/xml-apis-1.0.b2.jar:$EJML/commons-lang3-3.1.jar:$EJML/commons-cli-1.2.jar"\
-":/Applications/IntelliJ IDEA 12 CE.app/lib/idea_rt.jar"\
-    com.intellij.rt.execution.application.AppMain xl $1
+    THEPROJECT=~/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Java/Minco_XL
+    THEJAR=out/artifacts/Minco_XL_jar/Minco_XL.jar
+    java -jar $THEPROJECT/$THEJAR $1
 }
 
 # PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
