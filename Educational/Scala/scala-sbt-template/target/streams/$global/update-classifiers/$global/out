@@ -1,0 +1,469 @@
+[0m[[0mdebug[0m] [0m:: resolving dependencies :: edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0[0m
+[0m[[0mdebug[0m] [0m	confs: [compile, runtime, test, provided, optional, compile-internal, runtime-internal, test-internal, plugin, sources, docs, pom][0m
+[0m[[0mdebug[0m] [0m	validate = true[0m
+[0m[[0mdebug[0m] [0m	refresh = false[0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'compile'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->default(compile)][0m
+[0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.10.2 ...[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@655fd43[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-library;2.10.2[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scala-lang#scala-library;2.10.2[0m
+[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-library;2.10.2 in sbt-chain[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->default(compile)][0m
+[0m[[0minfo[0m] [0mResolving com.twitter#algebird_2.10;0.2.0 ...[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@41f5ad2b[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: com.twitter#algebird_2.10;0.2.0[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: com.twitter#algebird_2.10;0.2.0[0m
+[0m[[0mdebug[0m] [0m	found com.twitter#algebird_2.10;0.2.0 in sbt-chain[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->master][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'runtime'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->master][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'test'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [test][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test->default(compile)][0m
+[0m[[0minfo[0m] [0mResolving org.specs2#specs2_2.10;2.1.1 ...[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@22726ef8[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.specs2#specs2_2.10;2.1.1[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.specs2#specs2_2.10;2.1.1[0m
+[0m[[0mdebug[0m] [0m	found org.specs2#specs2_2.10;2.1.1 in sbt-chain[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test->default(compile)][0m
+[0m[[0minfo[0m] [0mResolving org.scalaz#scalaz-core_2.10;7.0.2 ...[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@7b41ce14[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scalaz#scalaz-core_2.10;7.0.2[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scalaz#scalaz-core_2.10;7.0.2[0m
+[0m[[0mdebug[0m] [0m	found org.scalaz#scalaz-core_2.10;7.0.2 in sbt-chain[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test->default(compile)][0m
+[0m[[0minfo[0m] [0mResolving org.scalaz#scalaz-concurrent_2.10;7.0.2 ...[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@2539c789[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scalaz#scalaz-concurrent_2.10;7.0.2[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scalaz#scalaz-concurrent_2.10;7.0.2[0m
+[0m[[0mdebug[0m] [0m	found org.scalaz#scalaz-concurrent_2.10;7.0.2 in sbt-chain[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test->default(compile)][0m
+[0m[[0minfo[0m] [0mResolving org.scalaz#scalaz-effect_2.10;7.0.2 ...[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@5e086a0f[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scalaz#scalaz-effect_2.10;7.0.2[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scalaz#scalaz-effect_2.10;7.0.2[0m
+[0m[[0mdebug[0m] [0m	found org.scalaz#scalaz-effect_2.10;7.0.2 in sbt-chain[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test->default(compile)][0m
+[0m[[0minfo[0m] [0mResolving org.scalatest#scalatest_2.10;1.9.1 ...[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@1fc25624[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scalatest#scalatest_2.10;1.9.1[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scalatest#scalatest_2.10;1.9.1[0m
+[0m[[0mdebug[0m] [0m	found org.scalatest#scalatest_2.10;1.9.1 in sbt-chain[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test->default(compile)][0m
+[0m[[0minfo[0m] [0mResolving org.scala-lang#scala-actors;2.10.0 ...[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@70e4408[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-actors;2.10.0[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scala-lang#scala-actors;2.10.0[0m
+[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-actors;2.10.0 in sbt-chain[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test->default(compile)][0m
+[0m[[0minfo[0m] [0mResolving org.scala-lang#scala-reflect;2.10.0 ...[0m
+[0m[[0mdebug[0m] [0msbt-chain: Checking cache for: sbt.ivyint.MergedDescriptors@42695958[0m
+[0m[[0mdebug[0m] [0msbt-chain: module revision found in cache: org.scala-lang#scala-reflect;2.10.0[0m
+[0m[[0mdebug[0m] [0m	local: revision in cache: org.scala-lang#scala-reflect;2.10.0[0m
+[0m[[0mdebug[0m] [0m	found org.scala-lang#scala-reflect;2.10.0 in sbt-chain[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test->master][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'provided'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [provided][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'optional'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [optional][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'compile-internal'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [compile-internal][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [optional][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [provided][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile-internal->master][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'runtime-internal'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [runtime-internal][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [optional][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime-internal->master][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'test-internal'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [test-internal][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [test][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [compile->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [runtime->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [runtime->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [optional][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [provided][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-library;2.10.2 [test-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->com.twitter#algebird_2.10;0.2.0 [test-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.specs2#specs2_2.10;2.1.1 [test-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-core_2.10;7.0.2 [test-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-concurrent_2.10;7.0.2 [test-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalaz#scalaz-effect_2.10;7.0.2 [test-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scalatest#scalatest_2.10;1.9.1 [test-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-actors;2.10.0 [test-internal->master][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test-internal->default(compile)][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test-internal->runtime][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test-internal->compile][0m
+[0m[[0mdebug[0m] [0m== resolving dependencies edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0->org.scala-lang#scala-reflect;2.10.0 [test-internal->master][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'plugin'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [plugin][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'sources'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [sources][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'docs'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [docs][0m
+[0m[[0mdebug[0m] [0mresolving dependencies for configuration 'pom'[0m
+[0m[[0mdebug[0m] [0m== resolving dependencies for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 [pom][0m
+[0m[[0mdebug[0m] [0m	resolved ivy file produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/edu.utexas/algebird-trials$sources_javadoc_2.10/0.1.0/resolved.xml.xml[0m
+[0m[[0mdebug[0m] [0m:: downloading artifacts ::[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-library;2.10.2!scala-library.jar(doc)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-library;2.10.2!scala-library.jar(src)[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/com.twitter/algebird_2.10/0.2.0/srcs/algebird_2.10-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/com.twitter/algebird_2.10/0.2.0/docs/algebird_2.10-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] com.twitter#algebird_2.10;0.2.0!algebird_2.10.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-sources.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-sources.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-javadoc.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-javadoc.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-sources.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-sources.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-sources.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-sources.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-sources.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] com.twitter#algebird_2.10;0.2.0!algebird_2.10.jar(src) (427ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-javadoc.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-javadoc.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-javadoc.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/com/twitter/algebird_2.10/0.2.0/algebird_2.10-0.2.0-javadoc.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] com.twitter#algebird_2.10;0.2.0!algebird_2.10.jar(doc) (402ms)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.specs2#specs2_2.10;2.1.1!specs2_2.10.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.specs2/specs2_2.10/2.1.1/srcs/specs2_2.10-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.specs2/specs2_2.10/2.1.1/docs/specs2_2.10-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-sources.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-sources.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-javadoc.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-javadoc.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-sources.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-sources.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-sources.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-sources.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-sources.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.specs2#specs2_2.10;2.1.1!specs2_2.10.jar(src) (924ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-javadoc.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-javadoc.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-javadoc.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/specs2/specs2_2.10/2.1.1/specs2_2.10-2.1.1-javadoc.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.specs2#specs2_2.10;2.1.1!specs2_2.10.jar(doc) (3264ms)[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalaz/scalaz-core_2.10/7.0.2/jars/scalaz-core_2.10.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalaz/scalaz-core_2.10/7.0.2/srcs/scalaz-core_2.10-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalaz/scalaz-core_2.10/7.0.2/docs/scalaz-core_2.10-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-sources.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-sources.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-javadoc.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-javadoc.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalaz#scalaz-core_2.10;7.0.2!scalaz-core_2.10.jar (7896ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-sources.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-sources.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-sources.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-sources.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-sources.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalaz#scalaz-core_2.10;7.0.2!scalaz-core_2.10.jar(src) (686ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-javadoc.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-javadoc.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-javadoc.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-core_2.10/7.0.2/scalaz-core_2.10-7.0.2-javadoc.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalaz#scalaz-core_2.10;7.0.2!scalaz-core_2.10.jar(doc) (3135ms)[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalaz/scalaz-concurrent_2.10/7.0.2/docs/scalaz-concurrent_2.10-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalaz/scalaz-concurrent_2.10/7.0.2/jars/scalaz-concurrent_2.10.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalaz/scalaz-concurrent_2.10/7.0.2/srcs/scalaz-concurrent_2.10-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-javadoc.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-javadoc.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-sources.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-sources.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-javadoc.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-javadoc.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-javadoc.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-javadoc.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalaz#scalaz-concurrent_2.10;7.0.2!scalaz-concurrent_2.10.jar(doc) (766ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalaz#scalaz-concurrent_2.10;7.0.2!scalaz-concurrent_2.10.jar (561ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-sources.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-sources.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-sources.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-sources.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-concurrent_2.10/7.0.2/scalaz-concurrent_2.10-7.0.2-sources.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalaz#scalaz-concurrent_2.10;7.0.2!scalaz-concurrent_2.10.jar(src) (443ms)[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalaz/scalaz-effect_2.10/7.0.2/docs/scalaz-effect_2.10-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalaz/scalaz-effect_2.10/7.0.2/srcs/scalaz-effect_2.10-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalaz/scalaz-effect_2.10/7.0.2/jars/scalaz-effect_2.10.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-javadoc.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-javadoc.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-sources.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-sources.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-javadoc.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-javadoc.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-javadoc.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-javadoc.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalaz#scalaz-effect_2.10;7.0.2!scalaz-effect_2.10.jar(doc) (1150ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-sources.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-sources.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-sources.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-sources.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2-sources.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalaz#scalaz-effect_2.10;7.0.2!scalaz-effect_2.10.jar(src) (468ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalaz/scalaz-effect_2.10/7.0.2/scalaz-effect_2.10-7.0.2.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalaz#scalaz-effect_2.10;7.0.2!scalaz-effect_2.10.jar (538ms)[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalatest/scalatest_2.10/1.9.1/srcs/scalatest_2.10-sources.jar[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scalatest#scalatest_2.10;1.9.1!scalatest_2.10.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scalatest/scalatest_2.10/1.9.1/docs/scalatest_2.10-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-sources.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-sources.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-javadoc.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-javadoc.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-sources.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-sources.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-sources.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-sources.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-sources.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalatest#scalatest_2.10;1.9.1!scalatest_2.10.jar(src) (919ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-javadoc.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-javadoc.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-javadoc.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scalatest/scalatest_2.10/1.9.1/scalatest_2.10-1.9.1-javadoc.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scalatest#scalatest_2.10;1.9.1!scalatest_2.10.jar(doc) (465ms)[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scala-lang/scala-actors/2.10.0/srcs/scala-actors-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried /Users/Ethan/.ivy2/local/org.scala-lang/scala-actors/2.10.0/docs/scala-actors-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-actors;2.10.0!scala-actors.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-sources.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-sources.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-sources.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/snapshots/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-javadoc.jar[0m
+[0m[[0mdebug[0m] [0mCLIENT ERROR: Retrieval of /org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-javadoc.jar from M2Repository(id=snapshots) is forbidden by repository policy SNAPSHOT. url=http://oss.sonatype.org/content/repositories/snapshots/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-sources.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-sources.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-sources.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-sources.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-sources.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-actors;2.10.0!scala-actors.jar(src) (463ms)[0m
+[0m[[0mdebug[0m] [0m		tried http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-javadoc.jar[0m
+[0m[[0minfo[0m] [0mdownloading http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-javadoc.jar ...[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-javadoc.jar[0m
+[0m[[0mdebug[0m] [0m	releases: downloading http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-javadoc.jar.sha1[0m
+[0m[[0mdebug[0m] [0msha1 OK for http://oss.sonatype.org/content/repositories/releases/org/scala-lang/scala-actors/2.10.0/scala-actors-2.10.0-javadoc.jar[0m
+[0m[[0minfo[0m] [0m	[SUCCESSFUL ] org.scala-lang#scala-actors;2.10.0!scala-actors.jar(doc) (25976ms)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-reflect;2.10.0!scala-reflect.jar[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-reflect;2.10.0!scala-reflect.jar(src)[0m
+[0m[[0mdebug[0m] [0m	[NOT REQUIRED] org.scala-lang#scala-reflect;2.10.0!scala-reflect.jar(doc)[0m
+[0m[[0mdebug[0m] [0m:: resolution report :: resolve 457ms :: artifacts dl 51366ms[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 compile produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-compile.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 runtime produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-runtime.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 test produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-test.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 provided produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-provided.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 optional produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-optional.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 compile-internal produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-compile-internal.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 runtime-internal produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-runtime-internal.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 test-internal produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-test-internal.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 plugin produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-plugin.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 sources produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-sources.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 docs produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-docs.xml[0m
+[0m[[0mdebug[0m] [0m	report for edu.utexas#algebird-trials$sources_javadoc_2.10;0.1.0 pom produced in /Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Scala/AlgebirdTrials/target/resolution-cache/reports/edu.utexas-algebird-trials$sources_javadoc_2.10-pom.xml[0m
+[0m[[0mdebug[0m] [0m	resolve done (457ms resolve - 51366ms download)[0m

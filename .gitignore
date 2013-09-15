@@ -24,3 +24,9 @@ Java/TryGuava/.idea
 Java/Minco_XL/.idea
 *.xlsm
 *.csv
+*.ini
+*.dat
+*.xmi
+Educational/C/CtHW/.metadata
+*.swp
+Educational/Python/.metadata

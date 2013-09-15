@@ -25,6 +25,8 @@ set -o vi
 # turn on extra metacharacters: (?|*|+|@|!)(pattern)
 shopt -s extglob
 
+function uto { ssh -o ServerAliveInterval=30 -X ethanp@$1.cs.utexas.edu ; }
+
 # send file to ut
 function uts { scp "$1" ethanp@almond-joy.cs.utexas.edu: ; }
 
