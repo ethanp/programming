@@ -71,7 +71,6 @@ public class Semester
         lastRowNum = theDayRowNum = osColNum = 0;
         for (String subject : subjects)
             subjectTaskTotals.put(subject, new HashMap<String, Integer>());
-//        dateObjICareAbout = newMincoDateFormat.parse("2013-01-30"); // TODO use input params
 
         Calendar cal = Calendar.getInstance();
         if (cl.hasOption("y"))              // use yesterday

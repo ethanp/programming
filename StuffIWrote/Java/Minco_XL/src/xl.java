@@ -23,8 +23,8 @@ import java.util.Map;
  * The first Col ("A") is number 0
  */
 
-/** TODO allow arbitrary date input */
-/** TODO print total time for each activity within each subject */
+/** TODO refactor subjectTaskTotals into a class "subject" */
+/** TODO use Guava? */
 public class xl
 {
     public static void main(String[] args) throws Exception {
@@ -33,6 +33,7 @@ public class xl
 
         /* read and calculate Minco Weekly Summary */
         readMincoLog(s);
+        printActivityTimes(s);
         calcSubjectTotals(s);
         calcTopTwoSubjectTasks(s);
 
@@ -41,6 +42,18 @@ public class xl
         locateSubjectColumns(s);
         fillInData(s);
         s.writeOut();
+    }
+
+    private static void printActivityTimes(Semester s) {
+        String divider = "===========================";
+        System.out.println("\n" + divider);
+        for (String subject : s.subjects) {
+            Map<String,Integer> tasks = s.subjectTaskTotals.get(subject);
+            for (String task : tasks.keySet())
+                System.out.printf("%8s || %s: %d\n", subject, task, tasks.get(task));
+            if (tasks.keySet().size() > 0)
+                System.out.println(divider);
+        }
     }
 
     private static void readMincoLog(Semester s) throws IOException, ParseException {
@@ -214,9 +227,9 @@ public class xl
             }
         }
         if (!foundIt) {
-            System.out.println("Requested date wasn't found in XL sheet");
+            System.out.println("\nRequested date wasn't found in XL sheet");
             System.exit(2);
         }
-        else System.out.println("Date was on row " + s.theDayRowNum);
+        else System.out.println("\nDate was on row " + s.theDayRowNum);
     }
 }
