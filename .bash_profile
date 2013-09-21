@@ -95,7 +95,7 @@ function compile {
 function xlj {
     THEPROJECT=~/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Java/Minco_XL
     THEJAR=out/artifacts/Minco_XL_jar/Minco_XL.jar
-    java -jar $THEPROJECT/$THEJAR $1
+    java -jar $THEPROJECT/$THEJAR "$*"
 }
 
 # PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
