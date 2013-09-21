@@ -1,4 +1,7 @@
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.Options;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Row;
@@ -10,11 +13,9 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,13 +40,10 @@ public class Semester
     Workbook       workbook;
     BufferedReader csv;
 
-    String[]                          subjectsArray     = {"Alg", "NN", "LrngThry", "Geo"};
-    List<String>                      subjects          = Arrays.asList(subjectsArray);
-    Map<String, Integer>              mincoLine         = new HashMap<>(3);
-    Map<String, Map<String, Integer>> subjectTaskTotals = new HashMap<>();
-    Map<String, Integer>              subjectTotals     = new HashMap<>();
-    Map<String, List<String>>         subjectTasks      = new HashMap<>();
-    Map<String, Integer>              subjectColumns    = new HashMap<>();
+    Boolean              debug         = false;
+    String[]             subjectsArray = {"Alg", "NN", "LrngThry", "Geo"};
+    Map<String, Subject> subjects      = new HashMap<>();
+    Map<String, Integer> mincoLine     = new HashMap<>(3);
 
     String     excelName          = "Fall '13";
     String     xlDir              = "/Users/Ethan/Dropbox/School Help Files/";
@@ -56,11 +54,16 @@ public class Semester
 
     Semester(String[] args) throws Exception {
 
+        /* create subjects */
+        for (String name : subjectsArray)
+            subjects.put(name, new Subject(name));
+
         /* argument parsing */
         Options options = new Options();
         options.addOption("y", "yesterday", false, "fill in yesterday's data");
         options.addOption("d", "date", true, "fill in data for a given date");
         options.addOption("n", "dry-run", false, "don't fill in data");
+        options.addOption("t", "debug", false, "don't say where in sheet data is going");
         CommandLineParser cli = new GnuParser();
         CommandLine cl = cli.parse(options, args, true);
 
@@ -69,9 +72,6 @@ public class Semester
         mincoLine.put("Minutes", 3);
         mincoLine.put("Title", 4);
         lastRowNum = theDayRowNum = osColNum = 0;
-        for (String subject : subjects)
-            subjectTaskTotals.put(subject, new HashMap<String, Integer>());
-
         Calendar cal = Calendar.getInstance();
         if (cl.hasOption("y"))              // use yesterday
             cal.add(Calendar.DATE, -1);
@@ -84,6 +84,8 @@ public class Semester
         }
         if (cl.hasOption("n"))              // don't actually run
             System.exit(3);
+        if (cl.hasOption("t"))
+            debug = true;
         dateObjICareAbout = cal.getTime();
         dateICareAbout = newMincoDateFormat.format(dateObjICareAbout);
         rightNow = new SimpleDateFormat("_MM-dd-HH-mm-ss").format(new Date());
