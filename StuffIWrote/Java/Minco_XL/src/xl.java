@@ -162,11 +162,9 @@ public class xl
     }
 
     /*
-     * Set the index of today's row in this sheet, and
-     * Set the index of the last row in this sheet
+     * Set the index of today's row in this sheet
      */
     private static void setDayRowNum(Semester s) {
-        boolean foundIt = false;
         for (Row row : s.sheet) {
             if (row.getRowNum() == 0) continue;  // skip header row
             Cell dateCell = row.getCell(0);
@@ -176,7 +174,6 @@ public class xl
                 String dateString = s.newMincoDateFormat.format(thisDate);
                 s.theDayRowNum++;
                 if (dateString.equals(s.dateICareAbout)) {
-                    foundIt = true;
                     break;
                 }
             }

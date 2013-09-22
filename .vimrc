@@ -48,7 +48,8 @@ set wildmode=list:longest       " not sure what this does
 set ttyfast                     " makes vim faster, I guess
 set backspace=indent,eol,start  " Normalize backspace, I remapped it anyway though
 set laststatus=2                " Always display the status line
-set relativenumber              " line numbers relative to current line
+" set relativenumber            " line numbers relative to current line (sorta annoying)
+set number                      " show normal line numbers
 set undofile                    " save file's undos, load them on re-open
 set gdefault                    " apply global substitutions by default
 set colorcolumn=90
