@@ -14,15 +14,9 @@ public class MergeSortTest
         int[] cT = {2, 5, 10, 37, 45};
         int[] cM = sortAndPrint(c);
 
-        if (Arrays.equals(aM, aT))
-            System.out.println("A: Passed");
-        else System.out.println("A: Failed");
-        if (Arrays.equals(bM, bT))
-            System.out.println("B: Passed");
-        else System.out.println("B: Failed");
-        if (Arrays.equals(cM, cT))
-            System.out.println("C: Passed");
-        else System.out.println("C: Failed");
+        test("A", aM, aT);
+        test("B", bM, bT);
+        test("C", cM, cT);
     }
 
     public static int[] sortAndPrint(int[] a) {
@@ -32,5 +26,11 @@ public class MergeSortTest
             System.out.print(", " + b[i]);
         System.out.println();
         return b;
+    }
+
+    public static void test(String num, int[] result, int[] truth) {
+        if (Arrays.equals(result, truth))
+            System.out.println(num+": Passed")
+        else System.out.println(num+": Failed")
     }
 }

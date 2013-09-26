@@ -3,6 +3,9 @@
 from collections import Counter
 
 def isPermutation(a, b):
+    if len(a) != len(b):
+        print False
+        return False
     aCtr = letterCounter(a)
     bCtr = letterCounter(b)
     if not aSubCtrB(aCtr, bCtr) or \
