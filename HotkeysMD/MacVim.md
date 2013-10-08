@@ -2,32 +2,32 @@
 
 To do this Action                   | You must take these Steps
 ------------------------------------|--------------------------
-Ack                                 | `ga`
-Add execute permissions             | `gh`
+Ack                                 | `,a`
+Add execute permissions             | `,h`
 Add surrounding to this LINE        | `yss`
 Add surrounding to this WORD        | `ysiw`
-Insert blanks above / below         | `gio` / `go`
+Insert blanks above / below         | `,io` / `,o`
 Change surrounding                  | `cs`
 Delete surrounding                  | `ds`
-Go-To beginning of line (above)     | `gk`
-Go-To beginning of line (below)     | `gj`
-Go-To beginning of word             | `gw`
-Go-To beginning of word (strict)    | `gW`
-Indentation guides                  | `gig`
+Go-To beginning of line (above)     | `,k`
+Go-To beginning of line (below)     | `,j`
+Go-To beginning of word             | `,w`
+Go-To beginning of word (strict)    | `,W`
+Indentation guides                  | `,ig`
 Insert tab-character `\t`           | Ctrl-v + \<`TAB`\>
-Reload .vimrc                       | `gvr` (doesnt work)
-Open .vimrc in h-split              | `gvs`
-Open .vimrc in h-split              | `gvv`
-Open .vimrc in new buffer           | `gvw`
+Reload .vimrc                       | `,vr` (doesnt work)
+Open .vimrc in h-split              | `,vs`
+Open .vimrc in h-split              | `,vv`
+Open .vimrc in new buffer           | `,vw`
 Open Command-T                      | `zc`
 Open Dropbox in Command-T (nice)    | `zC`
-Open TreeBranch Undo                | `gz`
-Open Undo Tree                      | `gz`
-Re-hardwrap paragraphs of text      | `gq`
-Strip trailing whitespace           | `gl`
+Open TreeBranch Undo                | `,z`
+Open Undo Tree                      | `,z`
+Re-hardwrap paragraphs of text      | `,q`
+Strip trailing whitespace           | `,l`
 Switch between open tabs            | Optn + Cmd + ( left / right )
 Switch buffers in current window    | F13 / F14 or "print scrn"
-Toggle comments                     | *line-count* + `gci`
+Toggle comments                     | *line-count* + `,ci`
 Print list of `marks` in all files  | `:marks`
 
 

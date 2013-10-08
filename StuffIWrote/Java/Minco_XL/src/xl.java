@@ -27,12 +27,12 @@ public class xl
 
         Semester s = new Semester(args);
 
-        /* read and calculate Minco Weekly Summary */
+        /* calculate activities from Minco file */
         readMincoLog(s);
         printActivityTimes(s);
         calcTopTwoSubjectTasks(s);
 
-        /* READ AND UPDATE XL FILE */
+        /* update XL file with activities */
         setDayRowNum(s);
         locateSubjectColumns(s);
         fillInData(s);

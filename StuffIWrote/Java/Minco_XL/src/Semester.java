@@ -73,16 +73,16 @@ public class Semester
         mincoLine.put("Title", 4);
         lastRowNum = theDayRowNum = osColNum = 0;
         Calendar cal = Calendar.getInstance();
-        if (cl.hasOption("y"))              // use yesterday
+        if (cl.hasOption("y"))
             cal.add(Calendar.DATE, -1);
-        else if (cl.hasOption("d")) {       // use given date (defaults to current year)
+        else if (cl.hasOption("d")) {    // use given date (defaults to current year)
             String enteredDate = cl.getOptionValue("d").replace('-','/');
             if (StringUtils.countMatches(enteredDate,"/") == 1)
                 enteredDate += "/" + cal.get(Calendar.YEAR);
             Date d = new Date(enteredDate);
             cal.setTime(d);
         }
-        if (cl.hasOption("n"))              // don't actually run
+        if (cl.hasOption("n"))
             System.exit(3);
         if (cl.hasOption("t"))
             debug = true;
@@ -91,6 +91,7 @@ public class Semester
         rightNow = new SimpleDateFormat("_MM-dd-HH-mm-ss").format(new Date());
         backupFile = backupDir + excelName + rightNow + ".xlsm";
         System.out.println("Backing Up...");
+        System.out.println("IT'S TOO LATE TO CANCEL UNTIL THE WHOLE THING FINISHES!");
         File start = new File(excelFile);
         File end = new File(backupFile);
         copyFile(start, end);
