@@ -48,14 +48,14 @@ public class xl
     }
 
     private static void readMincoLog(Semester s) throws IOException, ParseException {
-        skipheaders(s);
+        skipHeaders(s);
         String line;
         while ((line = s.csv.readLine()) != null) {
             if (line.equals("\u0000")) continue;
             String[] splitLine = line.replaceAll("\"", "").replaceAll("\u0000", "").split(",");
             Date res = makeDate(s, splitLine);
             if (DateUtils.isSameDay(res, s.dateObjICareAbout)) {
-                String[] taskLine  = splitLine[s.mincoLine.get("Title")].split("\\s+");
+                String[] taskLine  = splitLine[s.MINCOLINE_TITLE].split("\\s+");
                 String lineSubject = taskLine[0];
                 String lineTask    = getLineTask(taskLine);
                 int    lineTime    = getLineTime(s, splitLine);
@@ -114,7 +114,7 @@ public class xl
     }
 
     private static int getLineTime(Semester s, String[] splitLine) {
-        String lineTimeString = splitLine[s.mincoLine.get("Minutes")];
+        String lineTimeString = splitLine[s.MINCOLINE_MINUTES];
         return Integer.parseInt(lineTimeString);
     }
 
@@ -126,16 +126,16 @@ public class xl
     }
 
     private static Date makeDate(Semester s, String[] splitLine) throws ParseException {
-        return s.newMincoDateFormat.parse(splitLine[s.mincoLine.get("Date")]);
+        return s.newMincoDateFormat.parse(splitLine[s.MINCOLINE_DATE]);
     }
 
     private static void printDateAndTitle(Semester s, String[] splitLine) {
         System.out.println(
-            splitLine[s.mincoLine.get("Date")] + " " +
-            splitLine[s.mincoLine.get("Title")]);
+            splitLine[s.MINCOLINE_DATE] + " " +
+            splitLine[s.MINCOLINE_TITLE]);
     }
 
-    private static void skipheaders(Semester s) throws IOException {
+    private static void skipHeaders(Semester s) throws IOException {
         if (s.csv.readLine() == null) {
             System.out.println("This Minco File is empty or missing or something");
             System.exit(1);
