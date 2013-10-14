@@ -25,7 +25,9 @@ public class xl
 {
     public static void main(String[] args) throws Exception {
 
+
         Semester s = new Semester(args);
+        s.backupXL();
 
         /* calculate activities from Minco file */
         readMincoLog(s);
@@ -52,7 +54,9 @@ public class xl
         String line;
         while ((line = s.csv.readLine()) != null) {
             if (line.equals("\u0000")) continue;
-            String[] splitLine = line.replaceAll("\"", "").replaceAll("\u0000", "").split(",");
+            String[] splitLine = line.replaceAll("\"", "")
+                                     .replaceAll("\u0000", "")
+                                     .split(",");
             Date res = makeDate(s, splitLine);
             if (DateUtils.isSameDay(res, s.dateObjICareAbout)) {
                 String[] taskLine  = splitLine[s.MINCOLINE_TITLE].split("\\s+");
@@ -85,18 +89,23 @@ public class xl
             double timeInHours = subject.timeInHours();
             hwTime += timeInHours;
             row.getCell(col).setCellValue(timeInHours);
-            if (s.debug)
-                printNewCellContent(s.theDayRowNum, col, subject.timeString());
+            debugPrintNewCellContent(s, s.theDayRowNum, col, subject.timeString());
 
             // print tasks (don't overwrite what's there if there's nothing to write)
             if (subject.hasTasks()) {
-                row.getCell(++col).setCellValue(subject.biggest());
-                if (s.debug)
-                    printNewCellContent(s.theDayRowNum, col, subject.biggest());
+                Cell colOne = row.getCell(++col);
+                if (colOne == null) {
+                    colOne = row.createCell(col);
+                    colOne.setCellValue(subject.biggest());
+                }
+                debugPrintNewCellContent(s, s.theDayRowNum, col, subject.biggest());
                 if (subject.needsTwoColumns()) {
-                    row.getCell(++col).setCellValue(subject.secondBiggest());
-                    if (s.debug)
-                        printNewCellContent(s.theDayRowNum, col, subject.secondBiggest());
+                    Cell colTwo = row.getCell(++col);
+                    if (colTwo == null) {
+                        colTwo = row.createCell(col);
+                        colTwo.setCellValue(subject.secondBiggest());
+                    }
+                    debugPrintNewCellContent(s, s.theDayRowNum, col, subject.secondBiggest());
                 }
             }
         }
@@ -106,8 +115,8 @@ public class xl
     /*
      * "Putting Book in (15, AG)"
      */
-    private static void printNewCellContent(int row, int col, String val) {
-        if (!val.equals("")) {
+    private static void debugPrintNewCellContent(Semester s, int row, int col, String val) {
+        if (s.debug && !val.equals("")) {
             String colString = CellReference.convertNumToColString(col);
             System.out.printf("Putting %s in (%d, %s)\n", val, row + 1, colString);
         }
@@ -126,7 +135,7 @@ public class xl
     }
 
     private static Date makeDate(Semester s, String[] splitLine) throws ParseException {
-        return s.newMincoDateFormat.parse(splitLine[s.MINCOLINE_DATE]);
+        return s.mincoDateFormat.parse(splitLine[s.MINCOLINE_DATE]);
     }
 
     private static void printDateAndTitle(Semester s, String[] splitLine) {
@@ -146,11 +155,10 @@ public class xl
      * for each subject, find the column index of the place to put the Total Time
      */
     private static void locateSubjectColumns(Semester s) {
-        for (Subject subject : s.subjects.values()) {
+        for (Subject subject : s.subjects.values())
             for (Cell header : s.headers)
                 if (header.getStringCellValue().equals("c"+subject.toString()))
                     subject.setColumn(header.getColumnIndex() - 1);
-        }
     }
 
     /*
@@ -169,15 +177,14 @@ public class xl
         for (Row row : s.sheet) {
             if (row.getRowNum() == 0) continue;  // skip header row
             Cell dateCell = row.getCell(0);
-            if (dateCell != null) {
-                dateCell.setCellType(Cell.CELL_TYPE_NUMERIC); // necessary for getDate
-                Date thisDate = dateCell.getDateCellValue();
-                String dateString = s.newMincoDateFormat.format(thisDate);
-                s.theDayRowNum++;
-                if (dateString.equals(s.dateICareAbout)) {
-                    foundIt = true;
-                    break;
-                }
+            if (dateCell == null) continue;
+            dateCell.setCellType(Cell.CELL_TYPE_NUMERIC); // necessary for getDate
+            Date thisDate = dateCell.getDateCellValue();
+            String dateString = s.mincoDateFormat.format(thisDate);
+            s.theDayRowNum++;
+            if (dateString.equals(s.dateICareAbout)) {
+                foundIt = true;
+                break;
             }
         }
         if (!foundIt) {

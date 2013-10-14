@@ -38,7 +38,8 @@ import java.util.Map;
 
 /**
  * Ethan Petuchowski
- * 8/26/13
+ *
+ * Started: 8/26/13
  *
  * NOTES:
  * - week# can be easily obtained from the Date object
@@ -59,23 +60,22 @@ public class Semester
     BufferedReader csv;
 
     /* initializations */
-    int                  theDayRowNum  = 0;
-    Boolean              debug         = false;
-    Map<String, Subject> subjects      = new HashMap<>();
-    Map<String, Integer> mincoLine     = new HashMap<>(3);
+    int                  theDayRowNum    = 0;
+    Boolean              debug           = false;
+    DateFormat           mincoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    Map<String, Subject> subjects        = new HashMap<>();
 
     /* constants */
-    public final int MINCOLINE_DATE = 0;
+    public final int MINCOLINE_DATE    = 0;
     public final int MINCOLINE_MINUTES = 3;
-    public final int MINCOLINE_TITLE = 4;
+    public final int MINCOLINE_TITLE   = 4;
 
     /* subject to change */
-    String     excelName          = "Fall '13";
-    String     xlDir              = "/Users/Ethan/Dropbox/School Help Files/";
-    String     excelFile          = xlDir + excelName + ".xlsm";
-    String     backupDir          = xlDir + excelName + " Backups/";
-    String[]   subjectsArray      = {"Alg", "NN", "LrngThry", "Geo"};
-    DateFormat newMincoDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    String     excelName     = "Fall '13";
+    String     xlDir         = "/Users/Ethan/Dropbox/School Help Files/";
+    String     excelFile     = xlDir + excelName + ".xlsm";
+    String     backupDir     = xlDir + excelName + " Backups/";
+    String[]   subjectsArray = {"Alg", "NN", "LrngThry", "Geo"};
 
 
     Semester(String[] args) throws Exception {
@@ -88,14 +88,13 @@ public class Semester
         this.setXlSheet();
         this.setXlHeaders();
         getCsvFile(cal);
-        doBackup();
     }
 
     private Calendar getDateFromOptions(String[] args) throws ParseException {
         Options options = createOptions();
         CommandLine cl = parseArgs(args, options);
         Calendar cal = setDateFromCL(cl);
-        dateICareAbout = newMincoDateFormat.format(dateObjICareAbout);
+        dateICareAbout = mincoDateFormat.format(dateObjICareAbout);
         System.out.println("Looking for " + dateICareAbout);
         return cal;
     }
@@ -111,13 +110,14 @@ public class Semester
         csv = new BufferedReader(new FileReader(csvFile));
     }
 
-    private CommandLine parseArgs(String[] args, Options options) throws ParseException {CommandLineParser cli = new GnuParser();
+    private CommandLine parseArgs(String[] args, Options options) throws ParseException {
+        CommandLineParser cli = new GnuParser();
         return cli.parse(options, args, true);
     }
 
-    private void doBackup() throws IOException {
+    public void backupXL() throws IOException {
         System.out.println("IT'S TOO LATE TO CANCEL UNTIL THE WHOLE THING FINISHES!");
-        System.out.println("Backing Up...");
+        System.out.println("Backing Up...\n\n");
         rightNow = new SimpleDateFormat("MM-dd-HH-mm-ss").format(new Date());
         backupFile = backupDir + excelName + rightNow + ".xlsm";
         Path start = Paths.get(excelFile);
@@ -131,21 +131,25 @@ public class Semester
 
     private Calendar setDateFromCL(CommandLine cl) {
         Calendar cal = Calendar.getInstance();
-        if (cl.hasOption("y"))
-            cal.add(Calendar.DATE, -1);
-        else if (cl.hasOption("d")) {    // use given date (defaults to current year)
-            String enteredDate = cl.getOptionValue("d").replace('-','/');
-            if (StringUtils.countMatches(enteredDate, "/") == 1)
-                enteredDate += "/" + cal.get(Calendar.YEAR);
-            Date d = new Date(enteredDate);
-            cal.setTime(d);
-        }
-        if (cl.hasOption("n"))
-            System.exit(3);
-        if (cl.hasOption("t"))
-            debug = true;
+
+        if (cl.hasOption("y"))  cal.add(Calendar.DATE, -1);     // yesterday
+        if (cl.hasOption("d"))  useGivenDate(cl, cal);          // date from command line
+        if (cl.hasOption("n"))  System.exit(3);                 // don't run
+        if (cl.hasOption("t"))  debug = true;                   // debug mode
+
         dateObjICareAbout = cal.getTime();
         return cal;
+    }
+
+    private void useGivenDate(CommandLine cl, Calendar cal) {
+        String enteredDate = cl.getOptionValue("d").replace('-','/');
+
+        // use this year if none given
+        if (StringUtils.countMatches(enteredDate, "/") == 1)
+            enteredDate += "/" + cal.get(Calendar.YEAR);
+
+        Date d = new Date(enteredDate);
+        cal.setTime(d);
     }
 
     private Options createOptions() {
