@@ -1,8 +1,7 @@
 ## 10/14/13
 ## Algorithm Design, Problem 6.4(c)
 
-## to date, this was probably the most logically
-##   challenging program I have ever written.
+## to date, one of my most logically challenging programs
 
 M = 10
 
@@ -14,14 +13,12 @@ trueSeq = [None, True, False, False, False]
 
 n = len(N)-1
 
-seq = {}
+
 OPT = {}
 def computeOPT(i, inNY):
+    """Recursive version"""
     # base case
     if i == 0:  return 0
-
-    # to enable one to print resulting sequence of cities
-    seq[i] = inNY
 
     # memoize (retrieval part)
     if (i, inNY) in OPT:  return OPT[(i, inNY)]
@@ -30,22 +27,32 @@ def computeOPT(i, inNY):
     cityCost = N[i] if inNY else S[i]
 
     # new current total if we had to move to get here
-    move = cityCost + computeOPT(i-1, not inNY) - M
+    move = computeOPT(i-1, not inNY) + M
 
     # new current total if we didn't have to move to get here
-    noMove = cityCost + computeOPT(i-1, inNY)
+    noMove = computeOPT(i-1, inNY)
 
     # memoize (storage part)
-    OPT[(i, inNY)] = max(move, noMove)
+    OPT[(i, inNY)] = cityCost + min(move, noMove)
 
     # return to caller
     return OPT[(i, inNY)]
 
-print computeOPT(n, True)
-print seq
+print min(computeOPT(n, True), computeOPT(n, False))
+
+
 OPT = {}
-seq = {}
-print computeOPT(n, False)
-print seq
+def iterativeComputeOPT():
+    """iterative version"""
+    OPT[(0, True)] = 0
+    OPT[(0, False)] = 0
+    for i in range(1, n+1):
+        for bool in [True, False]:
+            curCost = N[i] if bool else S[i]
+            move = OPT[(i-1, not bool)] + M
+            noMove = OPT[(i-1, bool)]
+            OPT[(i, bool)] = curCost + min(move, noMove)
 
+    print min(OPT[(n, True)], OPT[(n, False)])
 
+iterativeComputeOPT()
