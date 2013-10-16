@@ -25,8 +25,7 @@ tell application "Calendar"
 		make new event at end of events with properties {summary:theSummary, start date:startDate, end date:endDate, description:theDescription, location:theLocation}
 	end tell
 end tell'''
-with open("script.scpt", 'wr') as script:
-    script.write(theScript)
+with open("script.scpt", 'wr') as script: script.write(theScript)
 
 call(["osacompile", "script.scpt"])
 call(["osascript", "script.scpt"])
