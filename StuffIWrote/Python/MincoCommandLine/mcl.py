@@ -56,8 +56,18 @@
 
 from subprocess import call # this is what you're supposed to use now instead of "import sys"
 # http://docs.python.org/2/library/subprocess.html#replacing-older-functions-with-the-subprocess-module
+import sys  # though I don't see a way to get the command line args from subprocess
 
 def createEvent(**kwargs):
+    """
+    The expected Keyword Arguments:
+        calName
+        eventTitle
+        eventNotes
+        eventLocation
+        startDate
+        endDate
+    """
     print kwargs
     theScriptHeader='''set calendarName to "{calName}"
 set theSummary to "{eventTitle}"
@@ -77,7 +87,7 @@ tell application "Calendar"
 	end tell
 end tell'''
     theScriptHeader = theScriptHeader.format(**kwargs)
-    print theScriptHeader+restOfTheScript
+    return theScriptHeader+restOfTheScript
 
 createEvent(calName='theCalName',
              eventTitle='theEventTitle',
@@ -85,3 +95,46 @@ createEvent(calName='theCalName',
              eventLocation='theEventLocation',
              startDate='November 4, 2013 6:30:00 PM',
              endDate='November 5, 2013 1:00:00 AM')
+
+def ls(directory=''):
+    '''
+    list tasks, with call-numbers for each
+    in a tree-like format so the groups are displayed
+    '''
+    # probably just literally call the `tree` command
+    # and parse its output (or don't even parse)
+    pass
+
+def ll(directory=''):
+    '''
+    ls, but with time totals, start dates, due dates, etc
+    '''
+    pass
+
+def addGroup(name):
+    '''
+    if it doesn't exist, add a new folder in the current directory
+    otw do nothing
+    '''
+    pass
+
+def addTask(group, name, dueDate=''):
+    '''
+    if it doesn't exist, add a new task in the group specified
+    '''
+    pass
+
+def begin(number=None, group=None, name=None):
+    '''
+    "start the clock" for the given task
+    this is really just printing a piece of the CSV line out, I think
+        i.e. the name, and start time, but not the endTime or block time etc.
+    '''
+    pass
+
+def main(argv):
+    for arg in argv:
+        print arg
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
