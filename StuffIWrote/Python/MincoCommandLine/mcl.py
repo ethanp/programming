@@ -57,39 +57,10 @@
 from subprocess import call # this is what you're supposed to use now instead of "import sys"
 # http://docs.python.org/2/library/subprocess.html#replacing-older-functions-with-the-subprocess-module
 import sys  # though I don't see a way to get the command line args from subprocess
+import applescripts
 
-def createEvent(**kwargs):
-    """
-    The expected Keyword Arguments:
-        calName
-        eventTitle
-        eventNotes
-        eventLocation
-        startDate
-        endDate
-    """
-    print kwargs
-    theScriptHeader='''set calendarName to "{calName}"
-set theSummary to "{eventTitle}"
-set theDescription to "{eventNotes}"
-set theLocation to "{eventLocation}"
-set startDate to "{startDate}"
-set endDate to "{endDate}"
-'''
-
-    restOfTheScript='''
-    set startDate to date startDate
-set endDate to date endDate
-
-tell application "Calendar"
-	tell (first calendar whose name is calendarName)
-		make new event at end of events with properties {summary:theSummary, start date:startDate, end date:endDate, description:theDescription, location:theLocation}
-	end tell
-end tell'''
-    theScriptHeader = theScriptHeader.format(**kwargs)
-    return theScriptHeader+restOfTheScript
-
-createEvent(calName='theCalName',
+# example usage
+applescripts.createEvent(calName='theCalName',
              eventTitle='theEventTitle',
              eventNotes='theEventNotes',
              eventLocation='theEventLocation',
