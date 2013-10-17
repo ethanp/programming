@@ -27,7 +27,8 @@ tell application "Calendar"
 	tell (first calendar whose name is calendarName)
 		make new event at end of events with properties {summary:theSummary, start date:startDate, end date:endDate, description:theDescription, location:theLocation}
 	end tell
-end tell'''
+end tell
+    '''
 
     theScriptHeader = theScriptHeader.format(**kwargs)
     return theScriptHeader+restOfTheScript
@@ -45,10 +46,8 @@ set endDate to "{endDate}"
     '''
 
     restOfTheScript='''
-# cast to date
 set startDate to date startDate
 set endDate to date endDate
-
 tell application "Calendar"
 	tell (first calendar whose name is calendarName)
 		tell (last event whose startDate is startDate)
@@ -59,7 +58,7 @@ tell application "Calendar"
 			set location to theLocation
 		end tell
 	end tell
-end tell
+end tell '
     '''
 
     theScriptHeader = theScriptHeader.format(**kwargs)
@@ -78,7 +77,7 @@ def createReminder(**kwargs):
     theScriptHeader='''
 set theList to {todoList}
 set theTitle to {eventTitle}
-set theNotes to {notes}
+set theNote to {note}
 set theDueDate to {dueDate}
     '''
 
@@ -87,7 +86,7 @@ set theDueDate to date theDueDate
 
 tell application "Reminders"
 	tell (first list whose name is theList)
-		make new reminder at end of reminders with properties {name:theTitle, body:theNotes, due date:theDueDate}
+		make new reminder at end of reminders with properties {name:theTitle, body:theNote, due date:theDueDate}
 	end tell
 end tell
     '''
@@ -108,7 +107,7 @@ def editReminder(**kwargs):
     theScriptHeader='''
 set theList to {todoList}
 set theTitle to {eventTitle}
-set theNotes to {notes}
+set theNote to {note}
 set theDueDate to {dueDate}
     '''
 
@@ -117,7 +116,7 @@ set theDueDate to date theDueDate
 tell application "Reminders"
 	tell (first list whose name is theList)
 		set name to theTitle
-		set body to theNotes
+		set body to theNote
 		set due date to theDueDate
 	end tell
 end tell
