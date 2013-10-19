@@ -3,6 +3,7 @@
 
 ## Started: 10/16/13
 
+
 '''
 =============
 Sample Usages
@@ -12,7 +13,7 @@ Sample Usages
     $ mcl ls
 
     # list group’s tasks, with call-numbers for each
-    $ mcl ls --group NN
+    $ mcl lsGroup NN
 
     # ls, but with time totals, start dates, due dates, etc
     $ mcl ll
@@ -96,16 +97,21 @@ time for block n
 import subprocess # this is what you're supposed to use now instead of "import sys"
 # http://docs.python.org/2/library/subprocess.html#replacing-older-functions-with-the-subprocess-module
 import sys  # though I don't see a way to get the command line args from subprocess
-import applescripts
 import os
 import datetime
 import glob
 import csv
 import argparse
+import pandas as pd
 
+from util import get_csv
 
 # set home dir
 HOME_PATH = '/Users/Ethan/Dropbox/School Help Files/Tracker'
+TASKS_PATH = HOME_PATH+'/Tasks'
+CSVs_PATH = HOME_PATH+'/Days'
+CSV_FORMAT = ['group', 'task', 'location', 'start time', 'end time', 'block time']
+
 os.chdir(HOME_PATH)
 os.listdir('.')
 
@@ -118,17 +124,20 @@ os.listdir('.')
 #             endDate='November 5, 2013 1:00:00 AM')
 
 
-def ls(directory=''):
+# TODO unfinished
+def ls(group=''):
     '''
     RETURNS: map of number to its task-number
 
     list tasks, with call-numbers for each
     in a tree-like format so the groups are displayed
+
+    should allow for group typed and listed to be of any arrangement of capitalizations
     '''
     task_counter=0
     task_dict={}
     # print task-tree and create dictionary
-    os.chdir('Tasks')
+    os.chdir(TASKS_PATH)
     dir_tree = subprocess.check_output(['tree']).splitlines()
     for line in dir_tree:
         line = line.replace('\\','')
@@ -137,10 +146,14 @@ def ls(directory=''):
             line = line[:UP_TO_DOT]         # subtract the ".task"
             task_dict[task_counter] = line  # add it to the dictionary
         print line
-    os.chdir('..')
+    os.chdir(HOME_PATH)
     return task_dict
 
 
+# TODO use pandas to calculate (and print!) from the CSV(s)
+# TODO pandas: read in table: pg. 33
+# names1880 = pd.read_csv('names/yob1880.txt', names=['name', 'sex', 'births'])
+# TODO unfinished
 def ll(group=''):
     '''
     ls, but instead of showing the tree and the numbers,
@@ -148,16 +161,30 @@ def ll(group=''):
     '''
     # create a data structure to store the info
     # open each task
-    # get its start date and due date (if there is one)
-    # calculate its total time
-    # store all that
+    # TODO haven't checked if this is written correctly
+    data = None
+    for group in os.listdir(TASKS_PATH):
+        group_path = TASKS_PATH+group
+        for task in os.listdir(group_path):
+        # get its start date and due date (if there is one)
+            # TODO I need to make
+            dayFrame = pd.read_table(group_path+task, sep='\n', header=None)
+            if data is None:
+                data = dayFrame.copy()  # TODO made up: don't know the method's name
+            data = pd.merge(data, dayFrame)  # pg. 28, TODO sloppy: there must be better way to do it
+
+    # calculate totals
+    per_task = data.groupby('task name').sum()  # don't think this is right
     # print it all out
     pass
 
 
+# TODO pandas: SUM(minutes) GROUP_BY(title): page 33
+# .groupby('sex').births.sum()
+# TODO unfinished
 def printDay(date='*'):
     '''
-    print tabulated vrsn of today’s CSV w/ line#s
+    print tabulated vrsn of given day’s CSV w/ line#s (default to today)
     '''
     # open the right CSV
     files = glob.glob('Days/'+date)
@@ -176,70 +203,100 @@ def printDay(date='*'):
         print line
 
 
+# TODO unfinished
 def addGroup(name):
     '''
     if it doesn't exist, add a new folder in the current directory
     otw do nothing
+    capitalization will be left as-specified in the command
     '''
     if not os.path.exists(name):
         os.makedirs(name)
 
 
-def addTask(group, name, dueDate='November 4, 2013 6:30:00 PM', note=''):
+# TODO figure out how due_dates are going to be formatted on their way in
+#   so they can be printed properly to the file
+# TODO unfinished
+def add_task(group, name, due_date='', note=''):
     '''
     if it doesn't exist, add a new task in the group specified
+    capitalization will be left as-specified in the command
     '''
-    path = '.'
-    file_path = path + '/' + name + '.task'
+
+    group_path = TASKS_PATH + '/' + group
+    file_path = group_path + '/' + name + '.task'
     tmp_file = 'tmp.scpt'
+
+    # TODO turn the date into a usable format for both the .task and the reminder
+    now_object = datetime.datetime.now()
+    today = str(now_object.month)+'-'+str(now_object.day)+'-'+str(now_object.year)
+
+    # TODO check against other capitalizations
+
+    # ask to create group if it doesn't exist
+    if not os.path.exists(group_path):
+        response = raw_input('group "'+group+'" does not exist, create it? (y/n)')
+        if response is 'y':
+            addGroup(group)
+        else:
+            print 'Ok, cancelling.'
 
     if os.path.exists(file_path):
         return
 
-    with open(file_path, 'wr') as task_file:
-        task_file.write('created at'+str(datetime.datetime.now()))
+    with open(file_path, 'w+') as task_file:
+        writer = csv.writer(task_file, delimiter='\n')
+        writer.writerow([today, due_date])
 
-    # generate script to create reminder
-    script = applescripts.createReminder(
-                    todoList=group,
-                    eventTitle=name,
-                    note=note,
-                    dueDate=dueDate)
+    ## generate script to create reminder
+    #script = applescripts.createReminder(
+    #                todoList=group,
+    #                eventTitle=name,
+    #                note=note,
+    #                dueDate=dueDate)
 
-    # create reminder
-    with open(tmp_file, 'wr') as script_file:
-        script_file.write(script)
-    subprocess.call(['osascript','tmp.scpt'])
-    os.remove(tmp_file)
+    ## create reminder
+    #with open(tmp_file, 'wr') as script_file:
+    #    script_file.write(script)
+    #subprocess.call(['osascript','tmp.scpt'])
+    #os.remove(tmp_file)
 
 
+# TODO unfinished
 def editTask(group, name, newGroup=None, newName=None, dueDate=None, note=None):
     # edit task file
-    # edit reminder
-    script = applescripts.editReminder(
-        # args go here
-    )
+    ## edit reminder
+    #script = applescripts.editReminder(
+    #    # args go here
+    #)
     pass
 
 
+# TODO unfinished
 def begin(number=None, group=None, name=None):
     '''
     "start the clock" for the given task
     this is really just printing a piece of the CSV line out, I think
         i.e. the name and start time,
              but not the end time or block time etc.
+
+    the name can optionally include the group name inside it, i.e. name="NN HW#3"
+        this should still work (with any capitalization)
     '''
-    # open today's CSV
+    ## open today's CSV
+    csv = get_csv()
     # print info
     pass
 
 
+# TODO unfinished
 def end():
     '''
     print the end time and block time for the last line of the CSV
     also print the info out for the user to see
     '''
     # open today's CSV
+    csv = get_csv()
     # write info
     # append to .task file
     # create calendar event
@@ -247,30 +304,37 @@ def end():
     pass
 
 
+# TODO unfinished
 def move(minutes):
     '''
     change the start time of the currently running task by {minutes}
     '''
+    csv = get_csv()
     # edit the last line of the CSV
     pass
 
 
+# TODO unfinished
 def show():
     '''
     print time for current task (block, day, total)
     '''
+    csv = get_csv()
     # parse last line of today's CSV
     pass
 
 
+# TODO unfinished
 def cancel():
     '''
     cancel current task
     '''
+    csv = get_csv()
     # remove last line of CSV
     pass
 
 
+# TODO unfinished
 def did():
     '''
     pos-hoc add time a task was done
@@ -282,6 +346,7 @@ def did():
     pass
 
 
+# TODO unfinished
 def create_command_line_options():
     options = argparse.ArgumentParser(description='Manage Reminders, Calendar, and CSV in one go')
     options.add_argument('ls', help='list tasks, with call-numbers for each')
@@ -299,6 +364,11 @@ def create_command_line_options():
     options.add_argument('remove', help='remove block from CSV and calendar')
     options.add_argument('finish', help='remove task')
     options.add_argument('did', help='post-hoc add time a task was done')
+
+
+# TODO unfinished
+def get_task(name='task1'):
+    pass
 
 
 def main(argv):
