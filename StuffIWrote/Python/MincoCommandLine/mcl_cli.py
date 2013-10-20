@@ -73,14 +73,12 @@ Tasks/
 
     Alg/
 
-
 =========
 CSV FILES
 =========
 group, task, location, start time, end time, block time
 group, task, location, start time, end time, block time
 ...
-
 
 ==========
 TASK FILES
@@ -91,8 +89,8 @@ time for block 1
 ...
 time for block n
 
-
 '''
+import shutil
 
 import subprocess # this is what you're supposed to use now instead of "import sys"
 # http://docs.python.org/2/library/subprocess.html#replacing-older-functions-with-the-subprocess-module
@@ -104,13 +102,8 @@ import csv
 import argparse
 import pandas as pd
 
-from util import get_csv
+from util import *
 
-# set home dir
-HOME_PATH = '/Users/Ethan/Dropbox/School Help Files/Tracker'
-TASKS_PATH = HOME_PATH+'/Tasks'
-CSVs_PATH = HOME_PATH+'/Days'
-CSV_FORMAT = ['group', 'task', 'location', 'start time', 'end time', 'block time']
 
 os.chdir(HOME_PATH)
 os.listdir('.')
@@ -124,7 +117,7 @@ os.listdir('.')
 #             endDate='November 5, 2013 1:00:00 AM')
 
 
-# TODO unfinished
+# TODO finished but untested
 def ls(group=''):
     '''
     RETURNS: map of number to its task-number
@@ -134,19 +127,20 @@ def ls(group=''):
 
     should allow for group typed and listed to be of any arrangement of capitalizations
     '''
-    task_counter=0
-    task_dict={}
+    task_counter = 0
+    task_dict = {}
     # print task-tree and create dictionary
-    os.chdir(TASKS_PATH)
-    dir_tree = subprocess.check_output(['tree']).splitlines()
+    dir_tree = subprocess.check_output(['tree', TASKS_PATH]).splitlines()
     for line in dir_tree:
         line = line.replace('\\','')
         UP_TO_DOT = line.find('.')
+        NO_TREE = line.rfind(' ') + 1
         if UP_TO_DOT != -1:                 # found a task
-            line = line[:UP_TO_DOT]         # subtract the ".task"
-            task_dict[task_counter] = line  # add it to the dictionary
-        print line
-    os.chdir(HOME_PATH)
+            task_dict[task_counter] = line[NO_TREE:]  # add it to the dictionary
+            print line[:UP_TO_DOT], task_counter          # print without the ".task"
+            task_counter += 1
+        else:
+            print line
     return task_dict
 
 
@@ -203,15 +197,16 @@ def printDay(date='*'):
         print line
 
 
-# TODO unfinished
-def addGroup(name):
+# tested
+def add_group(name):
     '''
-    if it doesn't exist, add a new folder in the current directory
+    if it doesn't exist, create a new folder in the Tasks directory
     otw do nothing
-    capitalization will be left as-specified in the command
+    capitalization will NOT be checked
     '''
-    if not os.path.exists(name):
-        os.makedirs(name)
+    new_group_path = group_path(name)
+    if not os.path.exists(new_group_path):
+        os.makedirs(new_group_path)
 
 
 # TODO figure out how due_dates are going to be formatted on their way in
@@ -219,8 +214,9 @@ def addGroup(name):
 # TODO unfinished
 def add_task(group, name, due_date='', note=''):
     '''
-    if it doesn't exist, add a new task in the group specified
+    if task doesn't exist, add a new task in the group specified
     capitalization will be left as-specified in the command
+    if group doesn't exist, ask whether to create one
     '''
 
     group_path = TASKS_PATH + '/' + group
@@ -237,17 +233,19 @@ def add_task(group, name, due_date='', note=''):
     if not os.path.exists(group_path):
         response = raw_input('group "'+group+'" does not exist, create it? (y/n)')
         if response is 'y':
-            addGroup(group)
+            add_group(group)
         else:
             print 'Ok, cancelling.'
 
     if os.path.exists(file_path):
+        print 'Task already exists.'
         return
 
     with open(file_path, 'w+') as task_file:
         writer = csv.writer(task_file, delimiter='\n')
         writer.writerow([today, due_date])
 
+    # TODO enable (after testing) the creation of a reminder
     ## generate script to create reminder
     #script = applescripts.createReminder(
     #                todoList=group,
@@ -261,6 +259,19 @@ def add_task(group, name, due_date='', note=''):
     #subprocess.call(['osascript','tmp.scpt'])
     #os.remove(tmp_file)
 
+
+# tested
+def delete_group(name):
+    print group_path(name)
+    if not os.path.exists(group_path(name)):
+        print 'group "'+name+'" does not exist.'
+        return False
+    else:
+        response = raw_input('are you sure you want to delete group "'+name+'"? (y/n) ')
+        if response == 'y':
+            print 'deleting "'+name+'".'
+            shutil.rmtree(group_path(name))
+        return True
 
 # TODO unfinished
 def editTask(group, name, newGroup=None, newName=None, dueDate=None, note=None):

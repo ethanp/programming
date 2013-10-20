@@ -3,9 +3,11 @@ import csv
 from mcl_cli import *
 import os
 
+
 SAMPLE_TASK = 'Sample Task'
 SAMPLE_GROUP = 'Sample'
-FILE_SAMPLE_TASK_1 = TASKS_PATH+'/'+SAMPLE_GROUP+'/'+SAMPLE_TASK
+SAMPLE_GROUP_PATH = TASKS_PATH+'/'+SAMPLE_GROUP
+SAMPLE_TASK_PATH = SAMPLE_GROUP_PATH+'/'+SAMPLE_TASK
 
 
 def add_sample_task():
@@ -21,9 +23,28 @@ def append_time_to_sample_task():
 
 
 def clear_sample_task():
-    os.remove(FILE_SAMPLE_TASK_1)
+    os.remove(SAMPLE_TASK_PATH)
+
+
+def add_sample_group():
+    add_group(SAMPLE_GROUP)
+    if SAMPLE_GROUP not in os.listdir(TASKS_PATH):
+        print 'add_sample_group FAILED!'
+
+
+def delete_sample_group():
+    delete_group(SAMPLE_GROUP)
+    if os.path.exists(SAMPLE_GROUP_PATH):
+        print 'delete_sample_group FAILED!'
+
+
+def test_ls():
+    print ls()
 
 
 if __name__ == "__main__":
-    add_sample_task()
+    #add_sample_task()
     #append_to_sample_task()
+    #test_ls()
+    add_sample_group()
+    delete_sample_group()

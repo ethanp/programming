@@ -18,6 +18,7 @@ alias this='export PATH="${PATH}:."'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n $@'
 alias ut='ssh -o ServerAliveInterval=30 ethanp@almond-joy.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
+alias tracker='cs /Users/Ethan/Dropbox/School\ Help\ Files/Tracker'
 
 # 4lolz
 set -o vi
