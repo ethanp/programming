@@ -42,11 +42,13 @@ def delete_sample_group():
 
 def test_ls():
     print ls()
+    print ls(SAMPLE_GROUP)
 
 
 if __name__ == "__main__":
-    #add_sample_task()
-    #append_to_sample_task()
-    #test_ls()
     add_sample_group()
-    delete_sample_group()
+    add_sample_task()
+    #append_to_sample_task()
+    test_ls()
+    #add_sample_group()
+    #delete_sample_group()

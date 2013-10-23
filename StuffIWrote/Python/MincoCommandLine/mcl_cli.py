@@ -4,10 +4,8 @@
 ## Started: 10/16/13
 
 import shutil
-
-import subprocess # this is what you're supposed to use now instead of "import sys"
-# http://docs.python.org/2/library/subprocess.html#replacing-older-functions-with-the-subprocess-module
-import sys  # though I don't see a way to get the command line args from subprocess
+import subprocess
+import sys
 import os
 import datetime
 import glob
@@ -18,9 +16,6 @@ import pandas as pd
 from util import *
 
 
-os.chdir(HOME_PATH)
-os.listdir('.')
-
 # example usage
 #applescripts.createEvent(calName='theCalName',
 #             eventTitle='theEventTitle',
@@ -30,10 +25,10 @@ os.listdir('.')
 #             endDate='November 5, 2013 1:00:00 AM')
 
 
-# TODO finished but untested
+# tested
 def ls(group=''):
     '''
-    RETURNS: map of number to its task-number
+    RETURNS: map of number to its task-name
 
     list tasks, with call-numbers for each
     in a tree-like format so the groups are displayed
@@ -43,7 +38,20 @@ def ls(group=''):
     task_counter = 0
     task_dict = {}
     # print task-tree and create dictionary
-    dir_tree = subprocess.check_output(['tree', TASKS_PATH]).splitlines()
+    paths = os.listdir(TASKS_PATH)
+    groups = [g for g in paths if os.path.isdir(TASKS_PATH+'/'+g)]
+    groups_lower = [g.lower() for g in groups]
+    if group:
+        if group.lower() in groups_lower:
+            path = TASKS_PATH+'/'+groups[groups_lower.index(group.lower())]
+            print 'searching', path
+        else:
+            print 'group:', group, 'was not found'
+            return False
+    else:
+        path = TASKS_PATH
+
+    dir_tree = subprocess.check_output(['tree', path]).splitlines()
     for line in dir_tree:
         line = line.replace('\\','')
         UP_TO_DOT = line.find('.')
