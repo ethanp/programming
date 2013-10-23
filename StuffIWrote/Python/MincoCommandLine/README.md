@@ -1,7 +1,7 @@
-=============
 Sample Usages
 =============
 
+```bash
     # list tasks, with call-numbers for each
     $ mcl ls
 
@@ -49,11 +49,12 @@ Sample Usages
 
     # cancel current task
     $ mcl cancel
+```
 
 
-=============
 DIR STRUCTURE
 =============
+```
 Days/
     10-17-2013.csv
     10-18-2013.csv
@@ -65,19 +66,23 @@ Tasks/
         Ch 16.task
 
     Alg/
+```
 
-=========
 CSV FILES
 =========
+```
 group, task, location, start time, end time, block time
 group, task, location, start time, end time, block time
 ...
+```
 
-==========
 TASK FILES
 ==========
+```
 start date
 due date (can be blank)
 time for block 1
 ...
 time for block n
+```
+
