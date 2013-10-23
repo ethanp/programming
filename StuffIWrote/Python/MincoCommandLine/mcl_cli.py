@@ -1,95 +1,8 @@
 # coding=utf-8
-## "A time-tracker built with the user in mind" (where I am the user)
+## "A time-tracker built with the user in mind" (note: I am the user)
 
 ## Started: 10/16/13
 
-
-'''
-=============
-Sample Usages
-=============
-
-    # list tasks, with call-numbers for each
-    $ mcl ls
-
-    # list group’s tasks, with call-numbers for each
-    $ mcl lsGroup NN
-
-    # ls, but with time totals, start dates, due dates, etc
-    $ mcl ll
-
-    # add task if it doesn’t exist
-    $ mcl addTask NN --task HW#3 --duedate 10/23
-
-    # add group if it doesn’t exist
-    $ mcl addGroup Alg
-
-    # begin counting for first task
-    $ mcl begin 1
-
-    # adds task if it doesn’t exist
-    $ mcl begin NN HW#3
-
-    # stops counting
-    $ mcl end
-
-    # move start time forward 15 mins
-    $ mcl move 15
-
-    # move start time backward 15 mins
-    $ mcl move -15
-
-    # print tabulated vrsn of today’s CSV w/ line#s
-    $ mcl print
-
-    # delete line 4 of CSV printed above
-    $ mcl remove 4
-
-    # remove task 1
-    $ mcl finish 1
-
-    # print time for current task (block, day, total)
-    $ mcl show
-
-    # post-hoc add time a task was done
-    $ mcl did NN HW#3 10:30 15:15
-
-    # cancel current task
-    $ mcl cancel
-
-
-=============
-DIR STRUCTURE
-=============
-Days/
-    10-17-2013.csv
-    10-18-2013.csv
-    10-19-2013.csv
-
-Tasks/
-    NN/
-        HW#3.task
-        Ch 16.task
-
-    Alg/
-
-=========
-CSV FILES
-=========
-group, task, location, start time, end time, block time
-group, task, location, start time, end time, block time
-...
-
-==========
-TASK FILES
-==========
-start date
-due date (can be blank)
-time for block 1
-...
-time for block n
-
-'''
 import shutil
 
 import subprocess # this is what you're supposed to use now instead of "import sys"
@@ -272,6 +185,7 @@ def delete_group(name):
             print 'deleting "'+name+'".'
             shutil.rmtree(group_path(name))
         return True
+
 
 # TODO unfinished
 def editTask(group, name, newGroup=None, newName=None, dueDate=None, note=None):

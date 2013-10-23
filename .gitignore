@@ -36,3 +36,5 @@ a.out
 Educational/Django/tutorial/env
 database.sql
 StuffIWrote/Python/MincoCommandLine/.idea
+*.sublime-workspace
+*.sublime-project

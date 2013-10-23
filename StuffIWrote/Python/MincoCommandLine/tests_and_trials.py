@@ -24,11 +24,13 @@ def append_time_to_sample_task():
 
 def clear_sample_task():
     os.remove(SAMPLE_TASK_PATH)
+    if not os.path.exists(SAMPLE_TASK_PATH):
+        print 'clear_sample_task FAILED!'
 
 
 def add_sample_group():
     add_group(SAMPLE_GROUP)
-    if SAMPLE_GROUP not in os.listdir(TASKS_PATH):
+    if not os.path.exists(SAMPLE_GROUP_PATH):
         print 'add_sample_group FAILED!'
 
 
