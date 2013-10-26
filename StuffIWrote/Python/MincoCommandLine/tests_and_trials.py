@@ -11,9 +11,10 @@ SAMPLE_TASK_PATH = SAMPLE_GROUP_PATH+'/'+SAMPLE_TASK
 
 
 def add_sample_task():
-    add_task(group=SAMPLE_GROUP,
-             name=SAMPLE_TASK,
-             due_date='11-13-2013')
+    add_task(name=SAMPLE_TASK,
+             group=SAMPLE_GROUP,
+             due_date='11-13-2013',
+             note='This is a sample task!')
 
 
 def append_time_to_sample_task():

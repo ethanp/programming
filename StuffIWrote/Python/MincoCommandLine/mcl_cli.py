@@ -30,9 +30,12 @@ def ls(group=''):
     RETURNS: map of number to its task-name
     list tasks, with call-numbers for each in a
         tree-like format so the groups are displayed
+    if a group-name was given, it is the zero-th task in the dictionary
     '''
     task_counter = 1
     task_dict = {}
+    if group != '':
+        task_dict[0] = group
     path = get_group_path(group)
     dir_tree = subprocess.check_output(['tree', path]).splitlines()
     for line in dir_tree:
@@ -112,7 +115,7 @@ def add_group(group):
         new_group_path = create_group_path(group)
         os.makedirs(new_group_path)
         print 'group created.'
-        return True
+        return new_group_path
     print 'group already exists.'
     return False
 
@@ -133,40 +136,44 @@ def delete_group(name):
 
 
 # TODO unfinished
-def add_task(group, name, due_date='', note=''):
+def add_task(name, group='', due_date='', note=''):
     '''
-    if task doesn't exist, add a new task in the group specified
-    capitalization will be left as-specified in the command
-    if group doesn't exist, ask whether to create one
-    due dates must be formatted as mm-dd-yyyy
+    Group is looked for capitalization-agnostically.
+    If group doesn't exist, ask whether to create one.
+
+    If task doesn't exist, add a new task in the group specified.
+    Capitalization will be left as-specified in the command.
+
+    Due dates must be formatted as mm-dd-yyyy.
+    If no due date is given, none is created.
+    If due date is given, "all-day" event is given to Calendar on due date.
+    Due date is also stored in the corresponding .task file.
     '''
+    tmp_applescript_file = 'tmp.scpt'
 
-    group_path = TASKS_PATH + '/' + group
-    file_path = group_path + '/' + name + '.task'
-    tmp_file = 'tmp.scpt'
-
-    # turn the date into a usable format for both the .task and the reminder
-    n = datetime.datetime.now()
-    today = str(n.month)+'-'+str(n.day)+'-'+str(n.year)
-
-    if not due_date:
-        due_date = today
-
-    # TODO check against other capitalizations
-
+    group_path = get_group_path(group)
     # ask to create group if it doesn't exist
-    if not os.path.exists(group_path):
-        response = raw_input('group "'+group+'" does not exist, create it? (y/n)')
+    if not group_path:
+        response = raw_input('group "' + group + '" does not exist, create it? (y/n)')
         if response is 'y':
-            add_group(group)
+            group_path = add_group(group)
+            if not group_path:  raise RuntimeError
         else:
             print 'Ok, cancelling.'
+            return False
 
-    if os.path.exists(file_path):
+
+    task_path = create_task_path(name, group)
+
+    today = todays_date()  # e.g. 10-26-2013
+
+    # TODO check against other capitalizations! (START HERE)
+
+    if os.path.exists(task_path):
         print 'Task already exists.'
-        return
+        return True       # it could return something more useful if there is such a thing
 
-    with open(file_path, 'w+') as task_file:
+    with open(task_path, 'w+') as task_file:
         writer = csv.writer(task_file, delimiter='\n')
         writer.writerow([today, due_date])
 
@@ -202,14 +209,21 @@ def editTask(group, name, newGroup=None, newName=None, dueDate=None, note=None):
 # TODO unfinished
 def finishTask(name, group=''):
     '''
-    clears .task file (actually just move it somewhere recoverably), check-off Reminder
+    clears .task file (actually just move it into Tracker/Old_Tasks/), check-off Reminder
     $ mcl finish 1
             OR
     $ mcl finish HW3
             OR
     $ mcl finish NN HW3
     '''
-    pass
+    group_dict = ls(group)
+    if name in group_dict:  # don't need to say group_dict.keys()
+        # TODO get task file
+        # TODO move task file
+        # TODO check-off reminder
+        pass
+    else:
+        print 'command cancelled: no such task.'
 
 
 # TODO unfinished

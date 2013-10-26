@@ -43,5 +43,16 @@ def get_group_path(group=''):
             print 'group:', group, 'was not found'
             return False
 
+
 def create_group_path(group=''):
     return TASKS_PATH+'/'+group if group else TASKS_PATH
+
+
+def create_task_path(name, group):
+    return create_group_path(group)+'/'+name+'.task'
+
+def todays_date():
+    # turn the date into a usable format for both the .task and the reminder
+    n = datetime.datetime.now()
+    today = str(n.month) + '-' + str(n.day) + '-' + str(n.year)
+    return today
