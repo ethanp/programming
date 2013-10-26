@@ -15,7 +15,6 @@ import pandas as pd
 
 from util import *
 
-
 # example usage
 #applescripts.createEvent(calName='theCalName',
 #             eventTitle='theEventTitle',
@@ -25,40 +24,24 @@ from util import *
 #             endDate='November 5, 2013 1:00:00 AM')
 
 
-# tested
+# looks pretty done
 def ls(group=''):
     '''
     RETURNS: map of number to its task-name
-
-    list tasks, with call-numbers for each
-    in a tree-like format so the groups are displayed
-
-    should allow for group typed and listed to be of any arrangement of capitalizations
+    list tasks, with call-numbers for each in a
+        tree-like format so the groups are displayed
     '''
-    task_counter = 0
+    task_counter = 1
     task_dict = {}
-    # print task-tree and create dictionary
-    paths = os.listdir(TASKS_PATH)
-    groups = [g for g in paths if os.path.isdir(TASKS_PATH+'/'+g)]
-    groups_lower = [g.lower() for g in groups]
-    if group:
-        if group.lower() in groups_lower:
-            path = TASKS_PATH+'/'+groups[groups_lower.index(group.lower())]
-            print 'searching', path
-        else:
-            print 'group:', group, 'was not found'
-            return False
-    else:
-        path = TASKS_PATH
-
+    path = get_group_path(group)
     dir_tree = subprocess.check_output(['tree', path]).splitlines()
     for line in dir_tree:
         line = line.replace('\\','')
         UP_TO_DOT = line.find('.')
-        NO_TREE = line.rfind(' ') + 1
-        if UP_TO_DOT != -1:                 # found a task
-            task_dict[task_counter] = line[NO_TREE:]  # add it to the dictionary
-            print line[:UP_TO_DOT], task_counter          # print without the ".task"
+        NO_TREE = line.rfind('--') + 3                  # means you can't have a "--" in the name...
+        if UP_TO_DOT != -1:                             # found a task
+            task_dict[task_counter] = line[NO_TREE:]    # add it to the dictionary
+            print line[:UP_TO_DOT], task_counter        # print without the ".task"
             task_counter += 1
         else:
             print line
@@ -118,35 +101,56 @@ def printDay(date='*'):
         print line
 
 
-# tested
-def add_group(name):
+# tested (damn it feels good to be a testa)
+def add_group(group):
     '''
     if it doesn't exist, create a new folder in the Tasks directory
     otw do nothing
-    capitalization will NOT be checked
+    capitalization does NOT matter
     '''
-    new_group_path = group_path(name)
-    if not os.path.exists(new_group_path):
+    if not get_group_path(group):
+        new_group_path = create_group_path(group)
         os.makedirs(new_group_path)
+        print 'group created.'
+        return True
+    print 'group already exists.'
+    return False
 
 
-# TODO figure out how due_dates are going to be formatted on their way in
-#   so they can be printed properly to the file
+
+# tested
+def delete_group(name):
+    if get_group_path(name):
+        print get_group_path(name)
+        response = raw_input('are you sure you want to delete group "'+name+'"? (y/n) ')
+        if response == 'y':
+            print 'deleting "'+name+'".'
+            shutil.rmtree(get_group_path(name))
+        return True
+    else:
+        print 'group "'+name+'" does not exist.'
+        return False
+
+
 # TODO unfinished
 def add_task(group, name, due_date='', note=''):
     '''
     if task doesn't exist, add a new task in the group specified
     capitalization will be left as-specified in the command
     if group doesn't exist, ask whether to create one
+    due dates must be formatted as mm-dd-yyyy
     '''
 
     group_path = TASKS_PATH + '/' + group
     file_path = group_path + '/' + name + '.task'
     tmp_file = 'tmp.scpt'
 
-    # TODO turn the date into a usable format for both the .task and the reminder
-    now_object = datetime.datetime.now()
-    today = str(now_object.month)+'-'+str(now_object.day)+'-'+str(now_object.year)
+    # turn the date into a usable format for both the .task and the reminder
+    n = datetime.datetime.now()
+    today = str(n.month)+'-'+str(n.day)+'-'+str(n.year)
+
+    if not due_date:
+        due_date = today
 
     # TODO check against other capitalizations
 
@@ -181,28 +185,43 @@ def add_task(group, name, due_date='', note=''):
     #os.remove(tmp_file)
 
 
-# tested
-def delete_group(name):
-    print group_path(name)
-    if not os.path.exists(group_path(name)):
-        print 'group "'+name+'" does not exist.'
-        return False
-    else:
-        response = raw_input('are you sure you want to delete group "'+name+'"? (y/n) ')
-        if response == 'y':
-            print 'deleting "'+name+'".'
-            shutil.rmtree(group_path(name))
-        return True
-
 
 # TODO unfinished
 def editTask(group, name, newGroup=None, newName=None, dueDate=None, note=None):
+    '''
+    change task's name, group, dueDate, and/or note
+    '''
     # edit task file
     ## edit reminder
     #script = applescripts.editReminder(
     #    # args go here
     #)
     pass
+
+
+# TODO unfinished
+def finishTask(name, group=''):
+    '''
+    clears .task file (actually just move it somewhere recoverably), check-off Reminder
+    $ mcl finish 1
+            OR
+    $ mcl finish HW3
+            OR
+    $ mcl finish NN HW3
+    '''
+    pass
+
+
+# TODO unfinished
+def deleteTask(name, group=''):
+    '''
+    clears .task file (actually just move it somewhere recoverably), delete Reminder
+    $ mcl cancel 1
+            OR
+    $ mcl cancel HW3
+            OR
+    $ mcl cancel NN HW3
+    '''
 
 
 # TODO unfinished
@@ -295,7 +314,8 @@ def create_command_line_options():
     options.add_argument('show', help='print time for current running task (block, day, total)')
     options.add_argument('cancel', help='cancel current running task')
     options.add_argument('remove', help='remove block from CSV and calendar')
-    options.add_argument('finish', help='remove task')
+    options.add_argument('finish', help='remove task, check off reminder')
+    options.add_argument('delete', help='remove task, delete reminder')
     options.add_argument('did', help='post-hoc add time a task was done')
 
 

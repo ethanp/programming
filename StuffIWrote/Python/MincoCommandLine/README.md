@@ -38,8 +38,11 @@ Sample Usages
     # delete line 4 of CSV printed above
     $ mcl remove 4
 
-    # remove task 1
+    # remove task 1, check off associated Reminder
     $ mcl finish 1
+
+    # remove task 1, delete associated Reminder
+    $ mcl delete 1
 
     # print time for current task (block, day, total)
     $ mcl show

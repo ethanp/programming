@@ -26,9 +26,22 @@ def get_csv(date=''):
             # read info into DataFrame
             pass
 
-
-def group_path(group):
+def get_group_path(group=''):
     '''
     returns full-path version of the given group name
     '''
-    return TASKS_PATH+'/'+group
+    # print task-tree and create dictionary
+    if not group:
+        return TASKS_PATH
+    paths = os.listdir(TASKS_PATH)
+    groups = [g for g in paths if os.path.isdir(TASKS_PATH + '/' + g)]
+    groups_lower = [g.lower() for g in groups]
+    if group:
+        if group.lower() in groups_lower:
+            return TASKS_PATH + '/' + groups[groups_lower.index(group.lower())]
+        else:
+            print 'group:', group, 'was not found'
+            return False
+
+def create_group_path(group=''):
+    return TASKS_PATH+'/'+group if group else TASKS_PATH

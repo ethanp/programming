@@ -24,8 +24,6 @@ def append_time_to_sample_task():
 
 def clear_sample_task():
     os.remove(SAMPLE_TASK_PATH)
-    if not os.path.exists(SAMPLE_TASK_PATH):
-        print 'clear_sample_task FAILED!'
 
 
 def add_sample_group():
@@ -46,9 +44,9 @@ def test_ls():
 
 
 if __name__ == "__main__":
-    add_sample_group()
-    add_sample_task()
-    #append_to_sample_task()
-    test_ls()
     #add_sample_group()
-    #delete_sample_group()
+    #add_sample_task()
+    #append_to_sample_task()
+    #test_ls()
+    add_sample_group()
+    delete_sample_group()
