@@ -21,7 +21,7 @@ def compute_opt(i, L, d={}):
         notL = A
 
     # unhashable type: 'list', workaround
-    # still able to memoize
+    # use a string to represent it (could've been anything)
     if (i, the_list) in d.keys():
         return d[(i, the_list)]
 
