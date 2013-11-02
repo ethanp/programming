@@ -9,6 +9,9 @@ SAMPLE_GROUP = 'Sample'
 SAMPLE_GROUP_PATH = TASKS_PATH+'/'+SAMPLE_GROUP
 SAMPLE_TASK_PATH = SAMPLE_GROUP_PATH+'/'+SAMPLE_TASK
 
+def try_get_task_path():
+    add_sample_task()
+    get_task_path(SAMPLE_TASK)
 
 def add_sample_task():
     add_task(name=SAMPLE_TASK,
@@ -38,6 +41,15 @@ def delete_sample_group():
     if os.path.exists(SAMPLE_GROUP_PATH):
         print 'delete_sample_group FAILED!'
 
+def test_add_and_delete_group():
+    add_sample_group()
+    delete_sample_group()
+
+
+def test_finish_task():
+    add_sample_task()
+    finishTask(SAMPLE_TASK)
+
 
 def test_ls():
     print ls()
@@ -45,9 +57,5 @@ def test_ls():
 
 
 if __name__ == "__main__":
-    #add_sample_group()
-    #add_sample_task()
-    #append_to_sample_task()
-    #test_ls()
-    add_sample_group()
-    delete_sample_group()
+    #try_get_task_path()
+    test_finish_task()

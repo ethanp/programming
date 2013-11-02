@@ -6,7 +6,12 @@ from mcl_cli import *
 HOME_PATH = '/Users/Ethan/Dropbox/School Help Files/Tracker'
 TASKS_PATH = HOME_PATH+'/Tasks'
 CSVs_PATH = HOME_PATH+'/Days'
+OLD_TASKS_PATH = HOME_PATH+'/Old_Tasks'
 CSV_FORMAT = ['group', 'task', 'location', 'start time', 'end time', 'block time']
+
+
+# TODO make this REGEX work (snag task-name from task-file
+#TASK_NAME_REGEX = '?<TASK_NAME>(.*)\.task'.compile()
 
 
 # TODO unfinished (not sure what this will do yet, 'just figure it'll be useful)
@@ -26,13 +31,11 @@ def get_csv(date=''):
             # read info into DataFrame
             pass
 
-def get_group_path(group=''):
+def get_group_path(group):
     '''
-    returns full-path version of the given group name
+    if group exists (capitalization agnostic), returns its full-path
+    else returns False
     '''
-    # print task-tree and create dictionary
-    if not group:
-        return TASKS_PATH
     paths = os.listdir(TASKS_PATH)
     groups = [g for g in paths if os.path.isdir(TASKS_PATH + '/' + g)]
     groups_lower = [g.lower() for g in groups]
@@ -42,6 +45,41 @@ def get_group_path(group=''):
         else:
             print 'group:', group, 'was not found'
             return False
+
+
+# tested on sample_task
+def get_task_path(name, group=''):
+    '''
+    capitalization agnostic
+    find the task with the given name
+    searches within group if specified
+    group needn't be specified if the name is unique anyway
+    if found return task's path
+    else return false
+    '''
+    if not group:
+        group_paths = os.listdir(TASKS_PATH)
+        groups = [g for g in group_paths if os.path.isdir(TASKS_PATH+'/'+g)]
+    else:
+        groups = [group]
+    group_paths = [get_group_path(g) for g in groups]
+    found_list = []
+    for group_path in group_paths:
+        tasks = os.listdir(group_path)
+
+        # TODO replace with the TASK_NAME_REGEX above
+        task_names_lowered = [t[:t.rfind('.')].lower() for t in tasks]
+
+        if name.lower() in task_names_lowered:
+            task_path = group_path + '/' + tasks[task_names_lowered.index(name.lower())]
+            found_list.append(task_path)
+    if len(found_list) > 1:
+        print 'This task was found in multiple groups: `util.get_task_path()`'
+        return False
+    if len(found_list) == 0:
+        print "This task wasn't found: `util.get_task_path()`"
+        return False
+    return found_list[0]
 
 
 def create_group_path(group=''):

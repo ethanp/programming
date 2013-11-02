@@ -120,15 +120,19 @@ def add_group(group):
     return False
 
 
-
 # tested
 def delete_group(name):
-    if get_group_path(name):
-        print get_group_path(name)
+    '''
+    delete group and return True if it exists
+    else return False
+    '''
+    group_path = get_group_path(name)
+    if group_path:
+        print group_path
         response = raw_input('are you sure you want to delete group "'+name+'"? (y/n) ')
         if response == 'y':
             print 'deleting "'+name+'".'
-            shutil.rmtree(get_group_path(name))
+            shutil.rmtree(group_path)
         return True
     else:
         print 'group "'+name+'" does not exist.'
@@ -136,43 +140,39 @@ def delete_group(name):
 
 
 # TODO unfinished
-def add_task(name, group='', due_date='', note=''):
+def add_task(name, group, due_date='', note=''):
     '''
-    Group is looked for capitalization-agnostically.
-    If group doesn't exist, ask whether to create one.
+    If group doesn't exist (capitalization-agnostic), ask whether to create it.
 
-    If task doesn't exist, add a new task in the group specified.
-    Capitalization will be left as-specified in the command.
+    If task doesn't exist (capitalization-agnostic), add a new task in the group specified.
+    Capitalization of created task will be left as-specified in the command.
 
-    Due dates must be formatted as mm-dd-yyyy.
-    If no due date is given, none is created.
+    Due dates MUST be formatted as mm-dd-yyyy.
+    If no due date is given, blank line is written to .task file instead.
     If due date is given, "all-day" event is given to Calendar on due date.
-    Due date is also stored in the corresponding .task file.
     '''
     tmp_applescript_file = 'tmp.scpt'
 
     group_path = get_group_path(group)
     # ask to create group if it doesn't exist
     if not group_path:
-        response = raw_input('group "' + group + '" does not exist, create it? (y/n)')
-        if response is 'y':
+        response = raw_input('group "' + group + '" does not exist, create it? (y/n) ')
+        if response == 'y':
             group_path = add_group(group)
-            if not group_path:  raise RuntimeError
+            if not group_path:
+                raise RuntimeError
         else:
             print 'Ok, cancelling.'
             return False
 
-
-    task_path = create_task_path(name, group)
-
-    today = todays_date()  # e.g. 10-26-2013
-
-    # TODO check against other capitalizations! (START HERE)
-
-    if os.path.exists(task_path):
+    # TODO test this specifically
+    tasks_lowered = [task.lower() for task in os.listdir(group_path)]
+    if name.lower() in tasks_lowered:
         print 'Task already exists.'
         return True       # it could return something more useful if there is such a thing
 
+    task_path = create_task_path(name, group)
+    today = todays_date()  # e.g. 10-26-2013
     with open(task_path, 'w+') as task_file:
         writer = csv.writer(task_file, delimiter='\n')
         writer.writerow([today, due_date])
@@ -192,12 +192,12 @@ def add_task(name, group='', due_date='', note=''):
     #os.remove(tmp_file)
 
 
-
 # TODO unfinished
-def editTask(group, name, newGroup=None, newName=None, dueDate=None, note=None):
+def editTask(name, group='', newGroup=None, newName=None, dueDate=None, note=None):
     '''
     change task's name, group, dueDate, and/or note
     '''
+    task_path = get_task_path(name, group)
     # edit task file
     ## edit reminder
     #script = applescripts.editReminder(
@@ -206,7 +206,8 @@ def editTask(group, name, newGroup=None, newName=None, dueDate=None, note=None):
     pass
 
 
-# TODO unfinished
+# TODO check-off reminder
+# other parts tested to work
 def finishTask(name, group=''):
     '''
     clears .task file (actually just move it into Tracker/Old_Tasks/), check-off Reminder
@@ -216,12 +217,15 @@ def finishTask(name, group=''):
             OR
     $ mcl finish NN HW3
     '''
-    group_dict = ls(group)
-    if name in group_dict:  # don't need to say group_dict.keys()
-        # TODO get task file
-        # TODO move task file
+    task_path = get_task_path(name, group)
+    if task_path:
+        new_task_path = OLD_TASKS_PATH + task_path[len(TASKS_PATH):]
+        print new_task_path
+        new_task_dir = new_task_path[:new_task_path.rfind('/')]
+        if not os.path.isdir(new_task_dir):
+            subprocess.call(['mkdir', new_task_dir])
+        subprocess.call(['mv',task_path, new_task_path])
         # TODO check-off reminder
-        pass
     else:
         print 'command cancelled: no such task.'
 
@@ -236,6 +240,10 @@ def deleteTask(name, group=''):
             OR
     $ mcl cancel NN HW3
     '''
+    # get task file
+    # move task file
+    # delete reminder
+    pass
 
 
 # TODO unfinished
@@ -331,11 +339,6 @@ def create_command_line_options():
     options.add_argument('finish', help='remove task, check off reminder')
     options.add_argument('delete', help='remove task, delete reminder')
     options.add_argument('did', help='post-hoc add time a task was done')
-
-
-# TODO unfinished
-def get_task(name='task1'):
-    pass
 
 
 def main(argv):
