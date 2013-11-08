@@ -83,7 +83,7 @@ def ll(group=''):
 # TODO pandas: SUM(minutes) GROUP_BY(title): page 33
 # .groupby('sex').births.sum()
 # TODO unfinished
-def printDay(date='*'):
+def print_day(date='*'):
     '''
     print tabulated vrsn of given day’s CSV w/ line#s (default to today)
     '''
@@ -193,7 +193,7 @@ def add_task(name, group, due_date='', note=''):
 
 
 # TODO unfinished
-def editTask(name, group='', newGroup=None, newName=None, dueDate=None, note=None):
+def edit_task(name, group='', newGroup=None, newName=None, dueDate=None, note=None):
     '''
     change task's name, group, dueDate, and/or note
     '''
@@ -208,7 +208,7 @@ def editTask(name, group='', newGroup=None, newName=None, dueDate=None, note=Non
 
 # TODO check-off reminder
 # other parts tested to work
-def finishTask(name, group=''):
+def finish_task(name, group=''):
     '''
     clears .task file (actually just move it into Tracker/Old_Tasks/), check-off Reminder
     $ mcl finish 1
@@ -220,18 +220,23 @@ def finishTask(name, group=''):
     task_path = get_task_path(name, group)
     if task_path:
         new_task_path = OLD_TASKS_PATH + task_path[len(TASKS_PATH):]
-        print new_task_path
         new_task_dir = new_task_path[:new_task_path.rfind('/')]
         if not os.path.isdir(new_task_dir):
             subprocess.call(['mkdir', new_task_dir])
         subprocess.call(['mv',task_path, new_task_path])
         # TODO check-off reminder
+        return True
     else:
         print 'command cancelled: no such task.'
+        return False
 
 
-# TODO unfinished
-def deleteTask(name, group=''):
+# TODO delete reminder
+# TODO get rid of code duplication from finishTask
+# this could be done by creating a decorator that does all the stuff I've implemented here
+#     or it could be done by passing the code to manipulate the reminder as a function into another function
+#         that calls the function passed in after executing the code given here
+def delete_task(name, group=''):
     '''
     clears .task file (actually just move it somewhere recoverably), delete Reminder
     $ mcl cancel 1
@@ -240,9 +245,18 @@ def deleteTask(name, group=''):
             OR
     $ mcl cancel NN HW3
     '''
-    # get task file
-    # move task file
-    # delete reminder
+    task_path = get_task_path(name, group)
+    if task_path:
+        new_task_path = OLD_TASKS_PATH + task_path[len(TASKS_PATH):]
+        new_task_dir = new_task_path[:new_task_path.rfind('/')]
+        if not os.path.isdir(new_task_dir):
+            subprocess.call(['mkdir', new_task_dir])
+        subprocess.call(['mv',task_path, new_task_path])
+        # TODO delete reminder
+        return True
+    else:
+        print 'command cancelled: no such task.'
+        return False
     pass
 
 
@@ -258,7 +272,7 @@ def begin(number=None, group=None, name=None):
         this should still work (with any capitalization)
     '''
     ## open today's CSV
-    csv = get_csv()
+    csv = get_csv(TODAY)
     # print info
     pass
 
@@ -270,7 +284,7 @@ def end():
     also print the info out for the user to see
     '''
     # open today's CSV
-    csv = get_csv()
+    csv = get_csv(TODAY)
     # write info
     # append to .task file
     # create calendar event
@@ -283,7 +297,7 @@ def move(minutes):
     '''
     change the start time of the currently running task by {minutes}
     '''
-    csv = get_csv()
+    csv = get_csv(TODAY)
     # edit the last line of the CSV
     pass
 
@@ -293,7 +307,7 @@ def show():
     '''
     print time for current task (block, day, total)
     '''
-    csv = get_csv()
+    csv = get_csv(TODAY)
     # parse last line of today's CSV
     pass
 

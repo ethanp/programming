@@ -48,7 +48,7 @@ def test_add_and_delete_group():
 
 def test_finish_task():
     add_sample_task()
-    finishTask(SAMPLE_TASK)
+    finish_task(SAMPLE_TASK)
 
 
 def test_ls():

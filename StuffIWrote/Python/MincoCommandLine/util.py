@@ -1,5 +1,6 @@
 import datetime
 import os
+import re
 from mcl_cli import *
 
 # set home dir
@@ -8,9 +9,11 @@ TASKS_PATH = HOME_PATH+'/Tasks'
 CSVs_PATH = HOME_PATH+'/Days'
 OLD_TASKS_PATH = HOME_PATH+'/Old_Tasks'
 CSV_FORMAT = ['group', 'task', 'location', 'start time', 'end time', 'block time']
+TODAY = ''
 
-
-# TODO make this REGEX work (snag task-name from task-file
+# TODO make this REGEX work (snag task-name from task-file)
+a = re.compile(r'regex goes here')
+a.match('a string goes here, I believe')
 #TASK_NAME_REGEX = '?<TASK_NAME>(.*)\.task'.compile()
 
 
@@ -61,7 +64,7 @@ def get_task_path(name, group=''):
         group_paths = os.listdir(TASKS_PATH)
         groups = [g for g in group_paths if os.path.isdir(TASKS_PATH+'/'+g)]
     else:
-        groups = [group]
+        groups = list(group)
     group_paths = [get_group_path(g) for g in groups]
     found_list = []
     for group_path in group_paths:
