@@ -1,7 +1,6 @@
 # TODO
 # Cron jobs for
 #   brew update && brew upgrade
-#   sudo port -d selfupdate     # update macports (another package installer/manager)
 
 # Aliases: if you use "quotes", then the substitution is made here in the _profile
 #           but if you use 'aposts', then the substitution is done at call-time
@@ -116,7 +115,6 @@ PATH="/usr/local/lib/ruby:${PATH}"
 PATH=$PATH:$HOME/.rvm/bin                         # allows for "rvm" command
 PATH="~/code/fuzzycd/:$PATH"
 PATH="/usr/local/bin:${PATH}"
-PATH=/opt/local/bin:/opt/local/sbin:$PATH         # for MacPorts package installer
 export PATH
 
 # These are the places the "cd" command will LOOK, in this order too

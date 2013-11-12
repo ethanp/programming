@@ -1,14 +1,23 @@
 ''' -- EXPERIMENTS FOR HOW TO MAKE THE GRAMMATICALITY CLASSIFIER -- '''
 
+''' -- GLOBALS --'''
+MAX_LEN = 5  # maximum length of an input sentence
+
 ''' -- DATASET TYPE -- '''
 # http://pybrain.org/docs/tutorial/datasets.html
 # SequenceClassificationDataSet combines
 #       ClassificationDataSet
 #               with
 #       SequentialDataSet
+#
+# http://pybrain.org/docs/api/datasets/classificationdataset.html
 from pybrain.datasets.classification import SequenceClassificationDataSet
 
-inp = SequenceClassificationDataSet(None, None)  # TODO figure this out
+# inp: dimensionality of the input (I think this is the sentence length)
+# number of targets (output dimensionality, I think)
+# nb_classes: number of possible classifications (i.e. num of parts of speech)
+        # TODO figure out what the number should be
+inputData = SequenceClassificationDataSet(inp=MAX_LEN, nb_classes=5)
 
 ''' -- BPTT TRAINING ALGORITHM -- '''
 # http://pybrain.org/docs/api/supervised/trainers.html
@@ -22,7 +31,6 @@ from pybrain.structure import RecurrentNetwork
 n = RecurrentNetwork()
 
 from pybrain.structure import LinearLayer, SigmoidLayer
-MAX_LEN = 5  # maximum length of an input sentence
 n.addInputModule(LinearLayer(MAX_LEN, name='input sentence'))
 n.addModule(SigmoidLayer(3, name='simple recursive hidden layer'))
 n.addOutputModule(LinearLayer(1, name='bool isGrammatical layer'))
@@ -49,6 +57,7 @@ n.addRecurrentConnection(
 
 n.sortModules()  # does some initialization
 
+print n.activate((1,2,1,2,1))
 
 # NOTE: n.reset() will clear the history of the network
 
