@@ -55,9 +55,9 @@ n.addRecurrentConnection(
         n['simple recursive hidden layer'],
         name='recursive hidden connection'))
 
-n.sortModules()  # does some initialization
+n.sortModules()  # initialize the network
 
-print n.activate((1,2,1,2,1))
+print n.activate((1,2,1,2,1))  # present the network with a sample input
 
 # NOTE: n.reset() will clear the history of the network
 
