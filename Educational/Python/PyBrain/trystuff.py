@@ -1,22 +1,58 @@
 ''' -- EXPERIMENTS FOR HOW TO MAKE THE GRAMMATICALITY CLASSIFIER -- '''
-# started 10/28/13
 
 ''' -- DATASET TYPE -- '''
 # http://pybrain.org/docs/tutorial/datasets.html
 # SequenceClassificationDataSet combines
 #       ClassificationDataSet
 #               with
-#       SequencialDataSet
+#       SequentialDataSet
 from pybrain.datasets.classification import SequenceClassificationDataSet
 
-inp = SequenceClassificationDataSet()
+inp = SequenceClassificationDataSet(None, None)  # TODO figure this out
 
 ''' -- BPTT TRAINING ALGORITHM -- '''
 # http://pybrain.org/docs/api/supervised/trainers.html
-# backprop's "through time" on a sequencial dataset
+# backprop's "through time" on a sequential dataset
 from pybrain.supervised.trainers import BackpropTrainer
 
 
+''' -- CONSTRUCT THE NETWORK (SRN) -- '''
+from pybrain.structure import RecurrentNetwork
+        # TODO checkout the BidirectionalNetwork
+n = RecurrentNetwork()
+
+from pybrain.structure import LinearLayer, SigmoidLayer
+MAX_LEN = 5  # maximum length of an input sentence
+n.addInputModule(LinearLayer(MAX_LEN, name='input sentence'))
+n.addModule(SigmoidLayer(3, name='simple recursive hidden layer'))
+n.addOutputModule(LinearLayer(1, name='bool isGrammatical layer'))
+
+from pybrain.structure import FullConnection
+        # TODO checkout the SharedFullConnection, LSTMLayer, etc.
+n.addConnection(
+    FullConnection(
+        n['input sentence'],
+        n['simple recursive hidden layer'],
+        name='in to hidden'))
+
+n.addConnection(
+    FullConnection(
+        n['simple recursive hidden layer'],
+        n['bool isGrammatical layer'],
+        name='hidden to out'))
+
+n.addRecurrentConnection(
+    FullConnection(
+        n['simple recursive hidden layer'],
+        n['simple recursive hidden layer'],
+        name='recursive hidden connection'))
+
+n.sortModules()  # does some initialization
+
+
+# NOTE: n.reset() will clear the history of the network
+
+###########################################################################################
 ''' -- SAVING AND RELOADING TRAINED PYBRAINS -- '''
 # http://stackoverflow.com/questions/6006187/how-to-save-and-recover-pybrain-traning/6009051
 # "PyBrain's Neural Networks can be saved and loaded using either
