@@ -36,6 +36,8 @@ def create_dataset(MIN_LEN, MAX_LEN):
     for sentence_vector in vectorized_sentences:
         if random() < .25:  # percent distribution between sets needn't be perfect, right?
             test_data.addSample(sentence_vector, [0])
+            #test_data.newSequence() # TODO is this what I'm supposed to do??
+            #test_data.appendLinked() # TODO is this what I'm supposed to do??
         else:
             train_data.addSample(sentence_vector, [0])
 
@@ -101,8 +103,13 @@ def train(network_module, training_data, testing_data, n=20):
             "  test error: %5.2f%%" % test_result
 
 
-train_data, test_data = create_dataset(MIN_LEN, MAX_LEN)
 
-network = build_it()
+if __name__ == "__main__":
 
-train(network_module=network, training_data=train_data, testing_data=test_data, n=10)
+    train_data, test_data = create_dataset(MIN_LEN, MAX_LEN)
+
+    network = build_it()
+
+    train(network_module=network, training_data=train_data, testing_data=test_data, n=10)
+
+    # TODO NEXT STEP: create real testing data (with bad examples)!
