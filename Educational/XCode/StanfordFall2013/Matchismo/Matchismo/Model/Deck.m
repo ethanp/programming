@@ -14,6 +14,7 @@
 
 @implementation Deck
 
+// `minus` means it's an INSTANCE variable
 - (NSMutableArray *)cards
 {
     if (!_cards) _cards = [[NSMutableArray alloc] init];

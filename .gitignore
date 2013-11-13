@@ -38,3 +38,4 @@ database.sql
 StuffIWrote/Python/MincoCommandLine/.idea
 *.sublime-workspace
 *.sublime-project
+*.xcbkptlist
