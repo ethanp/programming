@@ -1,9 +1,17 @@
 ''' -- EXPERIMENTS FOR HOW TO MAKE THE GRAMMATICALITY CLASSIFIER -- '''
 
 ''' -- GLOBALS --'''
-MAX_LEN = 5  # maximum length of an input sentence
+# length restrictions on input sentences
+MAX_LEN = 15
+MIN_LEN = 4
 
-''' -- DATASET TYPE -- '''
+# number of different part of speech categorizations
+NUM_REG_POS = 12
+NUM_BROWN_POS = 470
+
+HIDDEN_LAYER_SIZE = 5
+
+''' -- CREATE DATASET -- '''
 # http://pybrain.org/docs/tutorial/datasets.html
 # SequenceClassificationDataSet combines
 #       ClassificationDataSet
@@ -14,15 +22,32 @@ MAX_LEN = 5  # maximum length of an input sentence
 from pybrain.datasets.classification import SequenceClassificationDataSet
 
 # inp: dimensionality of the input (I think this is the sentence length)
-# number of targets (output dimensionality, I think)
-# nb_classes: number of possible classifications (i.e. num of parts of speech)
-        # TODO figure out what the number should be
-inputData = SequenceClassificationDataSet(inp=MAX_LEN, nb_classes=5)
+# number of targets (output dimensionality, I think? Maybe not...I'm not sure!)
+# nb_classes: number of possible classifications (i.e. grammatical or not)
+all_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1)
 
-''' -- BPTT TRAINING ALGORITHM -- '''
-# http://pybrain.org/docs/api/supervised/trainers.html
-# backprop's "through time" on a sequential dataset
-from pybrain.supervised.trainers import BackpropTrainer
+# use nltk's BROWN dataset
+print 'vectorizing sentences'
+from get_brown_pos_sents import vectorize_sents, get_brown_tagged_sents
+vectorized_sentences = vectorize_sents(get_brown_tagged_sents(MAX_LEN, MIN_LEN),MAX_LEN)
+
+print 'creating dataset'
+for sentence_vector in vectorized_sentences:
+    all_data.addSample(sentence_vector, [0])
+
+# 25% of data will be held out for testing (though TODO there are no neg. e.g's...)
+test_data, train_data = all_data.splitWithProportion(0.25)
+
+# encode classes with one output neuron per class
+# duplicates the original target and stores them in an integer field named 'class'
+# http://pybrain.org/docs/tutorial/fnn.html
+test_data._convertToOneOfMany()
+train_data._convertToOneOfMany()
+
+print "num train patterns: ", len(train_data)
+print "input and output dimensions: ", train_data.indim, train_data.outdim
+print "First sample (input, target, class):"
+print train_data['input'][0], train_data['target'][0], train_data['class'][0]
 
 
 ''' -- CONSTRUCT THE NETWORK (SRN) -- '''
@@ -31,9 +56,22 @@ from pybrain.structure import RecurrentNetwork
 n = RecurrentNetwork()
 
 from pybrain.structure import LinearLayer, SigmoidLayer
-n.addInputModule(LinearLayer(MAX_LEN, name='input sentence'))
-n.addModule(SigmoidLayer(3, name='simple recursive hidden layer'))
-n.addOutputModule(LinearLayer(1, name='bool isGrammatical layer'))
+
+# TODO there's probably a `buildNetwork()` shortcut for all this stuff
+n.addInputModule(
+    LinearLayer(
+        train_data.indim,
+        name='input sentence'))
+
+n.addModule(
+    SigmoidLayer(
+        HIDDEN_LAYER_SIZE,
+        name='simple recursive hidden layer'))
+
+n.addOutputModule(
+    LinearLayer(
+        train_data.outdim,
+        name='bool isGrammatical layer'))
 
 from pybrain.structure import FullConnection
         # TODO checkout the SharedFullConnection, LSTMLayer, etc.
@@ -57,7 +95,21 @@ n.addRecurrentConnection(
 
 n.sortModules()  # initialize the network
 
-print n.activate((1,2,1,2,1))  # present the network with a sample input
+
+''' -- BPTT TRAINING ALGORITHM -- '''
+# http://pybrain.org/docs/api/supervised/trainers.html
+# backprop's "through time" on a sequential dataset
+from pybrain.supervised.trainers import BackpropTrainer
+trainer = BackpropTrainer(
+    module=n,
+    dataset=train_data,
+    momentum=0.1,
+    weightdecay=0.1)
+
+for i in range(20):
+    trainer.trainEpochs(epochs=1)
+
+# TODO print n.activate((1,2,1,2,1))  # present the network with a sample input
 
 # NOTE: n.reset() will clear the history of the network
 
