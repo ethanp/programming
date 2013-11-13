@@ -1,4 +1,4 @@
-''' -- EXPERIMENTS FOR HOW TO MAKE THE GRAMMATICALITY CLASSIFIER -- '''
+''' -- FIRST TRIAL OF GRAMMATICALITY CLASSIFIER (SRN w/ BPTT) -- '''
 from random import sample, random
 from pybrain.utilities import percentError
 
@@ -13,141 +13,96 @@ NUM_BROWN_POS = 470
 
 HIDDEN_LAYER_SIZE = 5
 
-''' -- CREATE DATASET -- '''
-# http://pybrain.org/docs/tutorial/datasets.html
-# SequenceClassificationDataSet combines
-#       ClassificationDataSet
-#               with
-#       SequentialDataSet
-#
-# http://pybrain.org/docs/api/datasets/classificationdataset.html
-from pybrain.datasets.classification import SequenceClassificationDataSet
 
-# inp: dimensionality of the input (I think this is the sentence length)
-# number of targets (output dimensionality, I think? Maybe not...I'm not sure!)
-# nb_classes: number of possible classifications (i.e. grammatical or not)
-all_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
+''' -- THE METHODS -- '''
+def create_dataset(MIN_LEN, MAX_LEN):
+    # http://pybrain.org/docs/tutorial/datasets.html
+    # http://pybrain.org/docs/api/datasets/classificationdataset.html
+    from pybrain.datasets.classification import SequenceClassificationDataSet
 
-train_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
-test_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
+    # inp: dimensionality of the input (I think this is the sentence length)
+    # number of targets (output dimensionality, I think? Maybe not...I'm not sure!)
+    # nb_classes: number of possible classifications (i.e. grammatical or not)
+    train_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
+    test_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
 
-# use nltk's BROWN dataset
-print 'vectorizing sentences'
-from get_brown_pos_sents import vectorize_sents, get_brown_tagged_sents
-vectorized_sentences = vectorize_sents(get_brown_tagged_sents(MAX_LEN, MIN_LEN),MAX_LEN)
+    # use nltk's BROWN dataset
+    print 'vectorizing sentences'
+    from get_brown_pos_sents import vectorize_sents, get_brown_tagged_sents
+    vectorized_sentences = vectorize_sents(get_brown_tagged_sents(MAX_LEN, MIN_LEN),MAX_LEN)
+    print 'num sentences', len(vectorized_sentences)
 
-print 'creating training and test sets'
-for sentence_vector in vectorized_sentences:
-    if random() < .25:  # percent distribution between sets needn't be perfect, right?
-        test_data.addSample(sentence_vector, [0])
-    else:
-        train_data.addSample(sentence_vector, [0])
+    print 'creating training and test sets'
+    for sentence_vector in vectorized_sentences:
+        if random() < .25:  # percent distribution between sets needn't be perfect, right?
+            test_data.addSample(sentence_vector, [0])
+        else:
+            train_data.addSample(sentence_vector, [0])
 
-# add a negative example for good measure
-train_data.addSample([7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0], [1])
-test_data.addSample([6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0], [1])
+    # add a negative example for good measure
+    train_data.addSample([7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0], [1])
+    test_data.addSample([6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0], [1])
 
-print 'num sentences', len(vectorized_sentences)
-l = all_data.getLength()
-print 'num seqs', l
-leftIndices = sample(range(l), int(l * 0.5))
-print leftIndices[:3]
+    # encode classes with one output neuron per class
+    # duplicates the original target and stores them in an integer field named 'class'
+    # http://pybrain.org/docs/tutorial/fnn.html
+    test_data._convertToOneOfMany()
+    train_data._convertToOneOfMany()
+
+    print_data_data(train_data, 'training')
+    print_data_data(test_data, 'testing')
+
+    return train_data, test_data
 
 
-# encode classes with one output neuron per class
-# duplicates the original target and stores them in an integer field named 'class'
-# http://pybrain.org/docs/tutorial/fnn.html
-test_data._convertToOneOfMany()
-train_data._convertToOneOfMany()
+def print_data_data(data, name):
+    print "num", name, "patterns: ", len(data)
+    print "input and output dimensions: ", data.indim, data.outdim
+    print "First sample (input, target, class):"
+    print data['input'][0], data['target'][0], data['class'][0]
 
-print "num train patterns: ", len(train_data)
-print "input and output dimensions: ", train_data.indim, train_data.outdim
-print "First sample (input, target, class):"
-print train_data['input'][0], train_data['target'][0], train_data['class'][0]
 
-print "num test patterns: ", len(test_data)
-print "input and output dimensions: ", test_data.indim, test_data.outdim
-print "First sample (input, target, class):"
-print test_data['input'][0], test_data['target'][0], test_data['class'][0]
+def build_it():
+    ''' -- CONSTRUCT THE NETWORK (SRN) -- '''
+    from pybrain.structure import SigmoidLayer
+    # TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 
-''' -- CONSTRUCT THE NETWORK (SRN) -- '''
-from pybrain.structure import SigmoidLayer
-# TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
+    from pybrain.tools.shortcuts import buildNetwork
+    network = buildNetwork(MAX_LEN, HIDDEN_LAYER_SIZE, 2,
+                     hiddenclass=SigmoidLayer, outclass=SigmoidLayer,
+                     recurrent=True)
 
-from pybrain.tools.shortcuts import buildNetwork
-n = buildNetwork(MAX_LEN, HIDDEN_LAYER_SIZE, 2,
-                 hiddenclass=SigmoidLayer, outclass=SigmoidLayer,
-                 recurrent=True)
+    network.randomize()
+    return network
 
-n.randomize()
 
-''' -- BPTT TRAINING ALGORITHM -- '''
 # http://pybrain.org/docs/api/supervised/trainers.html
 # backprop's "through time" on a sequential dataset
-from pybrain.supervised.trainers import BackpropTrainer
-trainer = BackpropTrainer(module=n, dataset=train_data)
+def train(network_module, training_data, testing_data, n=20):
+    ''' -- BPTT TRAINING ALGORITHM -- '''
+    from pybrain.supervised.trainers import BackpropTrainer
+    trainer = BackpropTrainer(module=network_module, dataset=training_data)
 
-for i in range(20):
-    trainer.trainEpochs(epochs=1)
-    print 'epoch', i, 'finished'
+    for i in range(n):
+        trainer.trainEpochs(epochs=1)
+        print 'epoch', i, 'finished'
 
-    # http://pybrain.org/docs/tutorial/fnn.html
-    train_result = percentError(
-        trainer.testOnClassData(),
-        train_data['class'])
+        # http://pybrain.org/docs/tutorial/fnn.html
+        train_result = percentError(
+            trainer.testOnClassData(),
+            train_data['class'])
 
-    test_result = percentError(
-        trainer.testOnClassData(dataset=test_data),
-        test_data['class'])
+        test_result = percentError(
+            trainer.testOnClassData(dataset=testing_data),
+            test_data['class'])
 
-    print "epoch: %4d" % trainer.totalepochs, \
-        "  train error: %5.2f%%" % train_result, \
-        "  test error: %5.2f%%" % test_result
+        print "epoch: %4d" % trainer.totalepochs, \
+            "  train error: %5.2f%%" % train_result, \
+            "  test error: %5.2f%%" % test_result
 
-# NOTE: n.reset() will clear the history of the network
 
-###########################################################################################
-''' -- SAVING AND RELOADING TRAINED PYBRAINS -- '''
-# http://stackoverflow.com/questions/6006187/how-to-save-and-recover-pybrain-traning/6009051
-# "PyBrain's Neural Networks can be saved and loaded using either
-#     python's built in pickle/cPickle module,
-#            or
-#     by using PyBrain's XML NetworkWriter."
-'''
-# Using pickle
+train_data, test_data = create_dataset(MIN_LEN, MAX_LEN)
 
-from pybrain.tools.shortcuts import buildNetwork
-import pickle
+network = build_it()
 
-net = buildNetwork(2,4,1)
-
-fileObject = open('filename', 'w')
-
-pickle.dump(net, fileObject)
-
-fileObject.close()
-
-fileObject = open('filename','r')
-net = pickle.load(fileObject)
-
-Note cPickle is implemented in C, and therefore should be much faster than pickle.
-Usage should mostly be the same as pickle, so just import and use cPickle instead.
-
-# Using NetworkWriter
-
-from pybrain.tools.shortcuts import buildNetwork
-from pybrain.tools.xml.networkwriter import NetworkWriter
-from pybrain.tools.xml.networkreader import NetworkReader
-
-net = buildNetwork(2,4,1)
-
-NetworkWriter.writeToFile(net, 'filename.xml')
-net = NetworkReader.readFrom('filename.xml')
-'''
-
-''' -- PLAIN OF ACTION --
-1. get a dataset
-2. train SRN on length 3 sentences
-3. make a training set
-4. see how it performs on it
-'''
+train(network_module=network, training_data=train_data, testing_data=test_data, n=10)
