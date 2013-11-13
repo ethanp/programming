@@ -71,60 +71,21 @@ print "First sample (input, target, class):"
 print test_data['input'][0], test_data['target'][0], test_data['class'][0]
 
 ''' -- CONSTRUCT THE NETWORK (SRN) -- '''
-from pybrain.structure import RecurrentNetwork
-        # TODO checkout the BidirectionalNetwork
-n = RecurrentNetwork()
+from pybrain.structure import SigmoidLayer
+# TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 
-from pybrain.structure import LinearLayer, SigmoidLayer
+from pybrain.tools.shortcuts import buildNetwork
+n = buildNetwork(MAX_LEN, HIDDEN_LAYER_SIZE, 2,
+                 hiddenclass=SigmoidLayer, outclass=SigmoidLayer,
+                 recurrent=True)
 
-# TODO there's probably a `buildNetwork()` shortcut for all this stuff
-n.addInputModule(
-    LinearLayer(
-        train_data.indim,
-        name='input sentence'))
-
-n.addModule(
-    SigmoidLayer(
-        HIDDEN_LAYER_SIZE,
-        name='simple recursive hidden layer'))
-
-n.addOutputModule(
-    LinearLayer(
-        train_data.outdim,
-        name='bool isGrammatical layer'))
-
-from pybrain.structure import FullConnection
-        # TODO checkout the SharedFullConnection, LSTMLayer, etc.
-n.addConnection(
-    FullConnection(
-        n['input sentence'],
-        n['simple recursive hidden layer'],
-        name='in to hidden'))
-
-n.addConnection(
-    FullConnection(
-        n['simple recursive hidden layer'],
-        n['bool isGrammatical layer'],
-        name='hidden to out'))
-
-n.addRecurrentConnection(
-    FullConnection(
-        n['simple recursive hidden layer'],
-        n['simple recursive hidden layer'],
-        name='recursive hidden connection'))
-
-n.sortModules()  # initialize the network
-
+n.randomize()
 
 ''' -- BPTT TRAINING ALGORITHM -- '''
 # http://pybrain.org/docs/api/supervised/trainers.html
 # backprop's "through time" on a sequential dataset
 from pybrain.supervised.trainers import BackpropTrainer
-trainer = BackpropTrainer(
-    module=n,
-    dataset=train_data,
-    momentum=0.1,
-    weightdecay=0.1)
+trainer = BackpropTrainer(module=n, dataset=train_data)
 
 for i in range(20):
     trainer.trainEpochs(epochs=1)
@@ -142,6 +103,7 @@ for i in range(20):
     print "epoch: %4d" % trainer.totalepochs, \
         "  train error: %5.2f%%" % train_result, \
         "  test error: %5.2f%%" % test_result
+
 # NOTE: n.reset() will clear the history of the network
 
 ###########################################################################################
