@@ -15,7 +15,7 @@ def vectorize_sents(ss, MAX_LEN=15):
     '''
     takes sentences with BROWN pos tags
     returns vectors of sentence's NORMAL pos tags
-    output vectors must be of the required length for the ANN
+    output vectors MUST be of the required length for the ANN (padded with -1's)
     '''
     # TODO I'm sure this would be much faster with numpy...
     sentence_vectors = []

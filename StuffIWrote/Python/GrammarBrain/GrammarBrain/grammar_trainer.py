@@ -1,4 +1,6 @@
 ''' -- EXPERIMENTS FOR HOW TO MAKE THE GRAMMATICALITY CLASSIFIER -- '''
+from random import sample, random
+from pybrain.utilities import percentError
 
 ''' -- GLOBALS --'''
 # length restrictions on input sentences
@@ -24,19 +26,33 @@ from pybrain.datasets.classification import SequenceClassificationDataSet
 # inp: dimensionality of the input (I think this is the sentence length)
 # number of targets (output dimensionality, I think? Maybe not...I'm not sure!)
 # nb_classes: number of possible classifications (i.e. grammatical or not)
-all_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1)
+all_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
+
+train_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
+test_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
 
 # use nltk's BROWN dataset
 print 'vectorizing sentences'
 from get_brown_pos_sents import vectorize_sents, get_brown_tagged_sents
 vectorized_sentences = vectorize_sents(get_brown_tagged_sents(MAX_LEN, MIN_LEN),MAX_LEN)
 
-print 'creating dataset'
+print 'creating training and test sets'
 for sentence_vector in vectorized_sentences:
-    all_data.addSample(sentence_vector, [0])
+    if random() < .25:  # percent distribution between sets needn't be perfect, right?
+        test_data.addSample(sentence_vector, [0])
+    else:
+        train_data.addSample(sentence_vector, [0])
 
-# 25% of data will be held out for testing (though TODO there are no neg. e.g's...)
-test_data, train_data = all_data.splitWithProportion(0.25)
+# add a negative example for good measure
+train_data.addSample([7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0], [1])
+test_data.addSample([6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0], [1])
+
+print 'num sentences', len(vectorized_sentences)
+l = all_data.getLength()
+print 'num seqs', l
+leftIndices = sample(range(l), int(l * 0.5))
+print leftIndices[:3]
+
 
 # encode classes with one output neuron per class
 # duplicates the original target and stores them in an integer field named 'class'
@@ -49,6 +65,10 @@ print "input and output dimensions: ", train_data.indim, train_data.outdim
 print "First sample (input, target, class):"
 print train_data['input'][0], train_data['target'][0], train_data['class'][0]
 
+print "num test patterns: ", len(test_data)
+print "input and output dimensions: ", test_data.indim, test_data.outdim
+print "First sample (input, target, class):"
+print test_data['input'][0], test_data['target'][0], test_data['class'][0]
 
 ''' -- CONSTRUCT THE NETWORK (SRN) -- '''
 from pybrain.structure import RecurrentNetwork
@@ -108,9 +128,20 @@ trainer = BackpropTrainer(
 
 for i in range(20):
     trainer.trainEpochs(epochs=1)
+    print 'epoch', i, 'finished'
 
-# TODO print n.activate((1,2,1,2,1))  # present the network with a sample input
+    # http://pybrain.org/docs/tutorial/fnn.html
+    train_result = percentError(
+        trainer.testOnClassData(),
+        train_data['class'])
 
+    test_result = percentError(
+        trainer.testOnClassData(dataset=test_data),
+        test_data['class'])
+
+    print "epoch: %4d" % trainer.totalepochs, \
+        "  train error: %5.2f%%" % train_result, \
+        "  test error: %5.2f%%" % test_result
 # NOTE: n.reset() will clear the history of the network
 
 ###########################################################################################
