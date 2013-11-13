@@ -1,0 +1,36 @@
+- makes it an instance method
++ makes it a class method
+± in the ().h makes it public
+
+lazy instantiation can't use the ternary operator
+
+if we `#import "subclass.h"`, we get everything for the superclass
+
+if you implement both the setter AND getter
+    you have to `@synthesise var = _var;`
+    in `@implementation TheClass`
+    
+to make private @properties
+    in the Class.m file, below #import, above @implementation
+    put
+        @interface ClassName()
+        @property (nonatomic, etc.) Classname varname;
+        ...
+        @end
+
+property non-pointer variables are 
+    readwrite (by default)
+    readonly (getter, no setter)
+    
+property pointer variables are
+    strong (count this reference too)
+    weak (ignore this reference when counting)
+    
+NSUInteger 
+    is not an Object that requires a pointer
+    is a typedef uint(32 for iPhone<5, 64 for iPhone≥5)
+    
+there are no type-parameters for collections
+
+nil is "null-instance"
+Nil is "Null-Class"
