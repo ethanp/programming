@@ -9,6 +9,9 @@ def get_brown_tagged_sents(MAX=8, MIN=3):
     '''
     return [s[:-1] for s in brown.tagged_sents() if MIN <= len(s) < MAX and s[-1][0] == '.']
 
+def get_nice_sentences(MAX=8, MIN=3):
+    return filter_punctuation(filter_numbers(get_brown_tagged_sents(MAX, MIN)))
+
 def count_categories_used(ss):  return len(set(w[1] for s in ss for w in s))
 
 def normalize_POSes(ss):
@@ -40,7 +43,7 @@ def filter_numbers(ss):
         return True
     return filter(remove_numbers, ss)
 
-def vectorize_sents(ss):
+def construct_sentence_matrices(ss):
     '''
     takes sentences with BROWN pos tags
     returns matrices of sentence's NORMAL pos tags
@@ -64,8 +67,7 @@ def print_n_sentences(ss, MAX=8, n=15):
 
 # for trying it out
 if __name__ == "__main__":
-    sentences = get_brown_tagged_sents()
-    filtered_sentences = filter_numbers(filter_punctuation(sentences))
+    sentences = get_nice_sentences()
     #print normalize_POSes(get_brown_tagged_sents())[:2]
-    print vectorize_sents(filtered_sentences)[:2]
-    print_n_sentences(filtered_sentences)
+    print construct_sentence_matrices(sentences)[:2]
+    print_n_sentences(sentences)

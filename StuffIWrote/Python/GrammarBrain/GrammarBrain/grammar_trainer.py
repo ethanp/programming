@@ -1,15 +1,17 @@
 ''' -- FIRST TRIAL OF GRAMMATICALITY CLASSIFIER (SRN w/ BPTT) -- '''
 from random import sample, random
 from pybrain.utilities import percentError
+from get_brown_pos_sents import get_nice_sentences, construct_sentence_matrices, print_n_sentences
+import brown_pos_map as bpm
 
 ''' -- GLOBALS --'''
 # length restrictions on input sentences
-MAX_LEN = 15
+MAX_LEN = 8
 MIN_LEN = 4
 
 # number of different part of speech categorizations
-NUM_REG_POS = 12
-NUM_BROWN_POS = 470
+NUM_REG_POS = len(bpm.pos_vector_map.keys())
+NUM_BROWN_POS = len(bpm.pos_map.keys())
 
 HIDDEN_LAYER_SIZE = 5
 
@@ -23,26 +25,34 @@ def create_dataset(MIN_LEN, MAX_LEN):
     # inp: dimensionality of the input (I think this is the sentence length)
     # number of targets (output dimensionality, I think? Maybe not...I'm not sure!)
     # nb_classes: number of possible classifications (i.e. grammatical or not)
-    train_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
-    test_data = SequenceClassificationDataSet(inp=MAX_LEN, target=1, nb_classes=2)
+    train_data = SequenceClassificationDataSet(inp=NUM_REG_POS, target=1, nb_classes=2)
+    test_data = SequenceClassificationDataSet(inp=NUM_REG_POS, target=1, nb_classes=2)
 
-    # use nltk's BROWN dataset
-    print 'vectorizing sentences'
-    from get_brown_pos_sents import vectorize_sents, get_brown_tagged_sents
-    vectorized_sentences = vectorize_sents(get_brown_tagged_sents(MAX_LEN, MIN_LEN),MAX_LEN)
-    print 'num sentences', len(vectorized_sentences)
+    # brown dataset, no mid-sentence punctuation, no numbers, ends in period, within length range
+    sentences = get_nice_sentences(MAX_LEN, MIN_LEN)
+    print '\ntotal number of sentences:', len(sentences)
+    print '\nFirst five sentences between length', MIN_LEN-1, 'and', MAX_LEN
+    print '------------------------------------------------------------'
+    print_n_sentences(sentences, n=5)
+    print '------------------------------------------------------------'
+    print '\nvectorizing sentences...'
+    sentence_matrices = construct_sentence_matrices(sentences)
 
-    print 'creating training and test sets'
-    for sentence_vector in vectorized_sentences:
+    print 'creating training and test sets...'
+
+    for sentence_matrix in sentence_matrices:
         if random() < .25:  # percent distribution between sets needn't be perfect, right?
-            test_data.addSample(sentence_vector, [0])
-            #test_data.newSequence() # TODO is this what I'm supposed to do??
-            #test_data.appendLinked() # TODO is this what I'm supposed to do??
+            test_data.newSequence()
+            for word_vector in sentence_matrix:
+                test_data.appendLinked(word_vector, [0])
         else:
-            train_data.addSample(sentence_vector, [0])
+            train_data.newSequence()
+            for word_vector in sentence_matrix:
+                train_data.appendLinked(word_vector, [0])
 
+    # TODO add shuffled sentence-matrices as the negative examples
     # add a negative example for good measure
-    train_data.addSample([7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0], [1])
+    train_data.addSample([7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0], [1])  # class [1]: ungrammatical
     test_data.addSample([6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0], [1])
 
     # encode classes with one output neuron per class
@@ -71,8 +81,7 @@ def build_it():
 
     from pybrain.tools.shortcuts import buildNetwork
     network = buildNetwork(MAX_LEN, HIDDEN_LAYER_SIZE, 2,
-                     hiddenclass=SigmoidLayer, outclass=SigmoidLayer,
-                     recurrent=True)
+                     hiddenclass=SigmoidLayer, outclass=SigmoidLayer, recurrent=True)
 
     network.randomize()
     return network
