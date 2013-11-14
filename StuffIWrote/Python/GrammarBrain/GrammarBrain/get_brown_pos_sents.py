@@ -1,26 +1,33 @@
 import brown_pos_map as bpm
 from nltk.corpus import brown
 
-def get_brown_tagged_sents(MAX=15, MIN=1):
-    return [s for s in brown.tagged_sents() if MIN <= len(s) < MAX and s[-1][0] == '.']
+def get_brown_tagged_sents(MAX=8, MIN=3):
+    '''
+    get sentences from the Brown dataset and their associated POS tags
+    only get sentences within the specified range bounds that end in a period
+    strip off the final period to simplify the overall learning task
+    '''
+    return [s[:-1] for s in brown.tagged_sents() if MIN <= len(s) < MAX and s[-1][0] == '.']
 
 def count_categories_used(ss):  return len(set(w[1] for s in ss for w in s))
 
-# transform sentences
-#    from Brown's parts of speech (470 of them total)
-#    to   more regular ones       ( 12 of them total)
-def normalize_POSes(ss): return [[(word, bpm.pos_map[pos]) for word, pos in s] for s in ss]
+def normalize_POSes(ss):
+    '''
+    transform sentences
+        from Brown's parts of speech (470 of them total)
+        to   more 'Normal' ones      ( 12 of them total)
+    '''
+    return [[(word, bpm.pos_map[pos]) for word, pos in s] for s in ss]
 
-# print the actual sentences that were collected (without POSs)
-def sentence_strings(ss, n=10):  return [" ".join(w[0] for w in s) for s in ss][:n]
 
-# filter sentences with punctuation in the middle
+def sentence_strings(ss, n=10):
+    ''' print the actual sentences that were collected (without POSs) '''
+    return [" ".join(w[0] for w in s) for s in ss][:n]
+
 def filter_punctuation(ss):
     def remove_punctuation(sentence):
-        # return false if punctuation in sentence
         for i, (word, pos) in enumerate(sentence):
-            # zero means punctuation, not the final period
-            if bpm.brown_index(pos) == 0 and i < len(sentence)-1:
+            if bpm.brown_index(pos) == 0: # zero means punctuation
                 return False
         return True
     return filter(remove_punctuation, ss)
@@ -33,31 +40,32 @@ def filter_numbers(ss):
         return True
     return filter(remove_numbers, ss)
 
-def vectorize_sents(ss, MAX_LEN=15):
+def vectorize_sents(ss):
     '''
     takes sentences with BROWN pos tags
-    returns vectors of sentence's NORMAL pos tags
-    output vectors MUST be of the required length for the ANN (padded with -1's)
+    returns matrices of sentence's NORMAL pos tags
+    output matrices NEED NOT be of the required length for the ANN
+        however each word-vector MUST be of the required length == len(normal POS tags)
     '''
-    # TODO I'm sure this would be much faster with numpy...
-    sentence_vectors = []
+    sentence_matrices = []
     for s in ss:
-        sentence_vector = [0] * MAX_LEN
-        for i in range(MAX_LEN):
-            if i < len(s):
-                sentence_vector[i] = bpm.brown_index(s[i][1])
-            else:
-                sentence_vector[i] = -1
-        sentence_vectors.append(sentence_vector)
-    return sentence_vectors
+        sentence_matrix = []
+        for w in s:
+            # TODO I'm sure this would be much faster with numpy...
+            word_vector = [0] * len(bpm.pos_vector_map.keys())
+            word_vector[bpm.brown_index(w[1])] = 1
+            sentence_matrix.append(word_vector)
+        sentence_matrices.append(sentence_matrix)
+    return sentence_matrices
 
+def print_n_sentences(ss, MAX=8, n=15):
+    for sentence in sentence_strings(ss, n=n):
+        print sentence
 
 # for trying it out
 if __name__ == "__main__":
+    sentences = get_brown_tagged_sents()
+    filtered_sentences = filter_numbers(filter_punctuation(sentences))
     #print normalize_POSes(get_brown_tagged_sents())[:2]
-    #print vectorize_sents(get_brown_tagged_sents())[:2]
-    for s in sentence_strings(
-        filter_numbers(
-            filter_punctuation(
-                get_brown_tagged_sents(MAX=8)))):
-        print s
+    print vectorize_sents(filtered_sentences)[:2]
+    print_n_sentences(filtered_sentences)
