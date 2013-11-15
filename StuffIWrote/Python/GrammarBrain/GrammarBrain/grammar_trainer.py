@@ -1,10 +1,10 @@
 ''' -- FIRST TRIAL OF GRAMMATICALITY CLASSIFIER (SRN w/ BPTT) -- '''
-from random import sample, random
+from random import sample, random, shuffle
 from pybrain.utilities import percentError
 from get_brown_pos_sents import get_nice_sentences, construct_sentence_matrices, print_n_sentences
 import brown_pos_map as bpm
 
-''' -- GLOBALS --'''
+
 # length restrictions on input sentences
 MAX_LEN = 8
 MIN_LEN = 4
@@ -16,11 +16,16 @@ NUM_OUTPUTS = 2
 HIDDEN_LAYER_SIZE = 5
 
 
-''' -- THE METHODS -- '''
 def create_train_and_test_sets(MIN_LEN, MAX_LEN):
     # http://pybrain.org/docs/tutorial/datasets.html
     # http://pybrain.org/docs/api/datasets/classificationdataset.html
     from pybrain.datasets.classification import SequenceClassificationDataSet
+
+    def print_data_data(data, name):
+        print "num", name, "patterns: ", len(data)
+        print "input and output dimensions: ", data.indim, data.outdim
+        print "First sample (input, target, class):"
+        print data['input'][0], data['target'][0], data['class'][0]
 
     # inp: dimensionality of the input (I think this is the sentence length)
     # number of targets (output dimensionality, I think? Maybe not...I'm not sure!)
@@ -42,16 +47,29 @@ def create_train_and_test_sets(MIN_LEN, MAX_LEN):
 
     for sentence_matrix in sentence_matrices:
         if random() < .25:  # percent distribution between sets needn't be perfect, right?
+            # the grammatical one
             test_data.newSequence()
             for word_vector in sentence_matrix:
                 test_data.appendLinked(word_vector, [0])
+
+            # the "ungrammatical" one
+            test_data.newSequence()
+            shuffle(sentence_matrix)
+            for word_vector in sentence_matrix:
+                test_data.appendLinked(word_vector, [1])
         else:
+            # the grammatical one
             train_data.newSequence()
             for word_vector in sentence_matrix:
                 train_data.appendLinked(word_vector, [0])
 
-    # TODO add shuffled sentence-matrices as the negative examples
-    # add a negative example for good measure
+            # the "ungrammatical" one
+            train_data.newSequence()
+            shuffle(sentence_matrix)
+            for word_vector in sentence_matrix:
+                train_data.appendLinked(word_vector, [1])
+
+    # add a /really/ negative example for good measure
     train_data.addSample([7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0], [1])  # class [1]: ungrammatical
     test_data.addSample([6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 0], [1])
 
@@ -61,20 +79,14 @@ def create_train_and_test_sets(MIN_LEN, MAX_LEN):
     test_data._convertToOneOfMany()
     train_data._convertToOneOfMany()
 
-    print_data_data(train_data, 'training')
-    print_data_data(test_data, 'testing')
+    ''' FOR DEBUGGING DATASET '''
+    #print_data_data(train_data, 'training')
+    #print_data_data(test_data, 'testing')
 
     return train_data, test_data
 
 
-def print_data_data(data, name):
-    print "num", name, "patterns: ", len(data)
-    print "input and output dimensions: ", data.indim, data.outdim
-    print "First sample (input, target, class):"
-    print data['input'][0], data['target'][0], data['class'][0]
-
-
-def build_it():
+def build_sigmoid_network():
     ''' -- CONSTRUCT THE NETWORK (SRN) -- '''
     from pybrain.structure import SigmoidLayer
     # TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
@@ -115,5 +127,5 @@ def train(network_module, training_data, testing_data, n=20):
 
 if __name__ == "__main__":
     train_data, test_data = create_train_and_test_sets(MIN_LEN, MAX_LEN)
-    network = build_it()
+    network = build_sigmoid_network()
     train(network_module=network, training_data=train_data, testing_data=test_data, n=10)
