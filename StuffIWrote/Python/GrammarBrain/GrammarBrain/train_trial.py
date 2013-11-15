@@ -13,7 +13,13 @@ from pybrain.structure.modules import TanhLayer, LSTMLayer
 # Load Dataset
 # specifying nb_classes is unnecessary, it'll figure out that it's 2 from the data
 
-sds = SequenceClassificationDataSet(3, 1)
+#sds = SequenceClassificationDataSet(3, 1)
+
+sds = SequenceClassificationDataSet(3, 2)
+blank_output = [1./sds.outdim]*sds.outdim
+print blank_output
+grammatical_label = (0, 1)
+ungrammatical_label = (1, 0)
 
 # make it learn
 #     NOUN --> VERB ==> OK!
@@ -59,6 +65,18 @@ def insert_sequence_mod_1(the_sentence, grammatical):
         else:
             sds.appendLinked(word_vector, [1])
 
+def insert_sequence_mod_2(the_sentence, grammatical):
+    sds.newSequence()
+    for i, word_vector in enumerate(the_sentence):
+        if grammatical:
+            if i < len(the_sentence)-1:
+                sds.appendLinked(word_vector, blank_output)
+
+            else:
+                sds.appendLinked(word_vector, grammatical_label)
+        else:
+            sds.appendLinked(word_vector, ungrammatical_label)
+
 # the only way it could learn this is if it could see that he_went is a subset of he_went_blue
 #   and not end up trying to learn that he_went is grammatical the first time, and ungrammatical the second
 
@@ -75,10 +93,10 @@ happy_go = [[0, 1, 0], [0, 0, 1]]
 
 sentences = [he_went, blue_green, he_went_blue, happy_go]
 
-insert_sequence_mod_1(he_went, grammatical=True)
-insert_sequence_mod_1(blue_green, grammatical=False)
-insert_sequence_mod_1(he_went_blue, grammatical=True)
-insert_sequence_mod_1(happy_go, grammatical=False)
+insert_sequence_mod_2(he_went, grammatical=True)
+insert_sequence_mod_2(blue_green, grammatical=False)
+insert_sequence_mod_2(he_went_blue, grammatical=True)
+insert_sequence_mod_2(happy_go, grammatical=False)
 
 print sds['input']  # array of all n inputs (note: here, n=8, not 4)
 print sds['target'] # array of all n targets (1 by n array)
