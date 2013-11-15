@@ -31,7 +31,12 @@ def insert_sequence(the_sentence, grammatical):
             sds.appendLinked(word_vector, [1])
 
 # the only way it could learn this is if it could see that he_went is a subset of he_went_blue
-# and not end up trying to learn that he_went is grammatical the first time, and ungrammatical the second
+#   and not end up trying to learn that he_went is grammatical the first time, and ungrammatical the second
+
+# it seems like the only solution is to LOOK
+#   for subsets in longer examples and make sure they don't create confusions
+# this would call for a rather sloppy-looking change to insert_sequence
+#   that's all I've got right now, so pending a better idea # TODO try that idea out!
 he_went = [[1, 0, 0], [0, 1, 0]]
 blue_green = [[0, 0, 1], [0, 0, 1]]
 he_went_blue = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
