@@ -20,10 +20,39 @@ sds = SequenceClassificationDataSet(3, 1)
 #     ADJ  --> ADJ  ==> NOPE!
 # input_vector := [NOUN, VERB, ADJ]
 
-def insert_sequence(the_sentence, grammatical):
+def insert_sequence_orig(the_sentence, grammatical):
+    '''
+    for grammatical sentences:
+        label all intermediate steps as UNGRAMMATICAL
+
+    this has the issue where if we have
+
+        1. he went
+        2. he went home
+        3. he went to work
+
+    it will end up learning that he went has P(grammatical) = 1/3, which is incorrect
+    '''
     sds.newSequence()
     for i, word_vector in enumerate(the_sentence):
+        if i < len(the_sentence)-1 or not grammatical:
+            sds.appendLinked(word_vector, [0])
 
+        else:
+            sds.appendLinked(word_vector, [1])
+
+def insert_sequence_mod_1(the_sentence, grammatical):
+    '''
+    for grammatical sentences:
+    add one version where all intermediate steps are labeled [1 0] and another labeled [0 1]
+    so that on average the intermediate steps are labeled [0.5 0.5]
+    '''
+    sds.newSequence()
+    if grammatical:
+        for word_vector in the_sentence:
+            sds.appendLinked(word_vector,[1])
+        sds.newSequence()
+    for i, word_vector in enumerate(the_sentence):
         if i < len(the_sentence)-1 or not grammatical:
             sds.appendLinked(word_vector, [0])
 
@@ -33,29 +62,23 @@ def insert_sequence(the_sentence, grammatical):
 # the only way it could learn this is if it could see that he_went is a subset of he_went_blue
 #   and not end up trying to learn that he_went is grammatical the first time, and ungrammatical the second
 
-# it seems like the only solution is to LOOK
+# it seems like one solution is to LOOK
 #   for subsets in longer examples and make sure they don't create confusions
 # this would call for a rather sloppy-looking change to insert_sequence
 #   that's all I've got right now, so pending a better idea # TODO try that idea out!
-
-# Another Idea
-# label mid-sentences as [0.5, 0.5]
-# i.e they give zero information
-# they will have the effect of dampening the learning of smaller sentences
-# but that may be tolerable
+# I guess one uses a trie data structure to pull that off efficiently
 
 he_went = [[1, 0, 0], [0, 1, 0]]
 blue_green = [[0, 0, 1], [0, 0, 1]]
 he_went_blue = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+happy_go = [[0, 1, 0], [0, 0, 1]]
 
-sentences = [he_went, blue_green, he_went_blue]
+sentences = [he_went, blue_green, he_went_blue, happy_go]
 
-insert_sequence(he_went, grammatical=True)
-insert_sequence(blue_green, grammatical=False)
-insert_sequence(he_went_blue, grammatical=True)
-
-# "happy go"
-insert_sequence([[0,1,0],[0,0,1]], grammatical=False)
+insert_sequence_mod_1(he_went, grammatical=True)
+insert_sequence_mod_1(blue_green, grammatical=False)
+insert_sequence_mod_1(he_went_blue, grammatical=True)
+insert_sequence_mod_1(happy_go, grammatical=False)
 
 print sds['input']  # array of all n inputs (note: here, n=8, not 4)
 print sds['target'] # array of all n targets (1 by n array)
@@ -73,27 +96,27 @@ print sds['target'] # now it's a (2 by n array)
 #   without any constraints on what that crazy function's intercept values are
 # bias adds a "biasModule" on all the hidden layers
 #   and if outputbias is True too, then also on the output layer
-rnet = buildNetwork(3, 3, 2, hiddenclass=LSTMLayer, outclass=TanhLayer, recurrent=True)
+recursive_network = buildNetwork(3, 3, 2, hiddenclass=LSTMLayer, outclass=TanhLayer, recurrent=True)
 
 
 # does this help, and why?
-recCon = FullConnection(rnet['out'], rnet['hidden0'])
-rnet.addRecurrentConnection(recCon)
+recCon = FullConnection(recursive_network['out'], recursive_network['hidden0'])
+recursive_network.addRecurrentConnection(recCon)
 
 # must re-sort after adding another connection
-rnet.sortModules()
+recursive_network.sortModules()
 
 print "------Before Training:"
 
 def test_on_sentence(the_sentence):
-    rnet.reset()
+    recursive_network.reset()
     for i, word in enumerate(the_sentence):
         if i < len(the_sentence)-1:
-            rnet.activate(word)
+            recursive_network.activate(word)
         else:
-            print rnet.activate(word)
+            print recursive_network.activate(word)
 
-trainer = BackpropTrainer(rnet, sds, verbose=True)
+trainer = BackpropTrainer(recursive_network, sds, verbose=True)
 trainer.trainEpochs(5000)
 
 print "------After Training:"
@@ -101,6 +124,6 @@ print "------After Training:"
 for a_sentence in sentences:
     test_on_sentence(a_sentence)
 
-print rnet['in']
-print rnet['hidden0']
-print rnet['out']
+print recursive_network['in']
+print recursive_network['hidden0']
+print recursive_network['out']
