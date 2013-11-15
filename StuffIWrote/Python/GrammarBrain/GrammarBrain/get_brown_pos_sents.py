@@ -61,7 +61,7 @@ def construct_sentence_matrices(ss):
         sentence_matrices.append(sentence_matrix)
     return sentence_matrices
 
-def print_n_sentences(ss, MAX=8, n=15):
+def print_n_sentences(ss, n=15):
     for sentence in sentence_strings(ss, n=n):
         print sentence
 

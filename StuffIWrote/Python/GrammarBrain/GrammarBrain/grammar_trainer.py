@@ -12,12 +12,12 @@ MIN_LEN = 4
 # number of different part of speech categorizations
 NUM_REG_POS = len(bpm.pos_vector_map.keys())
 NUM_BROWN_POS = len(bpm.pos_map.keys())
-
+NUM_OUTPUTS = 2
 HIDDEN_LAYER_SIZE = 5
 
 
 ''' -- THE METHODS -- '''
-def create_dataset(MIN_LEN, MAX_LEN):
+def create_train_and_test_sets(MIN_LEN, MAX_LEN):
     # http://pybrain.org/docs/tutorial/datasets.html
     # http://pybrain.org/docs/api/datasets/classificationdataset.html
     from pybrain.datasets.classification import SequenceClassificationDataSet
@@ -80,7 +80,7 @@ def build_it():
     # TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 
     from pybrain.tools.shortcuts import buildNetwork
-    network = buildNetwork(MAX_LEN, HIDDEN_LAYER_SIZE, 2,
+    network = buildNetwork(NUM_REG_POS, HIDDEN_LAYER_SIZE, NUM_OUTPUTS,
                      hiddenclass=SigmoidLayer, outclass=SigmoidLayer, recurrent=True)
 
     network.randomize()
@@ -114,11 +114,6 @@ def train(network_module, training_data, testing_data, n=20):
 
 
 if __name__ == "__main__":
-
-    train_data, test_data = create_dataset(MIN_LEN, MAX_LEN)
-
+    train_data, test_data = create_train_and_test_sets(MIN_LEN, MAX_LEN)
     network = build_it()
-
     train(network_module=network, training_data=train_data, testing_data=test_data, n=10)
-
-    # TODO NEXT STEP: create real testing data (with bad examples)!
