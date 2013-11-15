@@ -15,27 +15,35 @@ from pybrain.structure.modules import TanhLayer, LSTMLayer
 
 sds = SequenceClassificationDataSet(3, 1)
 
-# TODO make this echo my dataset, by having one bit on in each vector at a time
-# e.g. make it learn
-#               NOUN --> VERB ==> OK!
-#               ADJ  --> ADJ  ==> NOPE!
+# make it learn
+#     NOUN --> VERB ==> OK!
+#     ADJ  --> ADJ  ==> NOPE!
+# input_vector := [NOUN, VERB, ADJ]
 
-sds.appendLinked([0,0,0], [0])
-sds.appendLinked([0,0,0], [0])
+def insert_sequence(the_sentence, grammatical):
+    sds.newSequence()
+    for i, word_vector in enumerate(the_sentence):
 
-sds.newSequence()
-sds.appendLinked([0,0,0], [0])
-sds.appendLinked([1,0,0], [0])
+        if i < len(the_sentence)-1 or not grammatical:
+            sds.appendLinked(word_vector, [0])
 
-sds.newSequence()
-sds.appendLinked([1,1,1], [0])
-sds.appendLinked([1,1,1], [1])
+        else:
+            sds.appendLinked(word_vector, [1])
 
-sds.newSequence()
-sds.appendLinked([0,0,0], [0])
-sds.appendLinked([1,1,1], [1])
+he_went = [[1, 0, 0], [0, 1, 0]]
+blue_green = [[0, 0, 1], [0, 0, 1]]
+he_went_blue = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
 
-print sds['input'] # array of all n inputs (note: here, n=8, not 4)
+sentences = [he_went, blue_green, he_went_blue]
+
+insert_sequence(he_went, grammatical=True)
+insert_sequence(blue_green, grammatical=False)
+insert_sequence(he_went_blue, grammatical=True)
+
+# "happy go"
+insert_sequence([[0,1,0],[0,0,1]], grammatical=False)
+
+print sds['input']  # array of all n inputs (note: here, n=8, not 4)
 print sds['target'] # array of all n targets (1 by n array)
 
 # makes it so there are the same number of output neurons as classes
@@ -63,48 +71,21 @@ rnet.sortModules()
 
 print "------Before Training:"
 
-rnet.activate([0,0,0])
-print rnet.activate([0,0,0])
-rnet.reset()
-
-rnet.activate([0,0,0])
-print rnet.activate([1,0,0])
-rnet.reset()
-
-rnet.activate([1,1,1])
-print rnet.activate([1,1,1])
-rnet.reset()
-
-rnet.activate([0,0,0])
-print rnet.activate([1,1,1])
-rnet.reset()
-
-print rnet['in']
-print rnet['hidden0']
-print rnet['out']
-
-print
+def test_on_sentence(the_sentence):
+    rnet.reset()
+    for i, word in enumerate(the_sentence):
+        if i < len(the_sentence)-1:
+            rnet.activate(word)
+        else:
+            print rnet.activate(word)
 
 trainer = BackpropTrainer(rnet, sds, verbose=True)
 trainer.trainEpochs(5000)
 
 print "------After Training:"
 
-rnet.activate([0,0,0])
-print rnet.activate([0,0,0])
-rnet.reset()
-
-rnet.activate([0,0,0])
-print rnet.activate([1,0,0])
-rnet.reset()
-
-rnet.activate([1,1,1])
-print rnet.activate([1,1,1])
-rnet.reset()
-
-rnet.activate([0,0,0])
-print rnet.activate([1,1,1])
-rnet.reset()
+for a_sentence in sentences:
+    test_on_sentence(a_sentence)
 
 print rnet['in']
 print rnet['hidden0']
