@@ -37,6 +37,13 @@ def insert_sequence(the_sentence, grammatical):
 #   for subsets in longer examples and make sure they don't create confusions
 # this would call for a rather sloppy-looking change to insert_sequence
 #   that's all I've got right now, so pending a better idea # TODO try that idea out!
+
+# Another Idea
+# label mid-sentences as [0.5, 0.5]
+# i.e they give zero information
+# they will have the effect of dampening the learning of smaller sentences
+# but that may be tolerable
+
 he_went = [[1, 0, 0], [0, 1, 0]]
 blue_green = [[0, 0, 1], [0, 0, 1]]
 he_went_blue = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
