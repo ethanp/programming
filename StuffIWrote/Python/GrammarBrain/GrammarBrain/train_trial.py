@@ -30,6 +30,8 @@ def insert_sequence(the_sentence, grammatical):
         else:
             sds.appendLinked(word_vector, [1])
 
+# the only way it could learn this is if it could see that he_went is a subset of he_went_blue
+# and not end up trying to learn that he_went is grammatical the first time, and ungrammatical the second
 he_went = [[1, 0, 0], [0, 1, 0]]
 blue_green = [[0, 0, 1], [0, 0, 1]]
 he_went_blue = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
