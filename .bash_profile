@@ -85,6 +85,7 @@ function compile {
         else
             gcc -W -Wall -fno-common -std=c99 -Wcast-align -Wredundant-decls\
                 -Wbad-function-cast -Wwrite-strings -Waggregate-return $1 -o $2
+        fi
     else
         echo "Usage: compile <inName> (<outName>)?"
         echo "In your case, <inName> wasn't a file."
@@ -148,6 +149,11 @@ HISTFILESIZE=2000
 
 # Load RVM into a shell session *as a function*
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+
+# Brew tab-completion (works) [https://github.com/miku/brew-completion]
+if [ -f ~/code/brew-completion/brew-completion.sh ]; then
+    . ~/code/brew-completion/brew-completion.sh
+fi
 
 # Must overwrite cd-command after loading rvm bc rvm redefines cd too
 source ~/code/fuzzycd/fuzzycd_bash_wrapper.sh
