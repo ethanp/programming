@@ -1,4 +1,3 @@
-''' -- FIRST TRIAL OF GRAMMATICALITY CLASSIFIER (SRN w/ BPTT) -- '''
 from random import sample, random, shuffle
 from pybrain.utilities import percentError
 from numpy import argmax
@@ -101,6 +100,7 @@ def build_sigmoid_network():
 def train(network_module, training_data, testing_data, n=20):
     from pybrain.supervised.trainers import BackpropTrainer
     trainer = BackpropTrainer(module=network_module, dataset=training_data, verbose=True)
+    training_size = training_data.getNumSequences()
 
     for i in range(n):
         trainer.trainEpochs(epochs=1)
@@ -108,10 +108,7 @@ def train(network_module, training_data, testing_data, n=20):
 
         # modified from testOnClassData source code
         training_data.reset()
-        out = []
-        targ = []
-        num = 0
-        p = 0
+        num_correct, print_counter, estimated_class, true_class = 0, 0, [], []
         for seq in training_data._provideSequences():
             trainer.module.reset()
             a = True
@@ -124,13 +121,13 @@ def train(network_module, training_data, testing_data, n=20):
             #    print 'target:', t
             #    print 'result:', res
             #    p += 1
-            out.append(argmax(res))
-            targ.append(argmax(t))
-            if out[-1] == targ[-1]:
-                num += 1
-        p += 1
-        if p % 20 == 0:
-            print 'training error =', num, '/', training_data.getNumSequences()
+            estimated_class.append(argmax(res))
+            true_class.append(argmax(t))
+            if estimated_class[-1] == true_class[-1]:
+                num_correct += 1
+        print_counter += 1
+        if print_counter % 20 == 0:
+            print 'training error =', num_correct, '/', training_size
 
         ## http://pybrain.org/docs/tutorial/fnn.html
         #train_result = percentError(

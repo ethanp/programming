@@ -7,6 +7,7 @@ def get_brown_tagged_sents(MAX=8, MIN=3):
     only get sentences within the specified range bounds that end in a period
     strip off the final period to simplify the overall learning task
     '''
+    # TODO this could probably just return a generator
     return [s[:-1] for s in brown.tagged_sents() if MIN <= len(s) < MAX and s[-1][0] == '.']
 
 def get_nice_sentences(MAX=8, MIN=3):
@@ -20,11 +21,13 @@ def normalize_POSes(ss):
         from Brown's parts of speech (470 of them total)
         to   more 'Normal' ones      ( 12 of them total)
     '''
+    # TODO this could probably just return a generator
     return [[(word, bpm.pos_map[pos]) for word, pos in s] for s in ss]
 
 
 def sentence_strings(ss, n=10):
     ''' print the actual sentences that were collected (without POSs) '''
+    # TODO this could probably just return a generator
     return [" ".join(w[0] for w in s) for s in ss][:n]
 
 def filter_punctuation(ss):

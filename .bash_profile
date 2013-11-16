@@ -53,7 +53,7 @@ function dedir {
         echo "You must supply a single directory to demolish"
     elif [ -d "$1" ]; then
         tree $1
-        echo "Enter 1 to remove ${1} from the face of the Earth: "
+        echo "Enter 1 to remove $1 from the face of the Earth: "
         read response
         if [ $response -ne 1 ]; then
             echo "Action Cancelled"
@@ -75,19 +75,14 @@ function compile {
         echo "Usage: compile <inName> (<outName>)?"
     elif [[ $# > 2 ]]; then
         echo "You'll have to implement a better compile function to get that to work"
-        echo "It can either use a for loop, or it can match *.c & *.h"
-    elif [[ $# == 1 ]]; then
-        if [ -f "$1" ]; then
-            echo "Your output is in a.out"
-            # I took out -Wstrict-prototypes -Wmissing-prototypes
+        echo "May I suggest using a for loop, or matching *.c & *.h"
+    elif [ -f "$1" ]; then
+        # I took out -Wstrict-prototypes -Wmissing-prototypes
+        if [[ $# == 1 ]]; then
             gcc -W -Wall -fno-common -Wcast-align -std=c99 -Wredundant-decls\
                 -Wbad-function-cast -Wwrite-strings -Waggregate-return $1
+            echo "Your output is in a.out"
         else
-            echo "Usage: compile <inName> (<outName>)?"
-            echo "In your case, <inName> wasn't a file."
-        fi
-    elif [ -f "$1" ]; then
-            # I took out -Wstrict-prototypes -Wmissing-prototypes
             gcc -W -Wall -fno-common -std=c99 -Wcast-align -Wredundant-decls\
                 -Wbad-function-cast -Wwrite-strings -Waggregate-return $1 -o $2
     else
@@ -110,7 +105,7 @@ PATH="/Users/Ethan/Applications/apache-ant-1.8.4/bin:${PATH}"
 PATH="$PATH":~/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools  # don't remember this
 PATH="/Applications/Anaconda/anaconda/bin:$PATH"  # allows for "conda" command
 PATH="$PATH":/usr/local/share/scala-2.10.1/bin
-PATH=${PATH}:$HOME/gsutil
+PATH=${PATH}:$HOME/gsutil                         # this was for getting patent info
 PATH="/usr/local/lib/ruby:${PATH}"
 PATH=$PATH:$HOME/.rvm/bin                         # allows for "rvm" command
 PATH="~/code/fuzzycd/:$PATH"
@@ -139,6 +134,7 @@ export CLASSPATH
 # 6/18/13
 # from http://jeethurao.com/blog/?p=217 for getting Scala to work with Intellij
 # (I don't think it made a difference, I'm still "using an external compiler")
+# TODO delete this and see what happens
 export JAVA_HOME=$(/usr/libexec/java_home)
 export SCALA_HOME=/usr/local/Cellar/scala/2.10.0/libexec
 export JAVACMD=drip
@@ -147,7 +143,7 @@ export SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermS
 
 # These are only saved _this_ session
 HISTSIZE=2000
-# These are saved between sessions in .bash_history
+# These are saved _between_ sessions in .bash_history
 HISTFILESIZE=2000
 
 # Load RVM into a shell session *as a function*

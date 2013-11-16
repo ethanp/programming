@@ -10,23 +10,14 @@ from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.structure.connections import FullConnection
 from pybrain.structure.modules import TanhLayer, LSTMLayer
 
-# Load Dataset
-# specifying nb_classes is unnecessary, it'll figure out that it's 2 from the data
-
-#sds = SequenceClassificationDataSet(3, 1)
+import sys
 
 sds = SequenceClassificationDataSet(3, 2)
-blank_output = [1./sds.outdim]*sds.outdim
-print blank_output
+blank_label = [1./sds.outdim]*sds.outdim
 grammatical_label = (0, 1)
 ungrammatical_label = (1, 0)
 
-# make it learn
-#     NOUN --> VERB ==> OK!
-#     ADJ  --> ADJ  ==> NOPE!
-# input_vector := [NOUN, VERB, ADJ]
-
-def insert_sequence_orig(the_sentence, grammatical):
+def insert_sequence_vsn_1(the_sentence, grammatical):
     '''
     for grammatical sentences:
         label all intermediate steps as UNGRAMMATICAL
@@ -47,74 +38,61 @@ def insert_sequence_orig(the_sentence, grammatical):
         else:
             sds.appendLinked(word_vector, [1])
 
-def insert_sequence_mod_1(the_sentence, grammatical):
+def insert_sequence_vsn_3(the_sentence, grammatical):
     '''
-    for grammatical sentences:
-    add one version where all intermediate steps are labeled [1 0] and another labeled [0 1]
-    so that on average the intermediate steps are labeled [0.5 0.5]
+    label all words before the end as having P(gram.) = P(ungram.) = 0.5
+
     '''
-    sds.newSequence()
-    if grammatical:
-        for word_vector in the_sentence:
-            sds.appendLinked(word_vector,[1])
-        sds.newSequence()
-    for i, word_vector in enumerate(the_sentence):
-        if i < len(the_sentence)-1 or not grammatical:
-            sds.appendLinked(word_vector, [0])
-
-        else:
-            sds.appendLinked(word_vector, [1])
-
-def insert_sequence_mod_2(the_sentence, grammatical):
     sds.newSequence()
     for i, word_vector in enumerate(the_sentence):
         if grammatical:
             if i < len(the_sentence)-1:
-                sds.appendLinked(word_vector, blank_output)
-
+                sds.appendLinked(word_vector, blank_label)
             else:
                 sds.appendLinked(word_vector, grammatical_label)
+
+        # there are a few options on what to do here it /would/ make sence to
+        # give the first n-1 of these a `blank_label` like the grammatical
+        # ones, but by /not/ doing that, we are assuming that we have no
+        # problem declaring that partial sentences building up to ungrammatical
+        # sentences should be already recognized as ungrammatical a happy
+        # medium might be to label them as "probably" ungrammatical
         else:
             sds.appendLinked(word_vector, ungrammatical_label)
 
-# the only way it could learn this is if it could see that he_went is a subset of he_went_blue
-#   and not end up trying to learn that he_went is grammatical the first time, and ungrammatical the second
+he_went = [[1, 0, 0],
+           [0, 1, 0]]
 
-# it seems like one solution is to LOOK
-#   for subsets in longer examples and make sure they don't create confusions
-# this would call for a rather sloppy-looking change to insert_sequence
-#   that's all I've got right now, so pending a better idea # TODO try that idea out!
-# I guess one uses a trie data structure to pull that off efficiently
+blue_green = [[0, 0, 1],
+              [0, 0, 1]]
 
-he_went = [[1, 0, 0], [0, 1, 0]]
-blue_green = [[0, 0, 1], [0, 0, 1]]
-he_went_blue = [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
-happy_go = [[0, 1, 0], [0, 0, 1]]
+he_went_blue = [[1, 0, 0],
+                [0, 1, 0],
+                [0, 0, 1]]
+
+happy_go = [[0, 1, 0],
+            [0, 0, 1]]
 
 sentences = [he_went, blue_green, he_went_blue, happy_go]
 
-insert_sequence_mod_2(he_went, grammatical=True)
-insert_sequence_mod_2(blue_green, grammatical=False)
-insert_sequence_mod_2(he_went_blue, grammatical=True)
-insert_sequence_mod_2(happy_go, grammatical=False)
+insert_sequence_vsn_3(he_went, True)
+insert_sequence_vsn_3(blue_green, False)
+insert_sequence_vsn_3(he_went_blue, True)
+insert_sequence_vsn_3(happy_go, False)
 
-print sds['input']  # array of all n inputs (note: here, n=8, not 4)
-print sds['target'] # array of all n targets (1 by n array)
+print sds['input']
+print sds['target']
 
 # makes it so there are the same number of output neurons as classes
-sds._convertToOneOfMany()
+# (no longer does anything)
+#sds._convertToOneOfMany()
+#print 'converted:'
+#print sds['target'] # now it's a (2 by n array)
 
-print 'converted:'
-print sds['target'] # now it's a (2 by n array)
-
-# Build a recurrent Network.
-
-# bias and outputbias are on by default. I can't think of any good reason to turn them off
-# I suppose it's situation-specific, and in my situation, I just want to learn the function
-#   without any constraints on what that crazy function's intercept values are
 # bias adds a "biasModule" on all the hidden layers
 #   and if outputbias is True too, then also on the output layer
-recursive_network = buildNetwork(3, 3, 2, hiddenclass=LSTMLayer, outclass=TanhLayer, recurrent=True)
+recursive_network = buildNetwork(3, 30, 2,
+                         hiddenclass=LSTMLayer, outclass=TanhLayer, recurrent=True)
 
 
 # does this help, and why?
@@ -134,7 +112,8 @@ def test_on_sentence(the_sentence):
         else:
             print recursive_network.activate(word)
 
-trainer = BackpropTrainer(recursive_network, sds, verbose=True)
+sys.stdout.flush()
+trainer = BackpropTrainer(recursive_network, sds, verbose=False)
 trainer.trainEpochs(5000)
 
 print "------After Training:"

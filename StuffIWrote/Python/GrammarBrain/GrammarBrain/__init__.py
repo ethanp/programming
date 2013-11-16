@@ -25,7 +25,7 @@ fileObject = open('filename','r')
 net = pickle.load(fileObject)
 
 Note cPickle is implemented in C, and therefore should be much faster than pickle.
-Usage should mostly be the same as pickle, so just import and use cPickle instead.
+Just import and use cPickle instead.
 
 # Using NetworkWriter
 
@@ -37,11 +37,4 @@ net = buildNetwork(2,4,1)
 
 NetworkWriter.writeToFile(net, 'filename.xml')
 net = NetworkReader.readFrom('filename.xml')
-'''
-
-''' -- PLAIN OF ACTION --
-1. get a dataset
-2. train SRN on length 3 sentences
-3. make a training set
-4. see how it performs on it
 '''
