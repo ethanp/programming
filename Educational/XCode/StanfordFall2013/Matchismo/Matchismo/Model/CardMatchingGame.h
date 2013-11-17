@@ -6,15 +6,16 @@
 //  Copyright (c) 2013 Ethan Petuchowski. All rights reserved.
 //
 
+/* foundatation has NSArray and NS* */
 #import <Foundation/Foundation.h>
-#import "Deck.h"
-#import "Card.h"
+#import "Deck.h"   /* imports models */
+#import "Card.h"   /* doesn't import viewController */
 
 @interface CardMatchingGame : NSObject
 
-// designated initializer
-// must be called from any of our other initializers
-// or from any subclass's initializers
+/* designated initializer
+ * must be called from any of our other initializers
+ * or from any subclass's initializers */
 - (instancetype)initWithCardCount:(NSUInteger)count
                         usingDeck:(Deck *)deck;
 

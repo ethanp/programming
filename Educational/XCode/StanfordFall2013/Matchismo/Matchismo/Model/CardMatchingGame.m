@@ -9,13 +9,15 @@
 #import "CardMatchingGame.h"
 
 @interface CardMatchingGame()
-// we can make it readwrite /here/ because this is the /implementation/
+
+/* we can redefine score to be readwrite here in the implementation */
 @property (nonatomic, readwrite) NSInteger score;
-@property (nonatomic, strong) NSMutableArray *cards; // of Card (no type-parameters)
+@property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
 @end
 
 @implementation CardMatchingGame
 
+/* dynamic allocation for reference properties go in the getter */
 - (NSMutableArray *)cards
 {
     if (!_cards) _cards = [[NSMutableArray alloc] init];
@@ -25,14 +27,15 @@
 - (instancetype)initWithCardCount:(NSUInteger)count
                         usingDeck:(Deck *)deck
 {
-    self = [super init]; // bc we're init'ing a subclass
-    
+    self = [super init]; /* bc we're init'ing a subclass, 
+                          note there's no alloc bc it's `self`
+                          and the caller has to call alloc first */
     if (self) {
-        // note we're not adding 2 of each card we have
-        // i.e. we're going to "match" on value XOR suit
+        // note we're going to "match" on value XOR suit
+        // because drawRandomCard actually removes the card
         for (int i = 0; i < count; i++) {
             Card *card = [deck drawRandomCard];
-            [self.cards addObject:card];
+            [self.cards addObject:card]; /* calls constructor if necessary */
         }
     }
     
@@ -43,8 +46,6 @@
 static const int MISMATCH_PENALTY = 2;
 static const int MATCH_BONUS = 4;
 static const int COST_TO_CHOOSE = 1;
-
-
 
 - (Card *)cardAtIndex:(NSUInteger)index
 {

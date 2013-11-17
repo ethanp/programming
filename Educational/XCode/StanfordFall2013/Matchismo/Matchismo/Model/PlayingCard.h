@@ -8,6 +8,9 @@
 
 #import "Card.h"
 
+/* we don't need to redeclare methods that override
+ * methods in the SuperClass (in this case "match") */
+
 @interface PlayingCard : Card
 
 @property (strong, nonatomic) NSString *suit;

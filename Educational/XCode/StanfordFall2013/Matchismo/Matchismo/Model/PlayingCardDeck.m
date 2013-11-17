@@ -17,6 +17,7 @@
     
     if (self) {
         for (NSString *suit in [PlayingCard validSuits]) {
+            // we don't start at 0 because 0 has value "?" in the rank-array
             for (NSUInteger rank = 1; rank <= [PlayingCard maxRank]; rank++) {
                 PlayingCard *card = [[PlayingCard alloc] init];
                 card.rank = rank;
