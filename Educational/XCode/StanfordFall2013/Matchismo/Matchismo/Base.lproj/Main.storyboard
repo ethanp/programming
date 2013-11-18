@@ -161,14 +161,14 @@
                                 </connections>
                             </button>
                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Score: 0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="BkL-f0-B4R">
-                                <rect key="frame" x="20" y="439" width="280" height="21"/>
+                                <rect key="frame" x="20" y="439" width="130" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="G8B-NX-cla">
-                                <rect key="frame" x="20" y="396" width="64" height="35"/>
+                                <rect key="frame" x="161" y="436" width="70" height="28"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                                 <state key="normal" title="REDEAL" backgroundImage="cardfront">
@@ -179,12 +179,20 @@
                                     <action selector="touchRedealButton:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="744-Qv-eaD"/>
                                 </connections>
                             </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eHf-z4-bfZ">
+                                <rect key="frame" x="251" y="433" width="51" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <connections>
+                                    <action selector="switchTwoOrThreeCardMode:" destination="vXZ-lx-hvc" eventType="valueChanged" id="AsG-2s-ZJp"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.50196081399917603" blue="0.25098040699958801" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
                         <outlet property="redealButton" destination="G8B-NX-cla" id="vCM-Jj-cy6"/>
                         <outlet property="scoreLabel" destination="BkL-f0-B4R" id="xqo-Sz-arb"/>
+                        <outlet property="twoOrThreeCardMode" destination="eHf-z4-bfZ" id="NvL-IS-wpo"/>
                         <outletCollection property="cardButtons" destination="Izy-iB-wzW" id="uI1-qp-qZQ"/>
                         <outletCollection property="cardButtons" destination="mLe-Bf-yel" id="QNA-Gc-GWj"/>
                         <outletCollection property="cardButtons" destination="xJR-A2-z9T" id="tA6-0g-MVj"/>

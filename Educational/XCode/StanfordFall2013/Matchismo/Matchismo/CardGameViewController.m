@@ -24,6 +24,7 @@
  *   be connected to */
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
+@property (weak, nonatomic) IBOutlet UISwitch *twoOrThreeCardMode;
 
 
 @end
@@ -34,8 +35,9 @@
 {
     /* using a ternary operator for this doesn't work
      * because then you never actually assign to the _inner-variable */
-    if (!_game) _game = [[CardMatchingGame alloc] initWithCardCount:[self.cardButtons count]
-                                                          usingDeck:[self createDeck]];
+    if (!_game) _game = [[CardMatchingGame alloc]
+                         initWithCardCount:[self.cardButtons count]
+                                 usingDeck:[self createDeck]];
     return _game;
 
 }
@@ -45,10 +47,23 @@
     return [[PlayingCardDeck alloc] init];
 }
 
-// re-deal button from HW #2
-- (IBAction)touchRedealButton:(UIButton *)sender {
+// switch from HW #2
+- (IBAction)switchTwoOrThreeCardMode:(UISwitch *)sender
+{    
+    self.game.isThreeCardMode = sender.on ? YES : NO;
+    [self restartGame];
+}
+
+- (void)restartGame
+{
     self.game = nil;
     [self updateUI];
+}
+
+
+// re-deal button from HW #2
+- (IBAction)touchRedealButton:(UIButton *)sender {
+    [self restartGame];
 }
 
 - (IBAction)touchCardButton:(UIButton *)sender
