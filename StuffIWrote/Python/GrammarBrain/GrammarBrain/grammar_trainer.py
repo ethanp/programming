@@ -32,23 +32,24 @@ class GrammarTrainer(object):
         self.train_set, self.test_set = self.create_train_and_test_sets()
 
     def __str__(self):
-        string = ""
-        string += 'Sentences of length ' + str(self.MIN_LEN) + ' to ' + str(self.MAX_LEN) + '\n'
+        string = ['']
+        string += ['Sentences of length {0} to {1}'.format(str(self.MIN_LEN), str(self.MAX_LEN))]
         pos_set = 'BASIC' if self.basic_pos else 'EXTENDED'
-        string += 'Using ' + pos_set + ' pos set\n'
-        string += 'Hidden size: ' + str(self.HIDDEN_SIZE) +' \n'
-        string += 'Number of training iterations: ' + str(self.training_iterations) + '\n'
-        string += 'Network Layout\n'
-        string += '--------------------------------------\n'
+        string += ['Using {0} pos set'.format(pos_set)]
+        string += ['Hidden size: {0}'.format(str(self.HIDDEN_SIZE))]
+        string += ['Number of training iterations: {0}'.format(str(self.training_iterations))]
+        string += ['\n-------------------------------------------------------']
+        string += ['Network Layout']
+        string += ['-------------------------------------------------------']
         for module in self.network.modules:
-            string += '\n' + str(module) + '\n'
+            string += ['\n' + str(module)]
             for connection in self.network.connections[module]:
-                string += str(connection) + '\n'
-        string += "\nRecurrent connections\n"
+                string += [str(connection)]
+        string += ['\nRecurrent connections']
         for connection in self.network.recurrentConns:
-            string += str(connection) + '\n'
-        string += '--------------------------------------\n'
-        return string
+            string += [str(connection)]
+        string += ['\n-------------------------------------------------------\n']
+        return '\n'.join(string)
 
 
     def create_train_and_test_sets(self):
@@ -126,15 +127,17 @@ class GrammarTrainer(object):
 
         for i in range(n/10):
             trainer.trainEpochs(epochs=10)
-            print 'epoch', i, 'finished'
+            print 'epoch', (i+1)*10, 'finished'
 
             # modified from testOnClassData source code
             training_data.reset()
-            print 'current fraction that are correct on training data:'
-            print testOnSequenceData(network_module, training_data)
+            print
+            print 'current fraction that are correct on training data:', \
+                testOnSequenceData(network_module, training_data)
 
-            print 'current fraction that are correct on testing data:'
-            print testOnSequenceData(network_module, testing_data)
+            print 'current fraction that are correct on testing data:', \
+                testOnSequenceData(network_module, testing_data)
+            print
 
     def timed_train(self):
         start = time.clock()
