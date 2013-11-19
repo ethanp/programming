@@ -5,6 +5,11 @@ from get_brown_pos_sents import get_nice_sentences, construct_sentence_matrices,
 import brown_pos_map as bpm
 import time
 from pybrain.datasets.classification import SequenceClassificationDataSet
+import cPickle as pickle
+
+GRAMMATICAL = (0, 1)
+UNGRAMMATICAL = (1, 0)
+MID_SENTENCE = (0.5, 0.5)
 
 class GrammarTrainer(object):
     #noinspection PyTypeChecker
@@ -15,36 +20,37 @@ class GrammarTrainer(object):
 
         # number of different part of speech categorizations
         if basic_pos:
-            self.NUM_REG_POS = len(bpm.pos_vector_map.keys())
+            self.NUM_POS = len(bpm.pos_vector_map.keys())
         else:
-            self.NUM_REG_POS = len(bpm.pos_map.keys())
+            self.NUM_POS = len(bpm.pos_map.keys())
         self.NUM_OUTPUTS = outdim
         self.HIDDEN_LAYER_SIZE = hiddendim
-        self.dataset = None
         self.network = None
         self.training_iterations = train_time
+        self.train_set, self.test_set = self.create_train_and_test_sets()
 
 
-    ''' let's say [1] means GRAMMATICAL, and [0] means UNGRAMMATICAL '''
-    def insert_grammatical_sequence(dataset, sentence_mat):
-        dataset.newSequence()
-        for i, word_vector in enumerate(sentence_mat):
-            if i < len(sentence_mat)-1:
+    def create_train_and_test_sets(self, MIN_LEN=None, MAX_LEN=None):
+        if MIN_LEN is None:
+            MIN_LEN = self.MIN_LEN
+        if MAX_LEN is None:
+            MAX_LEN = self.MAX_LEN
+
+        # TODO this needs to be replaced with insert_sequence_vsn_3() from train_trial.py
+        def insert_grammatical_sequence(dataset, sentence_mat):
+            dataset.newSequence()
+            for i, word_vector in enumerate(sentence_mat):
+                if i < len(sentence_mat) - 1:
+                    dataset.appendLinked(word_vector, [0])
+                else:
+                    dataset.appendLinked(word_vector, [1])
+
+        def insert_randomized_sequence(dataset, sentence_mat):
+            dataset.newSequence()
+            dup_sent_mat = sentence_mat[:]
+            shuffle(dup_sent_mat)
+            for word_vector in dup_sent_mat:
                 dataset.appendLinked(word_vector, [0])
-            else:
-                dataset.appendLinked(word_vector, [1])
-
-
-    def insert_randomized_sequence(dataset, sentence_mat):
-        dataset.newSequence()
-        dup_sent_mat = sentence_mat[:]
-        shuffle(dup_sent_mat)
-        for word_vector in dup_sent_mat:
-            dataset.appendLinked(word_vector, [0])
-
-    def create_train_and_test_sets(MIN_LEN, MAX_LEN):
-        # http://pybrain.org/docs/tutorial/datasets.html
-        # http://pybrain.org/docs/api/datasets/classificationdataset.html
 
         def print_data_data(data, name):
             print "num", name, "patterns: ", len(data)
@@ -52,20 +58,22 @@ class GrammarTrainer(object):
             print "First sample (input, target, class):"
             print data['input'][0], data['target'][0], data['class'][0]
 
-        # inp: dimensionality of the input (I think this is the sentence length)
-        # number of targets (output dimensionality [i.e. #outNeurons], I think?)
-        # nb_classes: number of possible classifications (i.e. grammatical or not)
-        train_data = SequenceClassificationDataSet(inp=NUM_REG_POS, target=1)
-        test_data = SequenceClassificationDataSet(inp=NUM_REG_POS, target=1)
+        # inp: dimensionality of the input (# of POS types)
+        # target: output dimensionality (# of possible classifications)
+        train_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=2)
+        test_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=2)
 
         # brown dataset, no mid-sentence punctuation, no numbers, ends in period, within length range
+        # TODO this should be unpickling my pickles
         sentences = get_nice_sentences(MAX_LEN, MIN_LEN)
         print '\ntotal number of sentences:', len(sentences)
+        # TODO this could use the sentence-sampler
         print '\nFirst five sentences between length', MIN_LEN-1, 'and', MAX_LEN-2
         print '------------------------------------------------------------'
         print_n_sentences(sentences, n=5)
         print '------------------------------------------------------------'
         print '\nvectorizing sentences...'
+        # TODO this should be unpickling my pickles
         sentence_matrices = construct_sentence_matrices(sentences)
 
         print 'creating training and test sets...'
@@ -78,10 +86,6 @@ class GrammarTrainer(object):
                 insert_grammatical_sequence(train_data, sentence_matrix)
                 insert_randomized_sequence(train_data, sentence_matrix)
 
-        # encode classes with one output neuron per class: [ungrammatical, grammatical]
-        test_data._convertToOneOfMany()
-        train_data._convertToOneOfMany()
-
         ''' FOR DEBUGGING DATASET '''
         #print_data_data(train_data, 'training')
         #print_data_data(test_data, 'testing')
@@ -89,7 +93,7 @@ class GrammarTrainer(object):
         return train_data, test_data
 
 
-    def build_sigmoid_network():
+    def build_sigmoid_network(self):
         from pybrain.structure import TanhLayer, LSTMLayer
         # TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 
@@ -104,7 +108,7 @@ class GrammarTrainer(object):
 
     # http://pybrain.org/docs/api/supervised/trainers.html
     # backprop's "through time" on a sequential dataset
-    def train(network_module, training_data, testing_data, n=20):
+    def train(self, network_module, training_data, testing_data, n=20):
         from pybrain.supervised.trainers import BackpropTrainer
         trainer = BackpropTrainer(module=network_module, dataset=training_data, verbose=True)
         training_size = training_data.getNumSequences()
@@ -136,10 +140,13 @@ class GrammarTrainer(object):
             if print_counter % 20 == 0:
                 print 'training error =', num_correct, '/', training_size
 
+    def go(self):
+        train_data, test_data = self.create_train_and_test_sets(MIN_LEN, MAX_LEN)
+        network = self.build_sigmoid_network()
+        start = time.clock()
+        self.train(network_module=network, training_data=train_data, testing_data=test_data, n=1000)
+        print time.clock() - start, 'seconds'
 
 if __name__ == "__main__":
-    train_data, test_data = create_train_and_test_sets(MIN_LEN, MAX_LEN)
-    network = build_sigmoid_network()
-    start = time.clock()
-    train(network_module=network, training_data=train_data, testing_data=test_data, n=1000)
-    print time.clock() - start, 'seconds'
+    gt = GrammarTrainer() # lots of params are supposed to go in here
+    gt.go()
