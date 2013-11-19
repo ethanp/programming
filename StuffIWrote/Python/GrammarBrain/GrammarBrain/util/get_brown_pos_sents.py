@@ -1,5 +1,7 @@
-import brown_pos_map as bpm
 from nltk.corpus import brown
+
+from GrammarBrain.util import brown_pos_map as bpm
+
 
 def get_brown_tagged_sents(MAX=8, MIN=3):
     '''

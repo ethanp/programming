@@ -1,6 +1,6 @@
 import cPickle as pickle
 
-from GrammarBrain import get_brown_pos_sents as gbp
+from GrammarBrain.util import get_brown_pos_sents as gbp
 
 for i in range(2, 25):
     print i
