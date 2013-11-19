@@ -6,7 +6,9 @@ from pybrain.datasets.classification import SequenceClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.validation import testOnSequenceData
 from pybrain.tools.shortcuts import buildNetwork
-from pybrain.structure import TanhLayer
+from pybrain.structure.connections import FullConnection
+from pybrain.structure import TanhLayer, LSTMLayer
+
         # TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 
 
@@ -20,16 +22,33 @@ MID_SENTENCE = (0.5, 0.5)
 class GrammarTrainer(object):
     #noinspection PyTypeChecker
     def __init__(self, minim=4, maxim=5, outdim=2, hiddendim=5, train_time=50, basic_pos=True):
-        # length restrictions on input sentences
         self.MIN_LEN, self.MAX_LEN = minim, maxim
-
-        # number of different part of speech categorizations
         self.NUM_POS = len(bpm.pos_vector_map.keys()) if basic_pos else len(bpm.pos_map.keys())
-
+        self.basic_pos = basic_pos
         self.NUM_OUTPUTS, self.HIDDEN_SIZE = outdim, hiddendim
         self.network = self.build_sigmoid_network()
         self.training_iterations = train_time
+        print str(self)
         self.train_set, self.test_set = self.create_train_and_test_sets()
+
+    def __str__(self):
+        string = ""
+        string += 'Sentences of length ' + str(self.MIN_LEN) + ' to ' + str(self.MAX_LEN) + '\n'
+        pos_set = 'BASIC' if self.basic_pos else 'EXTENDED'
+        string += 'Using ' + pos_set + ' pos set\n'
+        string += 'Hidden size: ' + str(self.HIDDEN_SIZE) +' \n'
+        string += 'Number of training iterations: ' + str(self.training_iterations) + '\n'
+        string += 'Network Layout\n'
+        string += '--------------------------------------\n'
+        for module in self.network.modules:
+            string += '\n' + str(module) + '\n'
+            for connection in self.network.connections[module]:
+                string += str(connection) + '\n'
+        string += "\nRecurrent connections\n"
+        for connection in self.network.recurrentConns:
+            string += str(connection) + '\n'
+        string += '--------------------------------------\n'
+        return string
 
 
     def create_train_and_test_sets(self):
@@ -74,13 +93,11 @@ class GrammarTrainer(object):
         print '\nvectorizing sentences...'
         sentence_matrices = get_sentence_matrices(self.MIN_LEN, self.MAX_LEN)
         print '\ntotal number of sentences:', len(sentence_matrices)
-
         print 'creating training and test sets...'
         for sentence_matrix in sentence_matrices:
             if random() < .25:  # percent distribution between sets needn't be perfect, right?
                 insert_grammatical_sequence(test_data, sentence_matrix)
                 insert_randomized_sequence(test_data, sentence_matrix)
-
             else:
                 insert_grammatical_sequence(train_data, sentence_matrix)
                 insert_randomized_sequence(train_data, sentence_matrix)
@@ -94,7 +111,11 @@ class GrammarTrainer(object):
 
     def build_sigmoid_network(self):
         network = buildNetwork(self.NUM_POS, self.HIDDEN_SIZE, self.NUM_OUTPUTS,
-                         bias=True, hiddenclass=TanhLayer, outclass=TanhLayer, recurrent=True)
+                         bias=True, hiddenclass=LSTMLayer, outclass=TanhLayer, recurrent=True)
+
+        # these are the default "module" names
+        network.addRecurrentConnection(FullConnection(network['out'], network['hidden0']))
+        network.sortModules()
         return network
 
 
@@ -103,7 +124,7 @@ class GrammarTrainer(object):
     def train(self, network_module, training_data, testing_data, n=20):
         trainer = BackpropTrainer(module=network_module, dataset=training_data, verbose=True)
 
-        for i in range(n):
+        for i in range(n/10):
             trainer.trainEpochs(epochs=10)
             print 'epoch', i, 'finished'
 
@@ -112,20 +133,20 @@ class GrammarTrainer(object):
             print 'current fraction that are correct on training data:'
             print testOnSequenceData(network_module, training_data)
 
-        print 'current fraction that are correct on testing data:'
-        print testOnSequenceData(network_module, testing_data)
+            print 'current fraction that are correct on testing data:'
+            print testOnSequenceData(network_module, testing_data)
 
     def timed_train(self):
         start = time.clock()
 
         self.train(network_module=self.network,
                    training_data=self.train_set, testing_data=self.test_set,
-                   n=1000)
+                   n=self.training_iterations)
 
         print time.clock() - start, 'seconds'
 
 
 
 if __name__ == "__main__":
-    gt = GrammarTrainer() # lots of params are supposed to go in here
+    gt = GrammarTrainer(hiddendim=50) # lots of params are supposed to go in here
     gt.timed_train()
