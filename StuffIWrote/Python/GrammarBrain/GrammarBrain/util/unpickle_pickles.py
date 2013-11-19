@@ -9,7 +9,10 @@ def print_example_sentences(length, n=5):
     if n == 1:
         print pickle.load(open(words_file, 'rb'))[0]
     else:
-        print pickle.load(open(words_file, 'rb'))[:n]
+        print 'Length', length
+        for sentence in pickle.load(open(words_file, 'rb'))[:n]:
+            print sentence
+        print
 
 def print_sentence_range(MIN, MAX):
     for i in range(MIN, MAX+1):

@@ -1,19 +1,17 @@
 from random import random, shuffle
 import time
 
-from pybrain.utilities import percentError
 from pybrain.datasets.classification import SequenceClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.validation import testOnSequenceData
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.structure.connections import FullConnection
 from pybrain.structure import TanhLayer, LSTMLayer
-
         # TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
-
 
 from util import brown_pos_map as bpm
 from util.unpickle_pickles import print_sentence_range, get_sentence_matrices
+
 
 GRAMMATICAL = (0, 1)
 UNGRAMMATICAL = (1, 0)
@@ -146,8 +144,7 @@ class GrammarTrainer(object):
                    training_data=self.train_set, testing_data=self.test_set,
                    n=self.training_iterations)
 
-        print time.clock() - start, 'seconds'
-
+        print (time.clock() - start)/60, 'minutes'
 
 
 if __name__ == "__main__":
