@@ -1,11 +1,17 @@
-from random import sample, random, shuffle
-from pybrain.utilities import percentError
-from numpy import argmax
-from get_brown_pos_sents import get_nice_sentences, construct_sentence_matrices, print_n_sentences
-import brown_pos_map as bpm
+from random import random, shuffle
 import time
+
+from pybrain.utilities import percentError
 from pybrain.datasets.classification import SequenceClassificationDataSet
-import cPickle as pickle
+from pybrain.supervised.trainers import BackpropTrainer
+from pybrain.tools.validation import testOnSequenceData
+from pybrain.tools.shortcuts import buildNetwork
+from pybrain.structure import TanhLayer
+        # TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
+
+
+from util import brown_pos_map as bpm
+from util.unpickle_pickles import print_sentence_range, get_sentence_matrices
 
 GRAMMATICAL = (0, 1)
 UNGRAMMATICAL = (1, 0)
@@ -15,42 +21,39 @@ class GrammarTrainer(object):
     #noinspection PyTypeChecker
     def __init__(self, minim=4, maxim=5, outdim=2, hiddendim=5, train_time=50, basic_pos=True):
         # length restrictions on input sentences
-        self.MIN_LEN = minim
-        self.MAX_LEN = maxim
+        self.MIN_LEN, self.MAX_LEN = minim, maxim
 
         # number of different part of speech categorizations
-        if basic_pos:
-            self.NUM_POS = len(bpm.pos_vector_map.keys())
-        else:
-            self.NUM_POS = len(bpm.pos_map.keys())
-        self.NUM_OUTPUTS = outdim
-        self.HIDDEN_LAYER_SIZE = hiddendim
-        self.network = None
+        self.NUM_POS = len(bpm.pos_vector_map.keys()) if basic_pos else len(bpm.pos_map.keys())
+
+        self.NUM_OUTPUTS, self.HIDDEN_SIZE = outdim, hiddendim
+        self.network = self.build_sigmoid_network()
         self.training_iterations = train_time
         self.train_set, self.test_set = self.create_train_and_test_sets()
 
 
-    def create_train_and_test_sets(self, MIN_LEN=None, MAX_LEN=None):
-        if MIN_LEN is None:
-            MIN_LEN = self.MIN_LEN
-        if MAX_LEN is None:
-            MAX_LEN = self.MAX_LEN
+    def create_train_and_test_sets(self):
 
-        # TODO this needs to be replaced with insert_sequence_vsn_3() from train_trial.py
         def insert_grammatical_sequence(dataset, sentence_mat):
             dataset.newSequence()
             for i, word_vector in enumerate(sentence_mat):
                 if i < len(sentence_mat) - 1:
-                    dataset.appendLinked(word_vector, [0])
+                    dataset.appendLinked(word_vector, MID_SENTENCE)
                 else:
-                    dataset.appendLinked(word_vector, [1])
+                    dataset.appendLinked(word_vector, GRAMMATICAL)
 
+        # there are a few options on what to do here it /would/ make sense to
+        # give the first n-1 of these a `blank_label` like the grammatical
+        # ones, but by /not/ doing that, we are assuming that we have no
+        # problem declaring that partial sentences building up to ungrammatical
+        # sentences should be already recognized as ungrammatical a happy
+        # medium might be to label them as "probably" ungrammatical
         def insert_randomized_sequence(dataset, sentence_mat):
             dataset.newSequence()
             dup_sent_mat = sentence_mat[:]
             shuffle(dup_sent_mat)
             for word_vector in dup_sent_mat:
-                dataset.appendLinked(word_vector, [0])
+                dataset.appendLinked(word_vector, UNGRAMMATICAL)
 
         def print_data_data(data, name):
             print "num", name, "patterns: ", len(data)
@@ -64,17 +67,13 @@ class GrammarTrainer(object):
         test_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=2)
 
         # brown dataset, no mid-sentence punctuation, no numbers, ends in period, within length range
-        # TODO this should be unpickling my pickles
-        sentences = get_nice_sentences(MAX_LEN, MIN_LEN)
-        print '\ntotal number of sentences:', len(sentences)
-        # TODO this could use the sentence-sampler
-        print '\nFirst five sentences between length', MIN_LEN-1, 'and', MAX_LEN-2
+        print '\nFirst 2 sentences of each length', self.MIN_LEN, 'and', self.MAX_LEN
         print '------------------------------------------------------------'
-        print_n_sentences(sentences, n=5)
+        print_sentence_range(self.MIN_LEN, self.MAX_LEN)
         print '------------------------------------------------------------'
         print '\nvectorizing sentences...'
-        # TODO this should be unpickling my pickles
-        sentence_matrices = construct_sentence_matrices(sentences)
+        sentence_matrices = get_sentence_matrices(self.MIN_LEN, self.MAX_LEN)
+        print '\ntotal number of sentences:', len(sentence_matrices)
 
         print 'creating training and test sets...'
         for sentence_matrix in sentence_matrices:
@@ -94,59 +93,39 @@ class GrammarTrainer(object):
 
 
     def build_sigmoid_network(self):
-        from pybrain.structure import TanhLayer, LSTMLayer
-        # TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
-
-        from pybrain.tools.shortcuts import buildNetwork
-        network = buildNetwork(NUM_REG_POS, HIDDEN_LAYER_SIZE, NUM_OUTPUTS,
-                         bias=True, hiddenclass=LSTMLayer, outclass=TanhLayer, recurrent=True)
-
-        # buildNetwork() calls sortModules() at the end on its own
-
+        network = buildNetwork(self.NUM_POS, self.HIDDEN_SIZE, self.NUM_OUTPUTS,
+                         bias=True, hiddenclass=TanhLayer, outclass=TanhLayer, recurrent=True)
         return network
 
 
     # http://pybrain.org/docs/api/supervised/trainers.html
     # backprop's "through time" on a sequential dataset
     def train(self, network_module, training_data, testing_data, n=20):
-        from pybrain.supervised.trainers import BackpropTrainer
         trainer = BackpropTrainer(module=network_module, dataset=training_data, verbose=True)
-        training_size = training_data.getNumSequences()
 
         for i in range(n):
-            trainer.trainEpochs(epochs=1)
+            trainer.trainEpochs(epochs=10)
             print 'epoch', i, 'finished'
 
             # modified from testOnClassData source code
             training_data.reset()
-            num_correct, print_counter, estimated_class, true_class = 0, 0, [], []
-            for seq in training_data._provideSequences():
-                trainer.module.reset()
-                a = True
-                for inp, target in seq:
-                    if a:
-                        t = target
-                        a = False
-                    res = trainer.module.activate(inp)
-                #if p < 20:
-                #    print 'target:', t
-                #    print 'result:', res
-                #    p += 1
-                estimated_class.append(argmax(res))
-                true_class.append(argmax(t))
-                if estimated_class[-1] == true_class[-1]:
-                    num_correct += 1
-            print_counter += 1
-            if print_counter % 20 == 0:
-                print 'training error =', num_correct, '/', training_size
+            print 'current fraction that are correct on training data:'
+            print testOnSequenceData(network_module, training_data)
 
-    def go(self):
-        train_data, test_data = self.create_train_and_test_sets(MIN_LEN, MAX_LEN)
-        network = self.build_sigmoid_network()
+        print 'current fraction that are correct on testing data:'
+        print testOnSequenceData(network_module, testing_data)
+
+    def timed_train(self):
         start = time.clock()
-        self.train(network_module=network, training_data=train_data, testing_data=test_data, n=1000)
+
+        self.train(network_module=self.network,
+                   training_data=self.train_set, testing_data=self.test_set,
+                   n=1000)
+
         print time.clock() - start, 'seconds'
+
+
 
 if __name__ == "__main__":
     gt = GrammarTrainer() # lots of params are supposed to go in here
-    gt.go()
+    gt.timed_train()
