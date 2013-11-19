@@ -6,8 +6,17 @@ from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.validation import testOnSequenceData
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.structure.connections import FullConnection
-from pybrain.structure import TanhLayer, LSTMLayer
-        # TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
+from pybrain.structure import TanhLayer, LSTMLayer, SigmoidLayer
+# TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
+# TODO checkout whether weight sharing is a good idea
+    # http://www.cs.toronto.edu/~hinton/absps/sunspots.pdf
+# TODO I think to implement an ESN would require a new class FixedConn(Connection)
+    # check out identity.py for an example of how to make a simple class (Connection)
+    # also check out linear.py on this, I think it involves overriding
+        # _backwardImplementation to not do anything to update the weights?
+    # also check out linearlayer.py, I made need to subclass (NeuronLayer) as well...
+# TODO see if RPROP works faster
+
 
 from util import brown_pos_map as bpm
 from util.unpickle_pickles import print_sentence_range, get_sentence_matrices
@@ -24,7 +33,7 @@ class GrammarTrainer(object):
         self.NUM_POS = len(bpm.pos_vector_map.keys()) if basic_pos else len(bpm.pos_map.keys())
         self.basic_pos = basic_pos
         self.NUM_OUTPUTS, self.HIDDEN_SIZE = outdim, hiddendim
-        self.network = self.build_sigmoid_network()
+        self.network = self.build_network()
         self.training_iterations = train_time
         print str(self)
         self.train_set, self.test_set = self.create_train_and_test_sets()
@@ -108,34 +117,36 @@ class GrammarTrainer(object):
         return train_data, test_data
 
 
-    def build_sigmoid_network(self):
+    def build_network(self):
         network = buildNetwork(self.NUM_POS, self.HIDDEN_SIZE, self.NUM_OUTPUTS,
                          bias=True, hiddenclass=LSTMLayer, outclass=TanhLayer, recurrent=True)
 
         # these are the default "module" names
-        network.addRecurrentConnection(FullConnection(network['out'], network['hidden0']))
+        # NOTE: you DO have to add a hidden->hidden connection even when you set rec=True
+        #   bc otw how would it know that you wanted that /particular/ connection!?
+        h = network['hidden0']
+        o = network['out']
+        network.addRecurrentConnection(FullConnection(h, h))
+        network.addRecurrentConnection(FullConnection(o, h))
         network.sortModules()
         return network
 
 
     # http://pybrain.org/docs/api/supervised/trainers.html
     # backprop's "through time" on a sequential dataset
-    def train(self, network_module, training_data, testing_data, n=20):
+    def train(self, network_module, training_data, testing_data, n=20, s=5):
         trainer = BackpropTrainer(module=network_module, dataset=training_data, verbose=True)
-
-        for i in range(n/10):
-            trainer.trainEpochs(epochs=10)
-            print 'epoch', (i+1)*10, 'finished'
+        for i in range(n/s):
+            trainer.trainEpochs(epochs=s)
+            print 'epoch', (i+1)*s, 'finished'
 
             # modified from testOnClassData source code
             training_data.reset()
-            print
-            print 'current fraction that are correct on training data:', \
-                testOnSequenceData(network_module, training_data)
+            print '\nTRAINING: {:.2f}% correct'.format(
+                testOnSequenceData(network_module, training_data) * 100)
 
-            print 'current fraction that are correct on testing data:', \
-                testOnSequenceData(network_module, testing_data)
-            print
+            print 'TESTING: {:.2f}% correct\n'.format(
+                testOnSequenceData(network_module, testing_data) * 100)
 
     def timed_train(self):
         start = time.clock()
@@ -144,8 +155,12 @@ class GrammarTrainer(object):
                    training_data=self.train_set, testing_data=self.test_set,
                    n=self.training_iterations)
 
-        print (time.clock() - start)/60, 'minutes'
+        print '%.2f minutes' % ((time.clock() - start)/60)
 
+
+class BiDirectionalGrammarTrainer(GrammarTrainer):
+    def build_network(self):
+        pass
 
 if __name__ == "__main__":
     gt = GrammarTrainer(hiddendim=50) # lots of params are supposed to go in here
