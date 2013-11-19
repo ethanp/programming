@@ -9,7 +9,7 @@ from pybrain.datasets.classification import SequenceClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.structure.connections import FullConnection
 from pybrain.structure.modules import TanhLayer, LSTMLayer
-
+from pybrain.tools.validation import testOnSequenceData
 import sys
 
 sds = SequenceClassificationDataSet(3, 2)
@@ -70,8 +70,8 @@ he_went_blue = [[1, 0, 0],
                 [0, 1, 0],
                 [0, 0, 1]]
 
-happy_go = [[0, 1, 0],
-            [0, 0, 1]]
+happy_go = [[0, 0, 1],
+            [0, 1, 0]]
 
 sentences = [he_went, blue_green, he_went_blue, happy_go]
 
@@ -112,15 +112,37 @@ def test_on_sentence(the_sentence):
         else:
             print recursive_network.activate(word)
 
+print 'num_correct / len_dataset'
+print testOnSequenceData(recursive_network, sds)  # what a find!
+
+
 sys.stdout.flush()
 trainer = BackpropTrainer(recursive_network, sds, verbose=False)
-trainer.trainEpochs(5000)
+trainer.trainEpochs(500)
 
 print "------After Training:"
 
 for a_sentence in sentences:
     test_on_sentence(a_sentence)
 
-print recursive_network['in']
-print recursive_network['hidden0']
-print recursive_network['out']
+print 'num_correct / len_dataset'
+print testOnSequenceData(recursive_network, sds)
+
+#print recursive_network['in']
+#print recursive_network['hidden0']
+#print recursive_network['out']
+
+# modified from
+# http://stackoverflow.com/questions/8150772/pybrain-how-to-print-a-network-nodes-and-weights
+#for module in recursive_network.modules:
+#    print '\n', module
+#    for connection in recursive_network.connections[module]:
+#        print connection
+#        #for cc in range(len(connection.params)):
+#        #    print connection.whichBuffers(cc) #, connection.params[cc]
+#    if hasattr(recursive_network, "recurrentConns"):
+#        print "\nRecurrent connections"
+#        for connection in recursive_network.recurrentConns:
+#            print connection
+#            #for cc in range(len(connection.params)):
+#            #    print connection.whichBuffers(cc) #, connection.params[cc]

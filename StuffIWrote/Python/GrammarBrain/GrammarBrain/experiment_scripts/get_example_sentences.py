@@ -12,4 +12,5 @@ def print_sentence_range(MIN, MAX):
     for i in range(MIN, MAX+1):
         print_example_sentences(i, 1)
 
-print_sentence_range(2, 10)
+if __name__ == "__main__":
+    print_sentence_range(2, 10)
