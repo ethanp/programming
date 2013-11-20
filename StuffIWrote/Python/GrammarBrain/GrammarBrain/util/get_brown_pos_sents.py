@@ -1,12 +1,45 @@
-from nltk.corpus import brown, semcor, conll2000
+from nltk.corpus import brown, semcor, conll2000, treebank
+import sys
 
 from GrammarBrain.util import brown_pos_map as bpm
 
 
-CORPORA = brown, semcor, conll2000
+CORPORA = brown, semcor, conll2000, treebank
+
+def test_corpus_intersections(MIN=3, MAX=3):
+    sets = []
+    for corpus in CORPORA:
+        print corpus.__repr__()
+        a_set = set()
+        counter = 0
+        for a in corpus.tagged_sents():
+            if MIN < len(a) <= MAX + 1 and a[-1][0] == '.':
+                words = ' '.join([w[0] for w in a[:-1]])
+                a_set.add(words)
+                if counter < 5:
+                    print words
+                    sys.stdout.flush()
+                    counter += 1
+        sets.append((a_set, str(corpus)))
+
+        print corpus.__repr__()
+
+    for b in sets[::-1]:
+        print b[1]
+        print str(len(b[0])) + '\n'
+        for c in sets:
+            if b is not c:
+                print 'with', c[1]
+                d = b[0].copy()
+                d = d.difference(c[0])
+                print len(d)
+        print '\n-------------------------------------------------------------'
+
 
 def get_many_tagged_sents(MIN=3, MAX=5):
-    pass
+    # getting length of iterator does not compute
+    return [s[:-1] for corpus in CORPORA for s in corpus.tagged_sents()
+            if MIN < len(s) <= MAX + 1 and s[-1][0] == '.']
 
 def get_brown_tagged_sents(MIN=3, MAX=4):
     '''
@@ -80,7 +113,7 @@ def print_n_sentences(ss, n=15):
 
 # for trying it out
 if __name__ == "__main__":
-    sentences = filter_punctuation(get_brown_tagged_sents(4, 6))
-    #print normalize_POSes(get_brown_tagged_sents())[:2]
-    #print construct_sentence_matrices(sentences)[:2]
-    print_n_sentences(sentences)
+    #sentences = filter_punctuation(get_brown_tagged_sents(4, 6))
+    #print_n_sentences(sentences)
+    #print len(get_many_tagged_sents(3,3))
+    test_corpus_intersections()
