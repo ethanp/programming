@@ -1,25 +1,35 @@
-from nltk.corpus import brown
+from nltk.corpus import brown, semcor, conll2000
 
 from GrammarBrain.util import brown_pos_map as bpm
 
 
-def get_brown_tagged_sents(MAX=8, MIN=3):
+CORPORA = brown, semcor, conll2000
+
+def get_many_tagged_sents(MIN=3, MAX=5):
+    pass
+
+def get_brown_tagged_sents(MIN=3, MAX=4):
     '''
     get sentences from the Brown dataset and their associated POS tags
     only get sentences within the specified range bounds that end in a period
     strip off the final period to simplify the overall learning task
+    the sentence sizes are INCLUSIVE
     '''
-    return (s[:-1] for s in brown.tagged_sents() if MIN <= len(s) < MAX and s[-1][0] == '.')
+    return (s[:-1] for s in brown.tagged_sents()
+            if MIN < len(s) <= MAX+1 and s[-1][0] == '.')
 
-def get_nice_sentences(MAX=8, MIN=3):
-    return filter_punctuation(filter_numbers(get_brown_tagged_sents(MAX, MIN)))
+def get_nice_sentences(MIN=3, MAX=4, include_numbers=False):
+    if include_numbers:
+        return filter_punctuation(get_brown_tagged_sents(MIN, MAX))
+    else:
+        return filter_punctuation(filter_numbers(get_brown_tagged_sents(MIN, MAX)))
 
 def count_categories_used(ss):  return len(set(w[1] for s in ss for w in s))
 
 def normalize_POSes(ss):
     '''
     transform sentences
-        from Brown's parts of speech (470 of them total)
+        from Brown's parts of speech (470 of them total [no joke])
         to   more 'Normal' ones      ( 12 of them total)
     '''
     return ([(word, bpm.pos_map[pos]) for word, pos in s] for s in ss)
@@ -27,7 +37,7 @@ def normalize_POSes(ss):
 
 def sentence_strings(ss, n=10):
     ''' print the actual sentences that were collected (without POSs) '''
-    # can't do indexing in generator
+    # can't do indexing on generator
     return [" ".join(w[0] for w in s) for s in ss][:n]
 
 def filter_punctuation(ss):
@@ -57,7 +67,7 @@ def construct_sentence_matrices(ss):
     for s in ss:
         sentence_matrix = []
         for w in s:
-            # TODO I'm sure this would be much faster with numpy...
+            # this would be much faster with numpy, but with pickling, who cares
             word_vector = [0] * len(bpm.pos_vector_map.keys())
             word_vector[bpm.brown_index(w[1])] = 1
             sentence_matrix.append(word_vector)
@@ -70,7 +80,7 @@ def print_n_sentences(ss, n=15):
 
 # for trying it out
 if __name__ == "__main__":
-    sentences = get_nice_sentences()
+    sentences = filter_punctuation(get_brown_tagged_sents(4, 6))
     #print normalize_POSes(get_brown_tagged_sents())[:2]
-    print construct_sentence_matrices(sentences)[:2]
+    #print construct_sentence_matrices(sentences)[:2]
     print_n_sentences(sentences)

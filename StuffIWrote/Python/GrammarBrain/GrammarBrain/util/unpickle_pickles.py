@@ -21,7 +21,7 @@ def print_sentence_range(MIN, MAX):
 def get_sentence_matrices(MIN, MAX):
     assert 1 < MIN <= MAX < 25
     sentence_matrices = []
-    for i in range(MIN, MAX + 1):
+    for i in range(MIN, MAX+1):
         sentence_matrices += pickle.load(open(PICKLES+('sentence_matrices_%d.p' % i)))
     return sentence_matrices
 

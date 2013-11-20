@@ -11,10 +11,11 @@ from pybrain.structure import TanhLayer, LSTMLayer, SigmoidLayer
 # TODO checkout whether weight sharing is a good idea
     # http://www.cs.toronto.edu/~hinton/absps/sunspots.pdf
 # TODO I think to implement an ESN would require a new class FixedConn(Connection)
+    # I don't think this exists yet, but I don't think it will be hard to implement
     # check out identity.py for an example of how to make a simple class (Connection)
     # also check out linear.py on this, I think it involves overriding
         # _backwardImplementation to not do anything to update the weights?
-    # also check out linearlayer.py, I made need to subclass (NeuronLayer) as well...
+    # also check out linearlayer.py, I may need to subclass (NeuronLayer) as well...
 # TODO see if RPROP works faster
 
 
