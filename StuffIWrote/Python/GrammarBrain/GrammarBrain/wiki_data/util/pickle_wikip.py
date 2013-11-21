@@ -67,7 +67,7 @@ def filter_invalid_POSs(s):
     return True
 
 
-def create_matrices_and_sentence_pickles():
+def create_pickled_matrices():
     for length in range(4,25):  # 4 because it crashed during 4 last time
         sentence_matrices = []
         print 'length', length
@@ -94,4 +94,5 @@ def create_matrices_and_sentence_pickles():
 # go through sentences, and put it in 'file_%d' % len(sentence)
 # if len(sentence) < 25
 if __name__ == '__main__':
-    create_matrices_and_sentence_pickles()
+    #create_pickled_matrices()
+    pass
