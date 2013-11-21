@@ -3,6 +3,7 @@ import cPickle as pickle
 
 PICKLES = '/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Python/GrammarBrain/GrammarBrain/pickles/'
 
+
 def print_example_sentences(length, n=5):
     assert 1 < length < 25
     words_file = PICKLES+ ('sentence_words_%d.p' % length)
@@ -14,9 +15,11 @@ def print_example_sentences(length, n=5):
             print sentence
         print
 
+
 def print_sentence_range(MIN, MAX):
     for i in range(MIN, MAX+1):
         print_example_sentences(i, 2)
+
 
 def get_sentence_matrices(MIN, MAX):
     assert 1 < MIN <= MAX < 25

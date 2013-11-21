@@ -7,16 +7,16 @@ from pybrain.tools.validation import testOnSequenceData
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.structure.connections import FullConnection
 from pybrain.structure import TanhLayer, LSTMLayer, SigmoidLayer
-# TODO checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
-# TODO checkout whether weight sharing is a good idea
+# checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
+# checkout whether weight sharing is a good idea
     # http://www.cs.toronto.edu/~hinton/absps/sunspots.pdf
-# TODO I think to implement an ESN would require a new class FixedConn(Connection)
+# I think to implement an ESN would require a new class FixedConn(Connection)
     # I don't think this exists yet, but I don't think it will be hard to implement
     # check out identity.py for an example of how to make a simple class (Connection)
     # also check out linear.py on this, I think it involves overriding
         # _backwardImplementation to not do anything to update the weights?
     # also check out linearlayer.py, I may need to subclass (NeuronLayer) as well...
-# TODO see if RPROP works faster
+# see if RPROP works faster
 
 
 from util import brown_pos_map as bpm
@@ -149,6 +149,7 @@ class GrammarTrainer(object):
             print 'TESTING: {:.2f}% correct\n'.format(
                 testOnSequenceData(network_module, testing_data) * 100)
 
+
     def timed_train(self):
         start = time.clock()
 
@@ -158,10 +159,6 @@ class GrammarTrainer(object):
 
         print '%.2f minutes' % ((time.clock() - start)/60)
 
-
-class BiDirectionalGrammarTrainer(GrammarTrainer):
-    def build_network(self):
-        pass
 
 if __name__ == "__main__":
     gt = GrammarTrainer(hiddendim=50) # lots of params are supposed to go in here

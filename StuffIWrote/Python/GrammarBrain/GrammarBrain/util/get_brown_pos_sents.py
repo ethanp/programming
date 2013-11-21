@@ -9,7 +9,7 @@ CORPORA = brown, semcor, conll2000, treebank
 def test_corpus_intersections(MIN=3, MAX=3):
     sets = []
     for corpus in CORPORA:
-        print corpus.__repr__()
+        print repr(corpus)
         a_set = set()
         counter = 0
         for a in corpus.tagged_sents():
@@ -22,7 +22,7 @@ def test_corpus_intersections(MIN=3, MAX=3):
                     counter += 1
         sets.append((a_set, str(corpus)))
 
-        print corpus.__repr__()
+        print repr(corpus)
 
     for b in sets[::-1]:
         print b[1]
@@ -115,5 +115,4 @@ def print_n_sentences(ss, n=15):
 if __name__ == "__main__":
     #sentences = filter_punctuation(get_brown_tagged_sents(4, 6))
     #print_n_sentences(sentences)
-    #print len(get_many_tagged_sents(3,3))
-    test_corpus_intersections()
+    print len(get_many_tagged_sents(3,3))
