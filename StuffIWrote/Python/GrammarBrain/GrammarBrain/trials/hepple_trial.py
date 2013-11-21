@@ -5,7 +5,6 @@ sample_file = '/Users/Ethan/Desktop/Data/OANC-GrAF/data/written_1/journal/slate/
 with open(sample_file, 'rb') as xml_binary:
     tree = etree.parse(xml_binary)
 
-#print etree.tostring(tree.getroot())
 root = tree.getroot()
 sentences = []
 sentence = []
