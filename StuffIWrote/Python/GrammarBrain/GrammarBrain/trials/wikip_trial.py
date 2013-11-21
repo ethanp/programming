@@ -7,7 +7,7 @@ path = '/Users/Ethan/Desktop/Data/wiki_tagged.en/'
 c = Counter()
 stop = 0
 for file in os.listdir(path):
-    if stop < 10:
+    if stop < 5:
         stop += 1
         print file
         with open(path+file, 'rb') as text:
@@ -28,7 +28,7 @@ for file in os.listdir(path):
                     #print
 
 for b, d in c.items():
-    print b, d
+    print b
 
 print
 print len(c)

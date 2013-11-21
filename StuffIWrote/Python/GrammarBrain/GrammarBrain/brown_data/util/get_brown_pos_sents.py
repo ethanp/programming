@@ -1,7 +1,8 @@
-from nltk.corpus import brown, semcor, conll2000, treebank
 import sys
 
-from GrammarBrain.util import brown_pos_map as bpm
+from nltk.corpus import brown, semcor, conll2000, treebank
+
+from GrammarBrain.brown_data.util import brown_pos_map as bpm
 
 
 CORPORA = brown, semcor, conll2000, treebank

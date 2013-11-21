@@ -6,7 +6,7 @@ from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.validation import testOnSequenceData
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.structure.connections import FullConnection
-from pybrain.structure import TanhLayer, LSTMLayer, SigmoidLayer
+from pybrain.structure import TanhLayer, LSTMLayer
 # checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 # checkout whether weight sharing is a good idea
     # http://www.cs.toronto.edu/~hinton/absps/sunspots.pdf
@@ -19,8 +19,8 @@ from pybrain.structure import TanhLayer, LSTMLayer, SigmoidLayer
 # see if RPROP works faster
 
 
-from util import brown_pos_map as bpm
-from util.unpickle_pickles import print_sentence_range, get_sentence_matrices
+from GrammarBrain.brown_data.util.unpickle_brown_pickles import print_sentence_range, get_sentence_matrices
+from GrammarBrain.brown_data.util import brown_pos_map as bpm
 
 
 GRAMMATICAL = (0, 1)

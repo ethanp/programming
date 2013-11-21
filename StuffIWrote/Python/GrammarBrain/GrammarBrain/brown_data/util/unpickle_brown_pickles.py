@@ -1,7 +1,7 @@
 import os
 import cPickle as pickle
 
-PICKLES = '/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Python/GrammarBrain/GrammarBrain/pickles/'
+PICKLES = '/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Python/GrammarBrain/GrammarBrain/brown_pickles/'
 
 
 def print_example_sentences(length, n=5):

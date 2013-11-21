@@ -40,3 +40,4 @@ StuffIWrote/Python/MincoCommandLine/.idea
 *.sublime-project
 *.xcbkptlist
 StuffIWrote/Python/GrammarBrain/GrammarBrain/pickles
+*.p
