@@ -2,8 +2,6 @@ from collections import Counter
 import wiki_pos_map
 import sys, os
 import cPickle as pickle
-import multiprocessing
-from time import time
 
 path = '/Users/Ethan/Desktop/Data/wiki_tagged.en/'
 base_name = '/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Python/GrammarBrain/GrammarBrain/wiki_data/wiki_pickles/'
@@ -69,25 +67,14 @@ def filter_invalid_POSs(s):
     return True
 
 
-def concurrently_create_matrices_and_sentence_pickles():
-    TOTAL_LENGTH = 25 - 2
-    PROCESSES = 4 * 2 + 1  # that's what Wade said
-    num_per_process = TOTAL_LENGTH / PROCESSES + 1
-    start = time()
-
-    pool = multiprocessing.Pool(processes=PROCESSES,
-                                initializer=start_process,
-                                maxtasksperchild=num_per_process)
-
-    # TODO not done with the parameters here yet
-    pool.map(pooled_create_matrices_and_sentence_pickles_of_length)
-
-
-def pooled_create_matrices_and_sentence_pickles_of_length(length):
-    sentence_matrices = []
-    for filenum in range(len(os.listdir(path))):
-        in_file = sentence_file + str(length) + '_' + str(filenum)
-        if os.path.exists(in_file):
+def create_matrices_and_sentence_pickles():
+    for length in range(4,25):  # 4 because it crashed during 4 last time
+        sentence_matrices = []
+        print 'length', length
+        for filenum in range(len(os.listdir(path))):
+            in_file = sentence_file + str(length) + '_' + str(filenum)
+            if not os.path.exists(in_file): continue
+            print 'filenum', filenum
             sentences = pickle.load(open(in_file, 'rb'))
             for sentence in sentences:
                 sentence_matrix = []
@@ -98,17 +85,13 @@ def pooled_create_matrices_and_sentence_pickles_of_length(length):
                     this_vec[wiki_pos_map.the_map[pos]] = 1
                     sentence_matrix.append(this_vec)
                 sentence_matrices.append(sentence_matrix[:])
-                print 'length', length, 'filenum', filenum, \
-                    '\nlen(sentence_matrices)', len(sentence_matrices)
+            print 'len(sentence_matrices)', len(sentence_matrices)
+        out_file = matrix_file_of_len + str(length) + '.p'
+        pickle.dump(sentence_matrices, open(out_file, 'wb'))
+        del sentence_matrices
 
-    out_file = matrix_file_of_len + str(length) + '.p'
-    pickle.dump(sentence_matrices, open(out_file, 'wb'))
-
-
-def start_process():
-    print 'Starting', multiprocessing.current_process().name
 
 # go through sentences, and put it in 'file_%d' % len(sentence)
 # if len(sentence) < 25
 if __name__ == '__main__':
-    concurrently_create_matrices_and_sentence_pickles()
+    create_matrices_and_sentence_pickles()
