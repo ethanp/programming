@@ -8,6 +8,7 @@ base_name = '/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Python/Gra
 tuple_file = base_name+'tuple_'
 sentence_file = base_name+'sentence_'
 pos_file = base_name+'pos_'
+matrix_file_of_len = base_name+'matrix_'
 ALL_OF_THEM = 1000
 
 
@@ -46,7 +47,7 @@ def import_n_wiki_to_tuple_files(n=2):
                 for length in range(2, 25):
                     sents_of_length_j = [s for s in sents if len(s) == length]
                     print length, ',', len(sents_of_length_j)
-                    out_file = sentence_file+str(length)+'_'+str(filenum)
+                    out_file = sentence_file + str(length) + '_' + str(filenum)
                     if len(sents_of_length_j) > 10:
                         print sents_of_length_j[10]
                     elif len(sents_of_length_j):
@@ -57,7 +58,6 @@ def import_n_wiki_to_tuple_files(n=2):
 
                 sents = []
 
-
 # using this in the way I have means that there
 # exist sentences with no corresponding matrix
 def filter_invalid_POSs(s):
@@ -67,9 +67,26 @@ def filter_invalid_POSs(s):
     return True
 
 
+def create_matrices_and_sentence_pickles():
+    for length in range(2,25):
+        sentence_matrices = []
+        for filenum in range(len(os.listdir(path))):
+            in_file = sentence_file + str(length) + '_' + str(filenum)
+            sentences = pickle.load(open(in_file, 'rb'))
+            for sentence in sentences:
+                sentence_matrix = []
+                word_vec = [0] * len(wiki_pos_map.the_map)
+                for word, pos in sentence:
+                    # create word vector
+                    this_vec = word_vec[:]
+                    this_vec[wiki_pos_map.the_map[pos]] = 1
+                    sentence_matrix.append(this_vec)
+                sentence_matrices.append(sentence_matrix[:])
+        out_file = matrix_file_of_len + str(length) + '.p'
+        pickle.dump(sentence_matrices, out_file)
 
 
 # go through sentences, and put it in 'file_%d' % len(sentence)
 # if len(sentence) < 25
 if __name__ == '__main__':
-    import_n_wiki_to_tuple_files(ALL_OF_THEM)
+    create_matrices_and_sentence_pickles()
