@@ -71,8 +71,8 @@ def filter_invalid_POSs(s):
 
 def concurrently_create_matrices_and_sentence_pickles():
     TOTAL_LENGTH = 25 - 2
-    PROCESSES = 0
-    num_per_process = TOTAL_LENGTH / PROCESSES + 1  # 'cause that's what they say
+    PROCESSES = 4 * 2 + 1  # that's what Wade said
+    num_per_process = TOTAL_LENGTH / PROCESSES + 1
     start = time()
 
     pool = multiprocessing.Pool(processes=PROCESSES,
@@ -84,12 +84,10 @@ def concurrently_create_matrices_and_sentence_pickles():
 
 
 def pooled_create_matrices_and_sentence_pickles_of_length(length):
-    print 'length', length
     sentence_matrices = []
     for filenum in range(len(os.listdir(path))):
         in_file = sentence_file + str(length) + '_' + str(filenum)
         if os.path.exists(in_file):
-            print 'filenum', filenum
             sentences = pickle.load(open(in_file, 'rb'))
             for sentence in sentences:
                 sentence_matrix = []
@@ -99,8 +97,10 @@ def pooled_create_matrices_and_sentence_pickles_of_length(length):
                     this_vec = word_vec[:]
                     this_vec[wiki_pos_map.the_map[pos]] = 1
                     sentence_matrix.append(this_vec)
-                    del this_vec
                 sentence_matrices.append(sentence_matrix[:])
+                print 'length', length, 'filenum', filenum, \
+                    '\nlen(sentence_matrices)', len(sentence_matrices)
+
     out_file = matrix_file_of_len + str(length) + '.p'
     pickle.dump(sentence_matrices, open(out_file, 'wb'))
 
