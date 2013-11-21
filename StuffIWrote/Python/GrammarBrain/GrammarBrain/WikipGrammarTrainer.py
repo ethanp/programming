@@ -18,32 +18,34 @@ from pybrain.structure import TanhLayer, LSTMLayer
     # also check out linearlayer.py, I may need to subclass (NeuronLayer) as well...
 # see if RPROP works faster
 
-
-from GrammarBrain.brown_data.util.unpickle_brown_pickles import print_sentence_range, get_sentence_matrices
-from GrammarBrain.brown_data.util import brown_pos_map as bpm
+from wiki_data.util.wiki_pos_map import the_map
+from wiki_data.util.get_wiki_pos_sents import get_sentence_matrices, print_sentence_range
 
 
 GRAMMATICAL = (0, 1)
 UNGRAMMATICAL = (1, 0)
 MID_SENTENCE = (0.5, 0.5)
 
-class GrammarTrainer(object):
+# if I made the interface to the Wikip data the SAME as that of the Brown data
+# I could have just one class, and set Brown=True/False instead of lots of dup'd code.
+# It's almost the same already, but having the pointless separation is fine for now
+# as far as I'm concerned.
+
+class WikipGrammarTrainer(object):
     #noinspection PyTypeChecker
-    def __init__(self, minim=4, maxim=5, outdim=2, hiddendim=5, train_time=50, basic_pos=True):
-        self.MIN_LEN, self.MAX_LEN = minim, maxim
-        self.NUM_POS = len(bpm.pos_vector_map.keys()) if basic_pos else len(bpm.pos_map.keys())
-        self.basic_pos = basic_pos
+    def __init__(self, min_len=4, max_len=5, outdim=2, hiddendim=50, train_time=50, train_set_percentage=25):
+        self.MIN_LEN, self.MAX_LEN = min_len, max_len
+        self.NUM_POS = len(the_map.keys())
         self.NUM_OUTPUTS, self.HIDDEN_SIZE = outdim, hiddendim
         self.network = self.build_network()
         self.training_iterations = train_time
         print str(self)
+        self.TRAIN_SET_PROPORTION = float(train_set_percentage) / 100
         self.train_set, self.test_set = self.create_train_and_test_sets()
 
     def __str__(self):
-        string = ['']
+        string = ['WIKIPEDIA DATASET']
         string += ['Sentences of length {0} to {1}'.format(str(self.MIN_LEN), str(self.MAX_LEN))]
-        pos_set = 'BASIC' if self.basic_pos else 'EXTENDED'
-        string += ['Using {0} pos set'.format(pos_set)]
         string += ['Hidden size: {0}'.format(str(self.HIDDEN_SIZE))]
         string += ['Number of training iterations: {0}'.format(str(self.training_iterations))]
         string += ['\n-------------------------------------------------------']
@@ -71,7 +73,7 @@ class GrammarTrainer(object):
                     dataset.appendLinked(word_vector, GRAMMATICAL)
 
         # there are a few options on what to do here it /would/ make sense to
-        # give the first n-1 of these a `blank_label` like the grammatical
+        # give the first n-1 of these a `MID_SENTENCE` label like the grammatical
         # ones, but by /not/ doing that, we are assuming that we have no
         # problem declaring that partial sentences building up to ungrammatical
         # sentences should be already recognized as ungrammatical a happy
@@ -87,24 +89,24 @@ class GrammarTrainer(object):
             print "num", name, "patterns: ", len(data)
             print "input and output dimensions: ", data.indim, data.outdim
             print "First sample (input, target, class):"
-            print data['input'][0], data['target'][0], data['class'][0]
+            print data['input'][0], data['target'][0]
 
         # inp: dimensionality of the input (# of POS types)
         # target: output dimensionality (# of possible classifications)
-        train_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=2)
-        test_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=2)
+        train_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=self.NUM_OUTPUTS)
+        test_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=self.NUM_OUTPUTS)
 
-        # brown dataset, no mid-sentence punctuation, no numbers, ends in period, within length range
         print '\nFirst 2 sentences of each length', self.MIN_LEN, 'and', self.MAX_LEN
         print '------------------------------------------------------------'
         print_sentence_range(self.MIN_LEN, self.MAX_LEN)
         print '------------------------------------------------------------'
-        print '\nvectorizing sentences...'
+        print '\nunpickling vectorized sentences...'
         sentence_matrices = get_sentence_matrices(self.MIN_LEN, self.MAX_LEN)
         print '\ntotal number of sentences:', len(sentence_matrices)
         print 'creating training and test sets...'
         for sentence_matrix in sentence_matrices:
-            if random() < .25:  # percent distribution between sets needn't be perfect, right?
+            # percent distribution between sets needn't be perfect, right?
+            if random() < self.TRAIN_SET_PROPORTION:
                 insert_grammatical_sequence(test_data, sentence_matrix)
                 insert_randomized_sequence(test_data, sentence_matrix)
             else:
@@ -112,8 +114,8 @@ class GrammarTrainer(object):
                 insert_randomized_sequence(train_data, sentence_matrix)
 
         ''' FOR DEBUGGING DATASET '''
-        #print_data_data(train_data, 'training')
-        #print_data_data(test_data, 'testing')
+        print_data_data(train_data, 'training')
+        print_data_data(test_data, 'testing')
 
         return train_data, test_data
 
@@ -127,9 +129,13 @@ class GrammarTrainer(object):
         #   bc otw how would it know that you wanted that /particular/ connection!?
         h = network['hidden0']
         o = network['out']
-        network.addRecurrentConnection(FullConnection(h, h))
+
         network.addRecurrentConnection(FullConnection(o, h))
-        network.sortModules()
+
+        # gets added automatically when connecting o->h for some reason
+        #network.addRecurrentConnection(FullConnection(h, h))
+
+        network.sortModules()  # must re-sort after adding new connection
         return network
 
 
@@ -150,16 +156,16 @@ class GrammarTrainer(object):
                 testOnSequenceData(network_module, testing_data) * 100)
 
 
-    def timed_train(self):
+    def timed_train(self, s=5):
         start = time.clock()
 
         self.train(network_module=self.network,
                    training_data=self.train_set, testing_data=self.test_set,
-                   n=self.training_iterations)
+                   n=self.training_iterations, s=s)
 
         print '%.2f minutes' % ((time.clock() - start)/60)
 
 
 if __name__ == "__main__":
-    gt = GrammarTrainer(hiddendim=50) # lots of params are supposed to go in here
-    gt.timed_train()
+    gt = WikipGrammarTrainer(train_time=1, min_len=3, max_len=3)
+    gt.timed_train(s=1)

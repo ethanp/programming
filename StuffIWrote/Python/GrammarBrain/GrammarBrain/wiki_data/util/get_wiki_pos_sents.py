@@ -26,9 +26,9 @@ def get_sentence_matrices(MIN, MAX):
         unpickled_matrices = pickle.load(open(filename, 'rb'))
         print 'sentence length', i
         print 'len(unpickled_matrices)', len(unpickled_matrices)
-        matrices.append(unpickled_matrices)
+        matrices += unpickled_matrices
     return matrices
 
 
 if __name__ == '__main__':
-    print get_sentence_matrices(3,3)[0]
+    print get_sentence_matrices(3,3)[0][0]
