@@ -21,10 +21,9 @@ GRAMMATICAL = (0, 1)
 UNGRAMMATICAL = (1, 0)
 MID_SENTENCE = (0.5, 0.5)
 
-# TODO be able to print the thing for graphing use
 '''
-    HOW_TO:
-    =======
+    How Experiment Printing Works:
+    ==============================
 
  1. load some data-structure (dict?) with the hyperparameters
 
@@ -35,7 +34,7 @@ MID_SENTENCE = (0.5, 0.5)
 
  4. print the training as
 
-    epoch,    training error,   testing error
+    epoch,    training error,   test error
      1,          .4,              .5
      2,          .35,             .49
      ...,        ...,             ...
@@ -70,8 +69,8 @@ class BrownGrammarTrainer(object):
             'hidden type'           : 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other',
             'output type'           : 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other',
             'training iterations'   : self.training_iterations,
-            'train set size'        : len(self.train_set.getNumSequences()),
-            'test set size'         : len(self.test_set.getNumSequences())
+            'train set size'        : self.train_set.getNumSequences(),
+            'test set size'         : self.test_set.getNumSequences()
         }
 
         # TODO fill this in during training
@@ -173,7 +172,7 @@ class BrownGrammarTrainer(object):
         #   bc otw how would it know that you wanted that /particular/ connection!?
         h = network['hidden0']
         o = network['out']
-        network.addRecurrentConnection(FullConnection(h, h))
+        #network.addRecurrentConnection(FullConnection(h, h)) made automatically below?
         network.addRecurrentConnection(FullConnection(o, h))
         network.sortModules()
         return network
@@ -201,13 +200,14 @@ class BrownGrammarTrainer(object):
             }
 
 
-    def timed_train(self):
+    def timed_train(self, s=1):
         start = time.clock()
 
         self.train(network_module=self.network,
                    training_data=self.train_set,
                    testing_data=self.test_set,
-                   n=self.training_iterations)
+                   n=self.training_iterations,
+                   s=s)
 
         train_minutes = (time.clock() - start) / 60
         print 'Total Train Time: %.2f minutes' % train_minutes
@@ -215,7 +215,7 @@ class BrownGrammarTrainer(object):
 
 
     def make_csv(self):
-        csv_filename = EXPERIMENT_RESULT_PATH + self.TITLE + '_' + time.strftime("%m/%d-%H:%M") + '.csv'
+        csv_filename = EXPERIMENT_RESULT_PATH + self.TITLE + '_' + time.strftime("%m:%d-%H:%M") + '.csv'
         with open(csv_filename, 'wb') as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(self.repr_dict.keys())
