@@ -8,18 +8,12 @@ from pybrain.tools.shortcuts import buildNetwork
 from pybrain.structure.connections import FullConnection
 from pybrain.structure import TanhLayer, LSTMLayer
 # checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
-# checkout whether weight sharing is a good idea
-    # http://www.cs.toronto.edu/~hinton/absps/sunspots.pdf
-# I think to implement an ESN would require a new class FixedConn(Connection)
-    # I don't think this exists yet, but I don't think it will be hard to implement
-    # check out identity.py for an example of how to make a simple class (Connection)
-    # also check out linear.py on this, I think it involves overriding
-        # _backwardImplementation to not do anything to update the weights?
-    # also check out linearlayer.py, I may need to subclass (NeuronLayer) as well...
+    # checkout whether weight sharing is a good idea
+        # http://www.cs.toronto.edu/~hinton/absps/sunspots.pdf
 # see if RPROP works faster
 
-from wiki_data.util.wiki_pos_map import the_map
-from wiki_data.util.get_wiki_pos_sents import get_sentence_matrices, print_sentence_range
+from util.wiki_pos_map import the_map
+from util.get_wiki_pos_sents import get_sentence_matrices, print_sentence_range
 
 
 GRAMMATICAL = (0, 1)
@@ -167,5 +161,5 @@ class WikipGrammarTrainer(object):
 
 
 if __name__ == "__main__":
-    gt = WikipGrammarTrainer(train_time=1, min_len=3, max_len=3)
+    gt = WikipGrammarTrainer(train_time=2, min_len=3, max_len=3)
     gt.timed_train(s=1)

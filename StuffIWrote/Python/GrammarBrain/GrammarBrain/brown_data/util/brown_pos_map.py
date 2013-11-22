@@ -1,6 +1,6 @@
 # https://code.google.com/p/universal-pos-tags/source/browse/trunk/en-brown.map?r=7
 # by neatnate on May 6, 2011
-pos_map = {
+pos_reducer = {
 """'""":""".""",
 """''""":""".""",
 """(""":""".""",
@@ -476,7 +476,7 @@ pos_map = {
 """``""":"""."""
 }
 
-pos_vector_map = {
+pos_vector_mapping = {
     '.'     :0,
     'VERB'  :1,
     'DET'   :2,
@@ -491,4 +491,4 @@ pos_vector_map = {
     'NUM'   :11
 }
 
-def brown_index(pos):  return pos_vector_map[pos_map[pos]]
+def pos_vector_index(pos):  return pos_vector_mapping[pos_reducer[pos]]

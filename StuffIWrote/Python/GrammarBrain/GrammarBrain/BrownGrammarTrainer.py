@@ -8,43 +8,74 @@ from pybrain.tools.shortcuts import buildNetwork
 from pybrain.structure.connections import FullConnection
 from pybrain.structure import TanhLayer, LSTMLayer
 # checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
-# checkout whether weight sharing is a good idea
-    # http://www.cs.toronto.edu/~hinton/absps/sunspots.pdf
-# I think to implement an ESN would require a new class FixedConn(Connection)
-    # I don't think this exists yet, but I don't think it will be hard to implement
-    # check out identity.py for an example of how to make a simple class (Connection)
-    # also check out linear.py on this, I think it involves overriding
-        # _backwardImplementation to not do anything to update the weights?
-    # also check out linearlayer.py, I may need to subclass (NeuronLayer) as well...
 # see if RPROP works faster
 
 
-from GrammarBrain.brown_data.util.unpickle_brown_pickles import print_sentence_range, get_sentence_matrices
-from GrammarBrain.brown_data.util import brown_pos_map as bpm
+from brown_data.util.unpickle_brown_pickles import print_sentence_range, get_sentence_matrices
+from brown_data.util.brown_pos_map import pos_reducer, pos_vector_mapping
 
 
 GRAMMATICAL = (0, 1)
 UNGRAMMATICAL = (1, 0)
 MID_SENTENCE = (0.5, 0.5)
 
+# TODO be able to print the thing for graphing use
+'''
+    HOW_TO:
+    =====
+
+ 1. load some data-structure (dict?) with the hyperparameters
+
+ 2. as the thing is training, be concatenating some list with
+    the error-numbers over the training, (validation?,) and test sets
+
+ 3. print the param_dict as `comma_separated(keys())\ncomma_separated(values())`
+
+ 4. print the training as
+
+    epoch,    training error,   testing error
+     1,          .4,              .5
+     2,          .35,             .49
+     ...,        ...,             ...
+
+
+'''
 class BrownGrammarTrainer(object):
     #noinspection PyTypeChecker
-    def __init__(self, minim=4, maxim=5, outdim=2, hiddendim=5, train_time=50, basic_pos=True):
+    def __init__(self, minim=4, maxim=5, outdim=2, hiddendim=None,
+                 train_time=50, basic_pos=True, hidden_type=LSTMLayer,
+                 output_type=TanhLayer):
+        if not hiddendim: hiddendim = [5]
         self.MIN_LEN, self.MAX_LEN = minim, maxim
-        self.NUM_POS = len(bpm.pos_vector_map.keys()) if basic_pos else len(bpm.pos_map.keys())
+        self.NUM_POS = len(pos_vector_mapping) if basic_pos else len(pos_reducer)
         self.basic_pos = basic_pos
-        self.NUM_OUTPUTS, self.HIDDEN_SIZE = outdim, hiddendim
+        self.NUM_OUTPUTS, self.HIDDEN_LIST = outdim, hiddendim
+        self.HIDDEN_TYPE = hidden_type
+        self.OUTPUT_TYPE = output_type
         self.network = self.build_network()
         self.training_iterations = train_time
         print str(self)
         self.train_set, self.test_set = self.create_train_and_test_sets()
+        self.repr_dict = {
+            'min_len': self.MIN_LEN,
+            'max_len': self.MAX_LEN,
+            'num_pos': self.NUM_POS,
+            'hidden_list': self.HIDDEN_LIST,
+            'hidden_type': self.HIDDEN_TYPE,
+            'output_type': self.OUTPUT_TYPE,
+            'training_iterations': self.training_iterations
+        }
+
+        # TODO fill this in during training
+        self.train_dict = {}
 
     def __str__(self):
         string = ['BROWN DATASET']
         string += ['Sentences of length {0} to {1}'.format(str(self.MIN_LEN), str(self.MAX_LEN))]
         pos_set = 'BASIC' if self.basic_pos else 'EXTENDED'
         string += ['Using {0} pos set'.format(pos_set)]
-        string += ['Hidden size: {0}'.format(str(self.HIDDEN_SIZE))]
+        string += ['Hidden size: {0}'.format(str(self.HIDDEN_LIST))]
+        string += ['Hidden type: {0}'.format(str(self.HIDDEN_TYPE))]
         string += ['Number of training iterations: {0}'.format(str(self.training_iterations))]
         string += ['\n-------------------------------------------------------']
         string += ['Network Layout']
@@ -103,6 +134,7 @@ class BrownGrammarTrainer(object):
         sentence_matrices = get_sentence_matrices(self.MIN_LEN, self.MAX_LEN)
         print '\ntotal number of sentences:', len(sentence_matrices)
         print 'creating training and test sets...'
+        # TODO need to create a validation set too?
         for sentence_matrix in sentence_matrices:
             if random() < .25:  # percent distribution between sets needn't be perfect, right?
                 insert_grammatical_sequence(test_data, sentence_matrix)
@@ -119,8 +151,14 @@ class BrownGrammarTrainer(object):
 
 
     def build_network(self):
-        network = buildNetwork(self.NUM_POS, self.HIDDEN_SIZE, self.NUM_OUTPUTS,
-                         bias=True, hiddenclass=LSTMLayer, outclass=TanhLayer, recurrent=True)
+        network_options = {
+            'hiddenclass' : self.HIDDEN_TYPE,
+            'outclass' : self.OUTPUT_TYPE,
+            'recurrent' : True,
+            'bias' : True
+        }
+        layout = tuple([self.NUM_POS] + self.HIDDEN_LIST + [self.NUM_OUTPUTS])
+        network = buildNetwork(*layout, **network_options)
 
         # these are the default "module" names
         # NOTE: you DO have to add a hidden->hidden connection even when you set rec=True
