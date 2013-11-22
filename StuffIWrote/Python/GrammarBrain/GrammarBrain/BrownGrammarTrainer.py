@@ -1,5 +1,6 @@
 from random import random, shuffle
 import time
+import csv
 
 from pybrain.datasets.classification import SequenceClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
@@ -13,6 +14,7 @@ from pybrain.structure import TanhLayer, LSTMLayer
 
 from brown_data.util.unpickle_brown_pickles import print_sentence_range, get_sentence_matrices
 from brown_data.util.brown_pos_map import pos_reducer, pos_vector_mapping
+from brown_data.experiment_scripts import EXPERIMENT_RESULT_PATH
 
 
 GRAMMATICAL = (0, 1)
@@ -41,10 +43,11 @@ MID_SENTENCE = (0.5, 0.5)
 '''
 class BrownGrammarTrainer(object):
     #noinspection PyTypeChecker
-    def __init__(self, minim=4, maxim=5, outdim=2, hiddendim=None,
+    def __init__(self, title='default title', minim=4, maxim=5, outdim=2, hiddendim=None,
                  train_time=50, basic_pos=True, hidden_type=LSTMLayer,
                  output_type=TanhLayer):
         if not hiddendim: hiddendim = [5]
+        self.TITLE       = title
         self.MIN_LEN     = minim
         self.MAX_LEN     = maxim
         self.basic_pos   = basic_pos
@@ -59,6 +62,7 @@ class BrownGrammarTrainer(object):
         self.train_set, self.test_set = self.create_train_and_test_sets()
 
         self.repr_dict = {
+            'title'                 : self.TITLE,
             'min len'               : self.MIN_LEN,
             'max len'               : self.MAX_LEN,
             'num pos'               : self.NUM_POS,
@@ -156,10 +160,10 @@ class BrownGrammarTrainer(object):
 
     def build_network(self):
         network_options = {
-            'hiddenclass' : self.HIDDEN_TYPE,
-            'outclass' : self.OUTPUT_TYPE,
-            'recurrent' : True,
-            'bias' : True
+            'hiddenclass'   : self.HIDDEN_TYPE,
+            'outclass'      : self.OUTPUT_TYPE,
+            'recurrent'     : True,
+            'bias'          : True
         }
         layout = tuple([self.NUM_POS] + self.HIDDEN_LIST + [self.NUM_OUTPUTS])
         network = buildNetwork(*layout, **network_options)
@@ -211,7 +215,19 @@ class BrownGrammarTrainer(object):
 
 
     def make_csv(self):
-        pass
+        csv_filename = EXPERIMENT_RESULT_PATH + self.TITLE + '_' + time.strftime("%m/%d-%H:%M") + '.csv'
+        with open(csv_filename, 'wb') as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(self.repr_dict.keys())
+            writer.writerow(self.repr_dict.values())
+            writer.writerow(('Epoch', 'Train Error', 'Test Error'))
+            for logged_epoch in self.train_dict.keys():
+                writer.writerow((
+                    logged_epoch,
+                    self.train_dict[logged_epoch]['train'],
+                    self.train_dict[logged_epoch]['test']
+                ))
+
 
 if __name__ == "__main__":
     gt = BrownGrammarTrainer(hiddendim=50) # lots of params are supposed to go in here
