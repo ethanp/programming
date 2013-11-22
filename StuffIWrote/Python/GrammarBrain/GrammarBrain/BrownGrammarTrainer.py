@@ -22,7 +22,7 @@ MID_SENTENCE = (0.5, 0.5)
 # TODO be able to print the thing for graphing use
 '''
     HOW_TO:
-    =====
+    =======
 
  1. load some data-structure (dict?) with the hyperparameters
 
@@ -38,7 +38,6 @@ MID_SENTENCE = (0.5, 0.5)
      2,          .35,             .49
      ...,        ...,             ...
 
-
 '''
 class BrownGrammarTrainer(object):
     #noinspection PyTypeChecker
@@ -46,24 +45,29 @@ class BrownGrammarTrainer(object):
                  train_time=50, basic_pos=True, hidden_type=LSTMLayer,
                  output_type=TanhLayer):
         if not hiddendim: hiddendim = [5]
-        self.MIN_LEN, self.MAX_LEN = minim, maxim
-        self.NUM_POS = len(pos_vector_mapping) if basic_pos else len(pos_reducer)
-        self.basic_pos = basic_pos
-        self.NUM_OUTPUTS, self.HIDDEN_LIST = outdim, hiddendim
+        self.MIN_LEN     = minim
+        self.MAX_LEN     = maxim
+        self.basic_pos   = basic_pos
+        self.NUM_POS     = len(pos_vector_mapping) if basic_pos else len(pos_reducer)
+        self.HIDDEN_LIST = hiddendim
         self.HIDDEN_TYPE = hidden_type
+        self.NUM_OUTPUTS = outdim
         self.OUTPUT_TYPE = output_type
-        self.network = self.build_network()
+        self.network     = self.build_network()
         self.training_iterations = train_time
         print str(self)
         self.train_set, self.test_set = self.create_train_and_test_sets()
+
         self.repr_dict = {
-            'min_len': self.MIN_LEN,
-            'max_len': self.MAX_LEN,
-            'num_pos': self.NUM_POS,
-            'hidden_list': self.HIDDEN_LIST,
-            'hidden_type': self.HIDDEN_TYPE,
-            'output_type': self.OUTPUT_TYPE,
-            'training_iterations': self.training_iterations
+            'min len'               : self.MIN_LEN,
+            'max len'               : self.MAX_LEN,
+            'num pos'               : self.NUM_POS,
+            'hidden list'           : self.HIDDEN_LIST,
+            'hidden type'           : 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other',
+            'output type'           : 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other',
+            'training iterations'   : self.training_iterations,
+            'train set size'        : len(self.train_set.getNumSequences()),
+            'test set size'         : len(self.test_set.getNumSequences())
         }
 
         # TODO fill this in during training
@@ -181,22 +185,33 @@ class BrownGrammarTrainer(object):
 
             # modified from testOnClassData source code
             training_data.reset()
-            print '\nTRAINING: {:.2f}% correct'.format(
-                testOnSequenceData(network_module, training_data) * 100)
+            training_error = 1 - testOnSequenceData(network_module, training_data)
+            print '\nTRAINING error: {:.3f}'.format(training_error)
 
-            print 'TESTING: {:.2f}% correct\n'.format(
-                testOnSequenceData(network_module, testing_data) * 100)
+            test_error = 1 - testOnSequenceData(network_module, testing_data)
+            print 'TEST error: {:.3f}\n'.format(test_error)
+
+            self.train_dict[(i+1)*s] = {
+                'train' : training_error,
+                'test'  : test_error
+            }
 
 
     def timed_train(self):
         start = time.clock()
 
         self.train(network_module=self.network,
-                   training_data=self.train_set, testing_data=self.test_set,
+                   training_data=self.train_set,
+                   testing_data=self.test_set,
                    n=self.training_iterations)
 
-        print '%.2f minutes' % ((time.clock() - start)/60)
+        train_minutes = (time.clock() - start) / 60
+        print 'Total Train Time: %.2f minutes' % train_minutes
+        self.repr_dict['train time'] = train_minutes
 
+
+    def make_csv(self):
+        pass
 
 if __name__ == "__main__":
     gt = BrownGrammarTrainer(hiddendim=50) # lots of params are supposed to go in here

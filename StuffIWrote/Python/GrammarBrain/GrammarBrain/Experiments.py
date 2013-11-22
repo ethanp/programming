@@ -2,5 +2,4 @@ class BrownExperiment(object):
     def __init__(self):
         pass
 
-    # TODO: in Python, the "splat" operator is *(tuple)
-    # with this, I will be able to experiment with multiple hidden layers
+    # to use multiple hidden layers, just pass in hiddendim=[20,30,20] or something
