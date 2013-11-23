@@ -1,9 +1,6 @@
-import os
+import os, time, csv
 from random import random, shuffle
-import time
-import csv
-
-import numpy as np
+import cPickle as pickle
 
 from pybrain.datasets.classification import SequenceClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
@@ -13,7 +10,6 @@ from pybrain.structure.connections import FullConnection
 from pybrain.structure import TanhLayer, LSTMLayer
 # checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 # see if RPROP works faster
-import sys
 
 from brown_data.util.brown_pos_map import pos_reducer, pos_vector_mapping
 from brown_data.experiment_scripts import EXPERIMENT_RESULT_PATH
@@ -66,6 +62,12 @@ class BrownGrammarTrainer(object):
         self.train_set, self.test_set, self.val_set = self.create_TrnTstVal_sets()
         self.train_list = []
         self.train_mins = 0.
+        csv_dir = EXPERIMENT_RESULT_PATH + self.TITLE
+        if not os.path.exists(csv_dir):
+            os.makedirs(csv_dir)
+        basename = csv_dir + '/part_' + str(self.PART) + '_' + time.strftime("%m:%d-%H:%M")
+        self.csv_filename = basename + '.csv'
+        self.pickle_name = basename + '.p'
 
     def __str__(self):
         string = ['{0}, part {1}'.format(self.TITLE, self.PART)]
@@ -115,7 +117,7 @@ class BrownGrammarTrainer(object):
                 dataset.appendLinked(word_vector, UNGRAMMATICAL)
 
         def print_data_data(data, name):
-            print "num", name, "patterns: ", len(data)
+            print "num", name, "patterns: ", data.getNumSequences()
             print "input and output dimensions: ", data.indim, data.outdim
             print "First sample (input, target, class):"
             print data['input'][0], data['target'][0]
@@ -221,7 +223,7 @@ class BrownGrammarTrainer(object):
         self.train_mins = train_minutes
 
 
-    def make_csv(self):
+    def make_csv_and_pickle(self):
         repr_list = [
             ('title'            , self.TITLE),
             ('part'             , self.PART),
@@ -238,22 +240,18 @@ class BrownGrammarTrainer(object):
             ('test set size'    , self.test_set.getNumSequences()),
             ('train mins'       , self.train_mins)
         ]
-        csv_dir = EXPERIMENT_RESULT_PATH + self.TITLE
-        if not os.path.exists(csv_dir):
-            os.makedirs(csv_dir)
 
-        csv_filename = csv_dir+ '/part_' + str(self.PART) + '_' + \
-                       time.strftime("%m:%d-%H:%M") + '.csv'
-
-        with open(csv_filename, 'wb') as csv_file:
+        with open(self.csv_filename, 'wb') as csv_file:
             writer = csv.writer(csv_file)
-            writer.writerow(t for t, v in repr_list)
-            writer.writerow(v for t, v in repr_list)
-            writer.writerow(('Epoch', 'Train Error', 'Test Error'))
+            writer.writerow([t for t, v in repr_list])
+            writer.writerow([v for t, v in repr_list])
+            writer.writerow(['Epoch', 'Train Error', 'Test Error', 'Validation Error'])
             for epoch, train, test, val in self.train_list:
                 writer.writerow((epoch, train, test, val))
             trn, val = min((trn, val) for ep, trn, tst, val in self.train_list)
-            writer.writerow(('Final Validation Error', val))
+            writer.writerow(['Final Validation Error', val])
+        with open(self.pickle_name, 'wb') as pickle_loc:
+            pickle.dump(self.network, pickle_loc)
 
 
 if __name__ == "__main__":

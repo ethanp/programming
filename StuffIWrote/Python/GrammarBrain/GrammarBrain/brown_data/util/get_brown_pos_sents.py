@@ -15,7 +15,7 @@ def get_nice_sentences_as_tuples(MIN=3, MAX=4, include_numbers=False, include_pu
     ''' sentence sizes are INCLUSIVE '''
     ss = get_brown_tagged_sents_as_tuples(MIN, MAX)
     if not include_numbers:
-        ss = filter_punctuation(ss)
+        ss = filter_numbers(ss)
     if not include_punctuation:
         ss = filter_punctuation(ss)
     return ss

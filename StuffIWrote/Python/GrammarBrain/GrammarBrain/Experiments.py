@@ -18,13 +18,16 @@ default_dict = {
 }
 
 def test_experiment_setup():
+    test_dict = default_dict.copy()
+    test_dict['hiddendim'] = [3]
+    test_dict['maxim'] = 3
     gt = BrownGrammarTrainer(**default_dict)
-    #gt.timed_train()
-    #gt.make_csv()
+    gt.timed_train()
+    gt.make_csv_and_pickle()
 
 
 ''' test the effect of including numbers and/or punctuation '''
-
+# TODO note that this doesn't include questions or exclamations
 def both():
     both_dict = default_dict.copy()
     both_dict['title'] = 'First Real Experiment'
@@ -33,6 +36,7 @@ def both():
     both_dict['train_time'] = 40
     both_gt = BrownGrammarTrainer(**both_dict)
     both_gt.timed_train(s=4)
+    both_gt.make_csv_and_pickle()
 
 def no_punct():
     num_dict = default_dict.copy()
@@ -43,6 +47,7 @@ def no_punct():
     num_dict['include_punctuation'] = False
     num_gt = BrownGrammarTrainer(**num_dict)
     num_gt.timed_train(s=4)
+    num_gt.make_csv_and_pickle()
 
 def no_num():
     punct_dict = default_dict.copy()
@@ -53,6 +58,7 @@ def no_num():
     punct_dict['include_numbers'] = False
     punct_gt = BrownGrammarTrainer(**punct_dict)
     punct_gt.timed_train(s=4)
+    punct_gt.make_csv_and_pickle()
 
 def none():
     none_dict = default_dict.copy()
@@ -65,7 +71,8 @@ def none():
 
     none_gt = BrownGrammarTrainer(**none_dict)
     none_gt.timed_train(s=4)
+    none_gt.make_csv_and_pickle()
 
 
 if __name__ == '__main__':
-    none()
+    test_experiment_setup()
