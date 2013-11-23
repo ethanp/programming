@@ -13,6 +13,7 @@
 /* we can redefine score to be readwrite here in the implementation */
 @property (nonatomic, readwrite) NSInteger score;
 @property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
+@property (nonatomic, strong) NSMutableArray *faceUpCards; // of Carrd
 @end
 
 @implementation CardMatchingGame
@@ -22,6 +23,12 @@
 {
     if (!_cards) _cards = [[NSMutableArray alloc] init];
     return _cards;
+}
+
+- (NSMutableArray *)faceUpCards
+{
+    if (!_faceUpCards) _faceUpCards = [[NSMutableArray alloc] init];
+    return _faceUpCards;
 }
 
 - (instancetype)initWithCardCount:(NSUInteger)count
@@ -53,30 +60,38 @@ static const int COST_TO_CHOOSE = 1;
     return (index < [self.cards count]) ? self.cards[index] : nil;
 }
 
+
+- (void)markMatched:(NSArray *)matchedCards
+{
+    for (Card *card in matchedCards) {
+        card.matched = YES;
+    }
+}
+
 - (void)chooseCardAtIndex:(NSUInteger)index
 {
     Card *card = [self cardAtIndex:index];
+
     
     if (!card.isMatched) {
         if (card.isChosen) {
             // if it's face-up, flip it back down
             card.chosen = NO; // setter has different name than getter (no reason?)
+            [self.faceUpCards removeObject:card];
         } else {
             // match against other chosen cards
-            for (Card *otherCard in self.cards) {
-                if (otherCard.isChosen && !otherCard.isMatched) {
-                    // TODO doesn't /have/ to be one card in the array ...
-                    // get the /particular/ score of having matched these two particular cards
-                    int matchScore = [card match:@[otherCard]];
-                    if (matchScore) {
-                        self.score += matchScore * MATCH_BONUS;
-                        otherCard.matched = YES;
-                        card.matched = YES;
-                    } else {
-                        self.score -= MISMATCH_PENALTY;
-                        otherCard.chosen = NO; // flip it back over
-                    }
-                    break; // can only choose 2 cards for now
+            int matchScore = [card match:self.faceUpCards];
+            if (matchScore) {
+                self.score += matchScore * MATCH_BONUS;
+                [self.faceUpCards addObject:card];
+                [self markMatched:self.faceUpCards]; // from assn: ALL get removed
+            } else {
+                if ([self.faceUpCards count] + 1 == self.numCardsToMatch) {
+                    // flip oldest card back over
+                    self.score -= MISMATCH_PENALTY;
+                    Card *card = [self.faceUpCards objectAtIndex:0];
+                    [self.faceUpCards removeObjectAtIndex:0];
+                    card.chosen = NO;
                 }
             }
             self.score -= COST_TO_CHOOSE;

@@ -47,10 +47,9 @@
     return [[PlayingCardDeck alloc] init];
 }
 
-// switch from HW #2
 - (IBAction)switchTwoOrThreeCardMode:(UISwitch *)sender
 {    
-    self.game.isThreeCardMode = sender.on ? YES : NO;
+    self.game.numCardsToMatch = sender.on ? 3 : 2;
     [self restartGame];
 }
 
@@ -61,7 +60,6 @@
 }
 
 
-// re-deal button from HW #2
 - (IBAction)touchRedealButton:(UIButton *)sender {
     [self restartGame];
 }

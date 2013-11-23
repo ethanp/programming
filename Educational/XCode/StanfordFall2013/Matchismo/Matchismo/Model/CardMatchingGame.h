@@ -25,6 +25,6 @@
 @property (nonatomic, readonly) NSInteger score;
 
 // should I be more worried about manipulating this in the view?
-@property (nonatomic, readwrite) BOOL isThreeCardMode;
+@property (nonatomic, readwrite) int numCardsToMatch;
 
 @end

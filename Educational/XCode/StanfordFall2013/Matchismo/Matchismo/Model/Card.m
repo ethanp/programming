@@ -16,11 +16,12 @@
     
     for (Card *card in otherCards) {
         if ([card.contents isEqualToString:self.contents]) {
-            score = 1;
+            score += 1;
         }
     }
     
     return score;
 }
+
 
 @end
