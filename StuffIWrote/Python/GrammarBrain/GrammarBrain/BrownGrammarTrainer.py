@@ -170,7 +170,7 @@ class BrownGrammarTrainer(object):
 
     # http://pybrain.org/docs/api/supervised/trainers.html
     # backprop's "through time" on a sequential dataset
-    def train(self, network_module, training_data, testing_data, n=20, s=5):
+    def train(self, network_module, training_data, testing_data, valing_data, n=20, s=5):
         trainer = BackpropTrainer(module=network_module, dataset=training_data, verbose=True)
         for i in range(n/s):
             trainer.trainEpochs(epochs=s)
@@ -184,9 +184,13 @@ class BrownGrammarTrainer(object):
             test_error = 1 - testOnSequenceData(network_module, testing_data)
             print 'TEST error: {:.3f}\n'.format(test_error)
 
+            val_error = 1 - testOnSequenceData(network_module, valing_data)
+            print 'VALIDATION error: {:.3f}\n'.format(val_error)
+
             self.train_dict[(i+1)*s] = {
                 'train' : training_error,
-                'test'  : test_error
+                'test'  : test_error,
+                'val'   : val_error
             }
 
 
@@ -196,6 +200,7 @@ class BrownGrammarTrainer(object):
         self.train(network_module=self.network,
                    training_data=self.train_set,
                    testing_data=self.test_set,
+                   valing_data=self.val_set,
                    n=self.training_iterations,
                    s=s)
 
@@ -206,16 +211,16 @@ class BrownGrammarTrainer(object):
 
     def make_csv(self):
         repr_list = [
-            ('title'                 , self.TITLE),
-            ('min len'               , self.MIN_LEN),
-            ('max len'               , self.MAX_LEN),
-            ('num pos'               , self.NUM_POS),
-            ('hidden list'           , self.HIDDEN_LIST),
-            ('hidden type'           , 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other'),
-            ('output type'           , 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other'),
-            ('training iterations'   , self.training_iterations),
-            ('train set size'        , self.train_set.getNumSequences()),
-            ('test set size'         , self.test_set.getNumSequences())
+            ('title'            , self.TITLE),
+            ('min len'          , self.MIN_LEN),
+            ('max len'          , self.MAX_LEN),
+            ('num pos'          , self.NUM_POS),
+            ('hidden list'      , self.HIDDEN_LIST),
+            ('hidden type'      , 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other'),
+            ('output type'      , 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other'),
+            ('training iters'   , self.training_iterations),
+            ('train set size'   , self.train_set.getNumSequences()),
+            ('test set size'    , self.test_set.getNumSequences())
         ]
         csv_filename = EXPERIMENT_RESULT_PATH + self.TITLE + '_' + time.strftime("%m:%d-%H:%M") + '.csv'
         with open(csv_filename, 'wb') as csv_file:
@@ -227,10 +232,9 @@ class BrownGrammarTrainer(object):
                 writer.writerow((
                     logged_epoch,
                     self.train_dict[logged_epoch]['train'],
-                    self.train_dict[logged_epoch]['test']
+                    self.train_dict[logged_epoch]['test'],
+                    self.train_dict[logged_epoch]['val']
                 ))
-
-            # TODO write the validation error
 
 
 if __name__ == "__main__":
