@@ -14,7 +14,7 @@ def filter_numbers_sentence_length_histogram():
     with open('../experiment_results/numbers_sentence_length_histogram.csv', 'wb') as out_file:
         writer = csv.writer(out_file)
         for i in range(3, 26): # want a range of 2 to 24, but min is 1 less than entered,
-            sentences = gbp.get_nice_sentences(i, i+2) # max is 2 less than entered
+            sentences = gbp.get_nice_sentences_as_tuples(i, i+2) # max is 2 less than entered
             print i-1, len(sentences)
             writer.writerow([i-1, len(sentences)])
 

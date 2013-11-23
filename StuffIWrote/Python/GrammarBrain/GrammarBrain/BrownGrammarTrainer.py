@@ -13,11 +13,9 @@ from pybrain.structure import TanhLayer, LSTMLayer
 # checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 # see if RPROP works faster
 
-
-from brown_data.util.unpickle_brown_pickles import print_sentence_range, get_sentence_matrices
 from brown_data.util.brown_pos_map import pos_reducer, pos_vector_mapping
 from brown_data.experiment_scripts import EXPERIMENT_RESULT_PATH
-
+from brown_data.util.get_brown_pos_sents import construct_sentence_matrices, get_nice_sentences_as_tuples, print_n_sentences, construct_sentence_matrix
 
 GRAMMATICAL = (0, 1)
 UNGRAMMATICAL = (1, 0)
@@ -46,7 +44,7 @@ class BrownGrammarTrainer(object):
     #noinspection PyTypeChecker
     def __init__(self, title='default title', minim=4, maxim=5, outdim=2, hiddendim=None,
                  train_time=50, basic_pos=True, hidden_type=LSTMLayer,
-                 output_type=TanhLayer):
+                 output_type=TanhLayer, include_numbers=True, include_punctuation=True):
         if not hiddendim: hiddendim = [5]
         self.TITLE       = title
         self.MIN_LEN     = minim
@@ -57,15 +55,20 @@ class BrownGrammarTrainer(object):
         self.HIDDEN_TYPE = hidden_type
         self.NUM_OUTPUTS = outdim
         self.OUTPUT_TYPE = output_type
+        self.INCL_NUM    = include_numbers
+        self.INCL_PUNCT  = include_punctuation
         self.network     = self.build_network()
         self.training_iterations = train_time
         print str(self)
         self.train_set, self.test_set, self.val_set = self.create_TrnTstVal_sets()
         self.train_list = []
+        self.train_mins = 0.
 
     def __str__(self):
         string = ['BROWN DATASET']
         string += ['Sentences of length {0} to {1}'.format(str(self.MIN_LEN), str(self.MAX_LEN))]
+        string += ['{0} numbers and {1} punctuation'.format('with' if self.INCL_NUM else 'without',
+                                                            'with' if self.INCL_PUNCT else 'without')]
         pos_set = 'BASIC' if self.basic_pos else 'EXTENDED'
         string += ['Using {0} pos set'.format(pos_set)]
         string += ['Hidden size: {0}'.format(str(self.HIDDEN_LIST))]
@@ -120,17 +123,24 @@ class BrownGrammarTrainer(object):
         test_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=self.NUM_OUTPUTS)
         validation_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=self.NUM_OUTPUTS)
 
-        # brown dataset, no mid-sentence punctuation, no numbers, ends in period, within length range
-        print '\nFirst 2 sentences of each length', self.MIN_LEN, 'and', self.MAX_LEN
+        sentence_tuples = get_nice_sentences_as_tuples(self.MIN_LEN, self.MAX_LEN,
+                                                       include_numbers=self.INCL_NUM,
+                                                       include_punctuation=self.INCL_PUNCT)
+
         print '------------------------------------------------------------'
-        print_sentence_range(self.MIN_LEN, self.MAX_LEN)
+        #print_sentence_range(self.MIN_LEN, self.MAX_LEN)
+        print_n_sentences(sentence_tuples[:2])
+        print_n_sentences(sentence_tuples[-2:])
         print '------------------------------------------------------------'
         print '\nvectorizing sentences...'
-        sentence_matrices = get_sentence_matrices(self.MIN_LEN, self.MAX_LEN)
-        print '\ntotal number of sentences:', len(sentence_matrices)
-        print 'creating training and test sets...'
-        # TODO need to create a validation set too?
-        for sentence_matrix in sentence_matrices:
+
+        ''' get pickled ones... probably not going to use this anymore '''
+        #sentence_matrices = get_sentence_matrices(self.MIN_LEN, self.MAX_LEN)
+
+        print '\ntotal number of sentences:', len(sentence_tuples)
+        print 'creating training, test, and validation sets...'
+        for s in sentence_tuples:
+            sentence_matrix = construct_sentence_matrix(s)
             r = random()
             if r < .15:  # percent distribution between sets needn't be perfect, right?
                 insert_grammatical_sequence(validation_data, sentence_matrix)
@@ -143,8 +153,9 @@ class BrownGrammarTrainer(object):
                 insert_randomized_sequence(train_data, sentence_matrix)
 
         ''' FOR DEBUGGING DATASET '''
-        #print_data_data(train_data, 'training')
-        #print_data_data(test_data, 'testing')
+        print_data_data(train_data, 'training')
+        print_data_data(test_data, 'testing')
+        print_data_data(validation_data, 'validation')
 
         return train_data, test_data, validation_data
 
@@ -172,7 +183,7 @@ class BrownGrammarTrainer(object):
 
     # http://pybrain.org/docs/api/supervised/trainers.html
     # backprop's "through time" on a sequential dataset
-    def train(self, network_module, training_data, testing_data, valing_data, n=20, s=5):
+    def train(self, network_module, training_data, testing_data, validation_data, n=20, s=5):
         trainer = BackpropTrainer(module=network_module, dataset=training_data, verbose=True)
         for i in range(n/s):
             trainer.trainEpochs(epochs=s)
@@ -186,7 +197,7 @@ class BrownGrammarTrainer(object):
             test_error = 1 - testOnSequenceData(network_module, testing_data)
             print 'TEST error: {:.3f}\n'.format(test_error)
 
-            val_error = 1 - testOnSequenceData(network_module, valing_data)
+            val_error = 1 - testOnSequenceData(network_module, validation_data)
             print 'VALIDATION error: {:.3f}\n'.format(val_error)
 
             self.train_list.append(((i+1)*s, training_error, test_error, val_error))
@@ -198,13 +209,13 @@ class BrownGrammarTrainer(object):
         self.train(network_module=self.network,
                    training_data=self.train_set,
                    testing_data=self.test_set,
-                   valing_data=self.val_set,
+                   validation_data=self.val_set,
                    n=self.training_iterations,
                    s=s)
 
         train_minutes = (time.clock() - start) / 60
         print 'Total Train Time: %.2f minutes' % train_minutes
-        self.repr_dict['train time'] = train_minutes
+        self.train_mins = train_minutes
 
 
     def make_csv(self):
@@ -212,13 +223,16 @@ class BrownGrammarTrainer(object):
             ('title'            , self.TITLE),
             ('min len'          , self.MIN_LEN),
             ('max len'          , self.MAX_LEN),
+            ('incl num'         , self.INCL_NUM),
+            ('incl punct'       , self.INCL_PUNCT),
             ('num pos'          , self.NUM_POS),
             ('hidden list'      , self.HIDDEN_LIST),
             ('hidden type'      , 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other'),
             ('output type'      , 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other'),
             ('training iters'   , self.training_iterations),
             ('train set size'   , self.train_set.getNumSequences()),
-            ('test set size'    , self.test_set.getNumSequences())
+            ('test set size'    , self.test_set.getNumSequences()),
+            ('train mins'       , self.train_mins)
         ]
         csv_filename = EXPERIMENT_RESULT_PATH + self.TITLE + '_' + time.strftime("%m:%d-%H:%M") + '.csv'
         with open(csv_filename, 'wb') as csv_file:

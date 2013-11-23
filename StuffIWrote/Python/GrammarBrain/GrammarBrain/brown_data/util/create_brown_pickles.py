@@ -4,7 +4,7 @@ from GrammarBrain.brown_data.util import get_brown_pos_sents as gbp
 
 for i in range(2, 25):
     print i
-    nice_sentences = gbp.get_nice_sentences(MIN=i, MAX=i)
+    nice_sentences = gbp.get_nice_sentences_as_tuples(MIN=i, MAX=i)
     tuple_file = 'nice_sentences_%d.p' % i
     pickle.dump(nice_sentences, open(tuple_file, 'wb'))
 
