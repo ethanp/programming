@@ -58,22 +58,7 @@ class BrownGrammarTrainer(object):
         self.network     = self.build_network()
         self.training_iterations = train_time
         print str(self)
-        self.train_set, self.test_set = self.create_train_and_test_sets()
-
-        self.repr_dict = {
-            'title'                 : self.TITLE,
-            'min len'               : self.MIN_LEN,
-            'max len'               : self.MAX_LEN,
-            'num pos'               : self.NUM_POS,
-            'hidden list'           : self.HIDDEN_LIST,
-            'hidden type'           : 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other',
-            'output type'           : 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other',
-            'training iterations'   : self.training_iterations,
-            'train set size'        : self.train_set.getNumSequences(),
-            'test set size'         : self.test_set.getNumSequences()
-        }
-
-        # TODO fill this in during training
+        self.train_set, self.test_set, self.val_set = self.create_TrnTstVal_sets()
         self.train_dict = {}
 
     def __str__(self):
@@ -98,7 +83,7 @@ class BrownGrammarTrainer(object):
         return '\n'.join(string)
 
 
-    def create_train_and_test_sets(self):
+    def create_TrnTstVal_sets(self):
 
         def insert_grammatical_sequence(dataset, sentence_mat):
             dataset.newSequence()
@@ -129,8 +114,9 @@ class BrownGrammarTrainer(object):
 
         # inp: dimensionality of the input (# of POS types)
         # target: output dimensionality (# of possible classifications)
-        train_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=2)
-        test_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=2)
+        train_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=self.NUM_OUTPUTS)
+        test_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=self.NUM_OUTPUTS)
+        validation_data = SequenceClassificationDataSet(inp=self.NUM_POS, target=self.NUM_OUTPUTS)
 
         # brown dataset, no mid-sentence punctuation, no numbers, ends in period, within length range
         print '\nFirst 2 sentences of each length', self.MIN_LEN, 'and', self.MAX_LEN
@@ -143,7 +129,11 @@ class BrownGrammarTrainer(object):
         print 'creating training and test sets...'
         # TODO need to create a validation set too?
         for sentence_matrix in sentence_matrices:
-            if random() < .25:  # percent distribution between sets needn't be perfect, right?
+            r = random()
+            if r < .15:  # percent distribution between sets needn't be perfect, right?
+                insert_grammatical_sequence(validation_data, sentence_matrix)
+                insert_randomized_sequence(validation_data, sentence_matrix)
+            elif r < .30:
                 insert_grammatical_sequence(test_data, sentence_matrix)
                 insert_randomized_sequence(test_data, sentence_matrix)
             else:
@@ -154,7 +144,7 @@ class BrownGrammarTrainer(object):
         #print_data_data(train_data, 'training')
         #print_data_data(test_data, 'testing')
 
-        return train_data, test_data
+        return train_data, test_data, validation_data
 
 
     def build_network(self):
@@ -215,11 +205,23 @@ class BrownGrammarTrainer(object):
 
 
     def make_csv(self):
+        repr_list = [
+            ('title'                 , self.TITLE),
+            ('min len'               , self.MIN_LEN),
+            ('max len'               , self.MAX_LEN),
+            ('num pos'               , self.NUM_POS),
+            ('hidden list'           , self.HIDDEN_LIST),
+            ('hidden type'           , 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other'),
+            ('output type'           , 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other'),
+            ('training iterations'   , self.training_iterations),
+            ('train set size'        , self.train_set.getNumSequences()),
+            ('test set size'         , self.test_set.getNumSequences())
+        ]
         csv_filename = EXPERIMENT_RESULT_PATH + self.TITLE + '_' + time.strftime("%m:%d-%H:%M") + '.csv'
         with open(csv_filename, 'wb') as csv_file:
             writer = csv.writer(csv_file)
-            writer.writerow(self.repr_dict.keys())
-            writer.writerow(self.repr_dict.values())
+            writer.writerow(t for t, v in repr_list)
+            writer.writerow(v for t, v in repr_list)
             writer.writerow(('Epoch', 'Train Error', 'Test Error'))
             for logged_epoch in self.train_dict.keys():
                 writer.writerow((
@@ -227,6 +229,8 @@ class BrownGrammarTrainer(object):
                     self.train_dict[logged_epoch]['train'],
                     self.train_dict[logged_epoch]['test']
                 ))
+
+            # TODO write the validation error
 
 
 if __name__ == "__main__":
