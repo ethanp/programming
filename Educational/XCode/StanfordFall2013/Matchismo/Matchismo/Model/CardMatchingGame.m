@@ -49,6 +49,12 @@
     return self;
 }
 
+- (int)numCardsToMatch
+{
+    if (!_numCardsToMatch) _numCardsToMatch = 3;
+    return _numCardsToMatch;
+}
+
 
 static const int MISMATCH_PENALTY = 2;
 static const int MATCH_BONUS = 4;
@@ -61,41 +67,42 @@ static const int COST_TO_CHOOSE = 1;
 }
 
 
-- (void)markMatched:(NSArray *)matchedCards
+- (void)markAllCardsAsMatched
 {
-    for (Card *card in matchedCards) {
+    for (Card *card in self.faceUpCards) {
         card.matched = YES;
     }
+    [self.faceUpCards removeAllObjects];
 }
 
 - (void)chooseCardAtIndex:(NSUInteger)index
 {
     Card *card = [self cardAtIndex:index];
-
-    
     if (!card.isMatched) {
         if (card.isChosen) {
             // if it's face-up, flip it back down
             card.chosen = NO; // setter has different name than getter (no reason?)
             [self.faceUpCards removeObject:card];
-        } else {
-            // match against other chosen cards
-            int matchScore = [card match:self.faceUpCards];
-            if (matchScore) {
-                self.score += matchScore * MATCH_BONUS;
+        } else {  // match against other chosen cards
+            card.chosen = YES;
+            if ([self.faceUpCards count] >= self.numCardsToMatch - 1) {
+                int matchScore = [card match:self.faceUpCards];
                 [self.faceUpCards addObject:card];
-                [self markMatched:self.faceUpCards]; // from assn: ALL get removed
-            } else {
-                if ([self.faceUpCards count] + 1 == self.numCardsToMatch) {
+                if (matchScore) {
+                    self.score += matchScore * MATCH_BONUS;
+                    [self markAllCardsAsMatched]; // from assn: ALL get removed
+                    self.score += matchScore;
+                } else {
                     // flip oldest card back over
-                    self.score -= MISMATCH_PENALTY;
-                    Card *card = [self.faceUpCards objectAtIndex:0];
+                    Card *oldCard = [self.faceUpCards objectAtIndex:0];
+                    oldCard.chosen = NO;
                     [self.faceUpCards removeObjectAtIndex:0];
-                    card.chosen = NO;
+                    self.score -= MISMATCH_PENALTY;
                 }
+            } else {
+                [self.faceUpCards addObject:card];
             }
             self.score -= COST_TO_CHOOSE;
-            card.chosen = YES;
         }
     }
 }

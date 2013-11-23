@@ -10,7 +10,8 @@
 #import "PlayingCardDeck.h"
 #import "CardMatchingGame.h" /* view imports controller */
 
-@interface CardGameViewController() /* the parentheses notation is just for the .m file */
+/* the parentheses notation is just for the .m file */
+@interface CardGameViewController()
 
 @property (strong, nonatomic) CardMatchingGame *game;
 
@@ -49,8 +50,8 @@
 
 - (IBAction)switchTwoOrThreeCardMode:(UISwitch *)sender
 {    
-    self.game.numCardsToMatch = sender.on ? 3 : 2;
     [self restartGame];
+    self.game.numCardsToMatch = sender.on ? 3 : 2;
 }
 
 - (void)restartGame
@@ -61,7 +62,9 @@
 
 
 - (IBAction)touchRedealButton:(UIButton *)sender {
+    int numCardsToMatch = self.game.numCardsToMatch;
     [self restartGame];
+    self.game.numCardsToMatch = numCardsToMatch;
 }
 
 - (IBAction)touchCardButton:(UIButton *)sender
@@ -82,7 +85,8 @@
         [cardButton setBackgroundImage:[self backgroundImageForCard:card]
                               forState:UIControlStateNormal];
         cardButton.enabled = !card.isMatched;
-        self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+        self.scoreLabel.text =
+            [NSString stringWithFormat:@"Score: %d", self.game.score];
     }
 }
 
