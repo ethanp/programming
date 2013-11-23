@@ -2,6 +2,8 @@ from random import random, shuffle
 import time
 import csv
 
+import numpy as np
+
 from pybrain.datasets.classification import SequenceClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
 from pybrain.tools.validation import testOnSequenceData
@@ -59,7 +61,7 @@ class BrownGrammarTrainer(object):
         self.training_iterations = train_time
         print str(self)
         self.train_set, self.test_set, self.val_set = self.create_TrnTstVal_sets()
-        self.train_dict = {}
+        self.train_list = []
 
     def __str__(self):
         string = ['BROWN DATASET']
@@ -187,11 +189,7 @@ class BrownGrammarTrainer(object):
             val_error = 1 - testOnSequenceData(network_module, valing_data)
             print 'VALIDATION error: {:.3f}\n'.format(val_error)
 
-            self.train_dict[(i+1)*s] = {
-                'train' : training_error,
-                'test'  : test_error,
-                'val'   : val_error
-            }
+            self.train_list.append(((i+1)*s, training_error, test_error, val_error))
 
 
     def timed_train(self, s=1):
@@ -228,13 +226,10 @@ class BrownGrammarTrainer(object):
             writer.writerow(t for t, v in repr_list)
             writer.writerow(v for t, v in repr_list)
             writer.writerow(('Epoch', 'Train Error', 'Test Error'))
-            for logged_epoch in self.train_dict.keys():
-                writer.writerow((
-                    logged_epoch,
-                    self.train_dict[logged_epoch]['train'],
-                    self.train_dict[logged_epoch]['test'],
-                    self.train_dict[logged_epoch]['val']
-                ))
+            for epoch, train, test, val in self.train_list:
+                writer.writerow((epoch, train, test, val))
+            trn, val = min((trn, val) for ep, trn, tst, val in self.train_list)
+            writer.writerow(('Final Validation Error', val))
 
 
 if __name__ == "__main__":
