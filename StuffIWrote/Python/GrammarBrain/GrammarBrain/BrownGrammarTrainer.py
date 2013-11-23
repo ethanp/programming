@@ -1,3 +1,4 @@
+import os
 from random import random, shuffle
 import time
 import csv
@@ -12,6 +13,7 @@ from pybrain.structure.connections import FullConnection
 from pybrain.structure import TanhLayer, LSTMLayer
 # checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 # see if RPROP works faster
+import sys
 
 from brown_data.util.brown_pos_map import pos_reducer, pos_vector_mapping
 from brown_data.experiment_scripts import EXPERIMENT_RESULT_PATH
@@ -42,11 +44,12 @@ MID_SENTENCE = (0.5, 0.5)
 '''
 class BrownGrammarTrainer(object):
     #noinspection PyTypeChecker
-    def __init__(self, title='default title', minim=4, maxim=5, outdim=2, hiddendim=None,
+    def __init__(self, title='default title', part='default', minim=4, maxim=5, outdim=2, hiddendim=None,
                  train_time=50, basic_pos=True, hidden_type=LSTMLayer,
                  output_type=TanhLayer, include_numbers=True, include_punctuation=True):
         if not hiddendim: hiddendim = [5]
         self.TITLE       = title
+        self.PART        = part
         self.MIN_LEN     = minim
         self.MAX_LEN     = maxim
         self.basic_pos   = basic_pos
@@ -65,7 +68,7 @@ class BrownGrammarTrainer(object):
         self.train_mins = 0.
 
     def __str__(self):
-        string = [self.TITLE]
+        string = ['{0}, part {1}'.format(self.TITLE, self.PART)]
         string += ['Sentences of length {0} to {1}'.format(str(self.MIN_LEN), str(self.MAX_LEN))]
         string += ['{0} numbers and {1} punctuation'.format('with' if self.INCL_NUM else 'without',
                                                             'with' if self.INCL_PUNCT else 'without')]
@@ -221,6 +224,7 @@ class BrownGrammarTrainer(object):
     def make_csv(self):
         repr_list = [
             ('title'            , self.TITLE),
+            ('part'             , self.PART),
             ('min len'          , self.MIN_LEN),
             ('max len'          , self.MAX_LEN),
             ('incl num'         , self.INCL_NUM),
@@ -234,7 +238,13 @@ class BrownGrammarTrainer(object):
             ('test set size'    , self.test_set.getNumSequences()),
             ('train mins'       , self.train_mins)
         ]
-        csv_filename = EXPERIMENT_RESULT_PATH + self.TITLE + '_' + time.strftime("%m:%d-%H:%M") + '.csv'
+        csv_dir = EXPERIMENT_RESULT_PATH + self.TITLE
+        if not os.path.exists(csv_dir):
+            os.makedirs(csv_dir)
+
+        csv_filename = csv_dir+ '/part_' + str(self.PART) + '_' + \
+                       time.strftime("%m:%d-%H:%M") + '.csv'
+
         with open(csv_filename, 'wb') as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(t for t, v in repr_list)
