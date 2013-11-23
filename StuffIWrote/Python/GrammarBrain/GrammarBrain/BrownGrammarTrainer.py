@@ -65,7 +65,7 @@ class BrownGrammarTrainer(object):
         self.train_mins = 0.
 
     def __str__(self):
-        string = ['BROWN DATASET']
+        string = [self.TITLE]
         string += ['Sentences of length {0} to {1}'.format(str(self.MIN_LEN), str(self.MAX_LEN))]
         string += ['{0} numbers and {1} punctuation'.format('with' if self.INCL_NUM else 'without',
                                                             'with' if self.INCL_PUNCT else 'without')]
@@ -115,7 +115,7 @@ class BrownGrammarTrainer(object):
             print "num", name, "patterns: ", len(data)
             print "input and output dimensions: ", data.indim, data.outdim
             print "First sample (input, target, class):"
-            print data['input'][0], data['target'][0], data['class'][0]
+            print data['input'][0], data['target'][0]
 
         # inp: dimensionality of the input (# of POS types)
         # target: output dimensionality (# of possible classifications)
