@@ -58,6 +58,7 @@
 {
     self.game = nil;
     [self updateUI];
+    [self.twoOrThreeCardMode setEnabled:YES];
 }
 
 
@@ -69,6 +70,7 @@
 
 - (IBAction)touchCardButton:(UIButton *)sender
 {
+    [self.twoOrThreeCardMode setEnabled:NO];
     // because we can't guarantee a particular index in the array for this button
     int chosenButtonIndex = [self.cardButtons indexOfObject:sender];
     [self.game chooseCardAtIndex:chosenButtonIndex];
