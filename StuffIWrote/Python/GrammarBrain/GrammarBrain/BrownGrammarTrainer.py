@@ -19,6 +19,12 @@ GRAMMATICAL = (0, 1)
 UNGRAMMATICAL = (1, 0)
 MID_SENTENCE = (0.5, 0.5)
 
+
+# TODO make it log after each error-calculation so I can stop it whenever
+#   printing the final validation-error isn't a big deal either, it's real easy to find
+
+
+
 '''
     How Experiment Printing Works:
     ==============================
@@ -224,32 +230,38 @@ class BrownGrammarTrainer(object):
 
 
     def make_csv_and_pickle(self):
-        repr_list = [
-            ('title'            , self.TITLE),
-            ('part'             , self.PART),
-            ('min len'          , self.MIN_LEN),
-            ('max len'          , self.MAX_LEN),
-            ('incl num'         , self.INCL_NUM),
-            ('incl punct'       , self.INCL_PUNCT),
-            ('num pos'          , self.NUM_POS),
-            ('hidden list'      , self.HIDDEN_LIST),
-            ('hidden type'      , 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other'),
-            ('output type'      , 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other'),
-            ('training iters'   , self.training_iterations),
-            ('train set size'   , self.train_set.getNumSequences()),
-            ('test set size'    , self.test_set.getNumSequences()),
-            ('train mins'       , self.train_mins)
-        ]
+        # TODO is it as good if I just use self.__dict__ here?
+        #repr_list = [
+        #    ('title'            , self.TITLE),
+        #    ('part'             , self.PART),
+        #    ('min len'          , self.MIN_LEN),
+        #    ('max len'          , self.MAX_LEN),
+        #    ('incl num'         , self.INCL_NUM),
+        #    ('incl punct'       , self.INCL_PUNCT),
+        #    ('num pos'          , self.NUM_POS),
+        #    ('hidden list'      , self.HIDDEN_LIST),
+        #    ('hidden type'      , 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other'),
+        #    ('output type'      , 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other'),
+        #    ('training iters'   , self.training_iterations),
+        #    ('train set size'   , self.train_set.getNumSequences()),
+        #    ('test set size'    , self.test_set.getNumSequences()),
+        #    ('train mins'       , self.train_mins)
+        #]
 
         with open(self.csv_filename, 'wb') as csv_file:
             writer = csv.writer(csv_file)
-            writer.writerow([t for t, v in repr_list])
-            writer.writerow([v for t, v in repr_list])
+            #writer.writerow([t for t, v in repr_list])
+            #writer.writerow([v for t, v in repr_list])
+            writer.writerow([v for t, v in self.__dict__])
+            writer.writerow([v for t, v in self.__dict__])
             writer.writerow(['Epoch', 'Train Error', 'Test Error', 'Validation Error'])
-            for epoch, train, test, val in self.train_list:
+
+            for (epoch, train, test, val) in self.train_list:
                 writer.writerow((epoch, train, test, val))
-            trn, val = min((trn, val) for ep, trn, tst, val in self.train_list)
+
+            trn, val = min((trn, val) for (ep, trn, tst, val) in self.train_list)
             writer.writerow(['Final Validation Error', val])
+
         with open(self.pickle_name, 'wb') as pickle_loc:
             pickle.dump(self.network, pickle_loc)
 
