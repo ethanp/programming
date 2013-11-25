@@ -1,8 +1,19 @@
 from nltk.corpus import brown
+from nltk.tag.simplify import simplify_brown_tag as simplify
+
 from GrammarBrain.brown_data.util import brown_pos_map as bpm
+
 import numpy as np
 
-def get_brown_tagged_sents_as_tuples(MIN=3, MAX=4):
+def get_medium_tagged_sentence_tuples(MIN=3, MAX=4):
+    '''
+    Produces ~36 POS tags
+    This function is not used anywhere, I used a better solution
+    '''
+    return [[(wrd, simplify(tag)) for wrd, tag in sent[:-1]] for sent in brown.tagged_sents()
+                    if MIN < len(sent) <= MAX+1 and sent[-1][0] == '.']
+
+def get_brown_tagged_sentence_tuples(MIN=3, MAX=4):
     '''
     get sentences from the Brown dataset and their associated POS tags
     only get sentences within the specified range bounds that end in a period
@@ -13,7 +24,7 @@ def get_brown_tagged_sents_as_tuples(MIN=3, MAX=4):
 
 def get_nice_sentences_as_tuples(MIN=3, MAX=4, include_numbers=False, include_punctuation=False):
     ''' sentence sizes are INCLUSIVE '''
-    ss = get_brown_tagged_sents_as_tuples(MIN, MAX)
+    ss = get_brown_tagged_sentence_tuples(MIN, MAX)
     if not include_numbers:
         ss = filter_numbers(ss)
     if not include_punctuation:
@@ -52,30 +63,32 @@ def filter_numbers(ss):
         return True
     return filter(remove_numbers, ss)
 
-def construct_sentence_matrices(ss):
+def construct_sentence_matrices(ss, medium=False):
     '''
     takes sentences with BROWN pos tags
     returns matrices of sentences' NORMAL pos tags
     '''
-    sentence_matrices = []
-    for s in ss:
-        sentence_matrix = []
-        for w in s:
-            word_vector = np.zeros(len(bpm.pos_vector_mapping))
-            word_vector[bpm.pos_vector_index(w[1])] = 1
-            sentence_matrix.append(word_vector)
-        sentence_matrices.append(sentence_matrix)
-    return sentence_matrices
+    return [construct_sentence_matrix(s, medium) for s in ss]
 
-def construct_sentence_matrix(s):
+
+def construct_sentence_matrix(s, medium):
     '''
     takes a sentence with BROWN pos tags
     returns matrix of sentence's NORMAL pos tags
     '''
+    if medium:
+        vector_len = len(bpm.medium_pos_map)
+        def vector_id(the_pos):
+            bpm.medium_pos_map[simplify(the_pos)]
+    else:
+        vector_len = len(bpm.pos_vector_mapping)
+        def vector_id(the_pos):
+            bpm.pos_vector_index(the_pos)
+
     sentence_matrix = []
     for _, pos in s:
-        word_vector = np.zeros(len(bpm.pos_vector_mapping))
-        word_vector[bpm.pos_vector_index(pos)] = 1
+        word_vector = np.zeros(vector_len)
+        word_vector[vector_id(pos)] = 1
         sentence_matrix.append(word_vector)
     return sentence_matrix
 
@@ -86,5 +99,7 @@ def print_n_sentences(ss, n=15):
 
 # for trying it out
 if __name__ == "__main__":
-    sentences = filter_punctuation(get_brown_tagged_sents_as_tuples(4, 6))
+    sentences = get_brown_tagged_sentence_tuples()[:3]
     print_n_sentences(sentences)
+    matrices = construct_sentence_matrices(sentences)
+    matrices2 = construct_sentence_matrices(sentences, medium=True)

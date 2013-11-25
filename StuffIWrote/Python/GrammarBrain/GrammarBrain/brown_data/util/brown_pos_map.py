@@ -492,3 +492,42 @@ pos_vector_mapping = {
 }
 
 def pos_vector_index(pos):  return pos_vector_mapping[pos_reducer[pos]]
+
+medium_pos_map = {
+    ''      :0,
+    'FW'    :1,
+    'DET'   :2,
+    'WH'    :3,
+    "''"    :4,
+    'VB+IN' :5,
+    'VBZ'   :6,
+    'VB+PPO':7,
+    "'"     :8,
+    ')'     :9,
+    'ADJ'   :10,
+    'PRO'   :11,
+    '*'     :12,
+    ','     :13,
+    '.'     :14,
+    'TO'    :15,
+    'NUM'   :16,
+    'NP'    :17,
+    ':'     :18,
+    'ADV'   :19,
+    '``'    :20,
+    'VBG+TO':21,
+    'VD'    :22,
+    'VG'    :23,
+    'VBN+TO':24,
+    'VN'    :25,
+    'N'     :26,
+    'P'     :27,
+    'EX'    :28,
+    'V'     :29,
+    'CNJ'   :30,
+    'NIL'   :31,
+    'VB+RP' :32,
+    'UH'    :33,
+    '('     :34,
+    'MOD'   :35
+}

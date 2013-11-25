@@ -20,19 +20,13 @@ def nltk_pos_tag_default():
 
 def nltk_simplify_brown_tag():
     ''' Produces ~36 POS tags '''
-    other_pos_tagging = [sbt(tag) for (_, tag) in brown.tagged_words()[:600000]]
-    ctr = Counter()
-    for tag in other_pos_tagging:
-        ctr[tag] += 1
-
-    print len(ctr)
-    return ctr
+    other_pos_tagging = set([sbt(tag) for (_, tag) in brown.tagged_words()[:600000]])
+    print len(other_pos_tagging)
+    print other_pos_tagging
+    return other_pos_tagging
 
 if __name__ == '__main__':
 
-    ctr1 = nltk_pos_tag_default()
-    ctr2 = nltk_simplify_brown_tag()
+    set2 = nltk_simplify_brown_tag()
 
-    print sorted(ctr1.keys())
-    print sorted(ctr2.keys())
 

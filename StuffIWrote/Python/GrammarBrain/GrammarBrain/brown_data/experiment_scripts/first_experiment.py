@@ -1,33 +1,11 @@
-import os
-from pybrain import TanhLayer, LSTMLayer
-from BrownGrammarTrainer import BrownGrammarTrainer
-
-default_dict = {
-        'title'               : 'default dict title',
-        'part'                : 'default part',
-        'minim'               : 3,
-        'maxim'               : 4,
-        'outdim'              : 2,
-        'hiddendim'           : [50],
-        'train_time'          : 2,
-        'basic_pos'           : True,
-        'hidden_type'         : LSTMLayer,
-        'output_type'         : TanhLayer,
-        'include_punctuation' : True,
-        'include_numbers'     : True
-}
-
-def test_experiment_setup():
-    test_dict = default_dict.copy()
-    test_dict['hiddendim'] = [3]
-    test_dict['maxim'] = 3
-    gt = BrownGrammarTrainer(**default_dict)
-    gt.timed_train()
-    gt.make_csv_and_pickle()
+from GrammarBrain.BrownGrammarTrainer import BrownGrammarTrainer
+from GrammarBrain.brown_data.util.Experiments import default_dict
 
 
 ''' test the effect of including numbers and/or punctuation '''
 # TODO note that this doesn't include questions or exclamations
+
+
 def both():
     both_dict = default_dict.copy()
     both_dict['title'] = 'First Real Experiment'
@@ -72,7 +50,3 @@ def none():
     none_gt = BrownGrammarTrainer(**none_dict)
     none_gt.timed_train(s=4)
     none_gt.make_csv_and_pickle()
-
-
-if __name__ == '__main__':
-    none()
