@@ -10,7 +10,7 @@ default_dict = {
         'outdim'              : 2,
         'hiddendim'           : [50],
         'train_time'          : 2,
-        'basic_pos'           : True,
+        'medium'              : False,
         'hidden_type'         : LSTMLayer,
         'output_type'         : TanhLayer,
         'include_punctuation' : True,

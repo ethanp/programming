@@ -4,24 +4,20 @@ import cPickle as pickle
 
 from pybrain.datasets.classification import SequenceClassificationDataSet
 from pybrain.supervised.trainers import BackpropTrainer
-from pybrain.tools.validation import testOnSequenceData
 from pybrain.tools.shortcuts import buildNetwork
 from pybrain.structure.connections import FullConnection
 from pybrain.structure import TanhLayer, LSTMLayer
 # checkout the SharedFullConnection, LSTMLayer, BidirectionalNetwork, etc.
 # see if RPROP works faster
 
-from brown_data.util.brown_pos_map import pos_reducer, pos_vector_mapping
+from brown_data.util.my_seq_tester import testOnSequenceData
+from brown_data.util.brown_pos_map import pos_vector_mapping, medium_pos_map
 from brown_data.experiment_scripts import EXPERIMENT_RESULT_PATH
-from brown_data.util.get_brown_pos_sents import construct_sentence_matrices, get_nice_sentences_as_tuples, print_n_sentences, construct_sentence_matrix
+from brown_data.util.get_brown_pos_sents import get_nice_sentences_as_tuples, print_n_sentences, construct_sentence_matrix
 
 GRAMMATICAL = (0, 1)
 UNGRAMMATICAL = (1, 0)
 MID_SENTENCE = (0.5, 0.5)
-
-
-# TODO make it log after each error-calculation so I can stop it whenever
-#   printing the final validation-error isn't a big deal either, it's real easy to find
 
 
 
@@ -47,15 +43,15 @@ MID_SENTENCE = (0.5, 0.5)
 class BrownGrammarTrainer(object):
     #noinspection PyTypeChecker
     def __init__(self, title='default title', part='default', minim=4, maxim=5, outdim=2, hiddendim=None,
-                 train_time=50, basic_pos=True, hidden_type=LSTMLayer,
+                 train_time=50, medium=True, hidden_type=LSTMLayer,
                  output_type=TanhLayer, include_numbers=True, include_punctuation=True):
         if not hiddendim: hiddendim = [5]
         self.TITLE       = title
         self.PART        = part
         self.MIN_LEN     = minim
         self.MAX_LEN     = maxim
-        self.basic_pos   = basic_pos
-        self.NUM_POS     = len(pos_vector_mapping) if basic_pos else len(pos_reducer)
+        self.MEDIUM      = medium
+        self.NUM_POS     = len(medium_pos_map) if medium else len(pos_vector_mapping)
         self.HIDDEN_LIST = hiddendim
         self.HIDDEN_TYPE = hidden_type
         self.NUM_OUTPUTS = outdim
@@ -80,7 +76,7 @@ class BrownGrammarTrainer(object):
         string += ['Sentences of length {0} to {1}'.format(str(self.MIN_LEN), str(self.MAX_LEN))]
         string += ['{0} numbers and {1} punctuation'.format('with' if self.INCL_NUM else 'without',
                                                             'with' if self.INCL_PUNCT else 'without')]
-        pos_set = 'BASIC' if self.basic_pos else 'EXTENDED'
+        pos_set = 'MEDIUM' if self.MEDIUM else 'BASIC'
         string += ['Using {0} pos set'.format(pos_set)]
         string += ['Hidden size: {0}'.format(str(self.HIDDEN_LIST))]
         string += ['Hidden type: {0}'.format(str(self.HIDDEN_TYPE))]
@@ -151,7 +147,7 @@ class BrownGrammarTrainer(object):
         print '\ntotal number of sentences:', len(sentence_tuples)
         print 'creating training, test, and validation sets...'
         for s in sentence_tuples:
-            sentence_matrix = construct_sentence_matrix(s)
+            sentence_matrix = construct_sentence_matrix(s, medium=self.MEDIUM)
             r = random()
             if r < .15:  # percent distribution between sets needn't be perfect, right?
                 insert_grammatical_sequence(validation_data, sentence_matrix)
@@ -186,8 +182,8 @@ class BrownGrammarTrainer(object):
         #   bc otw how would it know that you wanted that /particular/ connection!?
         h = network['hidden0']
         o = network['out']
-        #network.addRecurrentConnection(FullConnection(h, h)) made automatically below?
-        network.addRecurrentConnection(FullConnection(o, h))
+        network.addRecurrentConnection(FullConnection(h, h))  # made automatically below?
+        #network.addRecurrentConnection(FullConnection(o, h))
         network.sortModules()
         return network
 
@@ -202,6 +198,7 @@ class BrownGrammarTrainer(object):
 
             # modified from testOnClassData source code
             training_data.reset()
+
             training_error = 1 - testOnSequenceData(network_module, training_data)
             print '\nTRAINING error: {:.3f}'.format(training_error)
 
