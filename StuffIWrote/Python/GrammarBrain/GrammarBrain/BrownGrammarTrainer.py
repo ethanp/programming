@@ -227,30 +227,30 @@ class BrownGrammarTrainer(object):
 
 
     def make_csv_and_pickle(self):
-        # TODO is it as good if I just use self.__dict__ here?
-        #repr_list = [
-        #    ('title'            , self.TITLE),
-        #    ('part'             , self.PART),
-        #    ('min len'          , self.MIN_LEN),
-        #    ('max len'          , self.MAX_LEN),
-        #    ('incl num'         , self.INCL_NUM),
-        #    ('incl punct'       , self.INCL_PUNCT),
-        #    ('num pos'          , self.NUM_POS),
-        #    ('hidden list'      , self.HIDDEN_LIST),
-        #    ('hidden type'      , 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other'),
-        #    ('output type'      , 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other'),
-        #    ('training iters'   , self.training_iterations),
-        #    ('train set size'   , self.train_set.getNumSequences()),
-        #    ('test set size'    , self.test_set.getNumSequences()),
-        #    ('train mins'       , self.train_mins)
-        #]
+        repr_list = [
+            ('title'            , self.TITLE),
+            ('part'             , self.PART),
+            ('min len'          , self.MIN_LEN),
+            ('max len'          , self.MAX_LEN),
+            ('incl num'         , self.INCL_NUM),
+            ('incl punct'       , self.INCL_PUNCT),
+            ('num pos'          , self.NUM_POS),
+            ('medium'           , self.MEDIUM),
+            ('hidden list'      , self.HIDDEN_LIST),
+            ('hidden type'      , 'LSTM' if self.HIDDEN_TYPE == LSTMLayer else 'Other'),
+            ('output type'      , 'Tanh' if self.OUTPUT_TYPE == TanhLayer else 'Other'),
+            ('training iters'   , self.training_iterations),
+            ('train set size'   , self.train_set.getNumSequences()),
+            ('test set size'    , self.test_set.getNumSequences()),
+            ('train mins'       , self.train_mins)
+        ]
 
         with open(self.csv_filename, 'wb') as csv_file:
             writer = csv.writer(csv_file)
-            #writer.writerow([t for t, v in repr_list])
-            #writer.writerow([v for t, v in repr_list])
-            writer.writerow([v for t, v in self.__dict__])
-            writer.writerow([v for t, v in self.__dict__])
+
+            writer.writerow([k for k, v in repr_list])
+            writer.writerow([v for k, v in repr_list])
+
             writer.writerow(['Epoch', 'Train Error', 'Test Error', 'Validation Error'])
 
             for (epoch, train, test, val) in self.train_list:

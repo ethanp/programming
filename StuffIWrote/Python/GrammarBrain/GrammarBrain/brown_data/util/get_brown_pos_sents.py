@@ -7,11 +7,11 @@ import numpy as np
 
 def get_medium_tagged_sentence_tuples(MIN=3, MAX=4):
     '''
+    THIS FUNCTION IS NEVER USED
     Produces ~36 POS tags
-    This function is not used anywhere, I used a better solution
     '''
     return [[(wrd, simplify(tag)) for wrd, tag in sent[:-1]] for sent in brown.tagged_sents()
-                    if MIN < len(sent) <= MAX+1 and sent[-1][0] == '.']
+                    if MIN < len(sent) <= MAX and sent[-1][0] == '.']
 
 def get_brown_tagged_sentence_tuples(MIN=3, MAX=4):
     '''
@@ -20,7 +20,7 @@ def get_brown_tagged_sentence_tuples(MIN=3, MAX=4):
     strip off the final period to simplify the overall learning task
     the sentence sizes are INCLUSIVE
     '''
-    return [s[:-1] for s in brown.tagged_sents() if MIN < len(s) <= MAX+1 and s[-1][0] == '.']
+    return [s[:-1] for s in brown.tagged_sents() if MIN < len(s) <= MAX and s[-1][0] == '.']
 
 def get_nice_sentences_as_tuples(MIN=3, MAX=4, include_numbers=False, include_punctuation=False):
     ''' sentence sizes are INCLUSIVE '''
@@ -79,17 +79,17 @@ def construct_sentence_matrix(s, medium):
     if medium:
         vector_len = len(bpm.medium_pos_map)
         def vector_id(the_pos):
-            bpm.medium_pos_map[simplify(the_pos)]
+            return bpm.medium_pos_map[simplify(the_pos)]
     else:
         vector_len = len(bpm.pos_vector_mapping)
         def vector_id(the_pos):
-            bpm.pos_vector_index(the_pos)
+            return bpm.pos_vector_index(the_pos)
 
     sentence_matrix = []
     for _, pos in s:
         word_vector = np.zeros(vector_len)
         word_vector[vector_id(pos)] = 1
-        sentence_matrix.append(word_vector)
+        sentence_matrix.append(word_vector)  # no [:] is necessary (I checked)
     return sentence_matrix
 
 

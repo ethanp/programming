@@ -1,6 +1,5 @@
-import os
 from pybrain import TanhLayer, LSTMLayer
-from BrownGrammarTrainer import BrownGrammarTrainer
+from GrammarBrain.BrownGrammarTrainer import BrownGrammarTrainer
 
 default_dict = {
         'title'               : 'default dict title',
