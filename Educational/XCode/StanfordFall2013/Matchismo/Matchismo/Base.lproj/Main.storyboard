@@ -186,19 +186,10 @@
                                     <action selector="switchTwoOrThreeCardMode:" destination="vXZ-lx-hvc" eventType="valueChanged" id="AsG-2s-ZJp"/>
                                 </connections>
                             </switch>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8VE-ef-NPb">
-                                <rect key="frame" x="20" y="395" width="280" height="21"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.50196081399917603" blue="0.25098040699958801" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
-                        <outlet property="messageLabel" destination="8VE-ef-NPb" id="M2D-bl-dPR"/>
-                        <outlet property="messageLable" destination="8VE-ef-NPb" id="Y1F-Nb-Hh7"/>
                         <outlet property="redealButton" destination="G8B-NX-cla" id="vCM-Jj-cy6"/>
                         <outlet property="scoreLabel" destination="BkL-f0-B4R" id="xqo-Sz-arb"/>
                         <outlet property="twoOrThreeCardMode" destination="eHf-z4-bfZ" id="NvL-IS-wpo"/>
