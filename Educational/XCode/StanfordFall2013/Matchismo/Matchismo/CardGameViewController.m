@@ -26,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
 @property (weak, nonatomic) IBOutlet UISwitch *twoOrThreeCardMode;
+@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
 
 
 @end
