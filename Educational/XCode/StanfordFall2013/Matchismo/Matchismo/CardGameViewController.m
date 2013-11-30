@@ -24,6 +24,7 @@
  * That link was created when you ctrl-dragged into the @property that it used to
  *   be connected to */
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
+@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
 @property (weak, nonatomic) IBOutlet UISwitch *twoOrThreeCardMode;
 

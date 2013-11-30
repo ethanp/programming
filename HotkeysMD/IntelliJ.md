@@ -23,11 +23,10 @@ method parameter popup               | Cmd + P
 documentation popup                  | Ctrl + J
 surround with {if/then,try/catch,...}| Cmd + Optn + T
 paste even old shit                  | Cmd + Shft + V
-like `j` in Vim (line join)          | Ctrl + Shft + J
+like `J` in Vim (line join)          | Ctrl + Shft + J
 like `o` in Vim (*smart new line*)   | Cmd + Rtrn
 toggle case                          | Cmd + Shft + U
 prev/next method                     | Ctrl + up/dwn
-goto naviagtion bar                  | Optn + home
 goto naviagtion bar                  | Optn + home
 insert live template (nice)          | Cmd + J
 quick-call any-action (NICE!)        | Cmd + Shft + A
