@@ -53,6 +53,7 @@
 {    
     [self restartGame];
     self.game.numCardsToMatch = sender.on ? 3 : 2;
+    self.messageLabel.text = [NSString stringWithFormat:@"Match %d Cards", self.game.numCardsToMatch];
 }
 
 - (void)restartGame
@@ -67,6 +68,7 @@
     int numCardsToMatch = self.game.numCardsToMatch;
     [self restartGame];
     self.game.numCardsToMatch = numCardsToMatch;
+    self.messageLabel.text = [NSString stringWithFormat:@"Redealt"];
 }
 
 - (IBAction)touchCardButton:(UIButton *)sender
@@ -74,7 +76,7 @@
     [self.twoOrThreeCardMode setEnabled:NO];
     // because we can't guarantee a particular index in the array for this button
     int chosenButtonIndex = [self.cardButtons indexOfObject:sender];
-    [self.game chooseCardAtIndex:chosenButtonIndex];
+    self.messageLabel.text = [self.game chooseCardAtIndex:chosenButtonIndex];
     [self updateUI];
 }
 

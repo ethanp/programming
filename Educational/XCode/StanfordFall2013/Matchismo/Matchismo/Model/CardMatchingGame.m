@@ -75,8 +75,9 @@ static const int COST_TO_CHOOSE = 1;
     [self.faceUpCards removeAllObjects];
 }
 
-- (void)chooseCardAtIndex:(NSUInteger)index
+- (NSString *)chooseCardAtIndex:(NSUInteger)index
 {
+    NSMutableString *toRet = [[NSMutableString alloc] init];
     Card *card = [self cardAtIndex:index];
     if (!card.isMatched) {
         if (card.isChosen) {
@@ -89,14 +90,21 @@ static const int COST_TO_CHOOSE = 1;
                 int matchScore = [card match:self.faceUpCards];
                 [self.faceUpCards addObject:card];
                 if (matchScore) {
-                    self.score += matchScore * MATCH_BONUS;
-                    [self markAllCardsAsMatched]; // from assn: ALL get removed
-                    self.score += matchScore;
+                    int scoreIncrease = matchScore * MATCH_BONUS;
+                    self.score += scoreIncrease;
+                    [toRet appendString:@"Matched: "];
+                    for (Card *turned in self.faceUpCards) {
+                        [toRet appendFormat:@" %@",turned.contents];
+                    }
+                    [self markAllCardsAsMatched]; // from assn2: ALL get removed
+                    NSString *plural = scoreIncrease > 1 ? @"s" : @"";
+                    [toRet appendFormat:@"for %d point%@!", scoreIncrease, plural];
                 } else {
                     // flip oldest card back over
                     Card *oldCard = [self.faceUpCards objectAtIndex:0];
                     oldCard.chosen = NO;
                     [self.faceUpCards removeObjectAtIndex:0];
+                    [toRet appendFormat:@"No match, %d point penalty", MISMATCH_PENALTY];
                     self.score -= MISMATCH_PENALTY;
                 }
             } else {
@@ -105,6 +113,7 @@ static const int COST_TO_CHOOSE = 1;
             self.score -= COST_TO_CHOOSE;
         }
     }
+    return [NSString stringWithString:toRet];
 }
 
 @end
