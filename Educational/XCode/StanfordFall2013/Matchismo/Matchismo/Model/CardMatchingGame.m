@@ -57,7 +57,7 @@
 
 
 static const int MISMATCH_PENALTY = 2;
-static const int MATCH_BONUS = 4;
+static const int MATCH_BONUS = 6;
 static const int COST_TO_CHOOSE = 1;
 
 - (Card *)cardAtIndex:(NSUInteger)index
@@ -90,7 +90,7 @@ static const int COST_TO_CHOOSE = 1;
                 int matchScore = [card match:self.faceUpCards];
                 [self.faceUpCards addObject:card];
                 if (matchScore) {
-                    int scoreIncrease = matchScore * MATCH_BONUS;
+                    int scoreIncrease = matchScore * MATCH_BONUS / [self numCardsToMatch];
                     self.score += scoreIncrease;
                     [toRet appendString:@"Matched: "];
                     for (Card *turned in self.faceUpCards) {
