@@ -8,7 +8,7 @@ Align selected lines                | Ctrl + Cmd + a
 **IN a C file:**
 
 prefix      | result
-------------|--
+------------|------------------------
 `def`       |  `define`
 `do`        |  `do/while`
 `enum`      |  `enum` declaration
@@ -26,7 +26,7 @@ prefix      | result
 **IN a PYTHON file:**
 
 prefix          |  result
-----------------|--
+----------------|----------------------
 `cl`            |  class declaration
 `def`           |  function
 `deff`          |  simpler version
