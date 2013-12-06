@@ -48,25 +48,16 @@
     return [[PlayingCardDeck alloc] init];
 }
 
-- (IBAction)switchTwoOrThreeCardMode:(UISwitch *)sender
-{    
-    [self restartGame];
-    self.game.numCardsToMatch = sender.on ? 3 : 2;
-    self.messageLabel.text = [NSString stringWithFormat:@"Match %d Cards",
-                              self.game.numCardsToMatch];
-}
-
 - (void)restartGame
 {
     self.game = nil;
     [self updateUI];
+    self.game.numCardsToMatch = 3; // is there a better place for this?
 }
 
 
 - (IBAction)touchRedealButton:(UIButton *)sender {
-    int numCardsToMatch = self.game.numCardsToMatch;
     [self restartGame];
-    self.game.numCardsToMatch = numCardsToMatch;
     self.messageLabel.text = [NSString stringWithFormat:@"Redealt"];
 }
 
