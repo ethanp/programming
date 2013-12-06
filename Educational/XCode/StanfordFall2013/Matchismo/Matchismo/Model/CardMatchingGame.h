@@ -23,8 +23,6 @@
 - (Card *)cardAtIndex:(NSUInteger)index;
 
 @property (nonatomic, readonly) NSInteger score;
-
-// should I be more worried about manipulating this in the view?
 @property (nonatomic, readwrite) int numCardsToMatch;
 
 @end

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AA2F9F781851818300D30CBA /* SetCard.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2F9F771851818300D30CBA /* SetCard.m */; };
 		AA2FF18618333D71009684CA /* CardMatchingGame.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2FF18518333D71009684CA /* CardMatchingGame.m */; };
 		AA62C7EA185144AF00089A33 /* SetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA62C7E9185144AF00089A33 /* SetViewController.m */; };
 		AA978C341832074B00D17970 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA978C331832074B00D17970 /* Foundation.framework */; };
@@ -40,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AA2F9F761851818300D30CBA /* SetCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetCard.h; path = Model/SetCard.h; sourceTree = "<group>"; };
+		AA2F9F771851818300D30CBA /* SetCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SetCard.m; path = Model/SetCard.m; sourceTree = "<group>"; };
 		AA2FF18318333C27009684CA /* notes.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = notes.txt; sourceTree = "<group>"; };
 		AA2FF18418333D71009684CA /* CardMatchingGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CardMatchingGame.h; path = Model/CardMatchingGame.h; sourceTree = "<group>"; };
 		AA2FF18518333D71009684CA /* CardMatchingGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CardMatchingGame.m; path = Model/CardMatchingGame.m; sourceTree = "<group>"; };
@@ -190,6 +193,8 @@
 				AA2FF18518333D71009684CA /* CardMatchingGame.m */,
 				AA978C681832119400D17970 /* Card.h */,
 				AA978C691832119400D17970 /* Card.m */,
+				AA2F9F761851818300D30CBA /* SetCard.h */,
+				AA2F9F771851818300D30CBA /* SetCard.m */,
 				AA978C6D183212BE00D17970 /* PlayingCard.h */,
 				AA978C6E183212BE00D17970 /* PlayingCard.m */,
 				AA978C70183213A800D17970 /* Deck.h */,
@@ -302,6 +307,7 @@
 				AA978C4A1832074C00D17970 /* CardGameViewController.m in Sources */,
 				AA978C401832074C00D17970 /* main.m in Sources */,
 				AA62C7EA185144AF00089A33 /* SetViewController.m in Sources */,
+				AA2F9F781851818300D30CBA /* SetCard.m in Sources */,
 				AA978C6F183212BE00D17970 /* PlayingCard.m in Sources */,
 				AA2FF18618333D71009684CA /* CardMatchingGame.m in Sources */,
 				AA978C751832148700D17970 /* PlayingCardDeck.m in Sources */,
