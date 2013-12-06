@@ -8,7 +8,7 @@
 
 #import "CardGameViewController.h"
 #import "PlayingCardDeck.h"
-#import "CardMatchingGame.h" /* view imports controller */
+#import "CardMatchingGame.h" /* controller imports model */
 
 /* the parentheses notation is just for the .m file */
 @interface CardGameViewController()
@@ -53,7 +53,8 @@
 {    
     [self restartGame];
     self.game.numCardsToMatch = sender.on ? 3 : 2;
-    self.messageLabel.text = [NSString stringWithFormat:@"Match %d Cards", self.game.numCardsToMatch];
+    self.messageLabel.text = [NSString stringWithFormat:@"Match %d Cards",
+                              self.game.numCardsToMatch];
 }
 
 - (void)restartGame
