@@ -3,13 +3,10 @@
 
 call pathogen#infect()
 
-" Change "\" to "gg"
 noremap \ gg
-" set <leader> "g"
-let mapleader = ","
+let mapleader = ","     " using g for <leader> meant I couldn't then use the g commands
 
-"fileType detection
-filetype on
+filetype on             "fileType detection
 filetype indent on
 
 syntax on
@@ -36,11 +33,11 @@ set t_vb=
 set autochdir           " Automatically cd into the directory that the file is in:
 set cul                 " Highlight current line
 hi CursorLine term=none cterm=none ctermbg=3
-set ruler "Line number on bar
-set linebreak " makes wrapped lines at spaces, not middle of words
-set nocompatible " Don't try to be compatible with vi
-set linespace=4 " Increase the spacing between lines for better readability
-set autoindent " Auto-Indent By Default
+set ruler               " Line number on bar
+set linebreak           " Makes wrapped lines at spaces, not middle of words
+set nocompatible        " Don't try to be compatible with vi
+set linespace=4         " Increase the spacing between lines for better readability
+set autoindent
 set smartindent
 set encoding=utf-8
 set wildmenu
@@ -48,22 +45,22 @@ set wildmode=list:longest       " not sure what this does
 set ttyfast                     " makes vim faster, I guess
 set backspace=indent,eol,start  " Normalize backspace, I remapped it anyway though
 set laststatus=2                " Always display the status line
-" set relativenumber            " line numbers relative to current line (sorta annoying)
+" set relativenumber            " line numbers relative to current line (found this annoying)
 set number                      " show normal line numbers
 set undofile                    " save file's undos, load them on re-open
 set gdefault                    " apply global substitutions by default
 set colorcolumn=90
-set clipboard=unnamed " Share system clipboard
-set directory=/tmp// " swap files
+set clipboard=unnamed           " Share system clipboard
+set directory=/tmp/             " swap files go here
 set backupskip=/tmp/*,/private/tmp/*
-set ffs=unix,dos,mac "Default file types
-set nowrap " don't wrap lines
-set showmatch " set show matching parenthesis
-set ignorecase " ignore case when searching
-set smartcase " ignore case if search pattern is all lowercase, case-sensitive otherwise
-set copyindent " copy the previous indentation on autoindenting
+set ffs=unix,dos,mac            "Default file types
+set nowrap                      " don't wrap lines, let them trail off the side
+set showmatch                   " set show matching parenthesis
+set ignorecase                  " ignore case by default when searching
+set smartcase   " ignore case if search pattern is all lowercase, case-sensitive otherwise
+set copyindent                  " copy the previous indentation on autoindenting
 set list listchars=tab:»\ ,trail:· " Characters to show spaces/tabs/etc.
-" set scrolloff=5 " keep 5 lines around cursor
+" set scrolloff=5               " keep 5 lines around cursor (not a fan)
 
 " =============================================================================
 
@@ -73,16 +70,16 @@ set list listchars=tab:»\ ,trail:· " Characters to show spaces/tabs/etc.
 nnoremap ; :
 " nnoremap : ;
 
-" allow "fj" instead to exit to command mode
+" allow "fj" to exit to command mode
 inoremap fj <esc>
 
 " set "fk" to save in normal mode
 map fk ;w<CR>
 
-" toggle highlight search
+" toggle highlighting of items found matching search term
 nnoremap <backspace> :set hlsearch!<CR>
 
-" Simplified way to move between windows
+" Simplified way to move between inner-windows
 map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
@@ -101,9 +98,8 @@ nnoremap <F7> :colorscheme molokai<CR>
 let g:EasyMotion_leader_key = '<Leader>'
 
 " strip all trailing whitespace in the current file
-"   search for any number of trailing space characters
-"   replace all of them with nothings
-"  not sure what that :let command does
+"  I think that :let command says
+"   'take each instance of the matched text and replace it with the emptystring'
 nnoremap <leader>l :%s/\s\+$//<cr>:let @/=''<CR>
 
 nnoremap <leader>a :Ack
@@ -126,26 +122,25 @@ nnoremap <leader>vw :e ~/.vimrc<CR>
 
 " Instantly reload vimrc. 'Been waiting for this one...
 " TODO It's broken
-" nnoremap <leader>vr ;source $MYVIMRC<CR>
-
+" nnoremap <leader>vr :source $MYVIMRC<CR>
 
 " save sessions with .vis extension
-" TODO find out what this actually does
+" TODO find out how to use this feature properly
 map <leader>s :mksession!  session.vis<CR>
 
 " give current file execute permissions
 map <leader>h ;!chmod a+x %<CR><CR>
 
-
-" simplify buffer switches
+" simplify buffer switches on big keyboard
 map <F13> <ESC>;bp<CR>
 map <F14> <ESC>;bn<CR>
 
 " Undo Tree
 nnoremap <Leader>z :GundoToggle<CR>
 
-nnoremap zC :CommandT ~/Dropbox/<CR>
+" really simple and fast file-finder plugin
 nnoremap zc :CommandT<CR>
+nnoremap zC :CommandT ~/Dropbox/<CR>
 
 " Assign tab switching to global norm (also for using mouse/trackpad)
 map <M-D-Left> <ESC>;tabp<CR>
@@ -167,7 +162,7 @@ highlight ExtraWhitespace ctermbg=blue guibg=blue
 match ExtraWhitespace /\s\+$/
 
 " Save when losing focus
-set autowriteall " Auto-save files when switching buffers or leaving vim.
+set autowriteall            " Auto-save files when switching buffers or leaving vim.
 au FocusLost * silent! :wa
 au TabLeave * silent! :wa
 
@@ -186,14 +181,10 @@ au! BufNewFile,BufRead *.md set filetype=markdown
 " automatically source vim sessions so I can open them with the finder
 au BufRead *.vis so %
 
-" uses gig to get indent guides
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
-
-" probably turns RainbowParentheses on by default
+" turns RainbowParentheses on by default
 let g:rainbow_active = 1
 let g:rainbow_operators = 1
 
-" SOME CREDITS
+" SOME CREDITS/REFERENCES
 "   * http://stevelosh.com/blog/2010/09/coming-home-to-vim/
 "   * https://github.com/jasoncyu/dotfiles/blob/master/.vimrc
