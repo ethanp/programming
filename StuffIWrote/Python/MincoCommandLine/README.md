@@ -1,5 +1,10 @@
+THIS PROJECT HAS BEEN ABANDONED
+===============================
+
+I'm no longer using the spreadsheet it was going to plug into.
+
 Sample Usages
-=============
+-------------
 
 ```bash
     # list tasks, with call-numbers for each
@@ -12,7 +17,7 @@ Sample Usages
     $ mcl ll
 
     # add task if it doesn’t exist
-    $ mcl addTask NN --task HW#3 --duedate 10/23
+    $ mcl addTask NN --task HW_3 --duedate 10/23
 
     # add group if it doesn’t exist
     $ mcl addGroup Alg
@@ -21,7 +26,7 @@ Sample Usages
     $ mcl begin 1
 
     # adds task if it doesn’t exist
-    $ mcl begin NN HW#3
+    $ mcl begin NN HW_3
 
     # stops counting
     $ mcl end
@@ -48,7 +53,7 @@ Sample Usages
     $ mcl show
 
     # post-hoc add time a task was done
-    $ mcl did NN HW#3 10:30 15:15
+    $ mcl did NN HW_3 10:30 15:15
 
     # cancel current task
     $ mcl cancel
@@ -56,7 +61,7 @@ Sample Usages
 
 
 DIR STRUCTURE
-=============
+-------------
 ```
 Days/
     10-17-2013.csv
@@ -65,14 +70,14 @@ Days/
 
 Tasks/
     NN/
-        HW#3.task
+        HW_3.task
         Ch 16.task
 
     Alg/
 ```
 
 CSV FILES
-=========
+---------
 ```
 group, task, location, start time, end time, block time
 group, task, location, start time, end time, block time
@@ -80,7 +85,7 @@ group, task, location, start time, end time, block time
 ```
 
 TASK FILES
-==========
+----------
 ```
 start date
 due date (can be blank)
