@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "Card.h"
 
 @interface MatchingGame : NSObject
 {
@@ -20,5 +21,7 @@
 @property (nonatomic, readwrite) NSInteger score;
 @property (nonatomic, readwrite) int numCardsToMatch;
 @property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
+
+- (Card *)cardAtIndex:(NSUInteger)index;
 
 @end

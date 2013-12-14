@@ -17,11 +17,18 @@
 
 @implementation CardMatchingGame
 
+
+static const int MISMATCH_PENALTY = 2;
+static const int MATCH_BONUS = 6;
+static const int COST_TO_CHOOSE = 1;
+
+
 - (NSMutableArray *)faceUpCards
 {
     if (!_faceUpCards) _faceUpCards = [[NSMutableArray alloc] init];
     return _faceUpCards;
 }
+
 
 - (instancetype)initWithCardCount:(NSUInteger)count
                         usingDeck:(Deck *)deck
@@ -43,15 +50,6 @@
 }
 
 
-static const int MISMATCH_PENALTY = 2;
-static const int MATCH_BONUS = 6;
-static const int COST_TO_CHOOSE = 1;
-
-- (Card *)cardAtIndex:(NSUInteger)index
-{
-    // guard Error ArrayIndexOutOfBounds
-    return (index < [self.cards count]) ? self.cards[index] : nil;
-}
 
 
 - (void)markAllCardsAsMatched
@@ -61,6 +59,7 @@ static const int COST_TO_CHOOSE = 1;
     }
     [self.faceUpCards removeAllObjects];
 }
+
 
 - (NSString *)chooseCardAtIndex:(NSUInteger)index
 {

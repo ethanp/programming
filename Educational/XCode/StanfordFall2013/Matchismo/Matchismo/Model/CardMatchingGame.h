@@ -21,7 +21,6 @@
                         usingDeck:(Deck *)deck;
 
 - (NSString *)chooseCardAtIndex:(NSUInteger)index;
-- (Card *)cardAtIndex:(NSUInteger)index;
 
 
 @end

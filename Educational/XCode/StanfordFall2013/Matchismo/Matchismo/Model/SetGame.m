@@ -10,8 +10,7 @@
 
 @interface SetGame()
 
-/* we can redefine score to be readwrite here in the interface within the implementation */
-@property (nonatomic, readwrite) NSInteger score;
+@property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
 
 @end
 
