@@ -9,9 +9,15 @@
 #import <Foundation/Foundation.h>
 
 @interface MatchingGame : NSObject
+{
+    // http://stackoverflow.com/questions/575210/use-of-synthesize-property-in-objective-c-inheritance
+    NSInteger score;
+    int numCardsToMatch;
+    NSMutableArray *cards;
+}
 
 
-@property (nonatomic, readonly) NSInteger score;
+@property (nonatomic, readwrite) NSInteger score;
 @property (nonatomic, readwrite) int numCardsToMatch;
 @property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
 

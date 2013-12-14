@@ -10,23 +10,12 @@
 
 @interface CardMatchingGame()
 
-/* we can redefine score to be readwrite here in the interface within the implementation */
-@property (nonatomic, readwrite) NSInteger score;
 @property (nonatomic, strong) NSMutableArray *faceUpCards; // of Card
+@property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
 
 @end
 
 @implementation CardMatchingGame
-
-@synthesize cards = _cards;
-@synthesize numCardsToMatch = _numCardsToMatch;
-
-/* dynamic allocation for reference properties go in the getter */
-- (NSMutableArray *)cards
-{
-    if (!_cards) _cards = [[NSMutableArray alloc] init];
-    return _cards;
-}
 
 - (NSMutableArray *)faceUpCards
 {
@@ -40,6 +29,7 @@
     self = [super init]; /* bc we're init'ing a subclass, 
                           note there's no alloc bc it's `self`
                           and the caller has to call alloc first */
+    self.numCardsToMatch = 3;
     if (self) {
         // note we're going to "match" on value XOR suit
         // because drawRandomCard actually removes the card
@@ -50,12 +40,6 @@
     }
     
     return self;
-}
-
-- (int)numCardsToMatch
-{
-    if (!_numCardsToMatch) _numCardsToMatch = 3;
-    return _numCardsToMatch;
 }
 
 

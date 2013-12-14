@@ -11,4 +11,14 @@
 @implementation MatchingGame
 
 
+@synthesize cards = _cards;
+
+
+/* dynamic allocation for reference properties go in the getter */
+- (NSMutableArray *)cards
+{
+    if (!_cards) _cards = [[NSMutableArray alloc] init];
+    return _cards;
+}
+
 @end
