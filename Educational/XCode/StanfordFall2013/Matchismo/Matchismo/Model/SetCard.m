@@ -32,6 +32,16 @@
     return @[@"◼︎", @"▲", @"☯"];
 }
 
++ (NSArray *)validColors
+{
+    return @[@"Red", @"Blue", @"Green"];
+}
+
++ (NSArray *)validFillingTypes
+{
+    return @[@"Solid", @"Striped", @"Unfilled"];
+}
+
 // must @synthesize properties if we provide both setter AND getter
 @synthesize shape = _shape;
 
