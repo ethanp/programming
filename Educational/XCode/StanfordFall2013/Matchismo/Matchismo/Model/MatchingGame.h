@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "Card.h"
+#import "Deck.h"
 
 @interface MatchingGame : NSObject
 {
@@ -23,5 +24,14 @@
 @property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
 
 - (Card *)cardAtIndex:(NSUInteger)index;
+
+/* designated initializer
+ * must be called from any of our other initializers
+ * or from any subclass's initializers */
+- (instancetype)initWithCardCount:(NSUInteger)count
+                        usingDeck:(Deck *)deck;
+
+
+- (NSString *)chooseCardAtIndex:(NSUInteger)index;
 
 @end

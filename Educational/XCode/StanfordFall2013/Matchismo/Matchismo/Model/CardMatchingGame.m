@@ -9,10 +9,7 @@
 #import "CardMatchingGame.h"
 
 @interface CardMatchingGame()
-
 @property (nonatomic, strong) NSMutableArray *faceUpCards; // of Card
-@property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
-
 @end
 
 @implementation CardMatchingGame
@@ -33,24 +30,13 @@ static const int COST_TO_CHOOSE = 1;
 - (instancetype)initWithCardCount:(NSUInteger)count
                         usingDeck:(Deck *)deck
 {
-    self = [super init]; /* bc we're init'ing a subclass, 
-                          note there's no alloc bc it's `self`
-                          and the caller has to call alloc first */
-    self.numCardsToMatch = 3;
-    if (self) {
-        // note we're going to "match" on value XOR suit
-        // because drawRandomCard actually removes the card
-        for (int i = 0; i < count; i++) {
-            Card *card = [deck drawRandomCard];
-            [self.cards addObject:card]; /* calls constructor if necessary */
-        }
-    }
-    
+    /* bc we're init'ing a subclass,
+     note there's no alloc bc it's `self`
+     and the caller has to call alloc first */
+    self = [super initWithCardCount:count usingDeck:deck];
+    self.numCardsToMatch = 2;
     return self;
 }
-
-
-
 
 - (void)markAllCardsAsMatched
 {

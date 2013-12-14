@@ -14,13 +14,5 @@
 
 @interface CardMatchingGame : MatchingGame
 
-/* designated initializer
- * must be called from any of our other initializers
- * or from any subclass's initializers */
-- (instancetype)initWithCardCount:(NSUInteger)count
-                        usingDeck:(Deck *)deck;
-
-- (NSString *)chooseCardAtIndex:(NSUInteger)index;
-
 
 @end
