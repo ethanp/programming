@@ -10,8 +10,9 @@
 #import <Foundation/Foundation.h>
 #import "Deck.h"   /* imports models */
 #import "Card.h"   /* doesn't import viewController */
+#import "MatchingGame.h"
 
-@interface CardMatchingGame : NSObject
+@interface CardMatchingGame : MatchingGame
 
 /* designated initializer
  * must be called from any of our other initializers
@@ -22,7 +23,5 @@
 - (NSString *)chooseCardAtIndex:(NSUInteger)index;
 - (Card *)cardAtIndex:(NSUInteger)index;
 
-@property (nonatomic, readonly) NSInteger score;
-@property (nonatomic, readwrite) int numCardsToMatch;
 
 @end

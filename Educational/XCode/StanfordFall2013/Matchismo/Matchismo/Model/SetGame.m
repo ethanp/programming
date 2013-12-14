@@ -8,6 +8,13 @@
 
 #import "SetGame.h"
 
+@interface SetGame()
+
+/* we can redefine score to be readwrite here in the interface within the implementation */
+@property (nonatomic, readwrite) NSInteger score;
+
+@end
+
 @implementation SetGame
 
 @end

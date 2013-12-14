@@ -7,7 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MatchingGame.h"
 
-@interface SetGame : NSObject
+@interface SetGame : MatchingGame
 
 @end

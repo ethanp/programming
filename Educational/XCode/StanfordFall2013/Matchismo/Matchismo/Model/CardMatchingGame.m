@@ -10,13 +10,16 @@
 
 @interface CardMatchingGame()
 
-/* we can redefine score to be readwrite here in the implementation */
+/* we can redefine score to be readwrite here in the interface within the implementation */
 @property (nonatomic, readwrite) NSInteger score;
-@property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
-@property (nonatomic, strong) NSMutableArray *faceUpCards; // of Carrd
+@property (nonatomic, strong) NSMutableArray *faceUpCards; // of Card
+
 @end
 
 @implementation CardMatchingGame
+
+@synthesize cards = _cards;
+@synthesize numCardsToMatch = _numCardsToMatch;
 
 /* dynamic allocation for reference properties go in the getter */
 - (NSMutableArray *)cards
