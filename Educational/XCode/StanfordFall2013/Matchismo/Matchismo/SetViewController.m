@@ -18,6 +18,19 @@
 
 @implementation SetViewController
 
+@synthesize game = _game;
+
+- (SetGame *)game
+{
+    /* using a ternary operator for this doesn't work
+     * because then you never actually assign to the _inner-variable */
+    if (!_game) _game = [[SetGame alloc]
+                         initWithCardCount:[self.cardButtons count]
+                         usingDeck:[self createDeck]
+                         mustMatch:3];
+    return _game;
+}
+
 // this is supposed to OVERRIDE the CardGameVC method, I hope it works.
 - (Deck *)createDeck
 {

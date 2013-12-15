@@ -14,9 +14,9 @@
 - (int)match:(NSArray *)otherCards
 {
     int matchScore = 0;
-    NSMutableSet *chosenShapes = [@[self.shape] mutableCopy];
-    NSMutableSet *chosenColors = [@[self.color] mutableCopy];
-    NSMutableSet *chosenFills  = [@[self.fillType] mutableCopy];
+    NSMutableSet *chosenShapes = [NSMutableSet setWithObject:self.shape];
+    NSMutableSet *chosenColors = [NSMutableSet setWithObject:self.color];
+    NSMutableSet *chosenFills  = [NSMutableSet setWithObject:self.fillType];
     for (SetCard *otherCard in otherCards) {
         [chosenShapes addObject:otherCard.shape];
         [chosenColors addObject:otherCard.color];
@@ -57,6 +57,7 @@
         [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor grayColor]}];
     }
     
+    // ERROR ON THIS LINE
     [formattedString setValuesForKeysWithDictionary:attributes];
     return formattedString;
 }
