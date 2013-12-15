@@ -41,7 +41,6 @@
                                  usingDeck:[self createDeck]
                                  mustMatch:2];
     return _game;
-
 }
 
 - (Deck *)createDeck
@@ -78,6 +77,7 @@
                     forState:UIControlStateNormal];
         [cardButton setBackgroundImage:[self backgroundImageForCard:card]
                               forState:UIControlStateNormal];
+        cardButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:18.0];
         cardButton.enabled = !card.isMatched;
         self.scoreLabel.text =
             [NSString stringWithFormat:@"Score: %d", self.game.score];

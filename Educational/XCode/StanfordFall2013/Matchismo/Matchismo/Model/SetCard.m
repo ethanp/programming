@@ -34,14 +34,37 @@
 }
 
 /* this should probably be a string with formatting */
-- (NSString *)contents
+- (NSAttributedString *)contents
 {
-    return @"";  // TODO
+    
+    NSDictionary *colorDict
+             = @{@"Red": [UIColor redColor],
+                 @"Blue": [UIColor blueColor],
+                 @"Green": [UIColor greenColor]};
+    
+    NSDictionary *shapesDict
+             = @{@"Square": @"◼︎",
+                 @"Triangle": @"▲",
+                 @"Circle": @"☯"};
+    
+    NSAttributedString *formattedString =
+        [[NSAttributedString alloc] initWithString:shapesDict[self.shape]];
+    
+    NSMutableDictionary *attributes =
+        [@{NSForegroundColorAttributeName: colorDict[self.color]} mutableCopy];
+    
+    if ([self.fillType  isEqual: @"Backfilled"]) {
+        [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor grayColor]}];
+    }
+    
+    
+    return formattedString;
 }
 
+// these could be done with bit vectors and enums, but hooey
 + (NSArray *)validShapes
 {
-    return @[@"◼︎", @"▲", @"☯"];
+    return @[@"Square", @"Triangle", @"Circle"];
 }
 
 + (NSArray *)validColors
@@ -51,7 +74,7 @@
 
 + (NSArray *)validFillTypes
 {
-    return @[@"Solid", @"Striped", @"Unfilled"];
+    return @[@"Normal", @"Outlined", @"Backfilled"];
 }
 
 // must @synthesize properties if we provide both setter AND getter

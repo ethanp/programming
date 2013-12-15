@@ -30,7 +30,6 @@
 {
     NSArray *rankStrings = [PlayingCard rankStrings];
     return [rankStrings[self.rank] stringByAppendingString:self.suit];
-    
 }
 
 + (NSArray *)rankStrings

@@ -41,7 +41,6 @@
     return [[SetCardDeck alloc] init];
 }
 
-
 /* TODO replace this with the isChosen images for SetCards */
 - (UIImage *)backgroundImageForCard:(Card *)card
 {

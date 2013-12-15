@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AA2CB900185C10090075DB4D /* MatchingGame.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2CB8FF185C10090075DB4D /* MatchingGame.m */; };
+		AA2CB903185D595F0075DB4D /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2CB902185D595F0075DB4D /* BaseViewController.m */; };
 		AA2F9F781851818300D30CBA /* SetCard.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2F9F771851818300D30CBA /* SetCard.m */; };
 		AA2F9F7B1851840500D30CBA /* SetCardDeck.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2F9F7A1851840500D30CBA /* SetCardDeck.m */; };
 		AA2F9F81185184A600D30CBA /* SetGame.m in Sources */ = {isa = PBXBuildFile; fileRef = AA2F9F80185184A600D30CBA /* SetGame.m */; };
@@ -46,6 +47,8 @@
 /* Begin PBXFileReference section */
 		AA2CB8FE185C10090075DB4D /* MatchingGame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MatchingGame.h; path = Model/MatchingGame.h; sourceTree = "<group>"; };
 		AA2CB8FF185C10090075DB4D /* MatchingGame.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MatchingGame.m; path = Model/MatchingGame.m; sourceTree = "<group>"; };
+		AA2CB901185D595F0075DB4D /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
+		AA2CB902185D595F0075DB4D /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
 		AA2F9F761851818300D30CBA /* SetCard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetCard.h; path = Model/SetCard.h; sourceTree = "<group>"; };
 		AA2F9F771851818300D30CBA /* SetCard.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SetCard.m; path = Model/SetCard.m; sourceTree = "<group>"; };
 		AA2F9F791851840500D30CBA /* SetCardDeck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetCardDeck.h; path = Model/SetCardDeck.h; sourceTree = "<group>"; };
@@ -156,6 +159,8 @@
 				AA62C7E9185144AF00089A33 /* SetViewController.m */,
 				AA978C481832074C00D17970 /* CardGameViewController.h */,
 				AA978C491832074C00D17970 /* CardGameViewController.m */,
+				AA2CB901185D595F0075DB4D /* BaseViewController.h */,
+				AA2CB902185D595F0075DB4D /* BaseViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -347,6 +352,7 @@
 				AA978C4A1832074C00D17970 /* CardGameViewController.m in Sources */,
 				AA2F9F81185184A600D30CBA /* SetGame.m in Sources */,
 				AA978C401832074C00D17970 /* main.m in Sources */,
+				AA2CB903185D595F0075DB4D /* BaseViewController.m in Sources */,
 				AA2F9F7B1851840500D30CBA /* SetCardDeck.m in Sources */,
 				AA62C7EA185144AF00089A33 /* SetViewController.m in Sources */,
 				AA2F9F781851818300D30CBA /* SetCard.m in Sources */,

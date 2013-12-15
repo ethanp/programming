@@ -6,8 +6,8 @@
 //  Copyright (c) 2013 Ethan Petuchowski. All rights reserved.
 //
 
-#import "CardGameViewController.h"
+#import "BaseViewController.h"
 
-@interface SetViewController : CardGameViewController
+@interface SetViewController : BaseViewController
 
 @end
