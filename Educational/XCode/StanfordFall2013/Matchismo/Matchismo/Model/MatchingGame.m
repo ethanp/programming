@@ -23,14 +23,6 @@ static const int MATCH_BONUS = 6;
 static const int COST_TO_CHOOSE = 1;
 
 
-- (NSInteger)numCardsToMatch
-{
-    if (!_numCardsToMatch) {
-        _numCardsToMatch = 0;
-    }
-    return _numCardsToMatch;
-}
-
 /* dynamic allocation for reference properties go in the getter */
 - (NSMutableArray *)cards
 {
