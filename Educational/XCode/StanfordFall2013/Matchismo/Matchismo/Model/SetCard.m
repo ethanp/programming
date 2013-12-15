@@ -10,18 +10,30 @@
 
 @implementation SetCard
 
-// could call [super match:...] but doesn't have to in this case
+/* could call [super match:...] but doesn't have to in this case */
 - (int)match:(NSArray *)otherCards
 {
-    int score = 0;
-    
+    int matchScore = 0;
+    NSMutableSet *chosenShapes = [@[self.shape] mutableCopy];
+    NSMutableSet *chosenColors = [@[self.color] mutableCopy];
+    NSMutableSet *chosenFills  = [@[self.fillType] mutableCopy];
     for (SetCard *otherCard in otherCards) {
-
+        [chosenShapes addObject:otherCard.shape];
+        [chosenColors addObject:otherCard.color];
+        [chosenFills addObject:otherCard.fillType];
     }
     
-    return score;
+    if (([chosenShapes count] == 3 || [chosenShapes count] == 1) &&
+        ([chosenColors count] == 3 || [chosenColors count] == 1) &&
+        ([chosenFills count]  == 3 || [chosenFills count]  == 1))
+    {
+        matchScore = 1;
+    }
+    
+    return matchScore;
 }
 
+/* this should probably be a string with formatting */
 - (NSString *)contents
 {
     return @"";  // TODO
@@ -37,7 +49,7 @@
     return @[@"Red", @"Blue", @"Green"];
 }
 
-+ (NSArray *)validFillingTypes
++ (NSArray *)validFillTypes
 {
     return @[@"Solid", @"Striped", @"Unfilled"];
 }

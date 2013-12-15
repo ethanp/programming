@@ -13,17 +13,17 @@
 // could call [super match:...] but doesn't have to in this case
 - (int)match:(NSArray *)otherCards
 {
-    int score = 0;
+    int matchScore = 0;
     
     for (PlayingCard *otherCard in otherCards) {
         if (otherCard.rank == self.rank) {
-            score += 4;
+            matchScore += 4;
         } else if ([otherCard.suit isEqualToString:self.suit]) {
-            score += 1;
+            matchScore += 1;
         }
     }
     
-    return score;
+    return matchScore;
 }
 
 - (NSString *)contents

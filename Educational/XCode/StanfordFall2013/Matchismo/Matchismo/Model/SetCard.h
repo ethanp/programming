@@ -11,11 +11,11 @@
 @interface SetCard : Card
 
 @property (strong, nonatomic) NSString *shape;
-@property (nonatomic) NSUInteger color;  // not sure what type this should be yet
-@property (nonatomic) NSUInteger fillingType;  // not sure what type this should be yet
+@property (nonatomic) NSString *color;  // could use an ENUM for this instead...
+@property (nonatomic) NSString *fillType;  // could use an ENUM for this instead...
 
 + (NSArray *)validShapes;
 + (NSArray *)validColors;
-+ (NSArray *)validFillingTypes;
++ (NSArray *)validFillTypes;
 
 @end
