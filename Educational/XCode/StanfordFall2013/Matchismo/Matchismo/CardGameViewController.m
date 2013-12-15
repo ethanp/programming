@@ -38,7 +38,8 @@
      * because then you never actually assign to the _inner-variable */
     if (!_game) _game = [[CardMatchingGame alloc]
                          initWithCardCount:[self.cardButtons count]
-                                 usingDeck:[self createDeck]];
+                                 usingDeck:[self createDeck]
+                                 mustMatch:2];
     return _game;
 
 }
@@ -52,7 +53,6 @@
 {
     self.game = nil;
     [self updateUI];
-    self.game.numCardsToMatch = 3; // is there a better place for this?
 }
 
 

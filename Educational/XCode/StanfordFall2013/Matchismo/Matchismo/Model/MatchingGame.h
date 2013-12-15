@@ -16,12 +16,15 @@
     NSInteger score;
     int numCardsToMatch;
     NSMutableArray *cards;
+    NSMutableArray *chosenCards;
 }
 
 
 @property (nonatomic, readwrite) NSInteger score;
 @property (nonatomic, readwrite) int numCardsToMatch;
 @property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
+@property (nonatomic, strong) NSMutableArray *chosenCards; // of Card
+
 
 - (Card *)cardAtIndex:(NSUInteger)index;
 
@@ -29,8 +32,10 @@
  * must be called from any of our other initializers
  * or from any subclass's initializers */
 - (instancetype)initWithCardCount:(NSUInteger)count
-                        usingDeck:(Deck *)deck;
+                        usingDeck:(Deck *)deck
+                        mustMatch:(NSUInteger)numCards;
 
+- (void)markAllCardsAsMatched;
 
 - (NSString *)chooseCardAtIndex:(NSUInteger)index;
 
