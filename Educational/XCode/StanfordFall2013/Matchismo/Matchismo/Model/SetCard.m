@@ -57,7 +57,7 @@
         [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor grayColor]}];
     }
     
-    
+    [formattedString setValuesForKeysWithDictionary:attributes];
     return formattedString;
 }
 
