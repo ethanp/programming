@@ -48,25 +48,6 @@
     return [[PlayingCardDeck alloc] init];
 }
 
-- (void)restartGame
-{
-    self.game = nil;
-    [self updateUI];
-}
-
-
-- (IBAction)touchRedealButton:(UIButton *)sender {
-    [self restartGame];
-    self.messageLabel.text = [NSString stringWithFormat:@"Redealt"];
-}
-
-- (IBAction)touchCardButton:(UIButton *)sender
-{
-    // because we can't guarantee a particular index in the array for this button
-    int chosenButtonIndex = [self.cardButtons indexOfObject:sender];
-    self.messageLabel.text = [self.game chooseCardAtIndex:chosenButtonIndex];
-    [self updateUI];
-}
 
 - (void)updateUI
 {
@@ -77,7 +58,7 @@
                     forState:UIControlStateNormal];
         [cardButton setBackgroundImage:[self backgroundImageForCard:card]
                               forState:UIControlStateNormal];
-        cardButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:18.0];
+        cardButton.titleLabel.font = [UIFont systemFontOfSize:14];
         cardButton.enabled = !card.isMatched;
         self.scoreLabel.text =
             [NSString stringWithFormat:@"Score: %d", self.game.score];
