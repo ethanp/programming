@@ -43,4 +43,19 @@
     return [UIImage imageNamed:card.isChosen ? @"cardfront" : @"cardback"];
 }
 
+
+- (void)updateUI
+{
+    for (UIButton *cardButton in self.cardButtons) {
+        int cardButtonIndex = [self.cardButtons indexOfObject:cardButton];
+        Card *card = [self.game cardAtIndex:cardButtonIndex];
+        [cardButton setBackgroundImage:[self backgroundImageForCard:card]
+                              forState:UIControlStateNormal];
+        cardButton.titleLabel.font = [UIFont systemFontOfSize:14];
+        cardButton.enabled = !card.isMatched;
+        self.scoreLabel.text =
+        [NSString stringWithFormat:@"Score: %d", self.game.score];
+    }
+}
+
 @end

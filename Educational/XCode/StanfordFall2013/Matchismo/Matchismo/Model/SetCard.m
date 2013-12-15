@@ -47,8 +47,6 @@
                  @"Triangle": @"▲",
                  @"Circle": @"☯"};
     
-    NSAttributedString *formattedString =
-        [[NSAttributedString alloc] initWithString:shapesDict[self.shape]];
     
     NSMutableDictionary *attributes =
         [@{NSForegroundColorAttributeName: colorDict[self.color]} mutableCopy];
@@ -57,9 +55,7 @@
         [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor grayColor]}];
     }
     
-    // ERROR ON THIS LINE
-    [formattedString setValuesForKeysWithDictionary:attributes];
-    return formattedString;
+    return [[NSAttributedString alloc] initWithString:shapesDict[self.shape] attributes:attributes];
 }
 
 // these could be done with bit vectors and enums, but hooey
