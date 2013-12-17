@@ -57,7 +57,7 @@ static const int COST_TO_CHOOSE = 1;
 
 - (instancetype)initWithCardCount:(NSUInteger)count
                         usingDeck:(Deck *)deck
-                        mustMatch:(NSUInteger)numCards
+                        numCardsToMatch:(NSUInteger)numCards
 {
     /* bc we're init'ing a subclass,
      note there's no alloc bc it's `self`

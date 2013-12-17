@@ -14,6 +14,7 @@
 @property (nonatomic) NSString *color;  // could use an ENUM for this instead...
 @property (nonatomic) NSString *fillType;  // could use an ENUM for this instead...
 
+- (NSAttributedString *)attributedContents;
 + (NSArray *)validShapes;
 + (NSArray *)validColors;
 + (NSArray *)validFillTypes;

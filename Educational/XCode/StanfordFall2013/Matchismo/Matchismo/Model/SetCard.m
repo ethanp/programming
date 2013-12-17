@@ -34,7 +34,7 @@
 }
 
 /* this should probably be a string with formatting */
-- (NSAttributedString *)contents
+- (NSAttributedString *)attributedContents
 {
     
     NSDictionary *colorDict

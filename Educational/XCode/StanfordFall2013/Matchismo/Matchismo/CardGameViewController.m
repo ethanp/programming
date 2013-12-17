@@ -15,6 +15,8 @@
 
 @property (strong, nonatomic) CardMatchingGame *game;
 
+#define PLAYING_CARDS_TO_MATCH 2
+
 @end
 
 
@@ -29,7 +31,7 @@
     if (!_game) _game = [[CardMatchingGame alloc]
                          initWithCardCount:[self.cardButtons count]
                                  usingDeck:[self createDeck]
-                                 mustMatch:2];
+                           numCardsToMatch:PLAYING_CARDS_TO_MATCH];
     return _game;
 }
 

@@ -33,7 +33,7 @@
  * or from any subclass's initializers */
 - (instancetype)initWithCardCount:(NSUInteger)count
                         usingDeck:(Deck *)deck
-                        mustMatch:(NSUInteger)numCards;
+                        numCardsToMatch:(NSUInteger)numCards;
 
 - (void)markAllCardsAsMatched;
 
