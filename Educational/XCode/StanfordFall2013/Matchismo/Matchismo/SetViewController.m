@@ -46,7 +46,7 @@
 - (UIImage *)selectedCardImage:(Card *)card
 {
     /* TODO first slot should be @"cardfrontChosen" but I need to make that */
-    return [UIImage imageNamed:card.isChosen ? @"cardfront" : @"cardfront"];
+    return [UIImage imageNamed:card.isChosen ? @"selectedcard" : @"cardfront"];
 }
 
 
@@ -58,9 +58,9 @@
         SetCard *card = (SetCard *)[self.game cardAtIndex:cardButtonIndex];
         [cardButton setAttributedTitle:[self attributedTitleForCard:card]
                     forState:UIControlStateNormal];
-        [cardButton setBackgroundImage:[self backgroundImageForCard:card]
+        [cardButton setBackgroundImage:[self selectedCardImage:card]
                               forState:UIControlStateNormal];
-        cardButton.titleLabel.font = [UIFont systemFontOfSize:14];
+        cardButton.titleLabel.font = [UIFont systemFontOfSize:28];
         cardButton.enabled = !card.isMatched;
         self.scoreLabel.text =
         [NSString stringWithFormat:@"Score: %d", self.game.score];
@@ -69,17 +69,7 @@
 
 - (NSAttributedString *)attributedTitleForCard:(SetCard *)card
 {
-    return card.isChosen
-            ? card.attributedContents
-            : [[NSAttributedString alloc] initWithString:@"" attributes:@{}];
+    return card.attributedContents;
 }
-
-
-- (UIImage *)backgroundImageForCard:(Card *)card
-{ // First one should be selectedCardFront (just change the color a bit or something)
-    return [UIImage imageNamed:card.isChosen ? @"cardfront" : @"cardfront"];
-}
-
-
 
 @end
