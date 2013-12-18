@@ -669,11 +669,11 @@
             </objects>
             <point key="canvasLocation" x="-265" y="-291"/>
         </scene>
-        <!--Navigation Controller - Item-->
+        <!--Navigation Controller - Set-->
         <scene sceneID="aoP-yd-Rj4">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="8vA-Ns-kNz" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="XWn-IM-5h6"/>
+                    <tabBarItem key="tabBarItem" title="Set" id="XWn-IM-5h6"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="0SI-uy-GoH">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -688,11 +688,11 @@
             </objects>
             <point key="canvasLocation" x="261" y="37"/>
         </scene>
-        <!--Navigation Controller - Item-->
+        <!--Navigation Controller - Playing Cards-->
         <scene sceneID="tym-v0-YPa">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="6wt-Yf-9Oy" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Item" id="cgx-gk-aI0"/>
+                    <tabBarItem key="tabBarItem" title="Playing Cards" id="cgx-gk-aI0"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="vsm-dn-g3f">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
