@@ -33,13 +33,15 @@ static const int COST_TO_CHOOSE = 1;
             if ([self.chosenCards count] >= self.numCardsToMatch - 1) {
                 int matchScore = [card match:self.chosenCards];
                 [self.chosenCards addObject:card];
+                NSMutableString *cardsContents = [[NSMutableString alloc] init];
+                for (Card *turned in self.chosenCards) {
+                    [cardsContents appendString:[turned contents]];
+                }
                 if (matchScore) {
                     int scoreIncrease = matchScore * MATCH_BONUS / [self numCardsToMatch];
                     self.score += scoreIncrease;
                     [toRet appendString:@"Matched: "];
-                    for (Card *turned in self.chosenCards) {
-                        [toRet appendFormat:@" %@",turned.contents];
-                    }
+                    [toRet appendString:cardsContents];
                     [self markAllCardsAsMatched];
                     NSString *plural = scoreIncrease > 1 ? @"s" : @"";
                     [toRet appendFormat:@"for %d point%@!", scoreIncrease, plural];
@@ -48,7 +50,8 @@ static const int COST_TO_CHOOSE = 1;
                     Card *oldCard = [self.chosenCards objectAtIndex:0];
                     oldCard.chosen = NO;
                     [self.chosenCards removeObjectAtIndex:0];
-                    [toRet appendFormat:@"No match, %d point penalty", MISMATCH_PENALTY];
+                    [toRet appendString:cardsContents];
+                    [toRet appendFormat:@"don't match, %d point penalty", MISMATCH_PENALTY];
                     self.score -= MISMATCH_PENALTY;
                 }
             } else {

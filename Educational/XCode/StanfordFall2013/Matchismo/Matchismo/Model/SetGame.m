@@ -32,13 +32,15 @@ static const int COST_TO_CHOOSE = 1;
             if ([self.chosenCards count] >= self.numCardsToMatch - 1) {
                 int matchScore = [card match:self.chosenCards];
                 [self.chosenCards addObject:card];
+                NSMutableAttributedString *cardsContents = [[NSMutableAttributedString alloc] init];
+                for (Card *turned in self.chosenCards) {
+                    [cardsContents appendAttributedString:[turned attributedContents]];
+                }
                 if (matchScore) {
                     int scoreIncrease = matchScore * MATCH_BONUS;
                     self.score += scoreIncrease;
                     [toRet appendAttributedString:[[NSAttributedString alloc] initWithString: @"Matched: "]];
-                    for (Card *turned in self.chosenCards) {
-                        [toRet appendAttributedString:[turned attributedContents]];
-                    }
+                    [toRet appendAttributedString:cardsContents];
                     [self markAllCardsAsMatched];
                     NSString *plural = scoreIncrease > 1 ? @"s" : @"";
 
@@ -52,9 +54,10 @@ static const int COST_TO_CHOOSE = 1;
                     Card *oldCard = [self.chosenCards objectAtIndex:0];
                     oldCard.chosen = NO;
                     [self.chosenCards removeObjectAtIndex:0];
-
                     NSString *noPointMessage = [[NSString alloc]
-                                                initWithFormat:@"No match, %d point penalty", MISMATCH_PENALTY];
+                                                initWithFormat:@"don't match, %d point penalty", MISMATCH_PENALTY];
+
+                    [toRet appendAttributedString:cardsContents];
                     
                     [toRet appendAttributedString:[[NSAttributedString alloc]
                                                    initWithString:noPointMessage]];
