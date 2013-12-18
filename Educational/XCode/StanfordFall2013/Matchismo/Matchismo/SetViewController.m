@@ -46,6 +46,13 @@
 }
 
 
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    [self updateUI];
+}
+
+
 - (void)updateUI
 {
     for (UIButton *cardButton in self.cardButtons) {
