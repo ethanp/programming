@@ -374,10 +374,10 @@
             </objects>
             <point key="canvasLocation" x="661" y="-544"/>
         </scene>
-        <!--View Controller-->
+        <!--History View Controller-->
         <scene sceneID="JUE-WP-ZJj">
             <objects>
-                <viewController id="ojz-eR-QZn" sceneMemberID="viewController">
+                <viewController id="ojz-eR-QZn" customClass="HistoryViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="ifp-CC-gGT"/>
                         <viewControllerLayoutGuide type="bottom" id="Dxq-CI-M3v"/>
