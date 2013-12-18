@@ -7,6 +7,7 @@
 //
 
 #import "BaseViewController.h"
+#import "HistoryViewController.h"
 
 @interface BaseViewController ()
 @end
@@ -22,6 +23,16 @@
 {
     self.game = nil;
     [self updateUI];
+}
+
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    NSLog(@"%@", segue.identifier);
+    if ([segue.identifier isEqualToString:@"History"]) {
+        if ([segue.destinationViewController isKindOfClass:[HistoryViewController class]]) {
+            HistoryViewController *hVC = (HistoryViewController *)segue.destinationViewController;
+            hVC.gameHistory = self.game.history;
+        }
+    }
 }
 
 

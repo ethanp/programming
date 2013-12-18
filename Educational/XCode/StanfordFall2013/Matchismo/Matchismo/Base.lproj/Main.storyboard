@@ -336,7 +336,7 @@
                     <navigationItem key="navigationItem" id="syQ-tp-O5E">
                         <barButtonItem key="rightBarButtonItem" title="History" id="bwy-3C-ksT">
                             <connections>
-                                <segue destination="ojz-eR-QZn" kind="push" id="Mt6-RR-1pB"/>
+                                <segue destination="ojz-eR-QZn" kind="push" identifier="History" id="Mt6-RR-1pB"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -628,7 +628,7 @@
                     <navigationItem key="navigationItem" id="Xpc-QA-bQl">
                         <barButtonItem key="rightBarButtonItem" title="History" id="iHL-ho-6iH">
                             <connections>
-                                <segue destination="tdi-03-Vtb" kind="push" id="UZf-P1-J5H"/>
+                                <segue destination="tdi-03-Vtb" kind="push" identifier="History" id="UZf-P1-J5H"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>

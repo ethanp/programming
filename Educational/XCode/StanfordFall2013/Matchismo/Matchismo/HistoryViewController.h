@@ -7,7 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "GameHistory.h"
 
 @interface HistoryViewController : UIViewController
+
+@property (nonatomic, strong) GameHistory *gameHistory;
 
 @end

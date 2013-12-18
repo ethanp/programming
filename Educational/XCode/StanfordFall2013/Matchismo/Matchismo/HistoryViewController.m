@@ -21,7 +21,7 @@
 
  	// TODO Load the History onto the screen
     // from what's stored in the GameHistory for this View
-    [self.historyTextView setText:Nil];
+    [self.historyTextView setAttributedText:self.gameHistory.historyAttrString];
 }
 
 @end
