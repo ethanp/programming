@@ -58,6 +58,10 @@ static const int COST_TO_CHOOSE = 1;
         }
     }
     NSAttributedString *nsas = [[NSAttributedString alloc] initWithString:[toRet copy]];
+    if ([toRet length]) {
+        NSLog(@"Adding \"%@\" to history", toRet);
+        [self.history addLine:nsas];
+    }
     return nsas;
 }
 

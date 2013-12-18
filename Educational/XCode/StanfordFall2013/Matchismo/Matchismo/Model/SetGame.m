@@ -67,6 +67,10 @@ static const int COST_TO_CHOOSE = 1;
             self.score -= COST_TO_CHOOSE;
         }
     }
+    if ([toRet length]) {
+        NSLog(@"Adding \"%@\" to history", [toRet string]);
+        [self.history addLine:toRet];
+    }
     return toRet;
 }
 

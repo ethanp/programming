@@ -16,7 +16,7 @@
 @synthesize score = _score;
 @synthesize cards = _cards;
 @synthesize chosenCards = _chosenCards;
-
+@synthesize history = _history;
 
 
 /* dynamic allocation for reference properties go in the getter */
@@ -27,12 +27,18 @@
 }
 
 
+- (GameHistory *)history
+{
+    if (!_history) _history = [[GameHistory alloc] init];
+    return _history;
+}
+
+
 - (Card *)cardAtIndex:(NSUInteger)index
 {
     // guard Error ArrayIndexOutOfBounds
     return (index < [self.cards count]) ? self.cards[index] : nil;
 }
-
 
 
 - (NSMutableArray *)chosenCards

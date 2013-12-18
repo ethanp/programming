@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "Card.h"
 #import "Deck.h"
+#import "GameHistory.h"
 
 @interface MatchingGame : NSObject
 {
@@ -17,6 +18,7 @@
     int numCardsToMatch;
     NSMutableArray *cards;
     NSMutableArray *chosenCards;
+    GameHistory *history;
 }
 
 
@@ -24,6 +26,7 @@
 @property (nonatomic, readwrite) int numCardsToMatch;
 @property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
 @property (nonatomic, strong) NSMutableArray *chosenCards; // of Card
+@property (nonatomic, strong) GameHistory *history;
 
 
 - (Card *)cardAtIndex:(NSUInteger)index;

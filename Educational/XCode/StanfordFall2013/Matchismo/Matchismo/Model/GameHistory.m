@@ -10,16 +10,16 @@
 
 @implementation GameHistory
 
-- (NSMutableString *)history
+- (NSMutableAttributedString *)history
 {
-    if (!_history) _history = [[NSMutableString alloc] init];
+    if (!_history) _history = [[NSMutableAttributedString alloc] init];
     return _history;
 }
 
-- (void)addLineToHistory:(NSString *)str
+- (void)addLine:(NSAttributedString *)str
 {
-    [self.history appendString:str];
-    [self.history appendString:@"\n"];
+    [self.history appendAttributedString:str];
+    [self.history appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
 }
 
 - (void)clearHistory
@@ -27,7 +27,7 @@
     self.history = Nil;
 }
 
-- (NSString *)historyString
+- (NSAttributedString *)historyAttrString
 {
     return [self.history copy];
 }
