@@ -18,5 +18,8 @@
 + (NSArray *)validShapes;
 + (NSArray *)validColors;
 + (NSArray *)validFillTypes;
++ (NSDictionary *)colorDict;
++ (NSDictionary *)shapesDict;
+
 
 @end

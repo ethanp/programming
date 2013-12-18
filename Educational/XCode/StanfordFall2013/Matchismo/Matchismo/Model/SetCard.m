@@ -33,23 +33,27 @@
     return matchScore;
 }
 
-/* this should probably be a string with formatting */
+
++ (NSDictionary *)colorDict
+{
+    return @{@"Red": [UIColor redColor],
+             @"Blue": [UIColor blueColor],
+             @"Green": [UIColor greenColor]};
+}
+
+
++ (NSDictionary *)shapesDict
+{
+    return @{@"Square": @"◼︎",
+             @"Triangle": @"▲",
+             @"Circle": @"☯"};
+}
+
+
 - (NSAttributedString *)attributedContents
 {
-    
-    NSDictionary *colorDict
-             = @{@"Red": [UIColor redColor],
-                 @"Blue": [UIColor blueColor],
-                 @"Green": [UIColor greenColor]};
-    
-    NSDictionary *shapesDict
-             = @{@"Square": @"◼︎",
-                 @"Triangle": @"▲",
-                 @"Circle": @"☯"};
-    
-    
     NSMutableDictionary *attributes =
-        [@{NSForegroundColorAttributeName: colorDict[self.color]} mutableCopy];
+        [@{NSForegroundColorAttributeName:[SetCard colorDict][self.color]} mutableCopy];
     
     if ([self.fillType  isEqualToString: @"Backfilled"]) {
         [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor grayColor]}];
@@ -57,7 +61,14 @@
         [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor yellowColor]}];
     }
     
-    return [[NSAttributedString alloc] initWithString:shapesDict[self.shape] attributes:attributes];
+    return [[NSAttributedString alloc] initWithString:[SetCard shapesDict][self.shape] attributes:attributes];
+}
+
+- (NSString *)contents
+{   // man that's cludgy, but it's the best they've got
+    // http://stackoverflow.com/questions/510269/how-do-i-concatenate-strings
+    NSArray *stringArray = [NSArray arrayWithObjects:[self.color substringToIndex:1], [self.fillType substringToIndex:1], [SetCard shapesDict][self.shape], @",", nil];
+    return [stringArray componentsJoinedByString:@""];
 }
 
 // these could be done with bit vectors and enums, but hooey

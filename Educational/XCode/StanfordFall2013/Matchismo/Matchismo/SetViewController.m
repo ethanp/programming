@@ -46,6 +46,17 @@
 }
 
 
+
+- (IBAction)touchCardButton:(UIButton *)sender
+{
+    // because we can't guarantee a particular index in the array for this button
+    int chosenButtonIndex = [self.cardButtons indexOfObject:sender];
+    self.messageLabel.font = [UIFont systemFontOfSize:12];
+    self.messageLabel.text = [self.game chooseCardAtIndex:chosenButtonIndex];
+    [self updateUI];
+}
+
+
 - (void)updateUI
 {
     for (UIButton *cardButton in self.cardButtons) {

@@ -71,7 +71,11 @@
     return self;
 }
 
-
+// method stub
+- (NSString *)chooseCardAtIndex:(NSUInteger)index
+{
+    return Nil;
+}
 
 
 @end
