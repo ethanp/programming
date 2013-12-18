@@ -26,8 +26,6 @@
 
 - (SetGame *)game
 {
-    /* using a ternary operator for this doesn't work
-     * because then you never actually assign to the _inner-variable */
     if (!_game) _game = [[SetGame alloc]
                          initWithCardCount:[self.cardButtons count]
                                  usingDeck:[self createDeck]
@@ -42,13 +40,10 @@
 }
 
 
-/* TODO replace this with the isChosen images for SetCards */
 - (UIImage *)selectedCardImage:(Card *)card
 {
-    /* TODO first slot should be @"cardfrontChosen" but I need to make that */
     return [UIImage imageNamed:card.isChosen ? @"selectedcard" : @"cardfront"];
 }
-
 
 
 - (void)updateUI
@@ -60,7 +55,7 @@
                     forState:UIControlStateNormal];
         [cardButton setBackgroundImage:[self selectedCardImage:card]
                               forState:UIControlStateNormal];
-        cardButton.titleLabel.font = [UIFont systemFontOfSize:28];
+        cardButton.titleLabel.font = [UIFont systemFontOfSize:38];
         cardButton.enabled = !card.isMatched;
         self.scoreLabel.text =
         [NSString stringWithFormat:@"Score: %d", self.game.score];

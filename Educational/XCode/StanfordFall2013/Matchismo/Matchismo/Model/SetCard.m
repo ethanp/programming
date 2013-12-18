@@ -51,8 +51,10 @@
     NSMutableDictionary *attributes =
         [@{NSForegroundColorAttributeName: colorDict[self.color]} mutableCopy];
     
-    if ([self.fillType  isEqual: @"Backfilled"]) {
+    if ([self.fillType  isEqualToString: @"Backfilled"]) {
         [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor grayColor]}];
+    } else if ([self.fillType  isEqualToString: @"Outlined"]) {
+        [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor yellowColor]}];
     }
     
     return [[NSAttributedString alloc] initWithString:shapesDict[self.shape] attributes:attributes];

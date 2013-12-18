@@ -13,4 +13,50 @@
 
 @implementation SetGame
 
+static const int MISMATCH_PENALTY = 2;
+static const int MATCH_BONUS = 16;
+static const int COST_TO_CHOOSE = 1;
+
+
+- (NSString *)chooseCardAtIndex:(NSUInteger)index
+{
+    NSMutableString *toRet = [[NSMutableString alloc] init];
+    Card *card = [self cardAtIndex:index];
+    if (!card.isMatched) {
+        if (card.isChosen) {
+            // if it's face-up, flip it back down
+            card.chosen = NO; // setter has different name than getter (no reason?)
+            [self.chosenCards removeObject:card];
+        } else {  // match against other chosen cards
+            card.chosen = YES;
+            if ([self.chosenCards count] >= self.numCardsToMatch - 1) {
+                int matchScore = [card match:self.chosenCards];
+                [self.chosenCards addObject:card];
+                if (matchScore) {
+                    int scoreIncrease = matchScore * MATCH_BONUS;
+                    self.score += scoreIncrease;
+                    [toRet appendString:@"Matched: "];
+                    for (Card *turned in self.chosenCards) {
+                        [toRet appendFormat:@" %@",turned.contents];
+                    }
+                    [self markAllCardsAsMatched];
+                    NSString *plural = scoreIncrease > 1 ? @"s" : @"";
+                    [toRet appendFormat:@"for %d point%@!", scoreIncrease, plural];
+                } else {
+                    // flip oldest card back over
+                    Card *oldCard = [self.chosenCards objectAtIndex:0];
+                    oldCard.chosen = NO;
+                    [self.chosenCards removeObjectAtIndex:0];
+                    [toRet appendFormat:@"No match, %d point penalty", MISMATCH_PENALTY];
+                    self.score -= MISMATCH_PENALTY;
+                }
+            } else {
+                [self.chosenCards addObject:card];
+            }
+            self.score -= COST_TO_CHOOSE;
+        }
+    }
+    return [NSString stringWithString:toRet];
+}
+
 @end
