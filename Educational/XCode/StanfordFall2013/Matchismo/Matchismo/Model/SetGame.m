@@ -18,9 +18,9 @@ static const int MATCH_BONUS = 16;
 static const int COST_TO_CHOOSE = 1;
 
 
-- (NSString *)chooseCardAtIndex:(NSUInteger)index
+- (NSAttributedString *)chooseCardAtIndex:(NSUInteger)index
 {
-    NSMutableString *toRet = [[NSMutableString alloc] init];
+    NSMutableAttributedString *toRet = [[NSMutableAttributedString alloc] init];
     Card *card = [self cardAtIndex:index];
     if (!card.isMatched) {
         if (card.isChosen) {
@@ -35,19 +35,30 @@ static const int COST_TO_CHOOSE = 1;
                 if (matchScore) {
                     int scoreIncrease = matchScore * MATCH_BONUS;
                     self.score += scoreIncrease;
-                    [toRet appendString:@"Matched: "];
+                    [toRet appendAttributedString:[[NSAttributedString alloc] initWithString: @"Matched: "]];
                     for (Card *turned in self.chosenCards) {
-                        [toRet appendFormat:@" %@",turned.contents];
+                        [toRet appendAttributedString:[turned attributedContents]];
                     }
                     [self markAllCardsAsMatched];
                     NSString *plural = scoreIncrease > 1 ? @"s" : @"";
-                    [toRet appendFormat:@"for %d point%@!", scoreIncrease, plural];
+
+                    NSString *pointString = [[NSString alloc]
+                                             initWithFormat:@" for %d point%@!", scoreIncrease, plural];
+                    
+                    [toRet appendAttributedString:[[NSAttributedString alloc]
+                                                   initWithString:pointString]];
                 } else {
                     // flip oldest card back over
                     Card *oldCard = [self.chosenCards objectAtIndex:0];
                     oldCard.chosen = NO;
                     [self.chosenCards removeObjectAtIndex:0];
-                    [toRet appendFormat:@"No match, %d point penalty", MISMATCH_PENALTY];
+
+                    NSString *noPointMessage = [[NSString alloc]
+                                                initWithFormat:@"No match, %d point penalty", MISMATCH_PENALTY];
+                    
+                    [toRet appendAttributedString:[[NSAttributedString alloc]
+                                                   initWithString:noPointMessage]];
+                    
                     self.score -= MISMATCH_PENALTY;
                 }
             } else {
@@ -56,7 +67,7 @@ static const int COST_TO_CHOOSE = 1;
             self.score -= COST_TO_CHOOSE;
         }
     }
-    return [NSString stringWithString:toRet];
+    return toRet;
 }
 
 @end

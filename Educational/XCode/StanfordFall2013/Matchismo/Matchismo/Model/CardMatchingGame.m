@@ -19,7 +19,7 @@ static const int MATCH_BONUS = 12;
 static const int COST_TO_CHOOSE = 1;
 
 
-- (NSString *)chooseCardAtIndex:(NSUInteger)index
+- (NSAttributedString *)chooseCardAtIndex:(NSUInteger)index
 {
     NSMutableString *toRet = [[NSMutableString alloc] init];
     Card *card = [self cardAtIndex:index];
@@ -57,7 +57,8 @@ static const int COST_TO_CHOOSE = 1;
             self.score -= COST_TO_CHOOSE;
         }
     }
-    return [NSString stringWithString:toRet];
+    NSAttributedString *nsas = [[NSAttributedString alloc] initWithString:[toRet copy]];
+    return nsas;
 }
 
 @end

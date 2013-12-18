@@ -34,7 +34,7 @@
 {
     // because we can't guarantee a particular index in the array for this button
     int chosenButtonIndex = [self.cardButtons indexOfObject:sender];
-    self.messageLabel.text = [self.game chooseCardAtIndex:chosenButtonIndex];
+    self.messageLabel.attributedText = [self.game chooseCardAtIndex:chosenButtonIndex];
     [self updateUI];
 }
 

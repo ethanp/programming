@@ -37,6 +37,6 @@
 
 - (void)markAllCardsAsMatched;
 
-- (NSString *)chooseCardAtIndex:(NSUInteger)index;
+- (NSAttributedString *)chooseCardAtIndex:(NSUInteger)index;
 
 @end

@@ -15,6 +15,7 @@
 @property (nonatomic, getter = isChosen) BOOL chosen;
 @property (nonatomic, getter = isMatched) BOOL matched;
 
+- (NSAttributedString *)attributedContents;
 - (int)match:(NSArray *)otherCards;
 
 @end

@@ -72,7 +72,7 @@
 }
 
 // method stub
-- (NSString *)chooseCardAtIndex:(NSUInteger)index
+- (NSAttributedString *)chooseCardAtIndex:(NSUInteger)index
 {
     return Nil;
 }
