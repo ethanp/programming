@@ -372,7 +372,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="661" y="-544"/>
+            <point key="canvasLocation" x="462" y="-557"/>
         </scene>
         <!--History View Controller-->
         <scene sceneID="JUE-WP-ZJj">
@@ -398,15 +398,18 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="WbZ-Pp-bz3"/>
+                    <connections>
+                        <outlet property="historyTextView" destination="1gF-Ff-Z1a" id="gXZ-us-wjc"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="PaI-Wq-tbb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1050" y="-544"/>
+            <point key="canvasLocation" x="851" y="-557"/>
         </scene>
-        <!--View Controller-->
+        <!--History View Controller-->
         <scene sceneID="7M3-sJ-Ax5">
             <objects>
-                <viewController id="tdi-03-Vtb" sceneMemberID="viewController">
+                <viewController id="tdi-03-Vtb" customClass="HistoryViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="iYF-Gn-kwm"/>
                         <viewControllerLayoutGuide type="bottom" id="ZHT-9q-rBa"/>
@@ -427,10 +430,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="6C9-ro-BAs"/>
+                    <connections>
+                        <outlet property="historyTextView" destination="MFG-OV-99I" id="X5v-J2-y1n"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ORn-W3-XEr" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1050" y="37"/>
+            <point key="canvasLocation" x="851" y="24"/>
         </scene>
         <!--Set View Controller-->
         <scene sceneID="frb-fg-765">
@@ -647,7 +653,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gue-Jq-BXk" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="661" y="37"/>
+            <point key="canvasLocation" x="462" y="24"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="ojN-ZP-owi">
@@ -667,7 +673,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="i0p-yJ-O0Q" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-265" y="-291"/>
+            <point key="canvasLocation" x="-464" y="-304"/>
         </scene>
         <!--Navigation Controller - Set-->
         <scene sceneID="aoP-yd-Rj4">
@@ -686,7 +692,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gp9-w3-YpC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="261" y="37"/>
+            <point key="canvasLocation" x="62" y="24"/>
         </scene>
         <!--Navigation Controller - Playing Cards-->
         <scene sceneID="tym-v0-YPa">
@@ -705,7 +711,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="JKp-K2-Fa6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="278" y="-544"/>
+            <point key="canvasLocation" x="62" y="-557"/>
         </scene>
     </scenes>
     <resources>

@@ -10,4 +10,10 @@
 
 @interface GameHistory : NSObject
 
+@property (nonatomic, strong) NSMutableString *history;
+
+- (void)addLineToHistory:(NSString *)str;
+- (void)clearHistory;
+- (NSString *)historyString;
+
 @end
