@@ -1,8 +1,8 @@
 //
 //  BaseViewController.h
-//  Matchismo
+//  DyanamicMatchismo
 //
-//  Created by Ethan Petuchowski on 12/14/13.
+//  Created by Ethan Petuchowski on 12/19/13.
 //  Copyright (c) 2013 Ethan Petuchowski. All rights reserved.
 //
 
@@ -27,7 +27,6 @@
  *   be connected to */
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
-@property (weak, nonatomic) IBOutlet UILabel *messageLabel;
 
 - (void)restartGame;
 

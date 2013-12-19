@@ -16,6 +16,8 @@
 		AA5DAABC18636054003A6ECA /* MatchingGame.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5DAAB018636054003A6ECA /* MatchingGame.m */; };
 		AA5DAABD18636054003A6ECA /* Card.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5DAAB218636054003A6ECA /* Card.m */; };
 		AA5DAABE18636054003A6ECA /* Deck.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5DAAB418636054003A6ECA /* Deck.m */; };
+		AA5DAAC918638548003A6ECA /* Grid.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5DAAC818638548003A6ECA /* Grid.m */; };
+		AA5DAACD18638B5A003A6ECA /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA5DAACC18638B5A003A6ECA /* BaseViewController.m */; };
 		AAE2701918635C44007F0E24 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE2701818635C44007F0E24 /* Foundation.framework */; };
 		AAE2701B18635C44007F0E24 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE2701A18635C44007F0E24 /* CoreGraphics.framework */; };
 		AAE2701D18635C44007F0E24 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE2701C18635C44007F0E24 /* UIKit.framework */; };
@@ -62,6 +64,10 @@
 		AA5DAAB218636054003A6ECA /* Card.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Card.m; sourceTree = "<group>"; };
 		AA5DAAB318636054003A6ECA /* Deck.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Deck.h; sourceTree = "<group>"; };
 		AA5DAAB418636054003A6ECA /* Deck.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Deck.m; sourceTree = "<group>"; };
+		AA5DAAC718638548003A6ECA /* Grid.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Grid.h; sourceTree = "<group>"; };
+		AA5DAAC818638548003A6ECA /* Grid.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Grid.m; sourceTree = "<group>"; };
+		AA5DAACB18638B5A003A6ECA /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BaseViewController.h; sourceTree = "<group>"; };
+		AA5DAACC18638B5A003A6ECA /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BaseViewController.m; sourceTree = "<group>"; };
 		AAE2701518635C44007F0E24 /* DyanamicMatchismo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DyanamicMatchismo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAE2701818635C44007F0E24 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AAE2701A18635C44007F0E24 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -148,13 +154,38 @@
 			name = CardMatchingGame;
 			sourceTree = "<group>";
 		};
+		AA5DAAC518638516003A6ECA /* Misc */ = {
+			isa = PBXGroup;
+			children = (
+				AA5DAAC618638548003A6ECA /* Grid */,
+			);
+			name = Misc;
+			sourceTree = "<group>";
+		};
+		AA5DAAC618638548003A6ECA /* Grid */ = {
+			isa = PBXGroup;
+			children = (
+				AA5DAAC718638548003A6ECA /* Grid.h */,
+				AA5DAAC818638548003A6ECA /* Grid.m */,
+			);
+			path = Grid;
+			sourceTree = "<group>";
+		};
+		AA5DAACA186385A0003A6ECA /* Boring */ = {
+			isa = PBXGroup;
+			children = (
+				AAE2703D18635C44007F0E24 /* DyanamicMatchismoTests */,
+				AAE2701718635C44007F0E24 /* Frameworks */,
+				AAE2701618635C44007F0E24 /* Products */,
+			);
+			name = Boring;
+			sourceTree = "<group>";
+		};
 		AAE2700C18635C44007F0E24 = {
 			isa = PBXGroup;
 			children = (
 				AAE2701E18635C44007F0E24 /* DyanamicMatchismo */,
-				AAE2703D18635C44007F0E24 /* DyanamicMatchismoTests */,
-				AAE2701718635C44007F0E24 /* Frameworks */,
-				AAE2701618635C44007F0E24 /* Products */,
+				AA5DAACA186385A0003A6ECA /* Boring */,
 			);
 			sourceTree = "<group>";
 		};
@@ -185,6 +216,7 @@
 				AAE2704F18635ED3007F0E24 /* Views */,
 				AAE2704E18635ECC007F0E24 /* ViewControllers */,
 				AAE2704D18635EB9007F0E24 /* Models */,
+				AA5DAAC518638516003A6ECA /* Misc */,
 				AAE2703018635C44007F0E24 /* Images.xcassets */,
 				AAE2701F18635C44007F0E24 /* Supporting Files */,
 			);
@@ -237,6 +269,8 @@
 			children = (
 				AAE2705018635EFF007F0E24 /* PlayingCardViewController.h */,
 				AAE2705118635EFF007F0E24 /* PlayingCardViewController.m */,
+				AA5DAACB18638B5A003A6ECA /* BaseViewController.h */,
+				AA5DAACC18638B5A003A6ECA /* BaseViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -349,8 +383,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AA5DAABD18636054003A6ECA /* Card.m in Sources */,
+				AA5DAACD18638B5A003A6ECA /* BaseViewController.m in Sources */,
 				AA5DAAB618636054003A6ECA /* PlayingCard.m in Sources */,
 				AAE2702918635C44007F0E24 /* CardGameAppDelegate.m in Sources */,
+				AA5DAAC918638548003A6ECA /* Grid.m in Sources */,
 				AA5DAABC18636054003A6ECA /* MatchingGame.m in Sources */,
 				AAE2702518635C44007F0E24 /* main.m in Sources */,
 				AA5DAAB518636054003A6ECA /* CardMatchingGame.m in Sources */,

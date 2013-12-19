@@ -1,15 +1,15 @@
 //
 //  BaseViewController.m
-//  Matchismo
+//  DyanamicMatchismo
 //
-//  Created by Ethan Petuchowski on 12/14/13.
+//  Created by Ethan Petuchowski on 12/19/13.
 //  Copyright (c) 2013 Ethan Petuchowski. All rights reserved.
 //
 
 #import "BaseViewController.h"
-#import "HistoryViewController.h"
 
 @interface BaseViewController ()
+
 @end
 
 @implementation BaseViewController
@@ -25,27 +25,13 @@
     [self updateUI];
 }
 
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    NSLog(@"%@", segue.identifier);
-    if ([segue.identifier isEqualToString:@"History"]) {
-        if ([segue.destinationViewController isKindOfClass:[HistoryViewController class]]) {
-            HistoryViewController *hVC = (HistoryViewController *)segue.destinationViewController;
-            hVC.gameHistory = self.game.history;
-        }
-    }
-}
-
 
 - (IBAction)touchRedealButton:(UIButton *)sender {
     [self restartGame];
-    self.messageLabel.text = [NSString stringWithFormat:@"Redealt"];
 }
 
 - (IBAction)touchCardButton:(UIButton *)sender
 {
-    // because we can't guarantee a particular index in the array for this button
-    int chosenButtonIndex = [self.cardButtons indexOfObject:sender];
-    self.messageLabel.attributedText = [self.game chooseCardAtIndex:chosenButtonIndex];
     [self updateUI];
 }
 
