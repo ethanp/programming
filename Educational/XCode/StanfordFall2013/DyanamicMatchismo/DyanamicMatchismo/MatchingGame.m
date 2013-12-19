@@ -16,7 +16,6 @@
 @synthesize score = _score;
 @synthesize cards = _cards;
 @synthesize chosenCards = _chosenCards;
-@synthesize history = _history;
 
 
 /* dynamic allocation for reference properties go in the getter */
@@ -24,13 +23,6 @@
 {
     if (!_cards) _cards = [[NSMutableArray alloc] init];
     return _cards;
-}
-
-
-- (GameHistory *)history
-{
-    if (!_history) _history = [[GameHistory alloc] init];
-    return _history;
 }
 
 
