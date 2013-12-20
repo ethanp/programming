@@ -65,8 +65,7 @@
 }
 
 - (NSString *)contents
-{   // man that's cludgy, but it's the best they've got
-    // http://stackoverflow.com/questions/510269/how-do-i-concatenate-strings
+{   // http://stackoverflow.com/questions/510269/how-do-i-concatenate-strings
     NSArray *stringArray = [NSArray arrayWithObjects:[self.color substringToIndex:1], [self.fillType substringToIndex:1], [SetCard shapesDict][self.shape], @",", nil];
     return [stringArray componentsJoinedByString:@""];
 }

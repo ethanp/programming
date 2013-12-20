@@ -15,5 +15,6 @@
 @property (nonatomic) BOOL faceUp;
 
 - (void)pinch:(UIPinchGestureRecognizer *)gesture;
+- (void)flipCard;
 
 @end

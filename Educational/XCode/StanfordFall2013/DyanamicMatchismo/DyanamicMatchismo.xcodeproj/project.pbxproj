@@ -33,6 +33,7 @@
 		AAE2704418635C44007F0E24 /* DyanamicMatchismoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE2704318635C44007F0E24 /* DyanamicMatchismoTests.m */; };
 		AAE2705218635EFF007F0E24 /* PlayingCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE2705118635EFF007F0E24 /* PlayingCardViewController.m */; };
 		AAE2705518635F09007F0E24 /* PlayingCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE2705418635F09007F0E24 /* PlayingCardView.m */; };
+		AAE72FE71863AAC8003FFCC3 /* SetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE72FE61863AAC8003FFCC3 /* SetViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +90,8 @@
 		AAE2705118635EFF007F0E24 /* PlayingCardViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayingCardViewController.m; sourceTree = "<group>"; };
 		AAE2705318635F09007F0E24 /* PlayingCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayingCardView.h; sourceTree = "<group>"; };
 		AAE2705418635F09007F0E24 /* PlayingCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayingCardView.m; sourceTree = "<group>"; };
+		AAE72FE51863AAC8003FFCC3 /* SetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetViewController.h; sourceTree = "<group>"; };
+		AAE72FE61863AAC8003FFCC3 /* SetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -267,10 +270,12 @@
 		AAE2704E18635ECC007F0E24 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				AAE2705018635EFF007F0E24 /* PlayingCardViewController.h */,
-				AAE2705118635EFF007F0E24 /* PlayingCardViewController.m */,
 				AA5DAACB18638B5A003A6ECA /* BaseViewController.h */,
 				AA5DAACC18638B5A003A6ECA /* BaseViewController.m */,
+				AAE2705018635EFF007F0E24 /* PlayingCardViewController.h */,
+				AAE2705118635EFF007F0E24 /* PlayingCardViewController.m */,
+				AAE72FE51863AAC8003FFCC3 /* SetViewController.h */,
+				AAE72FE61863AAC8003FFCC3 /* SetViewController.m */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -391,6 +396,7 @@
 				AAE2702518635C44007F0E24 /* main.m in Sources */,
 				AA5DAAB518636054003A6ECA /* CardMatchingGame.m in Sources */,
 				AA5DAAB718636054003A6ECA /* PlayingCardDeck.m in Sources */,
+				AAE72FE71863AAC8003FFCC3 /* SetViewController.m in Sources */,
 				AA5DAAB818636054003A6ECA /* SetCardDeck.m in Sources */,
 				AA5DAABE18636054003A6ECA /* Deck.m in Sources */,
 				AA5DAABA18636054003A6ECA /* SetGame.m in Sources */,

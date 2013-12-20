@@ -12,6 +12,8 @@
 #import "PlayingCard.h"
 
 @interface PlayingCardViewController ()
+
+// TODO make this an Array somehow...
 @property (weak, nonatomic) IBOutlet PlayingCardView *playingCardView;
 @property (strong, nonatomic) Deck *deck;
 @end
@@ -37,7 +39,11 @@
 - (IBAction)swipe:(UISwipeGestureRecognizer *)sender
 {
     if (!self.playingCardView.faceUp) [self drawRandomPlayingCard];
-    self.playingCardView.faceUp = !self.playingCardView.faceUp;
+
+    // TODO maybe this is where the animation goes?
+    // I think it will be a message sent to the PlayingCard
+//    self.playingCardView.faceUp = !self.playingCardView.faceUp;
+    [self.playingCardView flipCard];
 }
 
 - (void)viewDidLoad

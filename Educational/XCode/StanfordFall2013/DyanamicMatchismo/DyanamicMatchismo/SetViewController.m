@@ -16,6 +16,7 @@
 @property (strong, nonatomic) SetGame *game;
 
 #define SET_CARDS_TO_MATCH 3
+#define SET_CARDS_TO_START 12
 
 @end
 
@@ -27,7 +28,7 @@
 - (SetGame *)game
 {
     if (!_game) _game = [[SetGame alloc]
-                         initWithCardCount:[self.cardButtons count]
+                         initWithCardCount:SET_CARDS_TO_START
                                  usingDeck:[self createDeck]
                            numCardsToMatch:SET_CARDS_TO_MATCH];
     return _game;
@@ -55,18 +56,18 @@
 
 - (void)updateUI
 {
-    for (UIButton *cardButton in self.cardButtons) {
-        int cardButtonIndex = [self.cardButtons indexOfObject:cardButton];
-        SetCard *card = (SetCard *)[self.game cardAtIndex:cardButtonIndex];
-        [cardButton setAttributedTitle:[self attributedTitleForCard:card]
-                    forState:UIControlStateNormal];
-        [cardButton setBackgroundImage:[self selectedCardImage:card]
-                              forState:UIControlStateNormal];
-        cardButton.titleLabel.font = [UIFont systemFontOfSize:38];
-        cardButton.enabled = !card.isMatched;
-        self.scoreLabel.text =
-        [NSString stringWithFormat:@"Score: %d", self.game.score];
-    }
+//    for (UIButton *cardButton in self.cardButtons) {
+//        int cardButtonIndex = [self.cardButtons indexOfObject:cardButton];
+//        SetCard *card = (SetCard *)[self.game cardAtIndex:cardButtonIndex];
+//        [cardButton setAttributedTitle:[self attributedTitleForCard:card]
+//                    forState:UIControlStateNormal];
+//        [cardButton setBackgroundImage:[self selectedCardImage:card]
+//                              forState:UIControlStateNormal];
+//        cardButton.titleLabel.font = [UIFont systemFontOfSize:38];
+//        cardButton.enabled = !card.isMatched;
+//        self.scoreLabel.text =
+//        [NSString stringWithFormat:@"Score: %d", self.game.score];
+//    }
 }
 
 - (NSAttributedString *)attributedTitleForCard:(SetCard *)card

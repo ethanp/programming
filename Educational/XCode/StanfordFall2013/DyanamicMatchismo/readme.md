@@ -3,6 +3,12 @@ iOS Assignment 4
 
 Started 12/19/13
 
+Concrete Next Steps to Persue
+-----------------------------
+* Animate flipping PlayingCardView
+* Have more than one PlayingCardView in the PlayingCardViewController
+* Draw the `SetCard`s with Bezier curves
+
 OVERALL
 -------
 1. Animate arrival and departure of cards

@@ -19,6 +19,7 @@ static const int MATCH_BONUS = 12;
 static const int COST_TO_CHOOSE = 1;
 
 
+// TODO return (void)?
 - (NSAttributedString *)chooseCardAtIndex:(NSUInteger)index
 {
     NSMutableString *toRet = [[NSMutableString alloc] init];

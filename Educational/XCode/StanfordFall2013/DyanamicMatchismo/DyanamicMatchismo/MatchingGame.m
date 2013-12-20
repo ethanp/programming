@@ -58,8 +58,6 @@
      and the caller has to call alloc first */
     self = [super init];
     if (self) {
-        // note we're going to "match" on value XOR suit
-        // because drawRandomCard actually removes the card
         for (int i = 0; i < count; i++) {
             Card *card = [deck drawRandomCard];
             [self.cards addObject:card]; /* calls constructor if necessary */

@@ -66,6 +66,13 @@
     }
 }
 
+#pragma mark - Animations
+
+- (void)flipCard
+{
+    self.faceUp = !self.faceUp;
+}
+
 #pragma mark - Drawing
 
 #define CORNER_FONT_STANDARD_HEIGHT 180.0

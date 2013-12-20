@@ -46,6 +46,8 @@
                     <tabBarItem key="tabBarItem" title="Playing Cards" id="TQM-q5-M4H"/>
                     <connections>
                         <outlet property="playingCardView" destination="1KY-6h-lTI" id="cim-Bx-LbM"/>
+                        <outlet property="redealButton" destination="aSy-h8-ScC" id="W7Z-uj-6LF"/>
+                        <outlet property="scoreLabel" destination="35V-9T-VPc" id="Csm-Dr-GqW"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
