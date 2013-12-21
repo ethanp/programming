@@ -40,10 +40,7 @@
 {
     if (!self.playingCardView.faceUp) [self drawRandomPlayingCard];
 
-    // TODO maybe this is where the animation goes?
-    // I think it will be a message sent to the PlayingCard
-//    self.playingCardView.faceUp = !self.playingCardView.faceUp;
-    [self.playingCardView flipCard];
+    [self.playingCardView handleSwipe:sender];
 }
 
 - (void)viewDidLoad
@@ -53,6 +50,11 @@
     [self.playingCardView addGestureRecognizer:[[UIPinchGestureRecognizer alloc]
                                                 initWithTarget:self.playingCardView
                                                 action:@selector(pinch:)]];
+
+    // code from http://stackoverflow.com/questions/9032331/ios-flip-animation-only-for-specific-view
+    [self.playingCardView addGestureRecognizer:[[UITapGestureRecognizer alloc]
+                                                initWithTarget:self.playingCardView
+                                                action:@selector(handleSwipe:)]];
 }
 
 @end

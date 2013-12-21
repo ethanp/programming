@@ -19,6 +19,7 @@
 #define DEFAULT_FACE_CARD_SCALE_FACTOR 0.90
 
 @synthesize faceCardScaleFactor = _faceCardScaleFactor;
+@synthesize faceUp = _faceUp;
 
 - (CGFloat)faceCardScaleFactor
 {
@@ -50,6 +51,11 @@
     [self setNeedsDisplay];
 }
 
+- (BOOL)faceUp
+{
+    return _faceUp;
+}
+
 - (NSString *)rankAsString
 {
     return @[@"?",@"A",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"10",@"J",@"Q",@"K"][self.rank];
@@ -68,9 +74,17 @@
 
 #pragma mark - Animations
 
-- (void)flipCard
+- (void)handleSwipe:(UISwipeGestureRecognizer *)gesture
 {
-    self.faceUp = !self.faceUp;
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        [UIView transitionWithView:self
+                          duration:1
+                           options:UIViewAnimationOptionTransitionFlipFromLeft
+                        animations:^{
+                            if (!_faceUp) { [self setFaceUp:YES]; }
+                            else          { [self setFaceUp:NO]; }
+                        } completion:nil];
+    }
 }
 
 #pragma mark - Drawing
