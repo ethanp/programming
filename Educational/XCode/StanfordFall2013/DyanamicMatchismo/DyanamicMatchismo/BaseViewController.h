@@ -11,6 +11,7 @@
 #import "MatchingGame.h"
 #import "Deck.h"
 #import "Grid.h"
+#import "CardView.h"
 
 
 @interface BaseViewController : UIViewController
@@ -25,6 +26,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
 @property (weak, nonatomic) IBOutlet UIView *layoutContainerView;
+@property (weak, nonatomic) IBOutletCollection(CardView) NSMutableArray *cardsInView;
 
 - (void)restartGame;
 - (void)updateUI;

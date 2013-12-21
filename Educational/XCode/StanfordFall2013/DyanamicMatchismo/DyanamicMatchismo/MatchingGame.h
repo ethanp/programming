@@ -17,6 +17,7 @@
     int numCardsToMatch;
     NSMutableArray *cards;
     NSMutableArray *chosenCards;
+    NSMutableArray *cardsInPlay;
 }
 
 
@@ -24,6 +25,7 @@
 @property (nonatomic, readwrite) int numCardsToMatch;
 @property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
 @property (nonatomic, strong) NSMutableArray *chosenCards; // of Card
+@property (nonatomic, strong) NSMutableArray *cardsInPlay; // of Card
 
 - (Card *)cardAtIndex:(NSUInteger)index;
 

@@ -14,5 +14,6 @@
 @property (strong, nonatomic) Card *card;  // set by the MatchingGame at initialization
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture; // abstract
+- (id)initWithFrame:(CGRect)rect withCard:(Card *)card;
 
 @end

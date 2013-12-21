@@ -16,6 +16,7 @@
 @synthesize score = _score;
 @synthesize cards = _cards;
 @synthesize chosenCards = _chosenCards;
+@synthesize cardsInPlay = _cardsInPlay;
 
 
 /* dynamic allocation for reference properties go in the getter */
@@ -23,6 +24,12 @@
 {
     if (!_cards) _cards = [[NSMutableArray alloc] init];
     return _cards;
+}
+
+- (NSMutableArray *)cardsInPlay
+{
+    if (!_cardsInPlay) _cardsInPlay = [[NSMutableArray alloc] init];
+    return _cardsInPlay;
 }
 
 

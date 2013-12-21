@@ -10,11 +10,12 @@
 
 @implementation CardView
 
-- (id)initWithFrame:(CGRect)frame
+- (id)initWithFrame:(CGRect)frame withCard:(Card *)card
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
+        self.card = card;
     }
     return self;
 }

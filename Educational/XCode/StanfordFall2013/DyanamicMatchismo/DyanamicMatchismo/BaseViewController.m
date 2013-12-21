@@ -35,24 +35,28 @@
     [self restartGame];
 }
 
-- (NSInteger)numCardsInPlay
-{
-    int numCardsInPlay = 0;
-    for (Card *card in self.game.cards) {
-        if (!card.chosen) {
-            numCardsInPlay++;
-        }
-    }
-    return numCardsInPlay;
-}
-
 - (void)updateUI
 {
     CGFloat height = self.layoutContainerView.bounds.size.height;
     CGFloat width  = self.layoutContainerView.bounds.size.width;
-    [_grid setCellAspectRatio:height/width];
-    [_grid setSize:CGSizeMake(height, width)];
-    [_grid setMinimumNumberOfCells:[self numCardsInPlay]];
+    [self.grid setCellAspectRatio:height/width];
+    [self.grid setSize:CGSizeMake(height, width)];
+    [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
+    NSArray *cardsToPlace = [self.game.cardsInPlay copy];
+    int cardsPlaced = 0;
+    for (int row = 0; row < self.grid.rowCount; row++) {
+        for (int col = 0; col < self.grid.columnCount; col++) {
+            if (cardsPlaced < [cardsToPlace count]) {
+                CGRect rect = [self.grid frameOfCellAtRow:row inColumn:col];
+                [self.cardsInView
+                 addObject:[[CardView alloc]
+                            initWithFrame:rect
+                            withCard:cardsToPlace[cardsPlaced]]];
+                cardsPlaced++;
+            }
+            else break;
+        }
+    }
 }
 
 - (NSString *)titleForCard:(Card *)card
