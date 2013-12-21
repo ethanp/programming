@@ -5,9 +5,9 @@ Started 12/19/13
 
 Concrete Next Steps to Persue
 -----------------------------
-* Animate flipping PlayingCardView
-* Have more than one PlayingCardView in the PlayingCardViewController
+* Make `addCard()` method for BaseViewController
 * Draw the `SetCard`s with Bezier curves
+* Have more than one PlayingCardView in the PlayingCardViewController
 
 OVERALL
 -------
@@ -73,7 +73,7 @@ PLAYING CARDS
 -------------
 1. Use `PlayingCardView` from the in-class demo
 
-2. Animate "flipping" the cards over
+2. Animate "flipping" the cards over [check]
 
 3. Will need to add public API for
     * Putting new cards into play

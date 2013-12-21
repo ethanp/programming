@@ -34,6 +34,8 @@
 		AAE2705218635EFF007F0E24 /* PlayingCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE2705118635EFF007F0E24 /* PlayingCardViewController.m */; };
 		AAE2705518635F09007F0E24 /* PlayingCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE2705418635F09007F0E24 /* PlayingCardView.m */; };
 		AAE72FE71863AAC8003FFCC3 /* SetViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE72FE61863AAC8003FFCC3 /* SetViewController.m */; };
+		AAE72FEA1865612A003FFCC3 /* SetCardView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE72FE91865612A003FFCC3 /* SetCardView.m */; };
+		AAE72FED186561CE003FFCC3 /* CardView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE72FEC186561CE003FFCC3 /* CardView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -92,6 +94,10 @@
 		AAE2705418635F09007F0E24 /* PlayingCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlayingCardView.m; sourceTree = "<group>"; };
 		AAE72FE51863AAC8003FFCC3 /* SetViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetViewController.h; sourceTree = "<group>"; };
 		AAE72FE61863AAC8003FFCC3 /* SetViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetViewController.m; sourceTree = "<group>"; };
+		AAE72FE81865612A003FFCC3 /* SetCardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetCardView.h; sourceTree = "<group>"; };
+		AAE72FE91865612A003FFCC3 /* SetCardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetCardView.m; sourceTree = "<group>"; };
+		AAE72FEB186561CE003FFCC3 /* CardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardView.h; sourceTree = "<group>"; };
+		AAE72FEC186561CE003FFCC3 /* CardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -284,7 +290,11 @@
 			isa = PBXGroup;
 			children = (
 				AAE2705318635F09007F0E24 /* PlayingCardView.h */,
+				AAE72FEB186561CE003FFCC3 /* CardView.h */,
+				AAE72FEC186561CE003FFCC3 /* CardView.m */,
 				AAE2705418635F09007F0E24 /* PlayingCardView.m */,
+				AAE72FE81865612A003FFCC3 /* SetCardView.h */,
+				AAE72FE91865612A003FFCC3 /* SetCardView.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -393,6 +403,7 @@
 				AAE2702918635C44007F0E24 /* CardGameAppDelegate.m in Sources */,
 				AA5DAAC918638548003A6ECA /* Grid.m in Sources */,
 				AA5DAABC18636054003A6ECA /* MatchingGame.m in Sources */,
+				AAE72FED186561CE003FFCC3 /* CardView.m in Sources */,
 				AAE2702518635C44007F0E24 /* main.m in Sources */,
 				AA5DAAB518636054003A6ECA /* CardMatchingGame.m in Sources */,
 				AA5DAAB718636054003A6ECA /* PlayingCardDeck.m in Sources */,
@@ -401,6 +412,7 @@
 				AA5DAABE18636054003A6ECA /* Deck.m in Sources */,
 				AA5DAABA18636054003A6ECA /* SetGame.m in Sources */,
 				AAE2705218635EFF007F0E24 /* PlayingCardViewController.m in Sources */,
+				AAE72FEA1865612A003FFCC3 /* SetCardView.m in Sources */,
 				AAE2705518635F09007F0E24 /* PlayingCardView.m in Sources */,
 				AA5DAAB918636054003A6ECA /* SetCard.m in Sources */,
 			);

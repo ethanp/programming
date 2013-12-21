@@ -16,73 +16,43 @@
 
 #pragma mark - Properties
 
-#define DEFAULT_FACE_CARD_SCALE_FACTOR 0.90
-
-@synthesize faceCardScaleFactor = _faceCardScaleFactor;
-@synthesize faceUp = _faceUp;
-
-- (CGFloat)faceCardScaleFactor
+- (void)suit:(NSString *)suit
 {
-    if (!_faceCardScaleFactor) _faceCardScaleFactor = DEFAULT_FACE_CARD_SCALE_FACTOR;
-    return _faceCardScaleFactor;
-}
-
-- (void)setFaceCardScaleFactor:(CGFloat)faceCardScaleFactor
-{
-    _faceCardScaleFactor = faceCardScaleFactor;
+    self.card.suit = suit;
     [self setNeedsDisplay];
 }
 
-- (void)setSuit:(NSString *)suit
+- (void)rank:(NSUInteger)rank
 {
-    _suit = suit;
+    self.card.rank = rank;
     [self setNeedsDisplay];
 }
 
-- (void)setRank:(NSUInteger)rank
+- (void)chosen:(BOOL)chosen
 {
-    _rank = rank;
+    self.card.chosen = chosen;
     [self setNeedsDisplay];
-}
-
-- (void)setFaceUp:(BOOL)faceUp
-{
-    _faceUp = faceUp;
-    [self setNeedsDisplay];
-}
-
-- (BOOL)faceUp
-{
-    return _faceUp;
 }
 
 - (NSString *)rankAsString
 {
-    return @[@"?",@"A",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"10",@"J",@"Q",@"K"][self.rank];
+    return @[@"?",@"A",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"10",@"J",@"Q",@"K"][self.card.rank];
 }
 
 #pragma mark - Gesture Handling
 
-- (void)pinch:(UIPinchGestureRecognizer *)gesture
-{
-    if ((gesture.state == UIGestureRecognizerStateChanged) ||
-        (gesture.state == UIGestureRecognizerStateEnded)) {
-        self.faceCardScaleFactor *= gesture.scale;
-        gesture.scale = 1.0;
-    }
-}
-
-#pragma mark - Animations
-
-- (void)handleSwipe:(UISwipeGestureRecognizer *)gesture
+- (void)handleTap:(UITapGestureRecognizer *)gesture
 {
     if (gesture.state == UIGestureRecognizerStateEnded) {
         [UIView transitionWithView:self
                           duration:1
                            options:UIViewAnimationOptionTransitionFlipFromLeft
                         animations:^{
-                            if (!_faceUp) { [self setFaceUp:YES]; }
-                            else          { [self setFaceUp:NO]; }
+                            if (!self.card.chosen) {
+                                [self chosen:YES];
+                            } else {
+                                [self chosen:NO];
+                            }
                         } completion:nil];
     }
 }
@@ -102,17 +72,17 @@
 {
     // Drawing code
     UIBezierPath *roundedRect = [UIBezierPath bezierPathWithRoundedRect:self.bounds cornerRadius:[self cornerRadius]];
-    
+
     [roundedRect addClip];
-    
+
     [[UIColor whiteColor] setFill];
     UIRectFill(self.bounds);
-    
+
     [[UIColor blackColor] setStroke];
     [roundedRect stroke];
-    
-    if (self.faceUp) {
-        UIImage *faceImage = [UIImage imageNamed:[NSString stringWithFormat:@"%@%@", [self rankAsString], self.suit]];
+
+    if (self.card.chosen) {
+        UIImage *faceImage = [UIImage imageNamed:[NSString stringWithFormat:@"%@%@", [self rankAsString], self.card.suit]];
         if (faceImage) {
             CGRect imageRect = CGRectInset(self.bounds,
                                            self.bounds.size.width * (1.0-self.faceCardScaleFactor),
@@ -121,7 +91,7 @@
         } else {
             [self drawPips];
         }
-        
+
         [self drawCorners];
     } else {
         [[UIImage imageNamed:@"cardback"] drawInRect:self.bounds];
@@ -147,17 +117,17 @@
 {
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.alignment = NSTextAlignmentCenter;
-    
+
     UIFont *cornerFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     cornerFont = [cornerFont fontWithSize:cornerFont.pointSize * [self cornerScaleFactor]];
-    
-    NSAttributedString *cornerText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@\n%@", [self rankAsString], self.suit] attributes:@{ NSFontAttributeName : cornerFont, NSParagraphStyleAttributeName : paragraphStyle }];
-    
+
+    NSAttributedString *cornerText = [[NSAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@\n%@", [self rankAsString], self.card.suit] attributes:@{ NSFontAttributeName : cornerFont, NSParagraphStyleAttributeName : paragraphStyle }];
+
     CGRect textBounds;
     textBounds.origin = CGPointMake([self cornerOffset], [self cornerOffset]);
     textBounds.size = [cornerText size];
     [cornerText drawInRect:textBounds];
-    
+
     [self pushContextAndRotateUpsideDown];
     [cornerText drawInRect:textBounds];
     [self popContext];
@@ -172,27 +142,27 @@
 
 - (void)drawPips
 {
-    if ((self.rank == 1) || (self.rank == 5) || (self.rank == 9) || (self.rank == 3)) {
+    if ((self.card.rank == 1) || (self.card.rank == 5) || (self.card.rank == 9) || (self.card.rank == 3)) {
         [self drawPipsWithHorizontalOffset:0
                             verticalOffset:0
                         mirroredVertically:NO];
     }
-    if ((self.rank == 6) || (self.rank == 7) || (self.rank == 8)) {
+    if ((self.card.rank == 6) || (self.card.rank == 7) || (self.card.rank == 8)) {
         [self drawPipsWithHorizontalOffset:PIP_HOFFSET_PERCENTAGE
                             verticalOffset:0
                         mirroredVertically:NO];
     }
-    if ((self.rank == 2) || (self.rank == 3) || (self.rank == 7) || (self.rank == 8) || (self.rank == 10)) {
+    if ((self.card.rank == 2) || (self.card.rank == 3) || (self.card.rank == 7) || (self.card.rank == 8) || (self.card.rank == 10)) {
         [self drawPipsWithHorizontalOffset:0
                             verticalOffset:PIP_VOFFSET2_PERCENTAGE
-                        mirroredVertically:(self.rank != 7)];
+                        mirroredVertically:(self.card.rank != 7)];
     }
-    if ((self.rank == 4) || (self.rank == 5) || (self.rank == 6) || (self.rank == 7) || (self.rank == 8) || (self.rank == 9) || (self.rank == 10)) {
+    if ((self.card.rank == 4) || (self.card.rank == 5) || (self.card.rank == 6) || (self.card.rank == 7) || (self.card.rank == 8) || (self.card.rank == 9) || (self.card.rank == 10)) {
         [self drawPipsWithHorizontalOffset:PIP_HOFFSET_PERCENTAGE
                             verticalOffset:PIP_VOFFSET3_PERCENTAGE
                         mirroredVertically:YES];
     }
-    if ((self.rank == 9) || (self.rank == 10)) {
+    if ((self.card.rank == 9) || (self.card.rank == 10)) {
         [self drawPipsWithHorizontalOffset:PIP_HOFFSET_PERCENTAGE
                             verticalOffset:PIP_VOFFSET1_PERCENTAGE
                         mirroredVertically:YES];
@@ -209,7 +179,7 @@
     CGPoint middle = CGPointMake(self.bounds.size.width/2, self.bounds.size.height/2);
     UIFont *pipFont = [UIFont preferredFontForTextStyle:UIFontTextStyleBody];
     pipFont = [pipFont fontWithSize:[pipFont pointSize] * self.bounds.size.width * PIP_FONT_SCALE_FACTOR];
-    NSAttributedString *attributedSuit = [[NSAttributedString alloc] initWithString:self.suit attributes:@{ NSFontAttributeName : pipFont }];
+    NSAttributedString *attributedSuit = [[NSAttributedString alloc] initWithString:self.card.suit attributes:@{ NSFontAttributeName : pipFont }];
     CGSize pipSize = [attributedSuit size];
     CGPoint pipOrigin = CGPointMake(
                                     middle.x-pipSize.width/2.0-hoffset*self.bounds.size.width,
