@@ -224,6 +224,9 @@
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc]
+                                initWithTarget:self
+                                action:@selector(handleTap:)]];
     [self setup];
     return self;
 }

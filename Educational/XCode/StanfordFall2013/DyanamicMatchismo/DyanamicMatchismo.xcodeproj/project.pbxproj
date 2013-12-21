@@ -289,9 +289,9 @@
 		AAE2704F18635ED3007F0E24 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				AAE2705318635F09007F0E24 /* PlayingCardView.h */,
 				AAE72FEB186561CE003FFCC3 /* CardView.h */,
 				AAE72FEC186561CE003FFCC3 /* CardView.m */,
+				AAE2705318635F09007F0E24 /* PlayingCardView.h */,
 				AAE2705418635F09007F0E24 /* PlayingCardView.m */,
 				AAE72FE81865612A003FFCC3 /* SetCardView.h */,
 				AAE72FE91865612A003FFCC3 /* SetCardView.m */,

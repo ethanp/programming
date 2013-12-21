@@ -56,6 +56,8 @@
 
 - (void)updateUI
 {
+    [super updateUI];
+    
 //    for (UIButton *cardButton in self.cardButtons) {
 //        int cardButtonIndex = [self.cardButtons indexOfObject:cardButton];
 //        SetCard *card = (SetCard *)[self.game cardAtIndex:cardButtonIndex];

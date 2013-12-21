@@ -34,11 +34,21 @@
                                     <action selector="touchRedealButton:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="hVm-9e-cN2"/>
                                 </connections>
                             </button>
+                            <view alpha="0.0" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Lz-PQ-vH8">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="461"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="0.25098040700000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="fpj-fg-KDT" firstAttribute="top" secondItem="9Lz-PQ-vH8" secondAttribute="bottom" constant="58" id="lxc-jR-aoc"/>
+                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Playing Cards" id="TQM-q5-M4H"/>
                     <connections>
+                        <outlet property="layoutContainer" destination="9Lz-PQ-vH8" id="TFZ-FR-3qS"/>
+                        <outlet property="layoutContainerView" destination="9Lz-PQ-vH8" id="pRE-3j-z6K"/>
                         <outlet property="redeal" destination="aSy-h8-ScC" id="RHb-z8-V7P"/>
                         <outlet property="redealButton" destination="aSy-h8-ScC" id="Me0-Wh-Hhx"/>
                         <outlet property="scoreLabel" destination="35V-9T-VPc" id="Csm-Dr-GqW"/>
@@ -79,8 +89,16 @@
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
+                            <view alpha="0.0" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9gF-Js-RYM">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="461"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.40000000596046448" blue="0.40000000596046448" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="8bZ-J2-GH0" firstAttribute="top" secondItem="9gF-Js-RYM" secondAttribute="bottom" constant="58" id="m25-kH-NTI"/>
+                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Set" id="Rjg-o2-3q2"/>
                 </viewController>

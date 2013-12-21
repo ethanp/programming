@@ -19,6 +19,12 @@
     return [[Deck alloc] init];
 }
 
+- (Grid *)grid
+{
+    if (!_grid) _grid = [[Grid alloc] init];
+    return _grid;
+}
+
 - (void)restartGame
 {
     self.game = nil;
@@ -37,6 +43,23 @@
 
 - (void)updateUI
 {
+
+    // count cards in play
+    int numCardsInPlay = 0;
+    for (Card *card in self.game.cards) {
+        if (!card.chosen) {
+            numCardsInPlay++;
+        }
+    }
+    
+    CGFloat height = self.layoutContainerView.bounds.size.height;
+    CGFloat width  = self.layoutContainerView.bounds.size.width;
+    [_grid setCellAspectRatio:height/width];
+    [_grid setSize:CGSizeMake(height, width)];
+    [_grid setMinimumNumberOfCells:numCardsInPlay];
+
+    
+// ============================ THE OLD METHOD =============================
 //    for (UIButton *cardButton in self.cardButtons) {
 //        int cardButtonIndex = [self.cardButtons indexOfObject:cardButton];
 //        Card *card = [self.game cardAtIndex:cardButtonIndex];

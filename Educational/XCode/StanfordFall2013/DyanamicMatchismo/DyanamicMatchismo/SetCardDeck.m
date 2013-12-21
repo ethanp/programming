@@ -25,6 +25,7 @@
                     card.shape = shape;
                     card.color = color;
                     card.fillType = fill;
+                 // card.chosen = NO; // unneccessary, the default is NO
                     [self addCard:card];
                 }
                 

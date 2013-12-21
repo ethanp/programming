@@ -15,7 +15,7 @@
 
 @property (strong, nonatomic) NSArray *cards; // of PlayingCards
 @property (strong, nonatomic) PlayingCardDeck *deck;
-@property (weak, nonatomic) IBOutlet UIButton *redealButton;
+
 
 @end
 
@@ -55,23 +55,13 @@
     self.cards = [drawnCards copy];
     
     // TODO put the new cards on the screen
+    [self updateUI];
 }
 
-- (IBAction)tap:(UITapGestureRecognizer *)sender
-{
-    if (!self.playingCardView.card.chosen) [self drawRandomPlayingCard];
-
-    [self.playingCardView handleTap:sender];
-}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    // code from http://stackoverflow.com/questions/9032331/ios-flip-animation-only-for-specific-view
-    [self.playingCardView addGestureRecognizer:[[UITapGestureRecognizer alloc]
-                                                initWithTarget:self.playingCardView
-                                                action:@selector(handleTap:)]];
 }
 
 @end

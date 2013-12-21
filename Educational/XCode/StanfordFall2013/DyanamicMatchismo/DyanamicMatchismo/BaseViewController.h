@@ -10,11 +10,12 @@
 #import <UIKit/UIKit.h>
 #import "MatchingGame.h"
 #import "Deck.h"
+#import "Grid.h"
 
 
 @interface BaseViewController : UIViewController
 
-
+@property (strong, nonatomic) Grid *grid;
 @property (strong, nonatomic) MatchingGame *game;
 
 /* to attach a new UILabel, you MUST drag a NEW Label object from the Object Pane.
@@ -23,9 +24,10 @@
  *   be connected to */
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
+@property (weak, nonatomic) IBOutlet UIView *layoutContainerView;
 
 - (void)restartGame;
-
+- (void)updateUI;
 - (IBAction)touchRedealButton:(UIButton *)sender;
 
 @end
