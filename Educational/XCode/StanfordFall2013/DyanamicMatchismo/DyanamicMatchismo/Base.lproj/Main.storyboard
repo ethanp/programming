@@ -16,14 +16,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Score: 0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="35V-9T-VPc">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Score: 0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="35V-9T-VPc">
                                 <rect key="frame" x="20" y="478" width="280" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aSy-h8-ScC">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="aSy-h8-ScC">
                                 <rect key="frame" x="252" y="469" width="48" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Redeal">
@@ -34,21 +34,29 @@
                                     <action selector="touchRedealButton:" destination="vXZ-lx-hvc" eventType="touchUpInside" id="hVm-9e-cN2"/>
                                 </connections>
                             </button>
-                            <view alpha="0.0" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9Lz-PQ-vH8">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="461"/>
+                            <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9Lz-PQ-vH8">
+                                <rect key="frame" x="0.0" y="-5" width="320" height="461"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.50196081400000003" blue="0.25098040700000002" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="fpj-fg-KDT" firstAttribute="top" secondItem="9Lz-PQ-vH8" secondAttribute="bottom" constant="58" id="lxc-jR-aoc"/>
+                            <constraint firstItem="9Lz-PQ-vH8" firstAttribute="centerX" secondItem="35V-9T-VPc" secondAttribute="centerX" id="2zJ-1X-Hbd"/>
+                            <constraint firstAttribute="bottom" secondItem="aSy-h8-ScC" secondAttribute="bottom" constant="20" symbolic="YES" id="94h-KP-XbW"/>
+                            <constraint firstItem="aSy-h8-ScC" firstAttribute="top" secondItem="9Lz-PQ-vH8" secondAttribute="bottom" constant="13" id="EV4-X9-Cw2"/>
+                            <constraint firstItem="35V-9T-VPc" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" constant="20" symbolic="YES" id="O71-VE-8Vh"/>
+                            <constraint firstItem="aSy-h8-ScC" firstAttribute="trailing" secondItem="35V-9T-VPc" secondAttribute="trailing" id="R3f-Ne-wrT"/>
+                            <constraint firstItem="9Lz-PQ-vH8" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="S4i-gX-JPc"/>
+                            <constraint firstItem="9Lz-PQ-vH8" firstAttribute="top" secondItem="kh9-bI-dsS" secondAttribute="top" constant="-5" id="StY-xF-PMZ"/>
+                            <constraint firstItem="aSy-h8-ScC" firstAttribute="bottom" secondItem="35V-9T-VPc" secondAttribute="bottom" id="Xy1-mq-NX3"/>
+                            <constraint firstAttribute="trailing" secondItem="aSy-h8-ScC" secondAttribute="trailing" constant="20" symbolic="YES" id="eax-fv-TMg"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Playing Cards" id="TQM-q5-M4H"/>
                     <connections>
                         <outlet property="layoutContainer" destination="9Lz-PQ-vH8" id="TFZ-FR-3qS"/>
-                        <outlet property="layoutContainerView" destination="9Lz-PQ-vH8" id="pRE-3j-z6K"/>
+                        <outlet property="layoutContainerView" destination="9Lz-PQ-vH8" id="SOa-pR-0GV"/>
                         <outlet property="redeal" destination="aSy-h8-ScC" id="RHb-z8-V7P"/>
                         <outlet property="redealButton" destination="aSy-h8-ScC" id="Me0-Wh-Hhx"/>
                         <outlet property="scoreLabel" destination="35V-9T-VPc" id="Csm-Dr-GqW"/>
@@ -63,10 +71,10 @@
             </objects>
             <point key="canvasLocation" x="838" y="382"/>
         </scene>
-        <!--View Controller - Set-->
+        <!--Set View Controller - Set-->
         <scene sceneID="0ma-KK-yrT">
             <objects>
-                <viewController id="oLb-N8-vNS" sceneMemberID="viewController">
+                <viewController id="oLb-N8-vNS" customClass="SetViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="N6F-CA-M7M"/>
                         <viewControllerLayoutGuide type="bottom" id="8bZ-J2-GH0"/>
@@ -75,21 +83,21 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Score: 0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="91V-85-KPB">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Score: 0" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="91V-85-KPB">
                                 <rect key="frame" x="20" y="478" width="280" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lC7-hT-JY5">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="lC7-hT-JY5">
                                 <rect key="frame" x="252" y="469" width="48" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Redeal">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                             </button>
-                            <view alpha="0.0" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9gF-Js-RYM">
+                            <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9gF-Js-RYM">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="461"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
@@ -97,10 +105,21 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.40000000596046448" blue="0.40000000596046448" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="8bZ-J2-GH0" firstAttribute="top" secondItem="9gF-Js-RYM" secondAttribute="bottom" constant="58" id="m25-kH-NTI"/>
+                            <constraint firstItem="9gF-Js-RYM" firstAttribute="top" secondItem="8TS-wd-wko" secondAttribute="top" id="AgD-iN-X5D"/>
+                            <constraint firstItem="9gF-Js-RYM" firstAttribute="centerX" secondItem="91V-85-KPB" secondAttribute="centerX" id="Air-hY-tk9"/>
+                            <constraint firstItem="lC7-hT-JY5" firstAttribute="top" secondItem="9gF-Js-RYM" secondAttribute="bottom" constant="8" symbolic="YES" id="FEp-fp-3Ap"/>
+                            <constraint firstItem="lC7-hT-JY5" firstAttribute="trailing" secondItem="91V-85-KPB" secondAttribute="trailing" id="GYH-9C-5fG"/>
+                            <constraint firstAttribute="bottom" secondItem="9gF-Js-RYM" secondAttribute="bottom" constant="58" id="Lio-Fr-Wr1"/>
+                            <constraint firstItem="lC7-hT-JY5" firstAttribute="bottom" secondItem="91V-85-KPB" secondAttribute="bottom" id="blC-y1-AoN"/>
+                            <constraint firstItem="9gF-Js-RYM" firstAttribute="leading" secondItem="8TS-wd-wko" secondAttribute="leading" id="pR4-mN-5Vm"/>
+                            <constraint firstAttribute="trailing" secondItem="9gF-Js-RYM" secondAttribute="trailing" id="vDz-oF-zQZ"/>
+                            <constraint firstItem="91V-85-KPB" firstAttribute="leading" secondItem="8TS-wd-wko" secondAttribute="leading" constant="20" symbolic="YES" id="zEM-FK-G3d"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Set" id="Rjg-o2-3q2"/>
+                    <connections>
+                        <outlet property="layoutContainerView" destination="9gF-Js-RYM" id="3BA-ud-z2r"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="lav-HL-lJ7" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
