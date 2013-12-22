@@ -5,9 +5,9 @@ Started 12/19/13
 
 Concrete Next Steps to Persue
 -----------------------------
+* Cards should flip according to the underlying game functionality
 * Make `addCard()` method for BaseViewController
 * Draw the `SetCard`s with Bezier curves
-* Have more than one PlayingCardView in the PlayingCardViewController
 
 OVERALL
 -------
