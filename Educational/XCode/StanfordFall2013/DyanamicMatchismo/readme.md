@@ -13,8 +13,7 @@ Concrete Next Steps to Persue
                 * whichever card is *moved in/out* of `cardsInPlay` is *phyisically* **flipped**
                     * this **animation** needs to be extracted from `handleTap:`
             * updates `scoreLabel`
-1. *Where-the-Heck* are the faces on the facecards at these days?
-    * They just randomly stopped showing up?
+1. Cards from the last `Redeal` shouldn't be *showing behind the current set of cards!*
 1. Make `addCard()` method for BaseViewController
 1. Draw the `SetCard`s with Bezier curves
 

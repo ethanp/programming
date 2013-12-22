@@ -10,7 +10,6 @@
 #import "PlayingCardView.h"
 
 @interface PlayingCardView()
-@property (nonatomic) CGFloat faceCardScaleFactor;
 @end
 
 @implementation PlayingCardView
@@ -29,7 +28,6 @@
     [self setNeedsDisplay];
 }
 
-
 - (NSString *)rankAsString
 {
     return @[@"?",@"A",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"10",@"J",@"Q",@"K"][self.card.rank];
@@ -41,14 +39,21 @@
 {
     if (gesture.state == UIGestureRecognizerStateEnded) {
         [self.container cardWasFlipped:self.card];
-        [UIView transitionWithView:self
-                          duration:0.5
-                           options:UIViewAnimationOptionTransitionFlipFromLeft
-                        animations:^{}
-                        completion:nil];
-        
-        [self setNeedsDisplay];
+        [self animateCardFlip];
     }
+}
+
+# pragma mark - Animation
+
+- (void)animateCardFlip
+{
+    [UIView transitionWithView:self
+                      duration:0.5
+                       options:UIViewAnimationOptionTransitionFlipFromLeft
+                    animations:^{}
+                    completion:nil];
+    
+    [self setNeedsDisplay];
 }
 
 #pragma mark - Drawing
@@ -79,10 +84,7 @@
     if (self.card.chosen) {
         UIImage *faceImage = [UIImage imageNamed:[NSString stringWithFormat:@"%@%@", [self rankAsString], self.card.suit]];
         if (faceImage) {
-            CGRect imageRect = CGRectInset(self.bounds,
-                                           self.bounds.size.width * (1.0-self.faceCardScaleFactor),
-                                           self.bounds.size.height * (1.0-self.faceCardScaleFactor));
-            [faceImage drawInRect:imageRect];
+            [faceImage drawInRect:self.bounds];
         } else {
             [self drawPips];
         }
