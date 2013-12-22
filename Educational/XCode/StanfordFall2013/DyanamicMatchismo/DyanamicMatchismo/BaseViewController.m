@@ -42,8 +42,8 @@
 {
     CGFloat height = self.layoutContainerView.bounds.size.height;
     CGFloat width  = self.layoutContainerView.bounds.size.width;
-    [self.grid setCellAspectRatio:height/width];
-    [self.grid setSize:CGSizeMake(height, width)];
+    [self.grid setCellAspectRatio:width/height];
+    [self.grid setSize:CGSizeMake(width, height)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
     int cardsPlaced = 0;
     self.cardsInView = [[NSMutableArray alloc] init];
@@ -53,6 +53,9 @@
 
                 CGRect rect = [self.grid frameOfCellAtRow:row
                                                  inColumn:col];
+                
+                rect.size.height *= 0.9;
+                rect.size.width  *= 0.9;
 
                 [self putCardInPlayAtIndex:cardsPlaced
                             intoViewInRect:rect];

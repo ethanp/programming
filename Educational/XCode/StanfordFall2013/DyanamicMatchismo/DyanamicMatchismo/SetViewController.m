@@ -56,19 +56,6 @@
 - (void)updateUI
 {
     [super updateUI];
-    
-//    for (UIButton *cardButton in self.cardButtons) {
-//        int cardButtonIndex = [self.cardButtons indexOfObject:cardButton];
-//        SetCard *card = (SetCard *)[self.game cardAtIndex:cardButtonIndex];
-//        [cardButton setAttributedTitle:[self attributedTitleForCard:card]
-//                    forState:UIControlStateNormal];
-//        [cardButton setBackgroundImage:[self selectedCardImage:card]
-//                              forState:UIControlStateNormal];
-//        cardButton.titleLabel.font = [UIFont systemFontOfSize:38];
-//        cardButton.enabled = !card.isMatched;
-//        self.scoreLabel.text =
-//        [NSString stringWithFormat:@"Score: %d", self.game.score];
-//    }
 }
 
 

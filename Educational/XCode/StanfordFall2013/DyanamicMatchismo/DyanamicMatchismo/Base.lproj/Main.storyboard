@@ -53,22 +53,25 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q5B-gM-DJ9">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="461"/>
+                                <rect key="frame" x="20" y="20" width="280" height="441"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.0" green="0.50196081399917603" blue="0.25098040699958801" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.50196081399917603" blue="0.25098040699958801" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
-                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="top" secondItem="epf-H3-Gt7" secondAttribute="top" id="2w3-7V-KdW"/>
+                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="trailing" secondItem="ogD-zP-V8D" secondAttribute="trailing" id="5mN-Do-3gL"/>
+                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="leading" secondItem="ogD-zP-V8D" secondAttribute="leading" id="7Cx-ea-KmD"/>
                             <constraint firstAttribute="trailing" secondItem="l61-af-pnB" secondAttribute="trailing" constant="18" id="9k7-eN-eUw"/>
-                            <constraint firstItem="l61-af-pnB" firstAttribute="top" secondItem="q5B-gM-DJ9" secondAttribute="bottom" constant="8" symbolic="YES" id="Muv-x3-2U9"/>
-                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="leading" secondItem="epf-H3-Gt7" secondAttribute="leading" id="PWI-UF-CRs"/>
-                            <constraint firstAttribute="bottom" secondItem="q5B-gM-DJ9" secondAttribute="bottom" constant="58" id="aNp-on-T4O"/>
+                            <constraint firstAttribute="trailing" secondItem="ogD-zP-V8D" secondAttribute="trailing" constant="20" id="CEx-GP-Y8C"/>
+                            <constraint firstItem="l61-af-pnB" firstAttribute="top" secondItem="q5B-gM-DJ9" secondAttribute="bottom" constant="8" symbolic="YES" id="Njp-WZ-IbB"/>
                             <constraint firstItem="ogD-zP-V8D" firstAttribute="leading" secondItem="epf-H3-Gt7" secondAttribute="leading" constant="20" symbolic="YES" id="gky-ll-P56"/>
-                            <constraint firstAttribute="trailing" secondItem="q5B-gM-DJ9" secondAttribute="trailing" id="k5d-aI-get"/>
+                            <constraint firstItem="ogD-zP-V8D" firstAttribute="leading" relation="lessThanOrEqual" secondItem="epf-H3-Gt7" secondAttribute="leading" constant="20" id="hrw-60-VYQ"/>
+                            <constraint firstItem="ogD-zP-V8D" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="epf-H3-Gt7" secondAttribute="leading" constant="20" id="m1g-T1-ntu"/>
                             <constraint firstItem="l61-af-pnB" firstAttribute="baseline" secondItem="ogD-zP-V8D" secondAttribute="baseline" id="nQW-fS-X23"/>
-                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="centerX" secondItem="ogD-zP-V8D" secondAttribute="centerX" id="rwo-5g-D4o"/>
+                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="top" secondItem="epf-H3-Gt7" secondAttribute="top" constant="20" symbolic="YES" id="pcz-Wo-V9x"/>
+                            <constraint firstItem="dif-z2-vWJ" firstAttribute="top" secondItem="ogD-zP-V8D" secondAttribute="bottom" constant="25" id="xO2-W8-uzF"/>
+                            <constraint firstItem="dif-z2-vWJ" firstAttribute="top" secondItem="ogD-zP-V8D" secondAttribute="bottom" constant="25" id="yVQ-gV-6d4"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="PlayingCard" id="ut0-il-vh4"/>
