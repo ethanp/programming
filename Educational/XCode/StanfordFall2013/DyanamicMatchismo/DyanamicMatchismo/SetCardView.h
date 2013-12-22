@@ -19,6 +19,6 @@
 //- (void)pinch:(UIPinchGestureRecognizer *)gesture;
 //- (void)handleSwipe:(UITapGestureRecognizer *)gesture;
 
-@property (nonatomic) SetCard *card;
+@property (nonatomic, weak) SetCard *card;
 
 @end

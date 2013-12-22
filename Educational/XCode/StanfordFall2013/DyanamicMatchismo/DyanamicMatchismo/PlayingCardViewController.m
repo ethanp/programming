@@ -29,7 +29,8 @@
 {
     [self.cardsInView addObject:[[PlayingCardView alloc]
                                  initWithFrame:rect
-                                 withCard:self.game.cardsInPlay[index]]];
+                                 withCard:self.game.cardsInPlay[index]
+                                 inContainer:self]];
 }
 
 @end

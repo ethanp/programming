@@ -9,11 +9,12 @@
 #import <UIKit/UIKit.h>
 #import "CardView.h"
 #import "PlayingCard.h"
+#import "PlayingCardViewController.h"
 
 @interface PlayingCardView : CardView
 
-@property (strong, nonatomic) PlayingCard *card;
+@property (weak, nonatomic) PlayingCard *card;
 
-- (id)initWithFrame:(CGRect)rect withCard:(PlayingCard *)card;
+- (id)initWithFrame:(CGRect)frame withCard:(PlayingCard *)card inContainer:(PlayingCardViewController *)viewController;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import "BaseViewController.h"
+#import "CardView.h"
 
 @interface BaseViewController ()
 
@@ -41,7 +42,8 @@
 {
     [self.cardsInView addObject:[[CardView alloc]
                                  initWithFrame:rect
-                                 withCard:self.game.cardsInPlay[index]]];
+                                 withCard:self.game.cardsInPlay[index]
+                                 inContainer:self]];
 }
 
 - (void)updateUI
@@ -75,6 +77,11 @@
     for (CardView *cardView in self.cardsInView) {
         [self.layoutContainerView addSubview:cardView];
     }
+}
+
+- (void)cardWasFlipped:(Card *)card
+{
+    [self.game chooseCardAtIndex:[self.game.cards indexOfObject:card]];
 }
 
 - (NSString *)titleForCard:(Card *)card

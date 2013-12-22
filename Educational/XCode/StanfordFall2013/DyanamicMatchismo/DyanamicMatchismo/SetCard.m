@@ -70,17 +70,23 @@
     return [stringArray componentsJoinedByString:@""];
 }
 
-// these could be done with bit vectors and enums, but hooey
+/* TODO: These should be done with enums; it would look like this:
+ * enum shapes { oval, diamont, squiggle };
+ * Then (I guess) you could say something like
+ *      if (card.shape == card.oval) { ... }
+ */
 + (NSArray *)validShapes
 {
     return @[@"Square", @"Triangle", @"Circle"];
 }
 
+// TODO enum colors { green, red, purple };
 + (NSArray *)validColors
 {
     return @[@"Red", @"Blue", @"Green"];
 }
 
+// TODO enum fills { solid, striped, unfilled };
 + (NSArray *)validFillTypes
 {
     return @[@"Normal", @"Outlined", @"Backfilled"];

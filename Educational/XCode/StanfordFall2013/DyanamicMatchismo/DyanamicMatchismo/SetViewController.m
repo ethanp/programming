@@ -63,7 +63,8 @@
 {
     [self.cardsInView addObject:[[SetCardView alloc]
                                  initWithFrame:rect
-                                 withCard:self.game.cardsInPlay[index]]];
+                                 withCard:self.game.cardsInPlay[index]
+                                 inContainer:self]];
 }
 
 - (NSAttributedString *)attributedTitleForCard:(SetCard *)card

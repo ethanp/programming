@@ -3,6 +3,7 @@
 //  SuperCard
 //
 //  Created by CS193p Instructor.
+//  Modified by Ethan Petuchowski, who is unaffiliated with Stanford.
 //  Copyright (c) 2013 Stanford University. All rights reserved.
 //
 
@@ -28,11 +29,6 @@
     [self setNeedsDisplay];
 }
 
-- (void)chosen:(BOOL)chosen
-{
-    self.card.chosen = chosen;
-    [self setNeedsDisplay];
-}
 
 - (NSString *)rankAsString
 {
@@ -44,16 +40,14 @@
 - (void)handleTap:(UITapGestureRecognizer *)gesture
 {
     if (gesture.state == UIGestureRecognizerStateEnded) {
+        [self.container cardWasFlipped:self.card];
         [UIView transitionWithView:self
                           duration:0.5
                            options:UIViewAnimationOptionTransitionFlipFromLeft
-                        animations:^{
-                            if (!self.card.chosen) {
-                                [self chosen:YES];
-                            } else {
-                                [self chosen:NO];
-                            }
-                        } completion:nil];
+                        animations:^{}
+                        completion:nil];
+        
+        [self setNeedsDisplay];
     }
 }
 
@@ -68,6 +62,7 @@
 
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
+// Also, NEVER CALL `drawRect()` DIRECTLY!!
 - (void)drawRect:(CGRect)rect
 {
     // Drawing code
@@ -221,10 +216,11 @@
     [self setup];
 }
 
-- (id)initWithFrame:(CGRect)rect withCard:(PlayingCard *)card
+- (id)initWithFrame:(CGRect)frame withCard:(PlayingCard *)card inContainer:(PlayingCardViewController *)viewController
 {
-    self = [self initWithFrame:rect];
+    self = [self initWithFrame:frame];
     self.card = card;
+    self.container = viewController;
     return self;
 }
 

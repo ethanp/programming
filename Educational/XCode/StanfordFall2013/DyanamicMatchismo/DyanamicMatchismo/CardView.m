@@ -10,12 +10,13 @@
 
 @implementation CardView
 
-- (id)initWithFrame:(CGRect)frame withCard:(Card *)card
+- (id)initWithFrame:(CGRect)frame withCard:(Card *)card inContainer:(BaseViewController *)viewController
 {
     self = [super initWithFrame:frame];
     if (self) {
         // Initialization code
         self.card = card;
+        self.container = viewController;
     }
     return self;
 }
@@ -24,6 +25,7 @@
 {
     return;
 }
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.
