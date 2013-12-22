@@ -45,7 +45,7 @@
 {
     if (gesture.state == UIGestureRecognizerStateEnded) {
         [UIView transitionWithView:self
-                          duration:1
+                          duration:0.5
                            options:UIViewAnimationOptionTransitionFlipFromLeft
                         animations:^{
                             if (!self.card.chosen) {
@@ -219,6 +219,13 @@
 - (void)awakeFromNib
 {
     [self setup];
+}
+
+- (id)initWithFrame:(CGRect)rect withCard:(PlayingCard *)card
+{
+    self = [self initWithFrame:rect];
+    self.card = card;
+    return self;
 }
 
 - (id)initWithFrame:(CGRect)frame

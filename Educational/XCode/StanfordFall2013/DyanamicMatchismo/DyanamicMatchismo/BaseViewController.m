@@ -26,6 +26,12 @@
     [self updateUI];
 }
 
+// NOT SURE WHY, BUT THIS JUST MAKES PERSISTENT PICTURES WHERE THE CARDS SHOULD BE
+//- (void)viewDidLayoutSubviews
+//{
+//    [self updateUI];
+//}
+
 - (IBAction)touchRedealButton:(UIButton *)sender {
     [self restartGame];
 }

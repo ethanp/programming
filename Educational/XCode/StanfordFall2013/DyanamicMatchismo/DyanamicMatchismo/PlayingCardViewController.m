@@ -25,11 +25,6 @@
     return _game;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-}
-
 - (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
     [self.cardsInView addObject:[[PlayingCardView alloc]

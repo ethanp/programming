@@ -14,4 +14,6 @@
 
 @property (strong, nonatomic) PlayingCard *card;
 
+- (id)initWithFrame:(CGRect)rect withCard:(PlayingCard *)card;
+
 @end
