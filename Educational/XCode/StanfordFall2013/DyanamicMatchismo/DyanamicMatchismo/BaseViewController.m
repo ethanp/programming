@@ -46,6 +46,7 @@
     [self.grid setSize:CGSizeMake(height, width)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
     int cardsPlaced = 0;
+    self.cardsInView = [[NSMutableArray alloc] init];
     for (int row = 0; row < self.grid.rowCount; row++) {
         for (int col = 0; col < self.grid.columnCount; col++) {
             if (cardsPlaced < [self.game.cardsInPlay count]) {
@@ -62,7 +63,9 @@
         }
     }
     
-    // TODO: actually render the cards that were put in play
+    for (CardView *cardView in self.cardsInView) {
+        [self.layoutContainerView addSubview:cardView];
+    }
 }
 
 - (NSString *)titleForCard:(Card *)card

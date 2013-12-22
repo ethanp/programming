@@ -52,23 +52,23 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <view alpha="0.0" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q5B-gM-DJ9">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="q5B-gM-DJ9">
                                 <rect key="frame" x="0.0" y="0.0" width="320" height="461"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                                <color key="backgroundColor" red="0.0" green="0.50196081399917603" blue="0.25098040699958801" alpha="1" colorSpace="calibratedRGB"/>
                             </view>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.50196081399917603" blue="0.25098040699958801" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="top" secondItem="epf-H3-Gt7" secondAttribute="top" id="2w3-7V-KdW"/>
                             <constraint firstAttribute="trailing" secondItem="l61-af-pnB" secondAttribute="trailing" constant="18" id="9k7-eN-eUw"/>
-                            <constraint firstItem="l61-af-pnB" firstAttribute="top" secondItem="q5B-gM-DJ9" secondAttribute="bottom" constant="8" symbolic="YES" id="Glq-m2-rCM"/>
-                            <constraint firstAttribute="trailing" secondItem="q5B-gM-DJ9" secondAttribute="trailing" id="JMU-gU-wEe"/>
-                            <constraint firstAttribute="bottom" secondItem="q5B-gM-DJ9" secondAttribute="bottom" constant="58" id="RAX-ya-WEC"/>
+                            <constraint firstItem="l61-af-pnB" firstAttribute="top" secondItem="q5B-gM-DJ9" secondAttribute="bottom" constant="8" symbolic="YES" id="Muv-x3-2U9"/>
+                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="leading" secondItem="epf-H3-Gt7" secondAttribute="leading" id="PWI-UF-CRs"/>
+                            <constraint firstAttribute="bottom" secondItem="q5B-gM-DJ9" secondAttribute="bottom" constant="58" id="aNp-on-T4O"/>
                             <constraint firstItem="ogD-zP-V8D" firstAttribute="leading" secondItem="epf-H3-Gt7" secondAttribute="leading" constant="20" symbolic="YES" id="gky-ll-P56"/>
-                            <constraint firstItem="ogD-zP-V8D" firstAttribute="centerX" secondItem="q5B-gM-DJ9" secondAttribute="centerX" id="kXt-LR-W2a"/>
+                            <constraint firstAttribute="trailing" secondItem="q5B-gM-DJ9" secondAttribute="trailing" id="k5d-aI-get"/>
                             <constraint firstItem="l61-af-pnB" firstAttribute="baseline" secondItem="ogD-zP-V8D" secondAttribute="baseline" id="nQW-fS-X23"/>
-                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="top" secondItem="epf-H3-Gt7" secondAttribute="top" id="rnf-ke-0vT"/>
-                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="leading" secondItem="epf-H3-Gt7" secondAttribute="leading" id="yeL-EM-YLm"/>
+                            <constraint firstItem="q5B-gM-DJ9" firstAttribute="centerX" secondItem="ogD-zP-V8D" secondAttribute="centerX" id="rwo-5g-D4o"/>
                         </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="PlayingCard" id="ut0-il-vh4"/>
