@@ -8,11 +8,13 @@
 
 /* foundatation has NSArray and NS* */
 #import <Foundation/Foundation.h>
-#import "Deck.h"   /* imports models */
-#import "Card.h"   /* doesn't import viewController */
 #import "MatchingGame.h"
+#import "PlayingCardDeck.h"
 
 @interface CardMatchingGame : MatchingGame
 
+@property (nonatomic) PlayingCardDeck *deck;
+
+- (instancetype)init;
 
 @end

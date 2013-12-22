@@ -27,9 +27,12 @@
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
 @property (weak, nonatomic) IBOutlet UIView *layoutContainerView;
 @property (weak, nonatomic) NSMutableArray *cardsInView;
+// IBOutlet resolves to nothing,
+// it just tells XCode this is something you can hook into the storyboard
 
 - (void)restartGame;
 - (void)updateUI;
 - (IBAction)touchRedealButton:(UIButton *)sender;
+- (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect;
 
 @end

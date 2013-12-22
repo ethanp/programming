@@ -17,7 +17,22 @@
 static const int MISMATCH_PENALTY = 2;
 static const int MATCH_BONUS = 12;
 static const int COST_TO_CHOOSE = 1;
+static const int NUM_CARDS_TO_START = 16;
 
+@synthesize deck = _deck;
+
+- (PlayingCardDeck *)deck
+{
+    if (!_deck) _deck = [[PlayingCardDeck alloc] init];
+    return _deck;
+}
+
+- (instancetype)init
+{
+    self = [super initWithCardCount:NUM_CARDS_TO_START];
+    self.numCardsToMatch = numCardsToMatch;
+    return self;
+}
 
 // TODO return (void)?
 - (NSAttributedString *)chooseCardAtIndex:(NSUInteger)index

@@ -14,11 +14,6 @@
 
 @implementation BaseViewController
 
-- (Deck *)createDeck
-{
-    return [[Deck alloc] init];
-}
-
 - (Grid *)grid
 {
     if (!_grid) _grid = [[Grid alloc] init];
@@ -35,6 +30,14 @@
     [self restartGame];
 }
 
+// inheriting classes must specify the actual CardView they want to use
+- (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect
+{
+    [self.cardsInView addObject:[[CardView alloc]
+                                 initWithFrame:rect
+                                 withCard:self.game.cardsInPlay[index]]];
+}
+
 - (void)updateUI
 {
     CGFloat height = self.layoutContainerView.bounds.size.height;
@@ -42,21 +45,24 @@
     [self.grid setCellAspectRatio:height/width];
     [self.grid setSize:CGSizeMake(height, width)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
-    NSArray *cardsToPlace = [self.game.cardsInPlay copy];
     int cardsPlaced = 0;
     for (int row = 0; row < self.grid.rowCount; row++) {
         for (int col = 0; col < self.grid.columnCount; col++) {
-            if (cardsPlaced < [cardsToPlace count]) {
-                CGRect rect = [self.grid frameOfCellAtRow:row inColumn:col];
-                [self.cardsInView
-                 addObject:[[CardView alloc]
-                            initWithFrame:rect
-                            withCard:cardsToPlace[cardsPlaced]]];
+            if (cardsPlaced < [self.game.cardsInPlay count]) {
+
+                CGRect rect = [self.grid frameOfCellAtRow:row
+                                                 inColumn:col];
+
+                [self putCardInPlayAtIndex:cardsPlaced
+                            intoViewInRect:rect];
+
                 cardsPlaced++;
             }
             else break;
         }
     }
+    
+    // TODO: actually render the cards that were put in play
 }
 
 - (NSString *)titleForCard:(Card *)card

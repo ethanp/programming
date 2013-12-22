@@ -13,54 +13,28 @@
 
 @interface PlayingCardViewController ()
 
-@property (strong, nonatomic) NSArray *cards; // of PlayingCards
-@property (strong, nonatomic) PlayingCardDeck *deck;
-
-
 @end
 
 @implementation PlayingCardViewController
 
-#define NUM_CARDS_TO_START 16
+@synthesize game = _game;
 
-- (Deck *)deck
+- (CardMatchingGame *)game
 {
-    if (!_deck) _deck = [[PlayingCardDeck alloc] init];
-    return _deck;
-}
-
-- (PlayingCard *)drawRandomPlayingCard
-{
-    return (PlayingCard *)[self.deck drawRandomCard];
-}
-
-
-/* TODO this is just adding a card for now
- * but it will be adding ALL the cards (well, removing them first, etc.)
- */
-- (IBAction)touchRedealButton:(UIButton *)sender
-{
-    // mark current set of cards as chosen to take them off the screen
-    if ([self.cards count] > 0) {
-        for (PlayingCard *card in self.cards) {
-            card.chosen = YES;
-        }
-    }
-    
-    // draw a new set of cards
-    NSMutableArray *drawnCards = [[NSMutableArray alloc] init];
-    for (int i = 0; i < NUM_CARDS_TO_START; i++) {
-        [drawnCards addObject:[self drawRandomPlayingCard]];
-    }
-    self.cards = [drawnCards copy];
-    
-    // TODO put the new cards on the screen
-    [self updateUI];
+    if (!_game) _game = [[CardMatchingGame alloc] init];
+    return _game;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+}
+
+- (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect
+{
+    [self.cardsInView addObject:[[PlayingCardView alloc]
+                                 initWithFrame:rect
+                                 withCard:self.game.cardsInPlay[index]]];
 }
 
 @end

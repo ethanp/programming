@@ -17,6 +17,7 @@
 @synthesize cards = _cards;
 @synthesize chosenCards = _chosenCards;
 @synthesize cardsInPlay = _cardsInPlay;
+@synthesize deck = _deck;
 
 
 /* dynamic allocation for reference properties go in the getter */
@@ -28,7 +29,14 @@
 
 - (NSMutableArray *)cardsInPlay
 {
-    if (!_cardsInPlay) _cardsInPlay = [[NSMutableArray alloc] init];
+    if (!_cardsInPlay) {
+        _cardsInPlay = [[NSMutableArray alloc] init];
+        for (Card *card in self.cards) {
+            if (!card.matched) {
+                [_cardsInPlay addObject:card];
+            }
+        }
+    }
     return _cardsInPlay;
 }
 
@@ -57,8 +65,6 @@
 
 
 - (instancetype)initWithCardCount:(NSUInteger)count
-                        usingDeck:(Deck *)deck
-                        numCardsToMatch:(NSUInteger)numCards
 {
     /* bc we're init'ing a subclass,
      note there's no alloc bc it's `self`
@@ -66,11 +72,11 @@
     self = [super init];
     if (self) {
         for (int i = 0; i < count; i++) {
-            Card *card = [deck drawRandomCard];
+            Card *card = [self.deck drawRandomCard];
             [self.cards addObject:card]; /* calls constructor if necessary */
         }
-        self.numCardsToMatch = numCards;
     }
+    self.cardsInPlay = [self.cards mutableCopy];
     return self;
 }
 

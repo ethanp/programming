@@ -15,9 +15,10 @@
     // http://stackoverflow.com/questions/575210/use-of-synthesize-property-in-objective-c-inheritance
     NSInteger score;
     int numCardsToMatch;
-    NSMutableArray *cards;
+    NSMutableArray *cards;  // the cards in play for in-game use
     NSMutableArray *chosenCards;
     NSMutableArray *cardsInPlay;
+    Deck *deck;
 }
 
 
@@ -26,15 +27,14 @@
 @property (nonatomic, strong) NSMutableArray *cards; // of Card [no type-parameters]
 @property (nonatomic, strong) NSMutableArray *chosenCards; // of Card
 @property (nonatomic, strong) NSMutableArray *cardsInPlay; // of Card
+@property (nonatomic, strong) Deck *deck;
 
 - (Card *)cardAtIndex:(NSUInteger)index;
 
 /* designated initializer
  * must be called from any of our other initializers
  * or from any subclass's initializers */
-- (instancetype)initWithCardCount:(NSUInteger)count
-                        usingDeck:(Deck *)deck
-                        numCardsToMatch:(NSUInteger)numCards;
+- (instancetype)initWithCardCount:(NSUInteger)count;
 
 - (void)markAllCardsAsMatched;
 

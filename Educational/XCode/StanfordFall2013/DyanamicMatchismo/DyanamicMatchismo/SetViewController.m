@@ -10,6 +10,7 @@
 #import "SetCardDeck.h"
 #import "SetGame.h"
 #import "SetCard.h"
+#import "SetCardView.h"
 
 @interface SetViewController ()
 
@@ -28,9 +29,7 @@
 - (SetGame *)game
 {
     if (!_game) _game = [[SetGame alloc]
-                         initWithCardCount:SET_CARDS_TO_START
-                                 usingDeck:[self createDeck]
-                           numCardsToMatch:SET_CARDS_TO_MATCH];
+                         initWithCardCount:SET_CARDS_TO_START];
     return _game;
 }
 
@@ -70,6 +69,14 @@
 //        self.scoreLabel.text =
 //        [NSString stringWithFormat:@"Score: %d", self.game.score];
 //    }
+}
+
+
+- (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect
+{
+    [self.cardsInView addObject:[[SetCardView alloc]
+                                 initWithFrame:rect
+                                 withCard:self.game.cardsInPlay[index]]];
 }
 
 - (NSAttributedString *)attributedTitleForCard:(SetCard *)card

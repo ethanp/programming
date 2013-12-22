@@ -8,7 +8,12 @@
 
 #import <Foundation/Foundation.h>
 #import "MatchingGame.h"
+#import "SetCardDeck.h"
 
 @interface SetGame : MatchingGame
+
+@property (nonatomic) SetCardDeck *deck;
+
+- (instancetype)init;
 
 @end

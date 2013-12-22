@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "SetCard.h"
+#import "CardView.h"
 
-@interface SetCardView : UIView
+@interface SetCardView : CardView
 
 //@property (nonatomic) NSUInteger rank;
 //@property (strong, nonatomic) NSString *suit;
