@@ -26,7 +26,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
 @property (weak, nonatomic) IBOutlet UIView *layoutContainerView;
-@property (weak, nonatomic) IBOutletCollection(CardView) NSMutableArray *cardsInView;
+@property (weak, nonatomic) NSMutableArray *cardsInView;
 
 - (void)restartGame;
 - (void)updateUI;
