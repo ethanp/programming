@@ -14,6 +14,7 @@
 @interface PlayingCardView : CardView
 
 @property (weak, nonatomic) PlayingCard *card;
+@property (weak, nonatomic) PlayingCardViewController *container;
 
 - (id)initWithFrame:(CGRect)frame withCard:(PlayingCard *)card inContainer:(PlayingCardViewController *)viewController;
 

@@ -27,15 +27,15 @@
 @property (weak, nonatomic) IBOutlet UIView *layoutContainerView;
 
 /* Is having `strong` creating a reference cycle here?
- * I guess that would depend on whether the elements of this array (`CardView`s)
- * have a strong reference back to this ViewController, which I don't think they do.
- * Well actually, they might have to in order to be able to send actions back to a
- * target to notify the ViewController that the card has been flipped over and
- * is now "chosen"???
+ * I don't think so because `CardView`s have explicitly
+ * only a weak reference back to this ViewController
  */
 @property (strong, nonatomic) NSMutableArray *cardsInView;
-// IBOutlet resolves to nothing,
-// it just tells XCode this is something you can hook into the storyboard
+/* note there's no `IBOutlet` specification.
+ * that's OK because IBOutlet resolves to nothing,
+ * it just tells XCode this is something you can hook into the storyboard,
+ * and `cardsInView` are /not/ something you can hook into the storyboard.
+ */
 
 - (void)restartGame;
 - (void)updateUI;

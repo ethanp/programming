@@ -5,12 +5,18 @@ Started 12/19/13
 
 Concrete Next Steps to Persue
 -----------------------------
-* Cards should flip according to the underlying game functionality
-    * Make a Target–Action
-        * This is in accordance with Lecture 1 slides
-        * see [the Apple Docs](https://developer.apple.com/library/ios/documentation/general/conceptual/CocoaEncyclopedia/Target-Action/Target-Action.html)
-* Make `addCard()` method for BaseViewController
-* Draw the `SetCard`s with Bezier curves
+1. Cards should flip according to the underlying game functionality
+    * **Plan:**
+        * `[PlayingCardView handleTap:]` calls `[self.container cardWasFlipped:]`
+        * `[PlayinCardViewController cardWasFlipped:]` runs the game logic:
+            * updates `cardsInPlay`
+                * whichever card is *moved in/out* of `cardsInPlay` is *phyisically* **flipped**
+                    * this **animation** needs to be extracted from `handleTap:`
+            * updates `scoreLabel`
+1. *Where-the-Heck* are the faces on the facecards at these days?
+    * They just randomly stopped showing up?
+1. Make `addCard()` method for BaseViewController
+1. Draw the `SetCard`s with Bezier curves
 
 OVERALL
 -------
