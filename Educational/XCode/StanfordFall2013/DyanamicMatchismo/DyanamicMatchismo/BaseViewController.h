@@ -12,7 +12,6 @@
 #import "Deck.h"
 #import "Grid.h"
 #import "Card.h"
-#import "CardView.h"
 
 
 @interface BaseViewController : UIViewController
@@ -51,6 +50,6 @@
 
 //- (void)
 
-- (void)cardWasChosen:(NSString *)cardName;
+- (void)cardWasChosen:(Card *)card;
 
 @end

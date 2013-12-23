@@ -45,7 +45,7 @@
 
 # pragma mark - Animation
 
-- (void)animateCardFlip
+- (void)animateChooseCard
 {
     [UIView transitionWithView:self
                       duration:0.5

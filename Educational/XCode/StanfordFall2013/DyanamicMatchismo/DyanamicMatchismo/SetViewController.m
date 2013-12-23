@@ -61,15 +61,12 @@
 
 - (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
-    [self.cardsInView addObject:[[SetCardView alloc]
+    SetCard *card = self.game.cardsInPlay[index];
+    [self.cardsInView setObject:[[SetCardView alloc]
                                  initWithFrame:rect
-                                 withCard:self.game.cardsInPlay[index]
-                                 inContainer:self]];
-}
-
-- (NSAttributedString *)attributedTitleForCard:(SetCard *)card
-{
-    return card.attributedContents;
+                                 withCard:card
+                                 inContainer:self]
+                         forKey:card.attributedContents];
 }
 
 @end

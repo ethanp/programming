@@ -7,6 +7,7 @@
 //
 
 #import "BaseViewController.h"
+#import "CardView.h"
 
 @interface BaseViewController ()
 
@@ -124,6 +125,7 @@
 
     /* 
      * UPDATE WHICH CARDS ARE ON THE SCREEN
+     * AND WHETHER THEY ARE "CHOSEN"
      */
     
     NSMutableDictionary *viewDictCopy = [self.cardsInView mutableCopy];
@@ -135,6 +137,7 @@
         if (!cardView) {
             [self addCardToView:card];
         } else if (card.chosen != cardView.thinksItsChosen) {
+            cardView.thinksItsChosen = card.chosen;
             [cardView animateChooseCard];
         }
         [viewDictCopy removeObjectForKey:card.attributedContents];

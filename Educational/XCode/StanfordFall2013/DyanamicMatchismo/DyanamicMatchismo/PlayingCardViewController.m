@@ -27,10 +27,12 @@
 
 - (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
-    [self.cardsInView addObject:[[PlayingCardView alloc]
+    PlayingCard *card = self.game.cardsInPlay[index];
+    [self.cardsInView setObject:[[PlayingCardView alloc]
                                  initWithFrame:rect
-                                 withCard:self.game.cardsInPlay[index]
-                                 inContainer:self]];
+                                 withCard:card
+                                 inContainer:self]
+                         forKey:card.attributedContents];
 }
 
 @end
