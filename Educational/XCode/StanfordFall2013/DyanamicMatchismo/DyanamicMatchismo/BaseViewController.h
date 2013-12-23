@@ -12,6 +12,7 @@
 #import "Deck.h"
 #import "Grid.h"
 #import "Card.h"
+#import "CardView.h"
 
 
 @interface BaseViewController : UIViewController
@@ -44,9 +45,6 @@
 
 - (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect;
 
-- (void)animateCardInsertion:(NSString *)cardName;
-- (void)animateCardRemoval:(NSString *)cardName;
-- (void)animateChooseCard:(Card *)card;
 
 - (void)removeCardFromView:(NSString *)cardName;
 - (void)addCardToView:(Card *)card;

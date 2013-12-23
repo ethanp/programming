@@ -7,7 +7,6 @@
 //
 
 #import "BaseViewController.h"
-#import "CardView.h"
 
 @interface BaseViewController ()
 
@@ -54,9 +53,6 @@
 
 - (void)redrawAllCards
 {
-    [[self.layoutContainerView subviews]
-     makeObjectsPerformSelector:@selector(removeFromSuperview)];
-    
     CGFloat height = self.layoutContainerView.bounds.size.height;
     CGFloat width  = self.layoutContainerView.bounds.size.width;
     [self.grid setCellAspectRatio:width/height];
@@ -64,7 +60,7 @@
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
     
     [[self.cardsInView allKeys]
-     makeObjectsPerformSelector:@selector(animateCardRemoval:)];
+     makeObjectsPerformSelector:@selector(removeCardFromView:)];
     
     int cardsPlaced = 0;
     for (int row = 0; row < self.grid.rowCount; row++) {
@@ -86,33 +82,15 @@
         }
     }
     
-    [[self.cardsInView allKeys]
-     makeObjectsPerformSelector:@selector(animateCardInsertion:)];
+    [self.game.cardsInPlay makeObjectsPerformSelector:@selector(addCardToView:)];
     
 }
 
-// TODO
-- (void)animateCardInsertion:(NSString *)cardName
-{
-    
-}
-
-// TODO
-- (void)animateCardRemoval:(NSString *)cardName
-{
-    
-}
-
-// TODO
-- (void)animateChooseCard:(Card *)card
-{
-    
-}
-
-// TODO
 - (void)removeCardFromView:(NSString *)cardName
 {
-    
+    CardView *cardView = [self.cardsInView objectForKey:cardName];
+    [cardView animateCardRemoval];
+    [self.cardsInView removeObjectForKey:cardName];
 }
 
 - (void)addCardToView:(Card *)card
@@ -129,6 +107,10 @@
 
 - (void)updateUI
 {
+    /*
+     * REDRAW ALL CARDS IF NECESSARY
+     */
+    
     // new game, or redeal
     if (!self.game)
         [self redrawAllCards];
@@ -139,7 +121,7 @@
     if (([self.cardsInView count] > 9) != ([self.game.cardsInPlay count] > 9))
         [self redrawAllCards];
 
-    
+
     /* 
      * UPDATE WHICH CARDS ARE ON THE SCREEN
      */
@@ -153,7 +135,7 @@
         if (!cardView) {
             [self addCardToView:card];
         } else if (card.chosen != cardView.thinksItsChosen) {
-            [self animateChooseCard:card];
+            [cardView animateChooseCard];
         }
         [viewDictCopy removeObjectForKey:card.attributedContents];
     }

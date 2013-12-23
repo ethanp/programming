@@ -17,8 +17,11 @@
 @property (nonatomic) BOOL thinksItsChosen;
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture; // abstract
-- (id)initWithFrame:(CGRect)rect
-           withCard:(Card *)card
+- (id)initWithFrame:(CGRect)rect withCard:(Card *)card
         inContainer:(BaseViewController *)viewController;
+
+- (void)animateCardInsertion;
+- (void)animateCardRemoval;
+- (void)animateChooseCard;
 
 @end
