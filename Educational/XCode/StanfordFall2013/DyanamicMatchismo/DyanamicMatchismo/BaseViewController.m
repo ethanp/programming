@@ -15,9 +15,9 @@
 
 @implementation BaseViewController
 
-- (NSMutableArray *)cardsInView
+- (NSMutableDictionary *)cardsInView
 {
-    if (!_cardsInView) _cardsInView = [[NSMutableArray alloc] init];
+    if (!_cardsInView) _cardsInView = [[NSMutableDictionary alloc] init];
     return _cardsInView;
 }
 
@@ -46,10 +46,10 @@
 // Note: inheriting classes must specify the actual CardView they want to use
 - (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
-    [self.cardsInView addObject:[[CardView alloc]
-                                 initWithFrame:rect
-                                 withCard:self.game.cardsInPlay[index]
-                                 inContainer:self]];
+    Card *card = self.game.cardsInPlay[index];
+    [self.cardsInView setObject:[[CardView alloc]
+                                 initWithFrame:rect withCard:card inContainer:self]
+                         forKey:card.attributedContents];
 }
 
 - (void)redrawAllCards
@@ -63,9 +63,9 @@
     [self.grid setSize:CGSizeMake(width, height)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
     
-    // TODO call a method that animates removing each CardView
-    // then use makeAllObjectsPerformSelector:@selector(animateRemovingCard:)
-    [self.cardsInView removeAllObjects];
+    [[self.cardsInView allKeys]
+     makeObjectsPerformSelector:@selector(animateCardRemoval:)];
+    
     int cardsPlaced = 0;
     for (int row = 0; row < self.grid.rowCount; row++) {
         for (int col = 0; col < self.grid.columnCount; col++) {
@@ -86,34 +86,31 @@
         }
     }
     
-    for (CardView *cardView in self.cardsInView) {
-        
-        // TODO call a method that animates adding each CardView
-        // then use makeAllObjectsPerformSelector:@selector(animateAddingCard:)
-        [self.layoutContainerView addSubview:cardView];
-    }
+    [[self.cardsInView allKeys]
+     makeObjectsPerformSelector:@selector(animateCardInsertion:)];
+    
 }
 
 // TODO
-- (void)animateCardInsertion:card
+- (void)animateCardInsertion:(NSString *)cardName
 {
     
 }
 
 // TODO
-- (void)animateCardRemoval:(id)card
+- (void)animateCardRemoval:(NSString *)cardName
 {
     
 }
 
 // TODO
-- (void)animateChooseCard:(id)card
+- (void)animateChooseCard:(Card *)card
 {
     
 }
 
 // TODO
-- (void)removeCardFromViewAtIndex:(int)index
+- (void)removeCardFromView:(NSString *)cardName
 {
     
 }
@@ -130,62 +127,43 @@
     // otw add the view to self.cardsInView and redrawAllCards()
 }
 
-/* This method should:
- *  1. Flip cards on the screen
- *  2. Remove cards from the screen
- *  3. Add cards to the screen
-
-===========================================
-My current algorithm is totally brain-dead;
-===========================================
- Here's a much better way to do it:
- ----------------------------------
-    view_dict := VIEW.toDict()
-    for card in PLAY:
-        if card in view_dict:
-            if card.chosen and not view_dict[card].chosen:
-                animate_choose_card()
-        else:
-            add_card_to_view(card)
-        view_dict.remove(card)
-    for card in view_dict.keys():
-        remove_from_view(card)
- */
 - (void)updateUI
 {
     // new game, or redeal
     if (!self.game)
         [self redrawAllCards];
     
-    // remove CardViews that are no longer in play
-    for (int index = 0; index < [self.cardsInView count]; index++) {
-        CardView *cardView = [self.cardsInView objectAtIndex:index];
-        if (![self.game.cardsInPlay containsObject:cardView.card]) {
-            [self removeCardFromViewAtIndex:index];
-        }
-    }
-    
-    // create dictionary of { card -> cardInView }
-    NSMutableDictionary *cardsInViewDict = [[NSMutableDictionary alloc] init];
-    for (CardView *cardView in self.cardsInView) {
-        [cardsInViewDict setObject:cardView forKey:cardView.card.attributedContents];
-    }
-    
-    // add cards that are in play but not in view to view
-    for (Card *card in self.game.cardsInPlay) {
-        if (![cardsInViewDict objectForKey:card.attributedContents]) {
-            [self addCardToView:card];
-        }
-    }
-    
-    
     // if size changes across 9 in either direction,
     // move to new grid
     // (not sure this will work, but it sounds nice)
     if (([self.cardsInView count] > 9) != ([self.game.cardsInPlay count] > 9))
         [self redrawAllCards];
+
     
+    /* 
+     * UPDATE WHICH CARDS ARE ON THE SCREEN
+     */
     
+    NSMutableDictionary *viewDictCopy = [self.cardsInView mutableCopy];
+    
+    // add cards that are in play but not in view to view
+    // un/choose cards that are in view but have the wrong "thinksItsChosen" status
+    for (Card *card in self.game.cardsInPlay) {
+        CardView *cardView = [self.cardsInView objectForKey:card.attributedContents];
+        if (!cardView) {
+            [self addCardToView:card];
+        } else if (card.chosen != cardView.thinksItsChosen) {
+            [self animateChooseCard:card];
+        }
+        [viewDictCopy removeObjectForKey:card.attributedContents];
+    }
+    
+    // remove cards that have been removed for any reason (really just matched)
+    for (NSString *cardName in viewDictCopy.allKeys) {
+        [self removeCardFromView:cardName];
+    }
+    
+    // update score
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
 }
 

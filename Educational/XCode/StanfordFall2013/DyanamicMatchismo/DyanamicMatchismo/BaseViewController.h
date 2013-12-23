@@ -11,6 +11,7 @@
 #import "MatchingGame.h"
 #import "Deck.h"
 #import "Grid.h"
+#import "Card.h"
 
 
 @interface BaseViewController : UIViewController
@@ -29,7 +30,8 @@
 /* Having `strong` here shouldn't a reference cycle because
  * `CardView`s have a `weak` reference back to this ViewController instance
  */
-@property (strong, nonatomic) NSMutableArray *cardsInView;
+// TODO: life would be much easier if this were a dictionary
+@property (strong, nonatomic) NSMutableDictionary *cardsInView;
 /* note there's no `IBOutlet` specification.
  * that's OK because IBOutlet resolves to nothing,
  * it just tells XCode this is something you can hook into the storyboard.
@@ -42,15 +44,15 @@
 
 - (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect;
 
-- (void)animateCardInsertion:card;
-- (void)animateCardRemoval:card;
-- (void)animateChooseCard:card;
+- (void)animateCardInsertion:(NSString *)cardName;
+- (void)animateCardRemoval:(NSString *)cardName;
+- (void)animateChooseCard:(Card *)card;
 
-- (void)removeCardFromViewAtIndex:(int)index;
+- (void)removeCardFromView:(NSString *)cardName;
 - (void)addCardToView:(Card *)card;
 
 //- (void)
 
-- (void)cardWasChosen:(Card *)card;
+- (void)cardWasChosen:(NSString *)cardName;
 
 @end
