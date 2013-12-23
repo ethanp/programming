@@ -53,6 +53,19 @@
     [self.grid setCellAspectRatio:width/height];
     [self.grid setSize:CGSizeMake(width, height)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
+    
+    /* ============================
+     * THIS IS TOTALLY PROBLEMATIC!
+     * ----------------------------
+     * it should be updating the UI to reflect the **CHANGES** that have been made
+     * not just drawing all the cards that are in play onto the screen in a buggy manner
+     *
+     * It should:
+     *  1. Flip cards on the screen
+     *  2. Remove cards from the screen
+     *  3. Add cards to the screen
+     */
+    
     int cardsPlaced = 0;
     self.cardsInView = [[NSMutableArray alloc] init];
     for (int row = 0; row < self.grid.rowCount; row++) {
@@ -77,11 +90,15 @@
     for (CardView *cardView in self.cardsInView) {
         [self.layoutContainerView addSubview:cardView];
     }
+    
+    self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
 }
 
-- (void)cardWasFlipped:(Card *)card
+- (void)cardWasChosen:(Card *)card
 {
     [self.game chooseCardAtIndex:[self.game.cards indexOfObject:card]];
+    [self updateUI];
+    
 }
 
 - (NSString *)titleForCard:(Card *)card

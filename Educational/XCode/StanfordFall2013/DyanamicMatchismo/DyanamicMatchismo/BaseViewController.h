@@ -26,21 +26,25 @@
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
 @property (weak, nonatomic) IBOutlet UIView *layoutContainerView;
 
-/* Is having `strong` creating a reference cycle here?
- * I don't think so because `CardView`s have explicitly
- * only a weak reference back to this ViewController
+/* Having `strong` here shouldn't a reference cycle because
+ * `CardView`s have a `weak` reference back to this ViewController instance
  */
 @property (strong, nonatomic) NSMutableArray *cardsInView;
 /* note there's no `IBOutlet` specification.
  * that's OK because IBOutlet resolves to nothing,
- * it just tells XCode this is something you can hook into the storyboard,
- * and `cardsInView` are /not/ something you can hook into the storyboard.
+ * it just tells XCode this is something you can hook into the storyboard.
  */
 
 - (void)restartGame;
 - (void)updateUI;
+
 - (IBAction)touchRedealButton:(UIButton *)sender;
+
 - (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect;
-- (void)cardWasFlipped:(Card *)card;
+- (void)removeCardFromPlayAtIndex:(int)index;
+
+//- (void)
+
+- (void)cardWasChosen:(Card *)card;
 
 @end

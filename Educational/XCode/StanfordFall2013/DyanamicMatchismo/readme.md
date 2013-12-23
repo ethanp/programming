@@ -10,11 +10,11 @@ Concrete Next Steps to Persue
         * `[PlayingCardView handleTap:]` calls `[self.container cardWasFlipped:]`
         * `[PlayinCardViewController cardWasFlipped:]` runs the game logic:
             * updates `cardsInPlay`
-                * whichever card is *moved in/out* of `cardsInPlay` is *phyisically* **flipped**
-                    * this **animation** needs to be extracted from `handleTap:`
-            * updates `scoreLabel`
+                * create a method **in the ViewController** for cards that get *moved in/out* of `cardsInPlay`
+                * call `[card animateCardFlip]` from within said method
+                * call said method from `[ViewController updateUI]`
 1. Cards from the last `Redeal` shouldn't be *showing behind the current set of cards!*
-1. Make `addCard()` method for BaseViewController
+    * This might be taken care of when I fix `updateUI` for completing the point above
 1. Draw the `SetCard`s with Bezier curves
 
 OVERALL
