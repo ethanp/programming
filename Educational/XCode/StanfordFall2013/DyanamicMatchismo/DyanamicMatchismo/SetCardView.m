@@ -62,10 +62,10 @@
     CGPoint bottomMiddle = CGPointMake(hMid, bottom);
     CGPoint leftMiddle   = CGPointMake(left, vMid);
 //    CGPoint middleMiddle = CGPointMake(hMid, vMid);
-    CGPoint topRight     = CGPointMake(right, top);
-    CGPoint bottomRight  = CGPointMake(right, bottom);
-    CGPoint bottomLeft   = CGPointMake(left, bottom);
-    CGPoint topLeft      = CGPointMake(left, top);
+//    CGPoint topRight     = CGPointMake(right, top);
+//    CGPoint bottomRight  = CGPointMake(right, bottom);
+//    CGPoint bottomLeft   = CGPointMake(left, bottom);
+//    CGPoint topLeft      = CGPointMake(left, top);
     
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
     
@@ -79,19 +79,40 @@
     }
     
     // DRAW OVAL
-    if ([self.card.shape isEqualToString:@"Oval"]) {
-        [shapeOutline moveToPoint:topMiddle];
-        [shapeOutline addQuadCurveToPoint:rightMiddle controlPoint:topRight];
-        [shapeOutline addQuadCurveToPoint:bottomMiddle controlPoint:bottomRight];
-        [shapeOutline addQuadCurveToPoint:leftMiddle controlPoint:bottomLeft];
-        [shapeOutline addQuadCurveToPoint:topMiddle controlPoint:topLeft];
+    else if ([self.card.shape isEqualToString:@"Oval"]) {
+        shapeOutline = [UIBezierPath bezierPathWithOvalInRect:shapeBounds];
     }
     
-    // set the color
-    [self.card.colorDict[self.card.color] setFill];
+    // DRAW SQUIGGLE (uh oh...)
+    else if ([self.card.shape isEqualToString:@"Squiggle"]) {
+        
+    }
+    
+    else [NSException raise:@"Invalid card shape" format:@"%@", self.card.shape];
+    
+    // COLOR
+    UIColor *cardColor = self.card.colorDict[self.card.color];
+    [cardColor set]; // does a setFill /and/ a setStroke
+    
+    // SOLID
+    if ([self.card.fillType isEqualToString:@"Solid"]) {
+        [shapeOutline fill];
+    }
+    
+    // UNFILLED
+    else if ([self.card.fillType isEqualToString:@"Unfilled"]) {
+        [shapeOutline stroke];
+    }
+    
+    // STRIPED (uh oh...)
+    else if ([self.card.fillType isEqualToString:@"Striped"]) {
+        // ???
+    }
+    
+    else [NSException raise:@"Invalid card fillType" format:@"%@", self.card.fillType];
     
     // differentiate it when it's chosen
-    if (self.card.chosen) {} else {}
+    if (self.thinksItsChosen) {} else {}
 }
 
 

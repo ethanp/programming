@@ -3,6 +3,12 @@ iOS Assignment 4
 
 Started 12/19/13
 
+Some Notes from Lecture
+-----------------------
+* Add a subview by sending `[containingView addSubview:view]`
+* Remove a view by sending `[viewToRemove removeFromSuperView]`
+* I should `hidden:YES` on `match` but `removeFromSuperView` on `redeal`
+
 Concrete Next Steps to Persue
 -----------------------------
 1. Cards should flip according to the underlying game functionality
@@ -16,6 +22,8 @@ Concrete Next Steps to Persue
 1. Cards from the last `Redeal` shouldn't be *showing behind the current set of cards!*
     * This might be taken care of when I fix `updateUI` for completing the point above
 1. Draw the `SetCard`s with Bezier curves
+1. May want to add the `UIPinchGestureRecognizer` to that `containerView`
+    * See lecture 7 for info on this Recognizer
 
 OVERALL
 -------

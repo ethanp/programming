@@ -13,7 +13,7 @@
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture
 {
-    if (gesture.state == UIGestureRecognizerStateEnded) {
+    if (gesture.state == UIGestureRecognizerStateRecognized) {
         [self.container cardWasChosen:self.card];
     }
 }
@@ -21,12 +21,22 @@
 // TODO check out DROPIT in 'Lecture Code' for how to do this
 - (void)animateCardInsertion
 {
+    self.hidden = self.card.isMatched;
     return;
 }
 
 // TODO
 - (void)animateCardRemoval
 {
+    /* self.hidden means:
+        1. it still has its place in the view hierarchy,
+        2. it still belongs to the superview,
+        3. it still lives in its frame,
+        4. it is not on screen,
+        5. it does not handle events.                   
+     He said "you probably won't need this for the homework, but you could.  */
+    
+    self.hidden = self.card.isMatched;
     return;
 }
 
@@ -55,7 +65,7 @@
                                  bezierPathWithRoundedRect:self.bounds
                                  cornerRadius:[self cornerRadius]];
     
-    [roundedRect addClip];
+    [roundedRect addClip];  // parts of the path outside the rect will be clipped
     
     [[UIColor whiteColor] setFill];
     UIRectFill(self.bounds);
@@ -70,7 +80,7 @@
 {
     self.backgroundColor = nil;
     self.opaque = NO;
-    self.contentMode = UIViewContentModeRedraw;
+    self.contentMode = UIViewContentModeRedraw;  // redraw everything when bounds change
 }
 
 - (id)initWithFrame:(CGRect)frame withCard:(Card *)card
@@ -82,22 +92,26 @@
         self.card = card;
         self.container = viewController;
     }
+    [self animateCardInsertion];
     return self;
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
+    /* Maybe I should initWithFrame:offScreenSomewhere
+     * and save the initFrame as a @property CGRect realLocation
+     * then animateCardInsertionToFrame:self.realLocation
+     */
     self = [super initWithFrame:frame];
-    [self addGestureRecognizer:[[UITapGestureRecognizer alloc]
-                                initWithTarget:self
-                                action:@selector(handleTap:)]];
+    UITapGestureRecognizer *tapRecognizer =
+    [[UITapGestureRecognizer alloc] initWithTarget:self  // set handler (could be VC)
+                                            action:@selector(handleTap:)]; // of handler
+    
+    // here, we could set tapRecognizer.numberOfTapsRequired/numberOfTouchesRequired
+
+    [self addGestureRecognizer:tapRecognizer];
     [self setup];
     return self;
-}
-
-- (void)awakeFromNib
-{
-    [self setup];
 }
 
 @end
