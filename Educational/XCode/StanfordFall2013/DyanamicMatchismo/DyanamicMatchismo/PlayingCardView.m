@@ -57,10 +57,15 @@
 }
 
 
-// TODO
+// TODO check out DROPIT in 'Lecture Code' for how to do this
 - (void)animateCardInsertion
 {
-    
+    // this is most definitely not the way to do it, this doesn't do anything
+    [UIView transitionWithView:self
+                      duration:1
+                       options:UIViewAnimationOptionCurveEaseInOut
+                    animations:^{}
+                    completion:nil];
 }
 
 // TODO
