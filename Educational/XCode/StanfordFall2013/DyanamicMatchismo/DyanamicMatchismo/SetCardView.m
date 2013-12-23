@@ -19,6 +19,24 @@
     return self;
 }
 
+// TODO
+- (void)animateCardInsertion
+{
+    
+}
+
+// TODO
+- (void)animateCardRemoval
+{
+    
+}
+
+// TODO
+- (void)animateChooseCard
+{
+    
+}
+
 /*
 // Only override drawRect: if you perform custom drawing.
 // An empty implementation adversely affects performance during animation.

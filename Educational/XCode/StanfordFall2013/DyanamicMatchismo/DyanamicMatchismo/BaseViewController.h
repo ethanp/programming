@@ -30,7 +30,6 @@
 /* Having `strong` here shouldn't a reference cycle because
  * `CardView`s have a `weak` reference back to this ViewController instance
  */
-// TODO: life would be much easier if this were a dictionary
 @property (strong, nonatomic) NSMutableDictionary *cardsInView;
 /* note there's no `IBOutlet` specification.
  * that's OK because IBOutlet resolves to nothing,

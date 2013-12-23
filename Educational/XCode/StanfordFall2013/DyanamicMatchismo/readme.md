@@ -7,8 +7,8 @@ Concrete Next Steps to Persue
 -----------------------------
 1. Cards should flip according to the underlying game functionality
     * **Plan:**
-        * `[PlayingCardView handleTap:]` calls `[self.container cardWasFlipped:]`
-        * `[PlayinCardViewController cardWasFlipped:]` runs the game logic:
+        * `[PlayingCardView handleTap:]` calls `[self.container cardWasChosen:]`
+        * `[PlayinCardViewController cardWasChosen:]` runs the game logic:
             * updates `cardsInPlay`
                 * create a method **in the ViewController** for cards that get *moved in/out* of `cardsInPlay`
                 * call `[card animateCardFlip]` from within said method

@@ -46,19 +46,6 @@
 }
 
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    [self updateUI];
-}
-
-
-- (void)updateUI
-{
-    [super updateUI];
-}
-
-
 - (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
     SetCard *card = self.game.cardsInPlay[index];

@@ -26,22 +26,22 @@
     return;
 }
 
-// TODO
+// Abstract
 - (void)animateCardInsertion
 {
-    
+    return;
 }
 
-// TODO
+// Abstract
 - (void)animateCardRemoval
 {
-    
+    return;
 }
 
-// TODO
+// Abstract
 - (void)animateChooseCard
 {
-    
+    return;
 }
 
 /*

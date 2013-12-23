@@ -83,8 +83,9 @@
         }
     }
     
-    [self.game.cardsInPlay makeObjectsPerformSelector:@selector(addCardToView:)];
-    
+    for (Card *card in self.game.cardsInPlay) {
+        [self addCardToView:card];
+    }
 }
 
 - (void)removeCardFromView:(NSString *)cardName
