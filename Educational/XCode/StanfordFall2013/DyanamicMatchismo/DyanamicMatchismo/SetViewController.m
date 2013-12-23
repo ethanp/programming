@@ -49,10 +49,8 @@
 - (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
     SetCard *card = self.game.cardsInPlay[index];
-    [self.cardsInView setObject:[[SetCardView alloc]
-                                 initWithFrame:rect
-                                 withCard:card
-                                 inContainer:self]
+    [self.cardsInView setObject:[[SetCardView alloc] initWithFrame:rect
+                                 withCard:card inContainer:self]
                          forKey:card.attributedContents];
 }
 

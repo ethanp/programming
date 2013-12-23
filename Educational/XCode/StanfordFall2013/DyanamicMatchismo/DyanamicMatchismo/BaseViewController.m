@@ -30,7 +30,7 @@
 - (void)restartGame
 {
     self.game = nil;
-    [self updateUI];
+    [self redrawAllCards];
 }
 
 // makes cards appear on the screen when the game first starts up
@@ -60,32 +60,11 @@
     [self.grid setSize:CGSizeMake(width, height)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
     
-    [[self.cardsInView allKeys]
-     makeObjectsPerformSelector:@selector(removeCardFromView:)];
+    for (NSString *cardName in [self.cardsInView copy])
+        [self removeCardFromView:cardName];
     
-    int cardsPlaced = 0;
-    for (int row = 0; row < self.grid.rowCount; row++) {
-        for (int col = 0; col < self.grid.columnCount; col++) {
-            if (cardsPlaced < [self.game.cardsInPlay count]) {
-                
-                CGRect rect = [self.grid frameOfCellAtRow:row
-                                                 inColumn:col];
-                
-                rect.size.height *= 0.9;
-                rect.size.width  *= 0.9;
-                
-                [self putCardInViewAtIndex:cardsPlaced
-                            intoViewInRect:rect];
-                
-                cardsPlaced++;
-            }
-            else break;
-        }
-    }
-    
-    for (Card *card in self.game.cardsInPlay) {
+    for (Card *card in self.game.cardsInPlay)
         [self addCardToView:card];
-    }
 }
 
 - (void)removeCardFromView:(NSString *)cardName
@@ -97,14 +76,28 @@
 
 - (void)addCardToView:(Card *)card
 {
-    // if there's space for the card in the grid,
-    // find the first empty spot and stick it in there (animatedly)
+    // ensure the grid has enough space
     int gridCapacity = [self.grid columnCount] * [self.grid rowCount];
-    if ([self.cardsInView count] + 1 > gridCapacity) {
-        
+    int newIndex = [self.cardsInView count];
+    int newCount = newIndex + 1;
+    if (newCount > gridCapacity) {
+        CGFloat height = self.layoutContainerView.bounds.size.height;
+        CGFloat width  = self.layoutContainerView.bounds.size.width;
+        [self.grid setCellAspectRatio:width/height];
+        [self.grid setSize:CGSizeMake(width, height)];
+        [self.grid setMinimumNumberOfCells:newCount];
     }
     
-    // otw add the view to self.cardsInView and redrawAllCards()
+    // add the view to self.cardsInView and redrawAllCards()
+    int row = newIndex / self.grid.columnCount;
+    int col = newIndex % self.grid.columnCount;
+    
+    CGRect rect =
+        CGRectOffset([self.grid frameOfCellAtRow:row inColumn:col], 0.9, 0.9);
+    
+    [self putCardInViewAtIndex:newIndex intoViewInRect:rect];
+    CardView *brandNewCardView = [self.cardsInView objectForKey:card.attributedContents];
+    [brandNewCardView animateCardInsertion];
 }
 
 - (void)updateUI
