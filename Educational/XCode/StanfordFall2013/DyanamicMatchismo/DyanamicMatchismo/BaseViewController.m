@@ -15,6 +15,12 @@
 
 @implementation BaseViewController
 
+- (NSMutableArray *)cardsInView
+{
+    if (!_cardsInView) _cardsInView = [[NSMutableArray alloc] init];
+    return _cardsInView;
+}
+
 - (Grid *)grid
 {
     if (!_grid) _grid = [[Grid alloc] init];
@@ -27,11 +33,10 @@
     [self updateUI];
 }
 
-// NOT SURE WHY, BUT THIS JUST MAKES PERSISTENT PICTURES WHERE THE CARDS SHOULD BE
-//- (void)viewDidLayoutSubviews
-//{
-//    [self updateUI];
-//}
+- (void)viewDidLayoutSubviews
+{
+    [self updateUI];
+}
 
 - (IBAction)touchRedealButton:(UIButton *)sender {
     [self restartGame];
@@ -46,41 +51,34 @@
                                  inContainer:self]];
 }
 
-- (void)updateUI
+- (void)redrawAllCards
 {
+    [[self.layoutContainerView subviews]
+     makeObjectsPerformSelector:@selector(removeFromSuperview)];
+    
     CGFloat height = self.layoutContainerView.bounds.size.height;
     CGFloat width  = self.layoutContainerView.bounds.size.width;
     [self.grid setCellAspectRatio:width/height];
     [self.grid setSize:CGSizeMake(width, height)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
     
-    /* ============================
-     * THIS IS TOTALLY PROBLEMATIC!
-     * ----------------------------
-     * it should be updating the UI to reflect the **CHANGES** that have been made
-     * not just drawing all the cards that are in play onto the screen in a buggy manner
-     *
-     * It should:
-     *  1. Flip cards on the screen
-     *  2. Remove cards from the screen
-     *  3. Add cards to the screen
-     */
-    
+    // TODO call a method that animates removing each CardView
+    // then use makeAllObjectsPerformSelector:@selector(animateRemovingCard:)
+    [self.cardsInView removeAllObjects];
     int cardsPlaced = 0;
-    self.cardsInView = [[NSMutableArray alloc] init];
     for (int row = 0; row < self.grid.rowCount; row++) {
         for (int col = 0; col < self.grid.columnCount; col++) {
             if (cardsPlaced < [self.game.cardsInPlay count]) {
-
+                
                 CGRect rect = [self.grid frameOfCellAtRow:row
                                                  inColumn:col];
                 
                 rect.size.height *= 0.9;
                 rect.size.width  *= 0.9;
-
+                
                 [self putCardInPlayAtIndex:cardsPlaced
                             intoViewInRect:rect];
-
+                
                 cardsPlaced++;
             }
             else break;
@@ -88,9 +86,20 @@
     }
     
     for (CardView *cardView in self.cardsInView) {
+        
+        // TODO call a method that animates adding each CardView
+        // then use makeAllObjectsPerformSelector:@selector(animateAddingCard:)
         [self.layoutContainerView addSubview:cardView];
     }
-    
+}
+
+/* This method should:
+ *  1. Flip cards on the screen
+ *  2. Remove cards from the screen
+ *  3. Add cards to the screen
+ */
+- (void)updateUI
+{
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
 }
 
