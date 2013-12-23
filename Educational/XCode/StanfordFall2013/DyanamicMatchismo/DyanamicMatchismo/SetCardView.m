@@ -50,27 +50,41 @@
                                      SHAPE_INSET_PROPORTION,
                                      SHAPE_INSET_PROPORTION);
 
+    CGFloat left   = shapeBounds.origin.x;
+    CGFloat top    = shapeBounds.origin.y;
+    CGFloat right  = shapeBounds.origin.x + shapeBounds.size.width;
+    CGFloat bottom = shapeBounds.origin.y + shapeBounds.size.height;
     CGFloat hMid   = shapeBounds.origin.x + shapeBounds.size.width/2;
     CGFloat vMid   = shapeBounds.origin.y + shapeBounds.size.height/2;
-    CGFloat left   = shapeBounds.origin.x;
-    CGFloat right  = shapeBounds.origin.x + shapeBounds.size.width;
-    CGFloat top    = shapeBounds.origin.y;
-    CGFloat bottom = shapeBounds.origin.y + shapeBounds.size.height;
+    
+    CGPoint topMiddle    = CGPointMake(hMid, top);
+    CGPoint rightMiddle  = CGPointMake(right, vMid);
+    CGPoint bottomMiddle = CGPointMake(hMid, bottom);
+    CGPoint leftMiddle   = CGPointMake(left, vMid);
+//    CGPoint middleMiddle = CGPointMake(hMid, vMid);
+    CGPoint topRight     = CGPointMake(right, top);
+    CGPoint bottomRight  = CGPointMake(right, bottom);
+    CGPoint bottomLeft   = CGPointMake(left, bottom);
+    CGPoint topLeft      = CGPointMake(left, top);
     
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
     
     // DRAW DIAMOND
     if ([self.card.shape isEqualToString:@"Diamond"]) {
-        CGPoint sTop    = CGPointMake(hMid, top);
-        CGPoint sRight  = CGPointMake(right, vMid);
-        CGPoint sBottom = CGPointMake(hMid, bottom);
-        CGPoint sLeft   = CGPointMake(left, vMid);
-        
-        [shapeOutline moveToPoint:sTop];
-        [shapeOutline addLineToPoint:sRight];
-        [shapeOutline addLineToPoint:sBottom];
-        [shapeOutline addLineToPoint:sLeft];
+        [shapeOutline moveToPoint:topMiddle];
+        [shapeOutline addLineToPoint:rightMiddle];
+        [shapeOutline addLineToPoint:bottomMiddle];
+        [shapeOutline addLineToPoint:leftMiddle];
         [shapeOutline closePath];
+    }
+    
+    // DRAW OVAL
+    if ([self.card.shape isEqualToString:@"Oval"]) {
+        [shapeOutline moveToPoint:topMiddle];
+        [shapeOutline addQuadCurveToPoint:rightMiddle controlPoint:topRight];
+        [shapeOutline addQuadCurveToPoint:bottomMiddle controlPoint:bottomRight];
+        [shapeOutline addQuadCurveToPoint:leftMiddle controlPoint:bottomLeft];
+        [shapeOutline addQuadCurveToPoint:topMiddle controlPoint:topLeft];
     }
     
     // set the color
