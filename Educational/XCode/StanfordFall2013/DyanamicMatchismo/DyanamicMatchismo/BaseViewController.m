@@ -44,7 +44,7 @@
 }
 
 // Note: inheriting classes must specify the actual CardView they want to use
-- (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect
+- (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
     [self.cardsInView addObject:[[CardView alloc]
                                  initWithFrame:rect
@@ -77,7 +77,7 @@
                 rect.size.height *= 0.9;
                 rect.size.width  *= 0.9;
                 
-                [self putCardInPlayAtIndex:cardsPlaced
+                [self putCardInViewAtIndex:cardsPlaced
                             intoViewInRect:rect];
                 
                 cardsPlaced++;
@@ -107,12 +107,18 @@
 }
 
 // TODO
-- (void)removeCardFromPlayAtIndex:(int)index
+- (void)animateChooseCard:(id)card
 {
     
 }
 
-- (void)addCardToPlay:(Card *)card
+// TODO
+- (void)removeCardFromViewAtIndex:(int)index
+{
+    
+}
+
+- (void)addCardToView:(Card *)card
 {
     // if there's space for the card in the grid,
     // find the first empty spot and stick it in there (animatedly)
@@ -128,6 +134,22 @@
  *  1. Flip cards on the screen
  *  2. Remove cards from the screen
  *  3. Add cards to the screen
+
+===========================================
+My current algorithm is totally brain-dead;
+===========================================
+ Here's a much better way to do it:
+ ----------------------------------
+    view_dict := VIEW.toDict()
+    for card in PLAY:
+        if card in view_dict:
+            if card.chosen and not view_dict[card].chosen:
+                animate_choose_card()
+        else:
+            add_card_to_view(card)
+        view_dict.remove(card)
+    for card in view_dict.keys():
+        remove_from_view(card)
  */
 - (void)updateUI
 {
@@ -139,7 +161,7 @@
     for (int index = 0; index < [self.cardsInView count]; index++) {
         CardView *cardView = [self.cardsInView objectAtIndex:index];
         if (![self.game.cardsInPlay containsObject:cardView.card]) {
-            [self removeCardFromPlayAtIndex:index];
+            [self removeCardFromViewAtIndex:index];
         }
     }
     
@@ -152,7 +174,7 @@
     // add cards that are in play but not in view to view
     for (Card *card in self.game.cardsInPlay) {
         if (![cardsInViewDict objectForKey:card.attributedContents]) {
-            [self addCardToPlay:card];
+            [self addCardToView:card];
         }
     }
     

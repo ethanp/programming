@@ -25,7 +25,7 @@
     return _game;
 }
 
-- (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect
+- (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
     [self.cardsInView addObject:[[PlayingCardView alloc]
                                  initWithFrame:rect

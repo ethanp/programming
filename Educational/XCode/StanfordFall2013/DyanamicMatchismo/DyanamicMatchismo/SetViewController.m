@@ -59,7 +59,7 @@
 }
 
 
-- (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect
+- (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
     [self.cardsInView addObject:[[SetCardView alloc]
                                  initWithFrame:rect
