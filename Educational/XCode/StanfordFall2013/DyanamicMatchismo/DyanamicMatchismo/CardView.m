@@ -10,7 +10,71 @@
 
 @implementation CardView
 
-- (id)initWithFrame:(CGRect)frame withCard:(Card *)card inContainer:(BaseViewController *)viewController
+
+- (void)handleTap:(UITapGestureRecognizer *)gesture
+{
+    if (gesture.state == UIGestureRecognizerStateEnded) {
+        [self.container cardWasChosen:self.card];
+    }
+}
+
+// TODO check out DROPIT in 'Lecture Code' for how to do this
+- (void)animateCardInsertion
+{
+    return;
+}
+
+// TODO
+- (void)animateCardRemoval
+{
+    return;
+}
+
+// Abstract
+- (void)animateChooseCard {}
+
+
+#pragma mark - Drawing
+
+#define CORNER_FONT_STANDARD_HEIGHT 180.0
+#define CORNER_RADIUS 12.0
+
+- (CGFloat)cornerScaleFactor {
+    return self.bounds.size.height / CORNER_FONT_STANDARD_HEIGHT;
+}
+- (CGFloat)cornerRadius { return CORNER_RADIUS * [self cornerScaleFactor]; }
+- (CGFloat)cornerOffset { return [self cornerRadius] / 3.0; }
+
+
+// Override `drawRect:` to perform custom drawing.
+// If it's empty, leave it commented out.
+// NEVER CALL it DIRECTLY
+- (void)drawRect:(CGRect)rect
+{
+    UIBezierPath *roundedRect = [UIBezierPath
+                                 bezierPathWithRoundedRect:self.bounds
+                                 cornerRadius:[self cornerRadius]];
+    
+    [roundedRect addClip];
+    
+    [[UIColor whiteColor] setFill];
+    UIRectFill(self.bounds);
+    
+    [[UIColor blackColor] setStroke];
+    [roundedRect stroke];
+}
+
+#pragma mark - Initialization
+
+- (void)setup
+{
+    self.backgroundColor = nil;
+    self.opaque = NO;
+    self.contentMode = UIViewContentModeRedraw;
+}
+
+- (id)initWithFrame:(CGRect)frame withCard:(Card *)card
+        inContainer:(BaseViewController *)viewController
 {
     self = [super initWithFrame:frame];
     if (self) {
@@ -21,36 +85,19 @@
     return self;
 }
 
-- (void)handleTap:(UITapGestureRecognizer *)gesture // abstract
+- (id)initWithFrame:(CGRect)frame
 {
-    return;
+    self = [super initWithFrame:frame];
+    [self addGestureRecognizer:[[UITapGestureRecognizer alloc]
+                                initWithTarget:self
+                                action:@selector(handleTap:)]];
+    [self setup];
+    return self;
 }
 
-// Abstract
-- (void)animateCardInsertion
+- (void)awakeFromNib
 {
-    return;
+    [self setup];
 }
-
-// Abstract
-- (void)animateCardRemoval
-{
-    return;
-}
-
-// Abstract
-- (void)animateChooseCard
-{
-    return;
-}
-
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect
-{
-    // Drawing code
-}
-*/
 
 @end

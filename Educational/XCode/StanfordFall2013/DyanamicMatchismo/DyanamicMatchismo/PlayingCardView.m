@@ -16,31 +16,10 @@
 
 #pragma mark - Properties
 
-- (void)suit:(NSString *)suit
-{
-    self.card.suit = suit;
-    [self setNeedsDisplay];
-}
-
-- (void)rank:(NSUInteger)rank
-{
-    self.card.rank = rank;
-    [self setNeedsDisplay];
-}
-
 - (NSString *)rankAsString
 {
     return @[@"?",@"A",@"2",@"3",@"4",@"5",@"6",@"7",@"8",@"9",@"10",@"J",@"Q",@"K"]
             [self.card.rank];
-}
-
-#pragma mark - Gesture Handling
-
-- (void)handleTap:(UITapGestureRecognizer *)gesture
-{
-    if (gesture.state == UIGestureRecognizerStateEnded) {
-        [self.container cardWasChosen:self.card];
-    }
 }
 
 # pragma mark - Animation
@@ -57,56 +36,9 @@
 }
 
 
-// TODO check out DROPIT in 'Lecture Code' for how to do this
-- (void)animateCardInsertion
-{
-    // this is most definitely not the way to do it, this doesn't do anything
-    [UIView transitionWithView:self
-                      duration:1
-                       options:UIViewAnimationOptionCurveEaseInOut
-                    animations:^{}
-                    completion:nil];
-}
-
-// TODO
-- (void)animateCardRemoval
-{
-    
-}
-
-
-#pragma mark - Drawing
-
-#define CORNER_FONT_STANDARD_HEIGHT 180.0
-#define CORNER_RADIUS 12.0
-
-- (CGFloat)cornerScaleFactor {
-    return self.bounds.size.height / CORNER_FONT_STANDARD_HEIGHT;
-}
-- (CGFloat)cornerRadius {
-    return CORNER_RADIUS * [self cornerScaleFactor];
-}
-- (CGFloat)cornerOffset {
-    return [self cornerRadius] / 3.0;
-}
-
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-// Also, NEVER CALL `drawRect()` DIRECTLY!!
 - (void)drawRect:(CGRect)rect
 {
-    // Drawing code
-    UIBezierPath *roundedRect = [UIBezierPath
-                                 bezierPathWithRoundedRect:self.bounds
-                                              cornerRadius:[self cornerRadius]];
-
-    [roundedRect addClip];
-
-    [[UIColor whiteColor] setFill];
-    UIRectFill(self.bounds);
-
-    [[UIColor blackColor] setStroke];
-    [roundedRect stroke];
+    [super drawRect:rect];
 
     if (self.card.chosen) {
         UIImage *faceImage = [UIImage imageNamed:
@@ -118,7 +50,7 @@
             [self drawPips];
         }
 
-        [self drawCorners];
+        [self drawTextInCorners];
     } else {
         [[UIImage imageNamed:@"cardback"] drawInRect:self.bounds];
     }
@@ -139,7 +71,7 @@
 
 #pragma mark - Corners
 
-- (void)drawCorners
+- (void)drawTextInCorners
 {
     NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
     paragraphStyle.alignment = NSTextAlignmentCenter;
@@ -171,8 +103,8 @@
 
 - (void)drawPips
 {
-    if ((self.card.rank == 1) || (self.card.rank == 5) ||
-        (self.card.rank == 9) || (self.card.rank == 3)) {
+    if ((self.card.rank == 1) || (self.card.rank == 3) ||
+        (self.card.rank == 5) || (self.card.rank == 9)) {
         [self drawPipsWithHorizontalOffset:0
                             verticalOffset:0
                         mirroredVertically:NO];
@@ -251,18 +183,6 @@
 
 #pragma mark - Initialization
 
-- (void)setup
-{
-    self.backgroundColor = nil;
-    self.opaque = NO;
-    self.contentMode = UIViewContentModeRedraw;
-}
-
-- (void)awakeFromNib
-{
-    [self setup];
-}
-
 - (id)initWithFrame:(CGRect)frame
            withCard:(PlayingCard *)card
         inContainer:(PlayingCardViewController *)viewController
@@ -270,16 +190,6 @@
     self = [self initWithFrame:frame];
     self.card = card;
     self.container = viewController;
-    return self;
-}
-
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    [self addGestureRecognizer:[[UITapGestureRecognizer alloc]
-                                initWithTarget:self
-                                action:@selector(handleTap:)]];
-    [self setup];
     return self;
 }
 
