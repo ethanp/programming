@@ -10,7 +10,6 @@
 
 @implementation SetCard
 
-/* could call [super match:...] but doesn't have to in this case */
 - (int)match:(NSArray *)otherCards
 {
     int matchScore = 0;
@@ -37,16 +36,16 @@
 + (NSDictionary *)colorDict
 {
     return @{@"Red": [UIColor redColor],
-             @"Blue": [UIColor blueColor],
+             @"Purple": [UIColor purpleColor],
              @"Green": [UIColor greenColor]};
 }
 
 
 + (NSDictionary *)shapesDict
 {
-    return @{@"Square": @"◼︎",
-             @"Triangle": @"▲",
-             @"Circle": @"☯"};
+    return @{@"Squiggle": @"◼︎",
+             @"Diamond": @"▲",
+             @"Oval": @"☯"};
 }
 
 
@@ -55,41 +54,42 @@
     NSMutableDictionary *attributes =
         [@{NSForegroundColorAttributeName:[SetCard colorDict][self.color]} mutableCopy];
     
-    if ([self.fillType  isEqualToString: @"Backfilled"]) {
-        [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor grayColor]}];
-    } else if ([self.fillType  isEqualToString: @"Outlined"]) {
-        [attributes addEntriesFromDictionary:@{NSBackgroundColorAttributeName: [UIColor yellowColor]}];
+    if ([self.fillType  isEqualToString: @"Solid"]) {
+        [attributes addEntriesFromDictionary:
+         @{NSBackgroundColorAttributeName: [UIColor grayColor]}];
+        
+    } else if ([self.fillType  isEqualToString: @"Striped"]) {
+        [attributes addEntriesFromDictionary:
+         @{NSBackgroundColorAttributeName: [UIColor yellowColor]}];
     }
     
-    return [[NSAttributedString alloc] initWithString:[SetCard shapesDict][self.shape] attributes:attributes];
+    return [[NSAttributedString alloc]
+            initWithString:[SetCard shapesDict][self.shape] attributes:attributes];
 }
 
 - (NSString *)contents
 {   // http://stackoverflow.com/questions/510269/how-do-i-concatenate-strings
-    NSArray *stringArray = [NSArray arrayWithObjects:[self.color substringToIndex:1], [self.fillType substringToIndex:1], [SetCard shapesDict][self.shape], @",", nil];
+    NSArray *stringArray = @[[self.color substringToIndex:1],
+                             [self.fillType substringToIndex:1],
+                             [SetCard shapesDict][self.shape],
+                             @","];
+    
     return [stringArray componentsJoinedByString:@""];
 }
 
-/* TODO: These should be done with enums; it would look like this:
- * enum shapes { oval, diamont, squiggle };
- * Then (I guess) you could say something like
- *      if (card.shape == card.oval) { ... }
- */
 + (NSArray *)validShapes
 {
-    return @[@"Square", @"Triangle", @"Circle"];
+    return @[@"Oval", @"Diamond", @"Squiggle"];
 }
 
-// TODO enum colors { green, red, purple };
 + (NSArray *)validColors
 {
-    return @[@"Red", @"Blue", @"Green"];
+    return @[@"Red", @"Purple", @"Green"];
 }
 
-// TODO enum fills { solid, striped, unfilled };
 + (NSArray *)validFillTypes
 {
-    return @[@"Normal", @"Outlined", @"Backfilled"];
+    return @[@"Solid", @"Striped", @"Unfilled"];
 }
 
 // must @synthesize properties if we provide both setter AND getter
