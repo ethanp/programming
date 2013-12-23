@@ -33,6 +33,7 @@
     [self updateUI];
 }
 
+// makes cards appear on the screen when the game first starts up
 - (void)viewDidLayoutSubviews
 {
     [self updateUI];
@@ -42,7 +43,7 @@
     [self restartGame];
 }
 
-// inheriting classes must specify the actual CardView they want to use
+// Note: inheriting classes must specify the actual CardView they want to use
 - (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect
 {
     [self.cardsInView addObject:[[CardView alloc]
@@ -93,6 +94,36 @@
     }
 }
 
+// TODO
+- (void)animateCardInsertion:card
+{
+    
+}
+
+// TODO
+- (void)animateCardRemoval:(id)card
+{
+    
+}
+
+// TODO
+- (void)removeCardFromPlayAtIndex:(int)index
+{
+    
+}
+
+- (void)addCardToPlay:(Card *)card
+{
+    // if there's space for the card in the grid,
+    // find the first empty spot and stick it in there (animatedly)
+    int gridCapacity = [self.grid columnCount] * [self.grid rowCount];
+    if ([self.cardsInView count] + 1 > gridCapacity) {
+        
+    }
+    
+    // otw add the view to self.cardsInView and redrawAllCards()
+}
+
 /* This method should:
  *  1. Flip cards on the screen
  *  2. Remove cards from the screen
@@ -100,6 +131,39 @@
  */
 - (void)updateUI
 {
+    // new game, or redeal
+    if (!self.game)
+        [self redrawAllCards];
+    
+    // remove CardViews that are no longer in play
+    for (int index = 0; index < [self.cardsInView count]; index++) {
+        CardView *cardView = [self.cardsInView objectAtIndex:index];
+        if (![self.game.cardsInPlay containsObject:cardView.card]) {
+            [self removeCardFromPlayAtIndex:index];
+        }
+    }
+    
+    // create dictionary of { card -> cardInView }
+    NSMutableDictionary *cardsInViewDict = [[NSMutableDictionary alloc] init];
+    for (CardView *cardView in self.cardsInView) {
+        [cardsInViewDict setObject:cardView forKey:cardView.card.attributedContents];
+    }
+    
+    // add cards that are in play but not in view to view
+    for (Card *card in self.game.cardsInPlay) {
+        if (![cardsInViewDict objectForKey:card.attributedContents]) {
+            [self addCardToPlay:card];
+        }
+    }
+    
+    
+    // if size changes across 9 in either direction,
+    // move to new grid
+    // (not sure this will work, but it sounds nice)
+    if (([self.cardsInView count] > 9) != ([self.game.cardsInPlay count] > 9))
+        [self redrawAllCards];
+    
+    
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
 }
 

@@ -41,7 +41,12 @@
 - (IBAction)touchRedealButton:(UIButton *)sender;
 
 - (void)putCardInPlayAtIndex:(int)index intoViewInRect:(CGRect)rect;
+
+- (void)animateCardInsertion:card;
+- (void)animateCardRemoval:card;
+
 - (void)removeCardFromPlayAtIndex:(int)index;
+- (void)addCardToPlay:(Card *)card;
 
 //- (void)
 

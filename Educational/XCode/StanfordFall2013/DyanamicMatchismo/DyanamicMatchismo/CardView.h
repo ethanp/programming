@@ -14,7 +14,7 @@
 
 @property (weak, nonatomic) Card *card;  // set by the MatchingGame at initialization
 @property (weak, nonatomic) BaseViewController *container;
-
+@property (nonatomic) BOOL thinksItsChosen;
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture; // abstract
 - (id)initWithFrame:(CGRect)rect withCard:(Card *)card inContainer:(BaseViewController *)viewController;
