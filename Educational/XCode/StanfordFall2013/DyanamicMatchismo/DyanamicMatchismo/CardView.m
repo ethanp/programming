@@ -18,24 +18,31 @@
     }
 }
 
-// TODO check out DROPIT in 'Lecture Code' for how to do this
+// pretty sloppy
 - (void)animateCardInsertion
 {
     self.frame = CGRectMake(400, 400,
                             self.homeFrame.size.width,
                             self.homeFrame.size.height);
     [UIView animateWithDuration:0.5
-                          delay:0.2
+                          delay:0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{ self.frame = self.homeFrame; }
                      completion:nil];
     return;
 }
 
-// TODO
+// pretty sloppy
 - (void)animateCardRemoval
 {
-
+    CGRect outframe = CGRectMake(400, 400,
+                                 self.homeFrame.size.width,
+                                 self.homeFrame.size.height);
+    [UIView animateWithDuration:0.5
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{ self.frame = outframe; }
+                     completion:nil];
     return;
 }
 
