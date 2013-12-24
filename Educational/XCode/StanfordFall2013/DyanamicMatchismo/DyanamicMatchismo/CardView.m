@@ -25,7 +25,7 @@
                             self.homeFrame.size.width,
                             self.homeFrame.size.height);
     [UIView animateWithDuration:0.5
-                          delay:0
+                          delay:0.2
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{ self.frame = self.homeFrame; }
                      completion:nil];

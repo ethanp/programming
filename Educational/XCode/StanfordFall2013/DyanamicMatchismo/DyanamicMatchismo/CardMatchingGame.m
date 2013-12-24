@@ -18,6 +18,7 @@ static const int MISMATCH_PENALTY = 2;
 static const int MATCH_BONUS = 12;
 static const int COST_TO_CHOOSE = 1;
 static const int NUM_CARDS_TO_START = 16;
+static const int NUM_CARDS_TO_MATCH = 2;
 
 @synthesize deck = _deck;
 
@@ -30,7 +31,7 @@ static const int NUM_CARDS_TO_START = 16;
 - (instancetype)init
 {
     self = [super initWithCardCount:NUM_CARDS_TO_START];
-    self.numCardsToMatch = numCardsToMatch;
+    self.numCardsToMatch = NUM_CARDS_TO_MATCH;
     return self;
 }
 
