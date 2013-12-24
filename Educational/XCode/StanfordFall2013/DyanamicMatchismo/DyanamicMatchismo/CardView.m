@@ -28,7 +28,8 @@
                           delay:0.5
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{ self.frame = self.homeFrame; }
-                     completion:nil];}
+                     completion:nil];
+}
 
 // pretty sloppy
 - (void)animateCardRemoval
@@ -41,7 +42,8 @@
                           delay:self.card.isMatched ? 2 : 0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{ self.frame = outframe; }
-                     completion:nil];
+                     completion:^(BOOL c){ if (c) [self removeFromSuperview]; }
+     ];
 }
 
 // Abstract

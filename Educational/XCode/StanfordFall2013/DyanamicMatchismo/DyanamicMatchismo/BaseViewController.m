@@ -81,6 +81,7 @@
     int newIndex = [self.cardsInView count];
     int newCount = newIndex + 1;
     if (newCount > gridCapacity) {
+        NSLog(@"Enlarging Grid");
         CGFloat height = self.layoutContainerView.bounds.size.height;
         CGFloat width  = self.layoutContainerView.bounds.size.width;
         [self.grid setCellAspectRatio:width/height];
@@ -128,10 +129,7 @@
     // add cards that are in play but not in view to view
     // un/choose cards that are in view but have the wrong "thinksItsChosen" status
     for (Card *card in self.game.cardsInPlay) {
-        CardView *cardView = [self.cardsInView objectForKey:card.attributedContents];
-        if (!cardView) {
-            [self addCardToView:card];
-        }
+        CardView *cardView = [viewDictCopy objectForKey:card.attributedContents];
         if (card.chosen != cardView.thinksItsChosen) {
             cardView.thinksItsChosen = card.chosen;
             [cardView animateChooseCard];

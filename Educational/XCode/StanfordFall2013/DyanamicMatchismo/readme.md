@@ -3,45 +3,18 @@ iOS Assignment 4
 
 Started 12/19/13
 
-Some Notes from Lecture
------------------------
-* Add a subview by sending `[containingView addSubview:view]`
-* Remove a view by sending `[viewToRemove removeFromSuperView]`
-* I should `hidden:YES` on `match` but `removeFromSuperView` on `redeal`
-    * self.hidden means:
-        1. it still has its place in the view hierarchy,
-        2. it still belongs to the superview,
-        3. it still lives in its frame,
-        4. it is not on screen,
-        5. it does not handle events.
-     * He said "you probably won't need this for the homework, but you could.
-* What is an animation?
-    * You set a new value for a `property` of a `UIView`
-    * But the *transition* to this new value occurs *over time*
-
-Concrete Next Steps to Persue
------------------------------
-1. Cards should fly in from off the screen
-    * `CardView`s should have an `@property CGRect homeFrame` which is where they belong in the `Grid`
-    * Then they fly in from `self.superview.origin`? and `animateWithDuration` setting `self.frame = self.homeFrame`
-    * To fly *out*, just set `self.frame = self.superview.origin` or something
-    * `- (void)animateCardInsertion`
-1. Cards should flip according to the underlying game functionality
-    * **Plan:**
-        * `[PlayingCardView handleTap:]` calls `[self.container cardWasChosen:]`
-        * `[PlayinCardViewController cardWasChosen:]` runs the game logic:
-            * updates `cardsInPlay`
-                * create a method **in the ViewController** for cards that get *moved in/out* of `cardsInPlay`
-                * call `[card animateCardFlip]` from within said method
-                * call said method from `[ViewController updateUI]`
+Evolving List of Next-Steps to Persue
+-------------------------------------
 1. Cards from the last `Redeal` shouldn't be *showing behind the current set of cards!*
-    * This might be taken care of when I fix `updateUI` for completing the point above
+    * This *works* but there's some sort of strange bug in it
 1. Draw the `SetCard`s with Bezier curves
 1. May want to add the `UIPinchGestureRecognizer` to that `containerView`
     * See lecture 7 for info on this Recognizer
+    * This would entail having the `containerView` *subclass* `UIView`
 
-OVERALL
--------
+
+OVERALL (don't edit this, it's not an as-you-go type of list)
+-------------------------------------------------------------
 1. Animate arrival and departure of cards
 
 2. Remove matched cards from the UI
@@ -111,4 +84,14 @@ PLAYING CARDS
     * Getting the number of cards in play
     * NO METHOD TO DELETE CARDS
         * Just hide them instead
+
+Some Random Notes from Lecture
+-----------------------
+* self.hidden means:
+    1. it still has its place in the view hierarchy,
+    2. it still belongs to the superview,
+    3. it still lives in its frame,
+    4. it is not on screen,
+    5. it does not handle events.
+    * He said "you probably won't need this for the homework, but you could.
 
