@@ -20,18 +20,6 @@
 }
 
 // TODO
-- (void)animateCardInsertion
-{
-    
-}
-
-// TODO
-- (void)animateCardRemoval
-{
-    
-}
-
-// TODO
 - (void)animateChooseCard
 {
     

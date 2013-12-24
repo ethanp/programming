@@ -25,7 +25,7 @@
                             self.homeFrame.size.width,
                             self.homeFrame.size.height);
     [UIView animateWithDuration:0.5
-                          delay:0.2
+                          delay:0.5
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{ self.frame = self.homeFrame; }
                      completion:nil];
@@ -38,7 +38,14 @@
     CGRect outframe = CGRectMake(400, 400,
                                  self.homeFrame.size.width,
                                  self.homeFrame.size.height);
-    [UIView animateWithDuration:0.5
+    if (self.card.isMatched)
+         [UIView animateWithDuration:0.5
+                               delay:2
+                             options:UIViewAnimationOptionCurveEaseInOut
+                          animations:^{ self.frame = outframe; }
+                          completion:nil];
+
+    else [UIView animateWithDuration:0.5
                           delay:0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{ self.frame = outframe; }

@@ -21,6 +21,7 @@
 @property (weak, nonatomic) BaseViewController *container;
 @property (nonatomic) BOOL thinksItsChosen;
 @property (nonatomic) CGRect homeFrame;
+@property (nonatomic) BOOL thinksItsMatched;
 
 - (void)handleTap:(UITapGestureRecognizer *)gesture; // abstract
 - (id)initWithFrame:(CGRect)rect withCard:(Card *)card

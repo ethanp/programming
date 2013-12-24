@@ -113,9 +113,9 @@
     
     // if size changes across 9 in either direction,
     // move to new grid
-    // (not sure this will work, but it sounds nice)
-    if (([self.cardsInView count] > 9) != ([self.game.cardsInPlay count] > 9))
-        [self redrawAllCards];
+    // (not sure this will work, but it sounds nice) [IT DOESN'T WORK]
+//    if (([self.cardsInView count] > 9) != ([self.game.cardsInPlay count] > 9))
+//        [self redrawAllCards];
 
 
     /* 
@@ -131,9 +131,14 @@
         CardView *cardView = [self.cardsInView objectForKey:card.attributedContents];
         if (!cardView) {
             [self addCardToView:card];
-        } else if (card.chosen != cardView.thinksItsChosen) {
+        }
+        if (card.chosen != cardView.thinksItsChosen) {
             cardView.thinksItsChosen = card.chosen;
             [cardView animateChooseCard];
+        }
+        if (card.isMatched != cardView.thinksItsMatched) {
+            cardView.thinksItsMatched = card.isMatched;
+            [self removeCardFromView:(NSString *)card.attributedContents];
         }
         [viewDictCopy removeObjectForKey:card.attributedContents];
     }
