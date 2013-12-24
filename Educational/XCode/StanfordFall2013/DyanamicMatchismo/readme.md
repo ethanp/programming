@@ -6,10 +6,7 @@ Started 12/19/13
 Evolving List of Next-Steps to Persue
 -------------------------------------
 1. Draw the `SetCard`s with Bezier curves
-1. May want to add the `UIPinchGestureRecognizer` to that `containerView`
-    * See lecture 7 for info on this Recognizer
-    * This would entail having the `containerView` *subclass* `UIView`
-
+1. Implement `handlePinch:`
 
 OVERALL (don't edit this, it's not an as-you-go type of list)
 -------------------------------------------------------------
