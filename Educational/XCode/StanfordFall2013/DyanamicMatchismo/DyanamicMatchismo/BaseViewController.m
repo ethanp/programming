@@ -65,6 +65,8 @@
     
     for (Card *card in self.game.cardsInPlay)
         [self addCardToView:card];
+    
+    [self updateUI];
 }
 
 - (void)removeCardFromView:(NSString *)cardName

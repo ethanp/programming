@@ -73,6 +73,30 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     return CGPointZero; // unreachable
 }
 
+- (void)drawDiamondInRect:(CGRect)rect
+{
+    UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
+    [shapeOutline moveToPoint:[self normPt:topMid ofRect:rect]];
+    
+    // TODO etc.
+//    [shapeOutline addLineToPoint:[self normPt:rightMiddle];
+//    [shapeOutline addLineToPoint:[self normPt:bottomMiddle];
+//    [shapeOutline addLineToPoint:[self normPt:leftMiddle];
+//    [shapeOutline closePath];
+}
+
+- (void)drawOvalInRect:(CGRect)rect
+{
+    UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
+    shapeOutline = [UIBezierPath bezierPathWithOvalInRect:rect];
+}
+
+- (void)drawSquiggleInRect:(CGRect)rect
+{
+    UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
+//    [shapeOutline moveToPoint:[self normBound:topMid ofRect:rect]];
+}
+
 - (void)drawRect:(CGRect)rect
 {
     [super drawRect:rect];
@@ -94,9 +118,10 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
 
     NSArray *shapeRectsArray = Nil;
     
-    if ([self.card.number isEqualToNumber:@1]) {
+    /* ===========  CREATE SHAPE FRAMES  =========== */
+    
+    if ([self.card.number isEqualToNumber:@1])
         shapeRectsArray = @[[NSValue valueWithCGRect:singleShapeRect]];
-    }
     
     else if ([self.card.number isEqualToNumber:@2]) {
         CGRect upperRect = singleShapeRect;
@@ -125,29 +150,20 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     if (!shapeRectsArray)
         [NSException raise:@"shapeRectsArray was never filled" format:@""];
     
-    UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
     
-    // DRAW DIAMOND
-    if ([self.card.shape isEqualToString:@"Diamond"]) {
-//        [shapeOutline moveToPoint:[self normPt:topMid ofRect:shapeArea]];
-        
-        // TODO etc.
-//        [shapeOutline addLineToPoint:rightMiddle];
-//        [shapeOutline addLineToPoint:bottomMiddle];
-//        [shapeOutline addLineToPoint:leftMiddle];
-//        [shapeOutline closePath];
-    }
+    /* ===========  DRAW SHAPES  =========== */
     
-    // DRAW OVAL
-    else if ([self.card.shape isEqualToString:@"Oval"]) {
-        shapeOutline = [UIBezierPath bezierPathWithOvalInRect:shapeArea];
-    }
+    if ([self.card.shape isEqualToString:@"Diamond"])
+        for (NSValue *rectVal in shapeRectsArray)
+            [self drawDiamondInRect:[rectVal CGRectValue]];
     
-    // DRAW SQUIGGLE (uh oh...)
-    else if ([self.card.shape isEqualToString:@"Squiggle"]) {
-//        [shapeOutline moveToPoint:topMiddle];
-        // TODO
-    }
+    else if ([self.card.shape isEqualToString:@"Oval"])
+        for (NSValue *rectVal in shapeRectsArray)
+            [self drawOvalInRect:[rectVal CGRectValue]];
+    
+    else if ([self.card.shape isEqualToString:@"Squiggle"])
+        for (NSValue *rectVal in shapeRectsArray)
+            [self drawSquiggleInRect:[rectVal CGRectValue]];
     
     else [NSException raise:@"Invalid card shape" format:@"%@", self.card.shape];
     
