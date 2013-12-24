@@ -12,6 +12,7 @@
 #import "Deck.h"
 #import "Grid.h"
 #import "Card.h"
+#import "ContainerView.h"
 
 
 @interface BaseViewController : UIViewController
@@ -25,7 +26,7 @@
  *   be connected to */
 @property (weak, nonatomic) IBOutlet UILabel *scoreLabel;
 @property (weak, nonatomic) IBOutlet UIButton *redealButton;
-@property (weak, nonatomic) IBOutlet UIView *layoutContainerView;
+@property (weak, nonatomic) IBOutlet ContainerView *layoutContainerView;
 
 /* Having `strong` here shouldn't a reference cycle because
  * `CardView`s have a `weak` reference back to this ViewController instance

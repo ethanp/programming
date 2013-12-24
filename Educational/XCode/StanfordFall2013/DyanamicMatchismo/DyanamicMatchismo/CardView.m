@@ -8,6 +8,10 @@
 
 #import "CardView.h"
 
+@interface CardView ()
+- (void)handleTap:(UITapGestureRecognizer *)gesture;
+@end
+
 @implementation CardView
 
 

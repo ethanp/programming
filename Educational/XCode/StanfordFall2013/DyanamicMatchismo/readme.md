@@ -5,8 +5,6 @@ Started 12/19/13
 
 Evolving List of Next-Steps to Persue
 -------------------------------------
-1. Cards from the last `Redeal` shouldn't be *showing behind the current set of cards!*
-    * This *works* but there's some sort of strange bug in it
 1. Draw the `SetCard`s with Bezier curves
 1. May want to add the `UIPinchGestureRecognizer` to that `containerView`
     * See lecture 7 for info on this Recognizer

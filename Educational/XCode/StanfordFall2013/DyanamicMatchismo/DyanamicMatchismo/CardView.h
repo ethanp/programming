@@ -23,7 +23,6 @@
 @property (nonatomic) CGRect homeFrame;
 @property (nonatomic) BOOL thinksItsMatched;
 
-- (void)handleTap:(UITapGestureRecognizer *)gesture; // abstract
 - (id)initWithFrame:(CGRect)rect withCard:(Card *)card
         inContainer:(BaseViewController *)viewController;
 
