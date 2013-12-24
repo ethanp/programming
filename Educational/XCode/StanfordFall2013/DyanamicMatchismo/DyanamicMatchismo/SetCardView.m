@@ -16,7 +16,7 @@
     
 }
 
-#define SHAPE_INSET_PROPORTION 0.7
+#define SHAPE_INSET_PROPORTION 0.1
 
 enum loc { left, top, right, bottom, hMid, vMid, uprMid, lwrMid };
 
@@ -110,8 +110,8 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     // TODO draw the card face in here
     
     CGRect shapeArea = CGRectInset(self.bounds,
-                                   SHAPE_INSET_PROPORTION,
-                                   SHAPE_INSET_PROPORTION);
+                                   self.bounds.size.width * SHAPE_INSET_PROPORTION,
+                                   self.bounds.size.height * SHAPE_INSET_PROPORTION);
     
     CGRect singleShapeRect = CGRectInset(shapeArea, 0, shapeArea.size.height / 3);
 
