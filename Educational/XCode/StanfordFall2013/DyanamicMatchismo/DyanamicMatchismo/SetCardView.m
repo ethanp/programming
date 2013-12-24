@@ -73,28 +73,31 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     return CGPointZero; // unreachable
 }
 
-- (void)drawDiamondInRect:(CGRect)rect
+- (UIBezierPath *)drawDiamondInRect:(CGRect)rect
 {
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
     [shapeOutline moveToPoint:[self normPt:topMid ofRect:rect]];
     
     // TODO etc.
-//    [shapeOutline addLineToPoint:[self normPt:rightMiddle];
-//    [shapeOutline addLineToPoint:[self normPt:bottomMiddle];
-//    [shapeOutline addLineToPoint:[self normPt:leftMiddle];
-//    [shapeOutline closePath];
+    [shapeOutline addLineToPoint:[self normPt:rtMid  ofRect:rect]];
+    [shapeOutline addLineToPoint:[self normPt:btMid  ofRect:rect]];
+    [shapeOutline addLineToPoint:[self normPt:lftMid ofRect:rect]];
+    [shapeOutline closePath];
+    return shapeOutline;
 }
 
-- (void)drawOvalInRect:(CGRect)rect
+- (UIBezierPath *)drawOvalInRect:(CGRect)rect
 {
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
     shapeOutline = [UIBezierPath bezierPathWithOvalInRect:rect];
+    return shapeOutline;
 }
 
-- (void)drawSquiggleInRect:(CGRect)rect
+- (UIBezierPath *)drawSquiggleInRect:(CGRect)rect
 {
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
 //    [shapeOutline moveToPoint:[self normBound:topMid ofRect:rect]];
+    return shapeOutline;
 }
 
 - (void)drawRect:(CGRect)rect
@@ -102,13 +105,6 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     [super drawRect:rect];
     
     // TODO draw the card face in here
-    
-    // TODO keep changing all this to use the card.number
-    
-    // TODO note that the shapes themselves are always the same size
-    // its just that there are either 1,2,3 of them
-    
-    
     
     CGRect shapeArea = CGRectInset(self.frame,
                                      SHAPE_INSET_PROPORTION,
@@ -153,33 +149,35 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     
     /* ===========  DRAW SHAPES  =========== */
     
+    NSMutableArray *bezierPathArray = [[NSMutableArray alloc] init];
+    
     if ([self.card.shape isEqualToString:@"Diamond"])
         for (NSValue *rectVal in shapeRectsArray)
-            [self drawDiamondInRect:[rectVal CGRectValue]];
+            [bezierPathArray addObject:[self drawDiamondInRect:[rectVal CGRectValue]]];
     
     else if ([self.card.shape isEqualToString:@"Oval"])
         for (NSValue *rectVal in shapeRectsArray)
-            [self drawOvalInRect:[rectVal CGRectValue]];
+            [bezierPathArray addObject:[self drawOvalInRect:[rectVal CGRectValue]]];
     
     else if ([self.card.shape isEqualToString:@"Squiggle"])
         for (NSValue *rectVal in shapeRectsArray)
-            [self drawSquiggleInRect:[rectVal CGRectValue]];
+            [bezierPathArray addObject:[self drawSquiggleInRect:[rectVal CGRectValue]]];
     
     else [NSException raise:@"Invalid card shape" format:@"%@", self.card.shape];
     
     // COLOR
     UIColor *cardColor = self.card.colorDict[self.card.color];
-    [cardColor set]; // does a setFill /and/ a setStroke
+    [cardColor set]; // does both setFill and setStroke
     
     // SOLID
-    if ([self.card.fillType isEqualToString:@"Solid"]) {
-//        [shapeOutline fill];
-    }
+    if ([self.card.fillType isEqualToString:@"Solid"])
+        for (UIBezierPath *path in bezierPathArray)
+            [path fill];
     
     // UNFILLED
-    else if ([self.card.fillType isEqualToString:@"Unfilled"]) {
-//        [shapeOutline stroke];
-    }
+    else if ([self.card.fillType isEqualToString:@"Unfilled"])
+        for (UIBezierPath *path in bezierPathArray)
+            [path stroke];
     
     // STRIPED (uh oh...)
     else if ([self.card.fillType isEqualToString:@"Striped"]) {
@@ -188,7 +186,7 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     
     else [NSException raise:@"Invalid card fillType" format:@"%@", self.card.fillType];
     
-    // differentiate it when it's chosen
+    // TODO differentiate it when it's chosen (shade? outline? etc?)
     if (self.thinksItsChosen) {} else {}
 }
 
