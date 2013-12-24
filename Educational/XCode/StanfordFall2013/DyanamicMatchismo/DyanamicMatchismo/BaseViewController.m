@@ -102,32 +102,11 @@
     [brandNewCardView animateCardInsertion];
 }
 
+/* update which cards are "chosen" or "matched" */
 - (void)updateUI
 {
-    /*
-     * REDRAW ALL CARDS IF NECESSARY
-     */
-    
-    // new game, or redeal
-    if (!self.game)
-        [self redrawAllCards];
-    
-    // if size changes across 9 in either direction,
-    // move to new grid
-    // (not sure this will work, but it sounds nice) [IT DOESN'T WORK]
-//    if (([self.cardsInView count] > 9) != ([self.game.cardsInPlay count] > 9))
-//        [self redrawAllCards];
-
-
-    /* 
-     * UPDATE WHICH CARDS ARE ON THE SCREEN
-     * AND WHETHER THEY ARE "CHOSEN"
-     */
-    
     NSMutableDictionary *viewDictCopy = [self.cardsInView mutableCopy];
     
-    // add cards that are in play but not in view to view
-    // un/choose cards that are in view but have the wrong "thinksItsChosen" status
     for (Card *card in self.game.cardsInPlay) {
         CardView *cardView = [viewDictCopy objectForKey:card.attributedContents];
         if (card.chosen != cardView.thinksItsChosen) {
@@ -141,7 +120,7 @@
         [viewDictCopy removeObjectForKey:card.attributedContents];
     }
     
-    // remove cards that have been removed for any reason (really just matched)
+    // remove cards that have been matched
     for (NSString *cardName in viewDictCopy.allKeys)
         [self removeCardFromView:cardName];
     
