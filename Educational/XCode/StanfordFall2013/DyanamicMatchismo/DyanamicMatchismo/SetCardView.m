@@ -10,15 +10,6 @@
 
 @implementation SetCardView
 
-- (id)initWithFrame:(CGRect)frame
-{
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-    }
-    return self;
-}
-
 // TODO
 - (void)animateChooseCard
 {
@@ -93,43 +84,68 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     // TODO note that the shapes themselves are always the same size
     // its just that there are either 1,2,3 of them
     
-    CGRect shapeBounds = CGRectInset(self.frame,
+    
+    
+    CGRect shapeArea = CGRectInset(self.frame,
                                      SHAPE_INSET_PROPORTION,
                                      SHAPE_INSET_PROPORTION);
-
-    CGFloat left   = shapeBounds.origin.x;
-    CGFloat top    = shapeBounds.origin.y;
-    CGFloat right  = shapeBounds.origin.x + shapeBounds.size.width;
-    CGFloat bottom = shapeBounds.origin.y + shapeBounds.size.height;
-    CGFloat hMid   = shapeBounds.origin.x + shapeBounds.size.width/2;
-    CGFloat vMid   = shapeBounds.origin.y + shapeBounds.size.height/2;
     
-    CGPoint topMiddle    = CGPointMake(hMid, top);
-    CGPoint rightMiddle  = CGPointMake(right, vMid);
-    CGPoint bottomMiddle = CGPointMake(hMid, bottom);
-    CGPoint leftMiddle   = CGPointMake(left, vMid);
+    CGRect singleShapeRect = CGRectInset(shapeArea, 1, 0.333);
+
+    NSArray *shapeRectsArray = Nil;
+    
+    if ([self.card.number isEqualToNumber:@1]) {
+        shapeRectsArray = @[[NSValue valueWithCGRect:singleShapeRect]];
+    }
+    
+    else if ([self.card.number isEqualToNumber:@2]) {
+        CGRect upperRect = singleShapeRect;
+        CGRect lowerRect = singleShapeRect;
+        upperRect.origin.y -= upperRect.size.height/2;
+        lowerRect.origin.y += lowerRect.size.height/2;
+        
+        shapeRectsArray = @[[NSValue valueWithCGRect:upperRect],
+                            [NSValue valueWithCGRect:lowerRect]];
+    }
+    
+    else if ([self.card.number isEqualToNumber:@3]) {
+        CGRect upperRect = singleShapeRect;
+        CGRect lowerRect = singleShapeRect;
+        upperRect.origin.y -= upperRect.size.height;
+        lowerRect.origin.y += lowerRect.size.height;
+        
+        shapeRectsArray = @[[NSValue valueWithCGRect:upperRect],
+                            [NSValue valueWithCGRect:singleShapeRect],
+                            [NSValue valueWithCGRect:lowerRect]];
+    }
+    
+    else [NSException raise:@"Invalid card number"
+                     format:@"Number was: %@", self.card.number];
+    
+    if (!shapeRectsArray)
+        [NSException raise:@"shapeRectsArray was never filled" format:@""];
     
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
     
     // DRAW DIAMOND
     if ([self.card.shape isEqualToString:@"Diamond"]) {
-        [shapeOutline moveToPoint:[self normPt:topMid ofRect:shapeBounds]];
+//        [shapeOutline moveToPoint:[self normPt:topMid ofRect:shapeArea]];
         
         // TODO etc.
-        [shapeOutline addLineToPoint:rightMiddle];
-        [shapeOutline addLineToPoint:bottomMiddle];
-        [shapeOutline addLineToPoint:leftMiddle];
-        [shapeOutline closePath];
+//        [shapeOutline addLineToPoint:rightMiddle];
+//        [shapeOutline addLineToPoint:bottomMiddle];
+//        [shapeOutline addLineToPoint:leftMiddle];
+//        [shapeOutline closePath];
     }
     
     // DRAW OVAL
     else if ([self.card.shape isEqualToString:@"Oval"]) {
-        shapeOutline = [UIBezierPath bezierPathWithOvalInRect:shapeBounds];
+        shapeOutline = [UIBezierPath bezierPathWithOvalInRect:shapeArea];
     }
     
     // DRAW SQUIGGLE (uh oh...)
     else if ([self.card.shape isEqualToString:@"Squiggle"]) {
-        [shapeOutline moveToPoint:topMiddle];
+//        [shapeOutline moveToPoint:topMiddle];
         // TODO
     }
     
@@ -141,12 +157,12 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     
     // SOLID
     if ([self.card.fillType isEqualToString:@"Solid"]) {
-        [shapeOutline fill];
+//        [shapeOutline fill];
     }
     
     // UNFILLED
     else if ([self.card.fillType isEqualToString:@"Unfilled"]) {
-        [shapeOutline stroke];
+//        [shapeOutline stroke];
     }
     
     // STRIPED (uh oh...)
