@@ -12,21 +12,24 @@
 
 - (int)match:(NSArray *)otherCards
 {
-    int matchScore = 0;
+    int matchScore = 1;
     NSMutableSet *chosenShapes = [NSMutableSet setWithObject:self.shape];
     NSMutableSet *chosenColors = [NSMutableSet setWithObject:self.color];
     NSMutableSet *chosenFills  = [NSMutableSet setWithObject:self.fillType];
+    NSMutableSet *chosenNumbers = [NSMutableSet setWithObject:self.number];
     for (SetCard *otherCard in otherCards) {
         [chosenShapes addObject:otherCard.shape];
         [chosenColors addObject:otherCard.color];
         [chosenFills addObject:otherCard.fillType];
+        [chosenNumbers addObject:otherCard.number];
     }
     
-    if (([chosenShapes count] == 3 || [chosenShapes count] == 1) &&
-        ([chosenColors count] == 3 || [chosenColors count] == 1) &&
-        ([chosenFills count]  == 3 || [chosenFills count]  == 1))
+    if ( [chosenShapes  count] == 2 ||
+         [chosenColors  count] == 2 ||
+         [chosenFills   count] == 2 ||
+         [chosenNumbers count] == 2 )
     {
-        matchScore = 1;
+        matchScore = 0;
     }
     
     return matchScore;
@@ -63,8 +66,11 @@
          @{NSBackgroundColorAttributeName: [UIColor yellowColor]}];
     }
     
+    NSArray *stringArray = @[[SetCard shapesDict][self.shape], self.number.description];
+    
     return [[NSAttributedString alloc]
-            initWithString:[SetCard shapesDict][self.shape] attributes:attributes];
+            initWithString:[stringArray componentsJoinedByString:@""]
+                attributes:attributes];
 }
 
 - (NSString *)contents

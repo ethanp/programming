@@ -11,8 +11,7 @@
 
 @implementation SetCardDeck
 
-/* `instancetype` means that this method returns an
- * instance of 'this' class */
+/* returns an instance of 'this' class */
 - (instancetype)init
 {
     self = [super init];
@@ -21,13 +20,15 @@
         for (NSString *shape in [SetCard validShapes]) {
             for (NSString *color in [SetCard validColors]) {
                 for (NSString *fill in [SetCard validFillTypes]) {
-                    SetCard *card = [[SetCard alloc] init];
-                    card.shape = shape;
-                    card.color = color;
-                    card.fillType = fill;
-                    [self addCard:card];
+                    for (int num = 1; num <= 3; num++) {
+                        SetCard *card = [[SetCard alloc] init];
+                        card.shape = shape;
+                        card.color = color;
+                        card.fillType = fill;
+                        card.number = [NSNumber numberWithInt:num];
+                        [self addCard:card];
+                    }
                 }
-                
             }
         }
     }

@@ -14,6 +14,7 @@
 @property (nonatomic) NSString *color;
 @property (nonatomic) NSString *fillType;
 @property (nonatomic) NSDictionary *colorDict;
+@property (nonatomic) NSNumber *number;
 
 
 - (NSAttributedString *)attributedContents;

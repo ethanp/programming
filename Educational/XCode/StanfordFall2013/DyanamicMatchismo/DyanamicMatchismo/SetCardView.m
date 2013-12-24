@@ -32,6 +32,10 @@
     [super drawRect:rect];
     
     // TODO draw the card face in here
+    
+    // TODO THIS IS ALLL WRONG BECAUSE I NEED TO DRAW
+    // THE RIGHT /NUMBER/ OF EACH TYPE OF SHAPE!!
+    
     // still not sure how to accomplish this for all the shapes
     
     CGRect shapeBounds = CGRectInset(self.frame,
@@ -73,7 +77,8 @@
     
     // DRAW SQUIGGLE (uh oh...)
     else if ([self.card.shape isEqualToString:@"Squiggle"]) {
-        
+        [shapeOutline moveToPoint:topMiddle];
+        // TODO
     }
     
     else [NSException raise:@"Invalid card shape" format:@"%@", self.card.shape];
