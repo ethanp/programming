@@ -27,16 +27,71 @@
 
 #define SHAPE_INSET_PROPORTION 0.7
 
+enum loc { left, top, right, bottom, hMid, vMid, uprMid, lwrMid };
+- (CGFloat)normBound:(int)location ofRect:(CGRect)rect
+{
+    if (location == left)   return rect.origin.x;
+    if (location == top)    return rect.origin.y;
+    if (location == right)  return rect.origin.x + rect.size.width;
+    if (location == bottom) return rect.origin.y + rect.size.height;
+    if (location == hMid)   return rect.origin.x + rect.size.width/2;
+    if (location == vMid)   return rect.origin.y + rect.size.height/2;
+    if (location == uprMid) return rect.origin.y; // TODO finish this line
+    // TODO write the other ones
+    
+    else [NSException raise:@"normBound has limited capabilities"
+                     format:@"You passed a %d", location];
+    return -1; // unreachable
+}
+
+enum pt { topMid, rtMid, btMid, lftMid, midMid,
+          topRt, btRt, btLft, tpLft,
+          upLftMid, btRtMid };
+- (CGPoint)normPt:(int)location ofRect:(CGRect)rect
+{
+    if (location == topMid)
+        return CGPointMake([self normBound:hMid ofRect:rect],
+                           [self normBound:top ofRect:rect]);
+    if (location == rtMid)
+        return CGPointMake([self normBound:right ofRect:rect],
+                           [self normBound:vMid ofRect:rect]);
+    if (location == btMid)
+        return CGPointMake([self normBound:hMid ofRect:rect],
+                           [self normBound:bottom ofRect:rect]);
+    if (location == lftMid)
+        return CGPointMake([self normBound:left ofRect:rect],
+                           [self normBound:vMid ofRect:rect]);
+    if (location == midMid)
+        return CGPointMake([self normBound:hMid ofRect:rect],
+                           [self normBound:vMid ofRect:rect]);
+    if (location == topRt)
+        return CGPointMake([self normBound:right ofRect:rect],
+                           [self normBound:top ofRect:rect]);
+    if (location == btRt)
+        return CGPointMake([self normBound:right ofRect:rect],
+                           [self normBound:bottom ofRect:rect]);
+    if (location == btLft)
+        return CGPointMake([self normBound:left ofRect:rect],
+                           [self normBound:bottom ofRect:rect]);
+    if (location == tpLft)
+        return CGPointMake([self normBound:left ofRect:rect],
+                           [self normBound:top ofRect:rect]);
+    
+    else [NSException raise:@"normPt has limited capabilities"
+                     format:@"You passed a %d", location];
+    return CGPointZero; // unreachable
+}
+
 - (void)drawRect:(CGRect)rect
 {
     [super drawRect:rect];
     
     // TODO draw the card face in here
     
-    // TODO THIS IS ALLL WRONG BECAUSE I NEED TO DRAW
-    // THE RIGHT /NUMBER/ OF EACH TYPE OF SHAPE!!
+    // TODO keep changing all this to use the card.number
     
-    // still not sure how to accomplish this for all the shapes
+    // TODO note that the shapes themselves are always the same size
+    // its just that there are either 1,2,3 of them
     
     CGRect shapeBounds = CGRectInset(self.frame,
                                      SHAPE_INSET_PROPORTION,
@@ -53,17 +108,14 @@
     CGPoint rightMiddle  = CGPointMake(right, vMid);
     CGPoint bottomMiddle = CGPointMake(hMid, bottom);
     CGPoint leftMiddle   = CGPointMake(left, vMid);
-//    CGPoint middleMiddle = CGPointMake(hMid, vMid);
-//    CGPoint topRight     = CGPointMake(right, top);
-//    CGPoint bottomRight  = CGPointMake(right, bottom);
-//    CGPoint bottomLeft   = CGPointMake(left, bottom);
-//    CGPoint topLeft      = CGPointMake(left, top);
     
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
     
     // DRAW DIAMOND
     if ([self.card.shape isEqualToString:@"Diamond"]) {
-        [shapeOutline moveToPoint:topMiddle];
+        [shapeOutline moveToPoint:[self normPt:topMid ofRect:shapeBounds]];
+        
+        // TODO etc.
         [shapeOutline addLineToPoint:rightMiddle];
         [shapeOutline addLineToPoint:bottomMiddle];
         [shapeOutline addLineToPoint:leftMiddle];

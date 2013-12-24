@@ -24,14 +24,12 @@
         [chosenNumbers addObject:otherCard.number];
     }
     
-    if ( [chosenShapes  count] == 2 ||
-         [chosenColors  count] == 2 ||
-         [chosenFills   count] == 2 ||
-         [chosenNumbers count] == 2 )
-    {
+    if ( [chosenShapes  count] == 2 || [chosenColors  count] == 2 ||
+         [chosenFills   count] == 2 || [chosenNumbers count] == 2 )
+        
         matchScore = 0;
-    }
-    
+
+
     return matchScore;
 }
 

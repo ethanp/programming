@@ -3,6 +3,7 @@
 //  SuperCard
 //
 //  Created by CS193p Instructor.
+//  Modified by Ethan Petuchowski, no relation to Stanford.
 //  Copyright (c) 2013 Stanford University. All rights reserved.
 //
 
