@@ -21,22 +21,21 @@
 // TODO check out DROPIT in 'Lecture Code' for how to do this
 - (void)animateCardInsertion
 {
-    self.hidden = self.card.isMatched;
+    self.frame = CGRectMake(400, 400,
+                            self.homeFrame.size.width,
+                            self.homeFrame.size.height);
+    [UIView animateWithDuration:0.5
+                          delay:0.2
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{ self.frame = self.homeFrame; }
+                     completion:nil];
     return;
 }
 
 // TODO
 - (void)animateCardRemoval
 {
-    /* self.hidden means:
-        1. it still has its place in the view hierarchy,
-        2. it still belongs to the superview,
-        3. it still lives in its frame,
-        4. it is not on screen,
-        5. it does not handle events.                   
-     He said "you probably won't need this for the homework, but you could.  */
-    
-    self.hidden = self.card.isMatched;
+
     return;
 }
 
@@ -86,13 +85,11 @@
 - (id)initWithFrame:(CGRect)frame withCard:(Card *)card
         inContainer:(BaseViewController *)viewController
 {
-    self = [super initWithFrame:frame];
-    if (self) {
-        // Initialization code
-        self.card = card;
-        self.container = viewController;
-    }
-    [self animateCardInsertion];
+    self = [self initWithFrame:frame];
+    // Initialization code
+    self.card = card;
+    self.container = viewController;
+    self.homeFrame = frame;
     return self;
 }
 

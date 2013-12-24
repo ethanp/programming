@@ -8,9 +8,24 @@ Some Notes from Lecture
 * Add a subview by sending `[containingView addSubview:view]`
 * Remove a view by sending `[viewToRemove removeFromSuperView]`
 * I should `hidden:YES` on `match` but `removeFromSuperView` on `redeal`
+    * self.hidden means:
+        1. it still has its place in the view hierarchy,
+        2. it still belongs to the superview,
+        3. it still lives in its frame,
+        4. it is not on screen,
+        5. it does not handle events.
+     * He said "you probably won't need this for the homework, but you could.
+* What is an animation?
+    * You set a new value for a `property` of a `UIView`
+    * But the *transition* to this new value occurs *over time*
 
 Concrete Next Steps to Persue
 -----------------------------
+1. Cards should fly in from off the screen
+    * `CardView`s should have an `@property CGRect homeFrame` which is where they belong in the `Grid`
+    * Then they fly in from `self.superview.origin`? and `animateWithDuration` setting `self.frame = self.homeFrame`
+    * To fly *out*, just set `self.frame = self.superview.origin` or something
+    * `- (void)animateCardInsertion`
 1. Cards should flip according to the underlying game functionality
     * **Plan:**
         * `[PlayingCardView handleTap:]` calls `[self.container cardWasChosen:]`

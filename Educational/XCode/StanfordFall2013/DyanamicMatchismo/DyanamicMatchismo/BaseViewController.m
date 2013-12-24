@@ -36,7 +36,7 @@
 // makes cards appear on the screen when the game first starts up
 - (void)viewDidLayoutSubviews
 {
-    [self updateUI];
+    [self restartGame];
 }
 
 - (IBAction)touchRedealButton:(UIButton *)sender {
@@ -97,6 +97,7 @@
     
     [self putCardInViewAtIndex:newIndex intoViewInRect:rect];
     CardView *brandNewCardView = [self.cardsInView objectForKey:card.attributedContents];
+    [self.layoutContainerView addSubview:brandNewCardView];
     [brandNewCardView animateCardInsertion];
 }
 
@@ -138,9 +139,8 @@
     }
     
     // remove cards that have been removed for any reason (really just matched)
-    for (NSString *cardName in viewDictCopy.allKeys) {
+    for (NSString *cardName in viewDictCopy.allKeys)
         [self removeCardFromView:cardName];
-    }
     
     // update score
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];

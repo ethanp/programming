@@ -187,9 +187,8 @@
            withCard:(PlayingCard *)card
         inContainer:(PlayingCardViewController *)viewController
 {
-    self = [self initWithFrame:frame];
-    self.card = card;
-    self.container = viewController;
+    // this method can be removed if this ends up being the only line
+    self = [super initWithFrame:frame withCard:card inContainer:viewController];
     return self;
 }
 
