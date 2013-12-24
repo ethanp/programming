@@ -28,9 +28,7 @@
                           delay:0.5
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{ self.frame = self.homeFrame; }
-                     completion:nil];
-    return;
-}
+                     completion:nil];}
 
 // pretty sloppy
 - (void)animateCardRemoval
@@ -38,19 +36,12 @@
     CGRect outframe = CGRectMake(400, 400,
                                  self.homeFrame.size.width,
                                  self.homeFrame.size.height);
-    if (self.card.isMatched)
-         [UIView animateWithDuration:0.5
-                               delay:2
-                             options:UIViewAnimationOptionCurveEaseInOut
-                          animations:^{ self.frame = outframe; }
-                          completion:nil];
-
-    else [UIView animateWithDuration:0.5
-                          delay:0
+    
+    [UIView animateWithDuration:0.5
+                          delay:self.card.isMatched ? 2 : 0
                         options:UIViewAnimationOptionCurveEaseInOut
                      animations:^{ self.frame = outframe; }
                      completion:nil];
-    return;
 }
 
 // Abstract
