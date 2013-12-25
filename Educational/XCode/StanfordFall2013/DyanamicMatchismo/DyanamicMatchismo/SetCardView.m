@@ -114,28 +114,24 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     CGRect singleShapeRect = CGRectInset(shapeArea, 0, shapeArea.size.height / 3);
 
     NSArray *shapeRectsArray = Nil;
+    CGRect upperRect = singleShapeRect;
+    CGRect lowerRect = singleShapeRect;
     
     /* ===========  CREATE SHAPE FRAMES  =========== */
-    
+
     if ([self.card.number isEqualToNumber:@1])
         shapeRectsArray = @[[NSValue valueWithCGRect:singleShapeRect]];
     
     else if ([self.card.number isEqualToNumber:@2]) {
-        CGRect upperRect = singleShapeRect;
-        CGRect lowerRect = singleShapeRect;
         upperRect.origin.y -= upperRect.size.height/2;
         lowerRect.origin.y += lowerRect.size.height/2;
-        
         shapeRectsArray = @[[NSValue valueWithCGRect:upperRect],
                             [NSValue valueWithCGRect:lowerRect]];
     }
     
     else if ([self.card.number isEqualToNumber:@3]) {
-        CGRect upperRect = singleShapeRect;
-        CGRect lowerRect = singleShapeRect;
         upperRect.origin.y -= upperRect.size.height;
         lowerRect.origin.y += lowerRect.size.height;
-        
         shapeRectsArray = @[[NSValue valueWithCGRect:upperRect],
                             [NSValue valueWithCGRect:singleShapeRect],
                             [NSValue valueWithCGRect:lowerRect]];
@@ -151,47 +147,37 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     /* ===========  DRAW SHAPES  =========== */
     
     NSMutableArray *bezierPathArray = [[NSMutableArray alloc] init];
-    
-    if ([self.card.shape isEqualToString:@"Diamond"])
-        for (NSValue *rectVal in shapeRectsArray)
+
+    for (NSValue *rectVal in shapeRectsArray) {
+        if ([self.card.shape isEqualToString:@"Diamond"])
             [bezierPathArray addObject:[self drawDiamondInRect:[rectVal CGRectValue]]];
-    
-    else if ([self.card.shape isEqualToString:@"Oval"])
-        for (NSValue *rectVal in shapeRectsArray)
+        else if ([self.card.shape isEqualToString:@"Oval"])
             [bezierPathArray addObject:[self drawOvalInRect:[rectVal CGRectValue]]];
-    
-    else if ([self.card.shape isEqualToString:@"Squiggle"])
-        for (NSValue *rectVal in shapeRectsArray)
+        else if ([self.card.shape isEqualToString:@"Squiggle"])
             [bezierPathArray addObject:[self drawSquiggleInRect:[rectVal CGRectValue]]];
+        else [NSException raise:@"Invalid card shape" format:@"%@", self.card.shape];
+    }
     
-    else [NSException raise:@"Invalid card shape" format:@"%@", self.card.shape];
-    
-    // COLOR
+    /* ===========  SET COLOR  =========== */
+
     UIColor *cardColor = self.card.colorDict[self.card.color];
     [cardColor set]; // does both setFill and setStroke
+
     
-    // SOLID
-    if ([self.card.fillType isEqualToString:@"Solid"])
-        for (UIBezierPath *path in bezierPathArray)
+    /* ===========  SET FILL  =========== */
+    
+    for (UIBezierPath *path in bezierPathArray) {
+        if ([self.card.fillType isEqualToString:@"Solid"])
             [path fill];
-    
-    // UNFILLED
-    else if ([self.card.fillType isEqualToString:@"Unfilled"])
-        for (UIBezierPath *path in bezierPathArray)
+        else if ([self.card.fillType isEqualToString:@"Unfilled"])
             [path stroke];
-    
-    // STRIPED: draw vertical stripes all across the rect, then clip them to the shape
-    else if ([self.card.fillType isEqualToString:@"Striped"]) {
-        for (int iconNum = 1; iconNum <= [self.card.number intValue]; iconNum++) {
-            UIBezierPath *path = bezierPathArray[iconNum-1];
-            CGRect rect = [shapeRectsArray[iconNum-1] CGRectValue];
+        else if ([self.card.fillType isEqualToString:@"Striped"]) {
             CGContextRef context = UIGraphicsGetCurrentContext();
             CGContextSaveGState(context);  // save state before clipping
             // clip to only keep strokes inside the path
             [path addClip];
-            
             // draw stripes
-            for (int xOffset = 0; xOffset <= rect.size.width/SHAPE_INSET_PROPORTION; xOffset += 2) {
+            for (int xOffset = 0; xOffset <= self.frame.size.width; xOffset += 2) {
                 UIBezierPath *stripe = [[UIBezierPath alloc] init];
                 [stripe moveToPoint:CGPointMake(xOffset, rect.origin.y)];
                 [stripe addLineToPoint:
@@ -199,14 +185,12 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
                 stripe.lineWidth /= 2;
                 [stripe stroke];
             }
-        
             // draw outline
             [path stroke];
             CGContextRestoreGState(UIGraphicsGetCurrentContext());
         }
+        else [NSException raise:@"Invalid card fillType" format:@"%@", self.card.fillType];
     }
-    
-    else [NSException raise:@"Invalid card fillType" format:@"%@", self.card.fillType];
     
     // TODO differentiate it when it's chosen (shade? outline? etc?)
     if (self.thinksItsChosen) {} else {}
