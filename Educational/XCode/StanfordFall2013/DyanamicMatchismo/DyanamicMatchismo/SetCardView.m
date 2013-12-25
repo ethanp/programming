@@ -80,8 +80,6 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
 {
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
     [shapeOutline moveToPoint:[self normPt:topMid ofRect:rect]];
-    
-    // TODO etc.
     [shapeOutline addLineToPoint:[self normPt:rtMid  ofRect:rect]];
     [shapeOutline addLineToPoint:[self normPt:btMid  ofRect:rect]];
     [shapeOutline addLineToPoint:[self normPt:lftMid ofRect:rect]];
@@ -99,7 +97,7 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
 - (UIBezierPath *)drawSquiggleInRect:(CGRect)rect
 {
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
-//    [shapeOutline moveToPoint:[self normBound:topMid ofRect:rect]];
+    [shapeOutline moveToPoint:[self normPt:topMid ofRect:rect]];
     return shapeOutline;
 }
 
@@ -182,9 +180,30 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
         for (UIBezierPath *path in bezierPathArray)
             [path stroke];
     
-    // STRIPED (uh oh...)
+    // STRIPED: draw vertical stripes all across the rect, then clip them to the shape
     else if ([self.card.fillType isEqualToString:@"Striped"]) {
-        // ???
+        for (int iconNum = 1; iconNum <= [self.card.number intValue]; iconNum++) {
+            UIBezierPath *path = bezierPathArray[iconNum-1];
+            CGRect rect = [shapeRectsArray[iconNum-1] CGRectValue];
+            CGContextRef context = UIGraphicsGetCurrentContext();
+            CGContextSaveGState(context);  // save state before clipping
+            // clip to only keep strokes inside the path
+            [path addClip];
+            
+            // draw stripes
+            for (int xOffset = 0; xOffset <= rect.size.width/SHAPE_INSET_PROPORTION; xOffset += 2) {
+                UIBezierPath *stripe = [[UIBezierPath alloc] init];
+                [stripe moveToPoint:CGPointMake(xOffset, rect.origin.y)];
+                [stripe addLineToPoint:
+                 CGPointMake(xOffset, [self normBound:bottom ofRect:rect])];
+                stripe.lineWidth /= 2;
+                [stripe stroke];
+            }
+        
+            // draw outline
+            [path stroke];
+            CGContextRestoreGState(UIGraphicsGetCurrentContext());
+        }
     }
     
     else [NSException raise:@"Invalid card fillType" format:@"%@", self.card.fillType];
