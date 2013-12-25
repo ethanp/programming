@@ -50,20 +50,23 @@ static const int NUM_CARDS_TO_MATCH = 3;
             if ([self.chosenCards count] >= self.numCardsToMatch - 1) {
                 int matchScore = [card match:self.chosenCards];
                 [self.chosenCards addObject:card];
-                NSMutableAttributedString *cardsContents = [[NSMutableAttributedString alloc] init];
+                NSMutableAttributedString *cardsContents = [[NSMutableAttributedString
+                                                             alloc] init];
                 for (Card *turned in self.chosenCards) {
                     [cardsContents appendAttributedString:[turned attributedContents]];
                 }
                 if (matchScore) {
                     int scoreIncrease = matchScore * MATCH_BONUS;
                     self.score += scoreIncrease;
-                    [toRet appendAttributedString:[[NSAttributedString alloc] initWithString: @"Matched: "]];
+                    [toRet appendAttributedString:[[NSAttributedString alloc]
+                                                   initWithString: @"Matched: "]];
                     [toRet appendAttributedString:cardsContents];
                     [self markAllCardsAsMatched];
                     NSString *plural = scoreIncrease > 1 ? @"s" : @"";
 
                     NSString *pointString = [[NSString alloc]
-                                             initWithFormat:@" for %d point%@!", scoreIncrease, plural];
+                                             initWithFormat:@" for %d point%@!",
+                                             scoreIncrease, plural];
                     
                     [toRet appendAttributedString:[[NSAttributedString alloc]
                                                    initWithString:pointString]];
@@ -73,7 +76,8 @@ static const int NUM_CARDS_TO_MATCH = 3;
                     oldCard.chosen = NO;
                     [self.chosenCards removeObjectAtIndex:0];
                     NSString *noPointMessage = [[NSString alloc]
-                                                initWithFormat:@"don't match, %d point penalty", MISMATCH_PENALTY];
+                                                initWithFormat:@"don't match, %d point penalty",
+                                                MISMATCH_PENALTY];
 
                     [toRet appendAttributedString:cardsContents];
                     

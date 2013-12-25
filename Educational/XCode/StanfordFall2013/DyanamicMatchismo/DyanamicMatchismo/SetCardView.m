@@ -17,8 +17,9 @@
 }
 
 #define SHAPE_INSET_PROPORTION 0.1
+#define OFF_MID_PROP 0.3
 
-enum loc { left, top, right, bottom, hMid, vMid, uprMid, lwrMid };
+enum loc { left, top, right, bottom, hMid, vMid };
 
 - (CGFloat)normBound:(int)location ofRect:(CGRect)rect
 {
@@ -28,8 +29,6 @@ enum loc { left, top, right, bottom, hMid, vMid, uprMid, lwrMid };
     if (location == bottom) return rect.origin.y + rect.size.height;
     if (location == hMid)   return rect.origin.x + rect.size.width/2;
     if (location == vMid)   return rect.origin.y + rect.size.height/2;
-    if (location == uprMid) return rect.origin.y; // TODO finish this line
-    // TODO write the other ones
     
     else [NSException raise:@"normBound has limited capabilities"
                      format:@"You passed a %d", location];
@@ -97,7 +96,15 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
 - (UIBezierPath *)drawSquiggleInRect:(CGRect)rect
 {
     UIBezierPath *shapeOutline = [[UIBezierPath alloc] init];
+    CGPoint startPoint = [self normPt:tpLft ofRect:rect];
+    startPoint.y += 10;
     [shapeOutline moveToPoint:[self normPt:topMid ofRect:rect]];
+    [shapeOutline addCurveToPoint:[self normPt:btMid ofRect:rect]
+                    controlPoint1:[self normPt:tpLft ofRect:rect]
+                    controlPoint2:[self normPt:midMid ofRect:rect]];
+    [shapeOutline addCurveToPoint:[self normPt:topMid ofRect:rect]
+                    controlPoint1:[self normPt:btRt ofRect:rect]
+                    controlPoint2:[self normPt:midMid ofRect:rect]];
     return shapeOutline;
 }
 
