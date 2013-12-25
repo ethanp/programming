@@ -105,17 +105,15 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
 {
     [super drawRect:rect];
     
-    // TODO draw the card face in here
-    
     CGRect shapeArea = CGRectInset(self.bounds,
                                    self.bounds.size.width * SHAPE_INSET_PROPORTION,
                                    self.bounds.size.height * SHAPE_INSET_PROPORTION);
     
     CGRect singleShapeRect = CGRectInset(shapeArea, 0, shapeArea.size.height / 3);
-
-    NSArray *shapeRectsArray = Nil;
     CGRect upperRect = singleShapeRect;
     CGRect lowerRect = singleShapeRect;
+    NSArray *shapeRectsArray = Nil;
+    
     
     /* ===========  CREATE SHAPE FRAMES  =========== */
 
@@ -158,13 +156,14 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
         else [NSException raise:@"Invalid card shape" format:@"%@", self.card.shape];
     }
     
+    
     /* ===========  SET COLOR  =========== */
 
     UIColor *cardColor = self.card.colorDict[self.card.color];
     [cardColor set]; // does both setFill and setStroke
 
     
-    /* ===========  SET FILL  =========== */
+    /* ===========  DRAW FILL  =========== */
     
     for (UIBezierPath *path in bezierPathArray) {
         if ([self.card.fillType isEqualToString:@"Solid"])
@@ -192,9 +191,10 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
         else [NSException raise:@"Invalid card fillType" format:@"%@", self.card.fillType];
     }
     
-    // TODO differentiate it when it's chosen (shade? outline? etc?)
+    
+    /* TODO: ===========  DIFFERENTIATE CHOSEN  =========== */
+    
     if (self.thinksItsChosen) {} else {}
 }
-
 
 @end
