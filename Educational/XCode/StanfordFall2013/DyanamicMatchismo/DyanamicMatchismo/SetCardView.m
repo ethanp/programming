@@ -13,7 +13,12 @@
 // TODO
 - (void)animateChooseCard
 {
-    
+    [UIView animateWithDuration:0.5
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{ self.alpha = self.thinksItsChosen ? 0.6 : 1.0; }
+                     completion:nil
+     ];
 }
 
 #define SHAPE_INSET_PROPORTION 0.1
@@ -201,7 +206,7 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     
     /* TODO: ===========  DIFFERENTIATE CHOSEN  =========== */
     
-    if (self.thinksItsChosen) {} else {}
+    self.alpha = self.thinksItsChosen ? 0.6 : 1.0;
 }
 
 @end
