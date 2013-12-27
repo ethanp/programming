@@ -33,10 +33,18 @@
     [self redrawAllCards];
 }
 
+// TODO: I think this is what gets called when the layout is about to rotate
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
+
 // makes cards appear on the screen when the game first starts up
 - (void)viewDidLayoutSubviews
 {
-    [self restartGame];
+    // WHY DOES THIS GET CALLED ≥TWICE WHEN THE APP STARTS UP?!
+    if ([self.cardsInView count] == 0)
+        [self drawAllCards];
 }
 
 - (IBAction)touchRedealButton:(UIButton *)sender {
@@ -54,18 +62,22 @@
 
 - (void)redrawAllCards
 {
+    for (NSString *cardName in [self.cardsInView copy])
+        [self removeCardFromView:cardName];
+    
+    [self drawAllCards];
+}
+
+// doesn't check that these cards aren't already in the view
+- (void)drawAllCards
+{
     CGFloat height = self.layoutContainerView.bounds.size.height;
     CGFloat width  = self.layoutContainerView.bounds.size.width;
     [self.grid setCellAspectRatio:width/height];
     [self.grid setSize:CGSizeMake(width, height)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
-    
-    for (NSString *cardName in [self.cardsInView copy])
-        [self removeCardFromView:cardName];
-    
     for (Card *card in self.game.cardsInPlay)
         [self addCardToView:card];
-    
     [self updateUI];
 }
 

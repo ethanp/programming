@@ -10,7 +10,6 @@
 
 @implementation SetCardView
 
-// TODO
 - (void)animateChooseCard
 {
     [UIView animateWithDuration:0.5
@@ -204,7 +203,7 @@ enum pt { topMid, rtMid, btMid, lftMid, midMid,
     }
     
     
-    /* TODO: ===========  DIFFERENTIATE CHOSEN  =========== */
+    /* ===========  DIFFERENTIATE CHOSEN  =========== */
     
     self.alpha = self.thinksItsChosen ? 0.6 : 1.0;
 }

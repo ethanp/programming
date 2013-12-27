@@ -22,6 +22,7 @@
 
 - (void)awakeFromNib
 {
+    [super awakeFromNib];
     UIPinchGestureRecognizer *pinchRecognizer =
     [[UIPinchGestureRecognizer alloc] initWithTarget:self
                                               action:@selector(handlePinch:)];

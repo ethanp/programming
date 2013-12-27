@@ -5,10 +5,12 @@ Started 12/19/13
 
 Evolving List of Next-Steps to Persue
 -------------------------------------
+
 1. Handle transition to `landscape` layout
-    * once you have called `layoutIfNeeded` you need to tell the `CollectionView`
-      that it has changed. Try calling `[layout invalidateLayout];` after you
-      have done `layoutIfNeeded`
+    * Why do cards change shape-ratio on the switch to `landscape`?
+    * maybe from the `BaseViewController` override `view{Will|Did}LayoutSubviews`?
+    * I have written in my notes what functions get called
+    * Also there are some notes on this in the slides
 1. Make one card deal after the other
     * Add cards to-be-added to a `queue`
     * On `completion:^(BOOL c){if(c)[self.container addCardFromQueue]}`
