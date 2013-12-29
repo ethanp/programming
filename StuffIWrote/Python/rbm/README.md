@@ -14,11 +14,16 @@ Sample Usages
 ```bash
 
     # add time to a file and
-    # put "Work iOS View Controller Docs" on the Work Calendar as a 1-hour long event
-    $ minco start Work iOS View Controller Docs
+    # put "iOS View Controller Docs" on the Work Calendar as a 1-hour long event
+    $ minco start iOS View Controller Docs
 
     # stops counting and adjusts Calendar event to reflect true time
     $ minco end
+
+    ######## SOON #########
+
+    # print amount of time spent so far on task
+    $ minco show
 
     ######## EVENTUALLY #########
 
