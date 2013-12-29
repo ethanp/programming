@@ -12,15 +12,15 @@ In There Now
     # put "iOS View Controller Docs" on the Work Calendar as a 1-hour long event
     $ minco start iOS View Controller Docs
 
-    # stops counting and adjusts Calendar event to reflect true time
+    # print time AND adjust Calendar event to show now as the end time
+    # of the most recent task
     $ minco end
 
     # print amount of time spent so far on task
     $ minco show
-
 ```
 
-Eventually Maybe
+Would be quite simple to add if desirable
 
 ```bash
 
