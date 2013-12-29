@@ -3,21 +3,23 @@
 ## Started: 12/28/13
 
 import shutil
-import subprocess
-import sys
 import os
-import datetime
 import glob
-import csv
+
+import sys
+import datetime
+from subprocess import call
 import argparse
 
 import applescripts
 
 # set home dir
 HOME_PATH = '/Users/Ethan/rbm_file'
-storage_file = open(HOME_PATH, 'a')
+STORAGE_FILE = open(HOME_PATH, 'a')
+TIME_FORMAT = '%m/%d/%Y %I:%M %p'
+TIME_NOW = datetime.datetime.now()
 
-# TODO
+# tested to work
 def start(name=None):
     '''
     "start the clock" for the given task
@@ -26,29 +28,18 @@ def start(name=None):
         print "no name given, cancelling"
         return False
 
-    # print name of task
-    storage_file.write(name)
-
-    # print timestamp
-    t = datetime.datetime
-    now_string = str(t.hour) + ':' + str(t.minute) + ':' + str(t.second)
-    storage_file.write(now_string)
+    # print name of task and timestamp
+    STORAGE_FILE.write(name+'\n')
+    STORAGE_FILE.write(TIME_NOW.strftime(TIME_FORMAT)+'\n')
 
     # create Calendar event
+    END_TIME = TIME_NOW + datetime.timedelta(hours=1)
     applescripts.createEvent(calName='Work',
                              eventTitle=name,
                              eventNotes='',
-                             startDate='')
-
-    pass
-
-# example usage
-#applescripts.createEvent(calName='theCalName',
-#             eventTitle='theEventTitle',
-#             eventNotes='theEventNotes',
-#             eventLocation='theEventLocation',
-#             startDate='November 4, 2013 6:30:00 PM',
-#             endDate='November 5, 2013 1:00:00 AM')
+                             eventLocation='',
+                             startDate=TIME_NOW.strftime(TIME_FORMAT),
+                             endDate=END_TIME.strftime(TIME_FORMAT))
 
 
 # TODO

@@ -1,4 +1,6 @@
 # Copied from the unfinished Minco Command Line Tool project
+from subprocess import call
+
 
 def createEvent(**kwargs):
     """
@@ -30,8 +32,13 @@ tell application "Calendar"
 	end tell
 end tell
     '''
-
     theScriptHeader = theScriptHeader.format(**kwargs)
+    the_script = theScriptHeader + restOfTheScript
+    with open("script.scpt", 'wr') as script:
+        script.write(the_script)
+    call(["osacompile", "script.scpt"])
+    call(["osascript", "script.scpt"])
+    call(["rm", "-f", "script.scpt", "a.scpt"])
     return theScriptHeader+restOfTheScript
 
 
