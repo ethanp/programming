@@ -71,6 +71,7 @@
 // NEVER CALL it DIRECTLY
 - (void)drawRect:(CGRect)rect
 {
+    [super drawRect:rect];
     UIBezierPath *roundedRect = [UIBezierPath
                                  bezierPathWithRoundedRect:self.bounds
                                  cornerRadius:[self cornerRadius]];

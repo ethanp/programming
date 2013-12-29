@@ -5,14 +5,26 @@ Started 12/19/13
 
 Evolving List of Next-Steps to Persue
 -------------------------------------
+
 1. Handle transition to `landscape` layout
-    * once you have called `layoutIfNeeded` you need to tell the `CollectionView`
-      that it has changed. Try calling `[layout invalidateLayout];` after you
-      have done `layoutIfNeeded`
+    * Why do cards change shape-ratio on the switch to `landscape`?
+    * maybe from the `BaseViewController` override `view{Will|Did}LayoutSubviews`?
+    * Read [How View Controllers Participate in the View Layout Process](https://developer.apple.com/library/IOS/featuredarticles/ViewControllerPGforiPhoneOS/AdoptingaFull-ScreenLayout/AdoptingaFull-ScreenLayout.html#//apple_ref/doc/uid/TP40007457-CH13-SW1)
+    * I have written in my notes what functions get called
+    * Also there are some notes on this in the slides
 1. Make one card deal after the other
     * Add cards to-be-added to a `queue`
-    * On `completion:^(BOOL c){if(c)[self.container addCardFromQueue]}`
-        * That's probably not right exactly as-is, but it should be something like that
+
+```
+
+    completion:^(BOOL c){
+        if(c){
+            [self.container animationCompleted:self];
+            [self.container animateNextCardFromQueue];
+    }}
+
+```
+
 1. Make cards fill screen again when there are only a few left
     * Ideally, they should "fly" to their new position
 1. Implement `handlePinch:`

@@ -75,6 +75,7 @@
                             <constraint firstItem="dif-z2-vWJ" firstAttribute="top" secondItem="ogD-zP-V8D" secondAttribute="bottom" constant="25" id="yVQ-gV-6d4"/>
                         </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
                     <tabBarItem key="tabBarItem" title="PlayingCard" id="ut0-il-vh4"/>
                     <connections>
                         <outlet property="layoutContainerView" destination="q5B-gM-DJ9" id="ZZD-3P-3GT"/>
@@ -133,6 +134,7 @@
                             <constraint firstItem="OGh-wF-AvS" firstAttribute="top" secondItem="zk9-C0-chg" secondAttribute="top" constant="20" symbolic="YES" id="m7u-pY-wPy"/>
                         </constraints>
                     </view>
+                    <extendedEdge key="edgesForExtendedLayout"/>
                     <tabBarItem key="tabBarItem" title="Set" id="XNG-p1-3sZ"/>
                     <connections>
                         <outlet property="layoutContainerView" destination="OGh-wF-AvS" id="PoQ-Qa-ONh"/>
