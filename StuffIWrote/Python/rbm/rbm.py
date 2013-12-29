@@ -11,18 +11,35 @@ import glob
 import csv
 import argparse
 
-from util import *
+import applescripts
 
+# set home dir
+HOME_PATH = '/Users/Ethan/rbm_file'
+storage_file = open(HOME_PATH, 'a')
 
 # TODO
 def start(name=None):
     '''
     "start the clock" for the given task
     '''
-    # open the storage file
+    if not name:
+        print "no name given, cancelling"
+        return False
+
     # print name of task
+    storage_file.write(name)
+
     # print timestamp
+    t = datetime.datetime
+    now_string = str(t.hour) + ':' + str(t.minute) + ':' + str(t.second)
+    storage_file.write(now_string)
+
     # create Calendar event
+    applescripts.createEvent(calName='Work',
+                             eventTitle=name,
+                             eventNotes='',
+                             startDate='')
+
     pass
 
 # example usage
