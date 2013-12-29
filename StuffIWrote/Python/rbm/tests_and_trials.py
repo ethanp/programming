@@ -2,7 +2,7 @@ from rbm import *
 from subprocess import call
 
 def test_createEvent_date_format():
-    applescripts.createEvent(calName='Work',
+    applescripts.create_event(calName='Work',
                              eventTitle='Sample Event',
                              eventNotes='',
                              eventLocation='',

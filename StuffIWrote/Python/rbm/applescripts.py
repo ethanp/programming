@@ -2,7 +2,7 @@
 from subprocess import call
 
 
-def createEvent(**kwargs):
+def create_event(**kwargs):
     """
     Expected Keyword Arguments:
         calName
@@ -16,8 +16,6 @@ def createEvent(**kwargs):
     theScriptHeader='''
 set calendarName to "{calName}"
 set theSummary to "{eventTitle}"
-set theDescription to "{eventNotes}"
-set theLocation to "{eventLocation}"
 set startDate to "{startDate}"
 set endDate to "{endDate}"
 '''
@@ -28,7 +26,7 @@ set endDate to date endDate
 
 tell application "Calendar"
 	tell (first calendar whose name is calendarName)
-		make new event at end of events with properties {summary:theSummary, start date:startDate, end date:endDate, description:theDescription, location:theLocation}
+		make new event at end of events with properties {summary:theSummary, start date:startDate, end date:endDate}
 	end tell
 end tell
     '''
@@ -42,13 +40,11 @@ end tell
     return the_script
 
 
-def editEvent(**kwargs):
+def edit_event(**kwargs):
     # TODO you should only have to pass in the parameters you want to change
     theScriptHeader='''
 set calendarName to "{calName}"
 set theSummary to "{eventTitle}"
-set theDescription to "{eventNotes}"
-set theLocation to "{eventLocation}"
 set startDate to "{startDate}"
 set endDate to "{endDate}"
     '''
@@ -61,9 +57,7 @@ tell application "Calendar"
 		tell (last event whose summary is theSummary)
 			set start date to startDate
 			set end date to endDate
-			set description to theDescription
 			set summary to theSummary
-			set location to theLocation
 		end tell
 	end tell
 end tell
