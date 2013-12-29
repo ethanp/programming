@@ -37,13 +37,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-}
-
-// makes cards appear on the screen when the game first starts up
-- (void)viewDidLayoutSubviews
-{
-    // WHY DOES THIS GET CALLED ≥TWICE WHEN THE APP STARTS UP?!
-    if ([self.cardsInView count] == 0)
+    if (![self.layoutContainerView.subviews count])
         [self drawAllCards];
 }
 
