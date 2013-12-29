@@ -14,8 +14,7 @@ alias ll='ls -l'
 alias lg='ls | grep'
 alias llg='ls -l | grep'
 alias hisg='history | grep'
-alias mlease='cs ~/Dropbox/MLease'
-alias nn='cs ~/Dropbox/nn394nNeuralNetworks'
+alias bug='brew update && brew upgrade'
 alias vimrc='mvim ~/.vimrc'
 alias bprof='mvim ~/.bash_profile'
 alias this='export PATH="${PATH}:."'
@@ -30,6 +29,7 @@ set -o vi
 # turn on extra metacharacters: (?|*|+|@|!)(pattern)
 shopt -s extglob
 
+# ssh -X into specified CS Server
 function uto { ssh -o ServerAliveInterval=30 -X ethanp@$1.cs.utexas.edu ; }
 
 # send file to ut
@@ -42,10 +42,10 @@ function dlmov { cd ~/Desktop/Movies/ && youtube-dl -t $1 && cd -; }
 function json { cat $1 | python -mjson.tool | less; }
 
 # change & show
-function cs { cd $1; ls; }
+function cs { cd "$1"; ls; }
 
 # as in Does Directory Have... ( Case insensitive bc -i )
-function ddh { ls $1 | grep -i $2; }
+function ddh { ls "$1" | grep -i "$2"; }
 
 # delete directory
 function dedir {
@@ -76,7 +76,7 @@ function compile {
     elif [[ $# > 2 ]]; then
         echo "You'll have to implement a better compile function to get that to work"
         echo "May I suggest using a for loop, or matching *.c & *.h"
-    elif [ -f "$1" ]; then
+    elif [[ -f "$1" ]]; then
         # I took out -Wstrict-prototypes -Wmissing-prototypes
         if [[ $# == 1 ]]; then
             gcc -W -Wall -fno-common -Wcast-align -std=c99 -Wredundant-decls\
@@ -109,7 +109,12 @@ PATH="$PATH":/usr/local/share/scala-2.10.1/bin
 PATH=${PATH}:$HOME/gsutil                         # this was for getting patent info
 PATH="/usr/local/lib/ruby:${PATH}"
 PATH=$PATH:$HOME/.rvm/bin                         # allows for "rvm" command
-PATH="~/code/fuzzycd/:$PATH"
+if [[ -d ~/code/fuzzycd ]]; then
+    FUZZYCD=~/code/fuzzycd
+else  # TODO why doesn't this work when surrounded by either '' or "" ??
+    FUZZYCD=~/code/personal_project_use/code_to_base_off_of/Ruby/fuzzycd
+fi
+PATH=$FUZZYCD:$PATH
 PATH="/usr/local/bin:${PATH}"
 export PATH
 
@@ -156,7 +161,7 @@ if [ -f ~/code/brew-completion/brew-completion.sh ]; then
 fi
 
 # Must overwrite cd-command after loading rvm bc rvm redefines cd too
-source ~/code/fuzzycd/fuzzycd_bash_wrapper.sh
+source $FUZZYCD/fuzzycd_bash_wrapper.sh
 
 ##############################################################################
 # The Cool Terminal from https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
