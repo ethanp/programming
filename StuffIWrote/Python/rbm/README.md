@@ -1,12 +1,6 @@
 The REALLY Barebones Minco
 ===============================
-New goal: make something useful and usable that can be iterated if need be
-
-Current ToDos
--------------
-
-1. Set `minco $@` as a function for `python $PATHTOPYTHONFILE $@`
-   or however you capture all args
+Goal: make something useful and usable that can be iterated if need be
 
 Sample Usages
 -------------
@@ -24,42 +18,23 @@ Sample Usages
     # print amount of time spent so far on task
     $ minco show
 
-    ######## EVENTUALLY #########
-
-    # cancel current task
-    $ minco cancel
+    ######## EVENTUALLY MAYBE #########
 
     # move start time forward 15 mins
     $ minco move start 15
 
     # move end time backward 15 mins
     $ minco move end -15
-
-    # list groups
-    $ minco ls
-
-    # add group iOS
-    $ minco add iOS
-
-    # delete group iOS
-    $ minco delete iOS
-
-    # print time for current task (block, day, total)
-    $ minco show
 ```
 
 
 File Layout
 -----------
 ```
-TODO
+Task_1 Name
+Task_1 Start Time
+Task_2 Name
+Task_2 Start Time
+...
 ```
-
-
-Futuristic Possibilities
-------------------------
-
-Use `MongoDB` to store info about commands that have been pressed and total
-time spent on activities, etc., more like what the original was going to do, so
-this information can then be aggregated.
 
