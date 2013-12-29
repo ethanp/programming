@@ -5,9 +5,9 @@ Goal: make something useful and usable that can be iterated if need be
 Sample Usages
 -------------
 
-```bash
+In There Now
 
-    ######## IN THERE NOW #########
+```bash
 
     # put "iOS View Controller Docs" on the Work Calendar as a 1-hour long event
     $ minco start iOS View Controller Docs
@@ -18,7 +18,11 @@ Sample Usages
     # print amount of time spent so far on task
     $ minco show
 
-    ######## EVENTUALLY MAYBE #########
+```
+
+Eventually Maybe
+
+```bash
 
     # move start time forward 15 mins
     $ minco move start 15
