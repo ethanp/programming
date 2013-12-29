@@ -34,11 +34,13 @@
 }
 
 
-+ (NSDictionary *)colorDict
+- (NSDictionary *)colorDict
 {
-    return @{@"Red": [UIColor redColor],
-             @"Purple": [UIColor purpleColor],
-             @"Green": [UIColor greenColor]};
+    if (!_colorDict)
+        _colorDict = @{@"Red": [UIColor redColor],
+                       @"Purple": [UIColor purpleColor],
+                       @"Green": [UIColor greenColor]};
+    return _colorDict;
 }
 
 
@@ -53,21 +55,15 @@
 - (NSAttributedString *)attributedContents
 {
     NSMutableDictionary *attributes =
-        [@{NSForegroundColorAttributeName:[SetCard colorDict][self.color]} mutableCopy];
+        [@{NSForegroundColorAttributeName:self.colorDict[self.color]} mutableCopy];
     
-    if ([self.fillType  isEqualToString: @"Solid"]) {
-        [attributes addEntriesFromDictionary:
-         @{NSBackgroundColorAttributeName: [UIColor grayColor]}];
-        
-    } else if ([self.fillType  isEqualToString: @"Striped"]) {
-        [attributes addEntriesFromDictionary:
-         @{NSBackgroundColorAttributeName: [UIColor yellowColor]}];
-    }
-    
-    NSArray *stringArray = @[[SetCard shapesDict][self.shape], self.number.description];
+    NSArray *stringArray = @[self.shape,
+                             self.number.description,
+                             self.color,
+                             self.fillType];
     
     return [[NSAttributedString alloc]
-            initWithString:[stringArray componentsJoinedByString:@""]
+            initWithString:[stringArray componentsJoinedByString:@", "]
                 attributes:attributes];
 }
 

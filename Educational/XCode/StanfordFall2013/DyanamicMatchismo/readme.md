@@ -5,16 +5,26 @@ Started 12/19/13
 
 Evolving List of Next-Steps to Persue
 -------------------------------------
-1. Draw the `SetCard`s with Bezier curves
+1. Handle transition to `landscape` layout
+    * once you have called `layoutIfNeeded` you need to tell the `CollectionView`
+      that it has changed. Try calling `[layout invalidateLayout];` after you
+      have done `layoutIfNeeded`
+1. Make one card deal after the other
+    * Add cards to-be-added to a `queue`
+    * On `completion:^(BOOL c){if(c)[self.container addCardFromQueue]}`
+        * That's probably not right exactly as-is, but it should be something like that
+1. Make cards fill screen again when there are only a few left
+    * Ideally, they should "fly" to their new position
 1. Implement `handlePinch:`
 
-OVERALL (don't edit this, it's not an as-you-go type of list)
--------------------------------------------------------------
-1. Animate arrival and departure of cards
+OVERALL
+-------
+### (don't edit this, it's not an as-you-go type of list)
+1. Animate arrival and departure of cards **CHECK**
 
-2. Remove matched cards from the UI
+2. Remove matched cards from the UI **CHECK**
 
-3. Animate Redeals
+3. Animate Redeals **CHECK**
     * Don't just flip cards back over, actually take them out and redeal them
 
 4. Adjust the UI layout when the number of cards onscreen changes
@@ -28,8 +38,6 @@ OVERALL (don't edit this, it's not an as-you-go type of list)
             * This should come for free because:
                 * The UI is always appropriate for its bounds
                 * All UI changes are animated
-
-
     * iPhone 4 *and* 5
     * Use **Autolayout** as much as possible for this
     * No code specific to any layout
@@ -41,20 +49,20 @@ OVERALL (don't edit this, it's not an as-you-go type of list)
     * Remember that an `attachment` behavior's `length` and `anchorPoint` can be
       modified at any time and the animation will instantly adapt
 
-7. Both `ViewControllers` should *inherit* from a `BaseController` class
+7. Both `ViewControllers` should *inherit* from a `BaseController` class **CHECK**
     * Subclasses should have less then 25 lines each
 
-8. Instead of `UIButtons` to display cards, use a `MutableArray` of `CardView`s
+8. Instead of `UIButtons` to display cards, use a `MutableArray` of `CardView`s **CHECK**
 
 
 
 SET CARDS
 ---------
-1. **Draw them** using `UIBezierPath` and `Core Graphics`
+1. **Draw them** using `UIBezierPath` and `Core Graphics` **CHECK**
     * No images or `attributedStrings`
     * Drawings must *scale* properly
 
-2. **Attributes**
+2. *Attributes* **CHECK**
     * Squiggles, Diamonds, or Ovals
     * Solid, Striped (*not* shaded), or Unfilled
     * Green, Red, or Purple
@@ -63,16 +71,16 @@ SET CARDS
 3. Start with 12 cards, but have the option of dealing 3 more at any time
     * Handle the case when there are no cards left in the deck
 
-4. The API must be generalized for the contents to be rendered in whatever way
+4. The API must be generalized for the contents to be rendered in whatever way **CHECK**
    the view wants them to be
     * (e.g. Colors 1,2,3; Shapes 1,2,3; Fills 1,2,3)
 
 
 PLAYING CARDS
 -------------
-1. Use `PlayingCardView` from the in-class demo
+1. Use `PlayingCardView` from the in-class demo **CHECK**
 
-2. Animate "flipping" the cards over [check]
+2. Animate "flipping" the cards over **CHECK**
 
 3. Will need to add public API for
     * Putting new cards into play

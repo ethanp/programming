@@ -28,8 +28,7 @@
 
 - (SetGame *)game
 {
-    if (!_game) _game = [[SetGame alloc]
-                         initWithCardCount:SET_CARDS_TO_START];
+    if (!_game) _game = [[SetGame alloc] init];
     return _game;
 }
 

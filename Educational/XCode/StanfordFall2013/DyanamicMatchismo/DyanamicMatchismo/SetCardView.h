@@ -12,13 +12,6 @@
 
 @interface SetCardView : CardView
 
-//@property (nonatomic) NSUInteger rank;
-//@property (strong, nonatomic) NSString *suit;
-//@property (nonatomic) BOOL faceUp;
-//
-//- (void)pinch:(UIPinchGestureRecognizer *)gesture;
-//- (void)handleSwipe:(UITapGestureRecognizer *)gesture;
-
 @property (nonatomic, weak) SetCard *card;
 
 @end
