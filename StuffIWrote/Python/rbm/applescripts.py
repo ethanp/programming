@@ -39,17 +39,17 @@ end tell
     call(["osacompile", "script.scpt"])
     call(["osascript", "script.scpt"])
     call(["rm", "-f", "script.scpt", "a.scpt"])
-    return theScriptHeader+restOfTheScript
+    return the_script
 
 
 def editEvent(**kwargs):
     # TODO you should only have to pass in the parameters you want to change
     theScriptHeader='''
 set calendarName to "{calName}"
-set theSummary to {eventTitle}
-set theDescription to {eventNotes}
-set theLocation to {eventLocation}
-set startDate to {startDate}
+set theSummary to "{eventTitle}"
+set theDescription to "{eventNotes}"
+set theLocation to "{eventLocation}"
+set startDate to "{startDate}"
 set endDate to "{endDate}"
     '''
 
@@ -58,7 +58,7 @@ set startDate to date startDate
 set endDate to date endDate
 tell application "Calendar"
 	tell (first calendar whose name is calendarName)
-		tell (last event whose startDate is startDate)
+		tell (last event whose summary is theSummary)
 			set start date to startDate
 			set end date to endDate
 			set description to theDescription
@@ -66,11 +66,17 @@ tell application "Calendar"
 			set location to theLocation
 		end tell
 	end tell
-end tell '
-    '''
+end tell
+'''
 
     theScriptHeader = theScriptHeader.format(**kwargs)
-    return theScriptHeader+restOfTheScript
+    the_script = theScriptHeader + restOfTheScript
+    with open("script.scpt", 'wr') as script:
+        script.write(the_script)
+    call(["osacompile", "script.scpt"])
+    call(["osascript", "script.scpt"])
+    call(["rm", "-f", "script.scpt", "a.scpt"])
+    return the_script
 
 
 def createReminder(**kwargs):

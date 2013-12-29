@@ -2,15 +2,7 @@
 ## A command line tool to make understanding what I do all day simpler
 ## Started: 12/28/13
 
-import shutil
-import os
-import glob
-
-import sys
-import datetime
-from subprocess import call
-import argparse
-
+import sys, datetime, argparse
 import applescripts
 
 # set home dir
@@ -18,11 +10,13 @@ HOME_PATH = '/Users/Ethan/rbm_file'
 STORAGE_FILE = open(HOME_PATH, 'a')
 TIME_FORMAT = '%m/%d/%Y %I:%M %p'
 TIME_NOW = datetime.datetime.now()
+DIFFERENCE_FORMAT = '%H:%M:%s'
 
 # tested to work
 def start(name=None):
     '''
     "start the clock" for the given task
+    create a 1-hour event for it in the epet@icloud calendar "Work"
     '''
     if not name:
         print "no name given, cancelling"
@@ -42,17 +36,30 @@ def start(name=None):
                              endDate=END_TIME.strftime(TIME_FORMAT))
 
 
-# TODO
+# seems to work
 def end():
     '''
     "stop the clock" for the running task
+    adjust the Calendar event to properly surround it
+    print the time spent
     '''
-    # open the storage file
-    # find the name of the running task
-    # find the timestamp
-    # print the total time spent
+    # find the timestamp printed for the running task
+    with open(HOME_PATH, 'rb') as read_file:
+        lines = read_file.readlines()
+        name_line = lines[-2].strip()
+        date_line = lines[-1].strip()
+    print 'Task:', name_line
+    print 'Start Time:', date_line
+    start_time = datetime.datetime.strptime(date_line, TIME_FORMAT)
+    time_difference = TIME_NOW - start_time
+    print 'Total Time for %s: %s' % (name_line, str(time_difference)[:7])
     # adjust Calendar event (might take a little while, not sure why though)
-    pass
+    applescripts.editEvent(calName='Work',
+                           eventTitle=name_line,
+                           eventNotes='',
+                           eventLocation='',
+                           startDate=date_line,
+                           endDate=TIME_NOW.strftime(TIME_FORMAT))
 
 
 # TODO
