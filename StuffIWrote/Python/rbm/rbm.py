@@ -43,17 +43,7 @@ def end():
     adjust the Calendar event to properly surround it
     print the time spent
     '''
-    # find the timestamp printed for the running task
-    with open(HOME_PATH, 'rb') as read_file:
-        lines = read_file.readlines()
-        name_line = lines[-2].strip()
-        date_line = lines[-1].strip()
-    print 'Task:', name_line
-    print 'Start Time:', date_line
-    start_time = datetime.datetime.strptime(date_line, TIME_FORMAT)
-    time_difference = TIME_NOW - start_time
-    print 'Total Time for %s: %s' % (name_line, str(time_difference)[:7])
-    # adjust Calendar event (might take a little while, not sure why though)
+    name_line, date_line = show()
     applescripts.editEvent(calName='Work',
                            eventTitle=name_line,
                            eventNotes='',
@@ -62,17 +52,18 @@ def end():
                            endDate=TIME_NOW.strftime(TIME_FORMAT))
 
 
-# TODO
 def show():
     '''
-    print time for current task
+    print time spent so far on current task
     '''
-    # open the storage file
-    # find the timestamp
-    # calc time since timestamp
-    # print time since timestamp
-    # NOTE does a lot of the same things as end, so they could probably share a subroutine
-    pass
+    with open(HOME_PATH, 'rb') as read_file:
+        lines = read_file.readlines()
+        name_line = lines[-2].strip()
+        date_line = lines[-1].strip()
+    start_time = datetime.datetime.strptime(date_line, TIME_FORMAT)
+    time_difference = TIME_NOW - start_time
+    print 'Total Time for %s: %s' % (name_line, str(time_difference)[:4])
+    return name_line, date_line
 
 
 # TODO
@@ -85,21 +76,13 @@ def cancel():
     pass
 
 
-# TODO these are in order of preference of implementation
-def create_command_line_options():
-    options = argparse.ArgumentParser(description="Command Line Tool for Tracking Time in Apple's `Calendar`")
-    options.add_argument('start', help='create 1-hour event of given name')
-    options.add_argument('end', help='stop current running task')
-    options.add_argument('move', help='edit start time of current running task')
-    options.add_argument('show', help='print time so far spent on current event')
-    options.add_argument('cancel', help='cancel current event')
-    options.add_argument('ls', help='list groups')
-    options.add_argument('add', help='create new task-group')
-    options.add_argument('delete', help='delete group')
-
-
 def main(argv):
-    create_command_line_options()
+    if not argv:
+        print 'either start <task>, or end, or show'
+        exit(1)
+    if argv[0] == 'start': start(' '.join(argv[1:]))
+    if argv[0] == 'end':   end()
+    if argv[0] == 'show':  show()
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ New goal: make something useful and usable that can be iterated if need be
 Current ToDos
 -------------
 
-1. Set `minco @` as a function for `python $PATHTOPYTHONFILE @`
+1. Set `minco $@` as a function for `python $PATHTOPYTHONFILE $@`
    or however you capture all args
 
 Sample Usages
@@ -13,14 +13,13 @@ Sample Usages
 
 ```bash
 
-    # add time to a file and
+    ######## IN THERE NOW #########
+
     # put "iOS View Controller Docs" on the Work Calendar as a 1-hour long event
     $ minco start iOS View Controller Docs
 
     # stops counting and adjusts Calendar event to reflect true time
     $ minco end
-
-    ######## SOON #########
 
     # print amount of time spent so far on task
     $ minco show

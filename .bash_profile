@@ -22,12 +22,21 @@ alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n 
 alias ut='ssh -o ServerAliveInterval=30 ethanp@almond-joy.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
 alias tracker='cs /Users/Ethan/Dropbox/School\ Help\ Files/Tracker'
+if [[ -d ~/Dropbox/CSyStuff/ProgrammingGit ]]; then
+    PROGRAMMINGGIT=~/Dropbox/CSyStuff/ProgrammingGit
+else
+    PROGRAMMINGGIT=~/code/programming
+fi
+
 
 # 4lolz
 set -o vi
 
 # turn on extra metacharacters: (?|*|+|@|!)(pattern)
 shopt -s extglob
+
+
+function minco { python $PROGRAMMINGGIT/StuffIWrote/Python/rbm/rbm.py $@ ; }
 
 # ssh -X into specified CS Server
 function uto { ssh -o ServerAliveInterval=30 -X ethanp@$1.cs.utexas.edu ; }
