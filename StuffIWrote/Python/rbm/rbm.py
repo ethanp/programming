@@ -1,10 +1,9 @@
 # coding=utf-8
 ## A command line tool to make understanding what I do all day simpler
-## Started: 12/28/13
+## 12/28/13
 
 import sys, datetime, applescripts
 
-# set home dir
 HOME_PATH = '/Users/Ethan/rbm_file'
 STORAGE_FILE = open(HOME_PATH, 'a')
 TIME_FORMAT = '%m/%d/%Y %I:%M %p'
@@ -18,7 +17,7 @@ def start(name=None):
     '''
     if not name:
         print "no name given, cancelling"
-        exit(2)
+        exit(1)
 
     STORAGE_FILE.write(name+'\n')
     STORAGE_FILE.write(DATETIME_NOW.strftime(TIME_FORMAT)+'\n')
@@ -36,7 +35,7 @@ def end():
     '''
     title, start_time = show()
     applescripts.edit_event(calName='Work', eventTitle=title, startDate=start_time,
-                           endDate=DATETIME_NOW.strftime(TIME_FORMAT))
+                            endDate=DATETIME_NOW.strftime(TIME_FORMAT))
 
 
 def show():
@@ -54,9 +53,7 @@ def show():
 
 
 def main(argv):
-    if not argv:
-        print 'either start <task>, or end, or show'
-        exit(1)
+    if not argv:  print 'either start <task>, or end, or show'
     if argv[0] == 'start': start(' '.join(argv[1:]))
     if argv[0] == 'end':   end()
     if argv[0] == 'show':  show()

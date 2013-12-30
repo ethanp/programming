@@ -8,6 +8,9 @@ Evolving List of Next-Steps to Persue
 
 1. Handle transition to `landscape` layout
     * Why do cards change shape-ratio on the switch to `landscape`?
+        * Maybe because the Grid.cell's `aspectRatio` is switched when the layout
+          changes for some reason.
+            * If this *is* true it was clearly a terrible design decision.
     * maybe from the `BaseViewController` override `view{Will|Did}LayoutSubviews`?
     * Read [How View Controllers Participate in the View Layout Process](https://developer.apple.com/library/IOS/featuredarticles/ViewControllerPGforiPhoneOS/AdoptingaFull-ScreenLayout/AdoptingaFull-ScreenLayout.html#//apple_ref/doc/uid/TP40007457-CH13-SW1)
     * I have written in my notes what functions get called
