@@ -8,16 +8,10 @@ ALL Lifecycle Stuff
 * `awakeFromNib` is called after its outlet & action connections have been established
     * Must call `super`
 
-* `viewDidLayoutSubviews` gets called whenever the `UIViewController`'s base
-  `@prop view`'s bounds change.
-    * First the bounds of the view and views down the hierarchy are changed, then this
-      method is called.
-    * However each subview is reponsible for readjusting its own layout in response to
-      the bounds change.
-    * The default implementation does nothing, it doesn't say that you need to call `super`
-
 * The first time the ViewController's view object is accessed, `loadView` is called
     * By default this loads it from the *Storyboard*, else an empty `UIView` is assigned
+    * If you override it to create your views programmatically, *don't* call
+      `[super loadView]`
 
 * Then `viewDidLoad` is called
 
@@ -27,6 +21,14 @@ ALL Lifecycle Stuff
       created programmatically in the `loadView` method.
     * You usually override this method to perform additional initialization on views that
       were loaded from 'nib' files (I think this means the storyboard now).
+
+* `viewDidLayoutSubviews` gets called whenever the `UIViewController`'s base
+  `@prop view`'s bounds change.
+    * First the bounds of the view and views down the hierarchy are changed, then this
+      method is called.
+    * However each subview is reponsible for readjusting its own layout in response to
+      the bounds change.
+    * The default implementation does nothing, it doesn't say that you need to call `super`
 
 
 From the [ViewController Programming Guide](https://developer.apple.com/library/IOS/featuredarticles/ViewControllerPGforiPhoneOS/Introduction/Introduction.html)
@@ -209,7 +211,58 @@ Now design the public interface
     * Call `[super init]`
 
 
-### Loading a ViewController's View from a Storyboard
+[Using View Controllers in the Responder Chain](https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/UsingViewControllerstoHandleEvents/UsingViewControllerstoHandleEvents.html)
+-----------------------------------------------
+
+* When a view does not respond to a given event, it passes that event to its
+  superview, traveling up the view hierarchy all the way to the root view.
+* However, if any view in the chain is managed by a view controller, it passes
+  the event to the view controller object before passing it up to the superview.
+* In this way, the view controller can respond to events that are not handled
+  by its views.
+* If the view controller does not handle the event, that event moves on to the
+  view’s superview as usual.
+
+[Supporting Multiple Interface Orientations](https://developer.apple.com/library/ios/featuredarticles/ViewControllerPGforiPhoneOS/RespondingtoDeviceOrientationChanges/RespondingtoDeviceOrientationChanges.html)
+--------------------------------------------
+
+* `UIDeviceOrientationDidChangeNotification` gets sent by the system on
+  orientation change, but you shouldn't need to handle it
+
+* The `UIWindow` is resized, the root ViewController's frame is adjusted, then this
+  is propagated down through the View hierarchy
+
+* The simplest way to to support multiple orientations is to make positions of
+  subviews update whenever the root view's frame changes.
+
+Here is the sequence of events that occur when a rotation is triggered:
+
+1. The window calls the root view controller’s
+   `willRotateToInterfaceOrientation:duration:` method, which then gets forwarded
+   to the currently displayed content ViewControllers
+    * You can override this to make changes to the layout before the interface
+    * is rotated
+2. The window adjusts the bounds of the view controller’s view. This causes the
+   view to layout its subviews, triggering the view controller’s
+   `viewWillLayoutSubviews` method. When this method runs, you can query the app
+   object’s `statusBarOrientation` property to determine the current user interface
+   layout.
+3. The view controller’s `willAnimateRotationToInterfaceOrientation:duration:`
+   method is called. This method is called from within an animation block so that
+   any property changes you make are animated at the same time as other animations
+   that comprise the rotation.
+4. The animation is executed
+5. The window calls the view controller’s `didRotateFromInterfaceOrientation:`
+   method.
+     * Container view controllers forward this message to the currently
+       displayed content view controllers.
+     * This action marks the end of the rotation process.
+     * You can use this method to show views, change the layout of views, or
+       make other changes to your app.
+
+* If you want to present the same data differently based on whether a device is
+  in a portrait or landscape orientation, use two separate view controllers.
+    * To do this, look at the example code listed in this document.
 
 From the [Class Reference](https://developer.apple.com/library/ios/documentation/uikit/reference/UIViewController_Class/Reference/Reference.html)
 ==========================

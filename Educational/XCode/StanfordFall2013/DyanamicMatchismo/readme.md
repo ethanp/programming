@@ -12,18 +12,23 @@ Evolving List of Next-Steps to Persue
           changes for some reason.
             * If this *is* true it was clearly a terrible design decision.
     * maybe from the `BaseViewController` override `view{Will|Did}LayoutSubviews`?
-    * Read [How View Controllers Participate in the View Layout Process](https://developer.apple.com/library/IOS/featuredarticles/ViewControllerPGforiPhoneOS/AdoptingaFull-ScreenLayout/AdoptingaFull-ScreenLayout.html#//apple_ref/doc/uid/TP40007457-CH13-SW1)
-    * I have written in my notes what functions get called
+    * After reading [How View Controllers Participate in the View Layout Process](https://developer.apple.com/library/IOS/featuredarticles/ViewControllerPGforiPhoneOS/AdoptingaFull-ScreenLayout/AdoptingaFull-ScreenLayout.html#//apple_ref/doc/uid/TP40007457-CH13-SW1),
+      I think I should override `viewWillLayoutSubviews`
+    * I have written in my notes what functions get called and the order
     * Also there are some notes on this in the slides
 1. Make one card deal after the other
     * Add cards to-be-added to a `queue`
+    * Call the queue from the completion block in something like the following
+      prototype code
+    * I *think* I also need to make sure not to create a memory cycle here, by saying
+      `__weak MyClass *weakSelf = self;`
 
 ```
 
     completion:^(BOOL c){
         if(c){
-            [self.container animationCompleted:self];
-            [self.container animateNextCardFromQueue];
+            [weakSelf.container animationCompleted:weakSelf];
+            [weakSelf.container animateNextCardFromQueue];
     }}
 
 ```
