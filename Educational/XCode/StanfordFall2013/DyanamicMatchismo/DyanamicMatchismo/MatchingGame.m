@@ -32,7 +32,7 @@
     if (!_cardsInPlay) {
         _cardsInPlay = [[NSMutableArray alloc] init];
         for (Card *card in self.cards) {
-            if (!card.matched) {
+            if (!card.isMatched) {
                 [_cardsInPlay addObject:card];
             }
         }
@@ -59,6 +59,7 @@
 {
     for (Card *card in self.chosenCards) {
         card.matched = YES;
+        [self.cardsInPlay removeObject:card];
     }
     [self.chosenCards removeAllObjects];
 }
