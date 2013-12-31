@@ -23,22 +23,37 @@
             </objects>
             <point key="canvasLocation" x="138" y="138"/>
         </scene>
-        <!--Top Places View Controller - Browse-->
+        <!--Browse Tab View Controller - Browse-->
         <scene sceneID="zOw-Cd-DoP">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="OKe-kp-p9N" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="naE-7E-oI2" customClass="TopPlacesViewController" sceneMemberID="viewController">
-                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="oJT-vm-hNR">
+                <tableViewController id="naE-7E-oI2" customClass="BrowseTabViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="oJT-vm-hNR">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="VHg-RV-cTk">
-                                <rect key="frame" x="0.0" y="22" width="320" height="44"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" textLabel="FSj-bQ-MWj" detailTextLabel="hRa-VS-BaW" style="IBUITableViewCellStyleSubtitle" id="VHg-RV-cTk">
+                                <rect key="frame" x="0.0" y="55" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="VHg-RV-cTk" id="H2x-ap-czE">
                                     <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="FSj-bQ-MWj">
+                                            <rect key="frame" x="15" y="3" width="34" height="22"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Subtitle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hRa-VS-BaW">
+                                            <rect key="frame" x="15" y="25" width="43" height="15"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
@@ -49,14 +64,14 @@
                     </tableView>
                     <tabBarItem key="tabBarItem" title="Browse" id="rnD-Yz-qWU"/>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="OKe-kp-p9N" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="713" y="29"/>
         </scene>
-        <!--Table View Controller - History-->
+        <!--History Tab View Controller - History-->
         <scene sceneID="5jZ-f4-xDT">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="7wE-9u-W4S" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <tableViewController id="yY9-4c-vaY" sceneMemberID="viewController">
+                <tableViewController id="yY9-4c-vaY" customClass="HistoryTabViewController" sceneMemberID="viewController">
                     <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="uQY-Gk-hOz">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -78,6 +93,7 @@
                     </tableView>
                     <tabBarItem key="tabBarItem" title="History" id="hvB-98-Q9H"/>
                 </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="7wE-9u-W4S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="700" y="710"/>
         </scene>

@@ -18,9 +18,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+
+    /* This was just to get up and running */
     NSData *data = [NSData dataWithContentsOfURL:[FlickrFetcher URLforTopPlaces]];
-    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:data
+                                                             options:0 error:nil];
     NSLog(@"%@", jsonDict);
 }
 
