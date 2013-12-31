@@ -140,13 +140,16 @@
     
     // update score
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
+
+    // relayout the grid of cards if need-be
+    if ([self.cardsInView count] <= ([self.grid rowCount] - 1) * ([self.grid columnCount] - 1))
+        [self redrawAllCards];
 }
 
 - (void)cardWasChosen:(Card *)card
 {
     [self.game chooseCardAtIndex:[self.game.cards indexOfObject:card]];
     [self updateUI];
-    
 }
 
 - (NSString *)titleForCard:(Card *)card
