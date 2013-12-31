@@ -33,7 +33,15 @@
     [self redrawAllCards];
 }
 
-// TODO: I think this is what gets called when the layout is about to rotate
+// NOTE: this gets called when the layout is about to switch btn portrait/landscape
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    // TODO: resize self.grid in here
+    [self redrawAllCards];
+    return;
+}
+
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
@@ -62,16 +70,24 @@
     [self drawAllCards];
 }
 
-// doesn't check that these cards aren't already in the view
-- (void)drawAllCards
+- (void)resetGridSize
 {
     CGFloat height = self.layoutContainerView.bounds.size.height;
     CGFloat width  = self.layoutContainerView.bounds.size.width;
-    [self.grid setCellAspectRatio:width/height];
+    NSLog(@"Height: %f; Width: %f", height, width);
+    [self.grid setCellAspectRatio:1.3/2.0];
     [self.grid setSize:CGSizeMake(width, height)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
+    NSLog(@"Grid Size: %@", NSStringFromCGSize([self.grid size]));
+}
+
+// doesn't check that these cards aren't already in the view
+- (void)drawAllCards
+{
+    [self resetGridSize];
     for (Card *card in self.game.cardsInPlay)
-        [self addCardToView:card];
+        if (!card.isMatched)
+            [self addCardToView:card];
     [self updateUI];
 }
 
@@ -89,12 +105,8 @@
     int newIndex = [self.cardsInView count];
     int newCount = newIndex + 1;
     if (newCount > gridCapacity) {
-        NSLog(@"Enlarging Grid");
-        CGFloat height = self.layoutContainerView.bounds.size.height;
-        CGFloat width  = self.layoutContainerView.bounds.size.width;
-        [self.grid setCellAspectRatio:width/height];
-        [self.grid setSize:CGSizeMake(width, height)];
-        [self.grid setMinimumNumberOfCells:newCount];
+        [NSException raise:@"Grid is wrong size"
+                    format:@"Has capacity %d, should have capacity %d", gridCapacity, newCount];
     }
     
     // add the view to self.cardsInView and redrawAllCards()
@@ -110,11 +122,10 @@
     [brandNewCardView animateCardInsertion];
 }
 
-/* update which cards are "chosen" or "matched" */
 - (void)updateUI
 {
+    /* update which cards are "chosen" or "matched" */
     NSMutableDictionary *viewDictCopy = [self.cardsInView mutableCopy];
-    
     for (Card *card in self.game.cardsInPlay) {
         CardView *cardView = [viewDictCopy objectForKey:card.attributedContents];
         if (card.chosen != cardView.thinksItsChosen) {

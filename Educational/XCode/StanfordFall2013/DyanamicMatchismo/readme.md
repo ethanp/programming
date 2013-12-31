@@ -11,9 +11,14 @@ Evolving List of Next-Steps to Persue
         * Maybe because the Grid.cell's `aspectRatio` is switched when the layout
           changes for some reason.
             * If this *is* true it was clearly a terrible design decision.
+        * After checking from within the Storyboard, I know that it is *not*
+          because the ContainerView's re-adjusted bounds are incorrect
     * maybe from the `BaseViewController` override `view{Will|Did}LayoutSubviews`?
-    * After reading [How View Controllers Participate in the View Layout Process](https://developer.apple.com/library/IOS/featuredarticles/ViewControllerPGforiPhoneOS/AdoptingaFull-ScreenLayout/AdoptingaFull-ScreenLayout.html#//apple_ref/doc/uid/TP40007457-CH13-SW1),
-      I think I should override `viewWillLayoutSubviews`
+        * After reading [How View Controllers Participate in the View Layout Process](https://developer.apple.com/library/IOS/featuredarticles/ViewControllerPGforiPhoneOS/AdoptingaFull-ScreenLayout/AdoptingaFull-ScreenLayout.html#//apple_ref/doc/uid/TP40007457-CH13-SW1),
+          I think I should override `viewWillLayoutSubviews`.
+            * I guess I should **read it again to see why I thought that**, because
+              *now* I'm thinking it should be `viewDidLayoutSubviews` because the `Grid`
+          won't know its `bounds` until it has been laid-out.
     * I have written in my notes what functions get called and the order
     * Also there are some notes on this in the slides
 1. Make one card deal after the other
@@ -22,11 +27,13 @@ Evolving List of Next-Steps to Persue
       prototype code
     * I *think* I also need to make sure not to create a memory cycle here, by saying
       `__weak MyClass *weakSelf = self;`
+        * XCode seems to know when to do this, so write self at first, and change it
+          if XCode says to
 
 ```
 
-    completion:^(BOOL c){
-        if(c){
+    completion:^(BOOL c) {
+        if (c) {
             [weakSelf.container animationCompleted:weakSelf];
             [weakSelf.container animateNextCardFromQueue];
     }}
@@ -49,7 +56,7 @@ OVERALL
 
 4. Adjust the UI layout when the number of cards onscreen changes
     * Use the provided `Grid` class
-    * Use a generic `UIView` (not a subclass) in the storyboard solely as a
+    * Use a generic `UIView` (not a subclass) in the Storyboard solely as a
       boundary area for the cards
 
 5. Make it work and look good in
