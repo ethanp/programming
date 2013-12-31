@@ -15,7 +15,6 @@
 		AA510FD518727E1C00C01F27 /* TopPlacesAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = AA510FD418727E1C00C01F27 /* TopPlacesAppDelegate.m */; };
 		AA510FD818727E1C00C01F27 /* Main_iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA510FD618727E1C00C01F27 /* Main_iPhone.storyboard */; };
 		AA510FDB18727E1C00C01F27 /* Main_iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA510FD918727E1C00C01F27 /* Main_iPad.storyboard */; };
-		AA510FDE18727E1C00C01F27 /* TopPlacesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA510FDD18727E1C00C01F27 /* TopPlacesViewController.m */; };
 		AA510FE018727E1C00C01F27 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA510FDF18727E1C00C01F27 /* Images.xcassets */; };
 		AA510FE718727E1C00C01F27 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA510FE618727E1C00C01F27 /* XCTest.framework */; };
 		AA510FE818727E1C00C01F27 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA510FC418727E1C00C01F27 /* Foundation.framework */; };
@@ -50,8 +49,6 @@
 		AA510FD418727E1C00C01F27 /* TopPlacesAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TopPlacesAppDelegate.m; sourceTree = "<group>"; };
 		AA510FD718727E1C00C01F27 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
 		AA510FDA18727E1C00C01F27 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
-		AA510FDC18727E1C00C01F27 /* TopPlacesViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TopPlacesViewController.h; sourceTree = "<group>"; };
-		AA510FDD18727E1C00C01F27 /* TopPlacesViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TopPlacesViewController.m; sourceTree = "<group>"; };
 		AA510FDF18727E1C00C01F27 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		AA510FE518727E1C00C01F27 /* Top PlacesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Top PlacesTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA510FE618727E1C00C01F27 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -127,8 +124,6 @@
 		AA510FCA18727E1C00C01F27 /* Top Places */ = {
 			isa = PBXGroup;
 			children = (
-				AA510FDC18727E1C00C01F27 /* TopPlacesViewController.h */,
-				AA510FDD18727E1C00C01F27 /* TopPlacesViewController.m */,
 				AADBB8911872AD97009D4B10 /* Tab ViewControllers */,
 				AA510FCB18727E1C00C01F27 /* Supporting Files */,
 			);
@@ -288,7 +283,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA510FDE18727E1C00C01F27 /* TopPlacesViewController.m in Sources */,
 				AA510FD518727E1C00C01F27 /* TopPlacesAppDelegate.m in Sources */,
 				AA51100018727E3200C01F27 /* FlickrFetcher.m in Sources */,
 				AA510FD118727E1C00C01F27 /* main.m in Sources */,
