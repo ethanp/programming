@@ -7,6 +7,7 @@
 //
 
 #import "TopPlacesViewController.h"
+#import "FlickrFetcher.h"
 
 @interface TopPlacesViewController ()
 
@@ -18,12 +19,9 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    NSData *data = [NSData dataWithContentsOfURL:[FlickrFetcher URLforTopPlaces]];
+    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    NSLog(@"%@", jsonDict);
 }
 
 @end

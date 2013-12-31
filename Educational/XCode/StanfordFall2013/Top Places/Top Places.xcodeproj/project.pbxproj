@@ -88,6 +88,9 @@
 		AA510FB818727E1C00C01F27 = {
 			isa = PBXGroup;
 			children = (
+				AA510FD618727E1C00C01F27 /* Main_iPhone.storyboard */,
+				AA510FD918727E1C00C01F27 /* Main_iPad.storyboard */,
+				AA510FFC18727E3200C01F27 /* Flickr Fetcher */,
 				AA510FCA18727E1C00C01F27 /* Top Places */,
 				AA510FEC18727E1C00C01F27 /* Top PlacesTests */,
 				AA510FC318727E1C00C01F27 /* Frameworks */,
@@ -118,14 +121,8 @@
 		AA510FCA18727E1C00C01F27 /* Top Places */ = {
 			isa = PBXGroup;
 			children = (
-				AA510FFC18727E3200C01F27 /* Flickr Fetcher */,
-				AA510FD318727E1C00C01F27 /* TopPlacesAppDelegate.h */,
-				AA510FD418727E1C00C01F27 /* TopPlacesAppDelegate.m */,
-				AA510FD618727E1C00C01F27 /* Main_iPhone.storyboard */,
-				AA510FD918727E1C00C01F27 /* Main_iPad.storyboard */,
 				AA510FDC18727E1C00C01F27 /* TopPlacesViewController.h */,
 				AA510FDD18727E1C00C01F27 /* TopPlacesViewController.m */,
-				AA510FDF18727E1C00C01F27 /* Images.xcassets */,
 				AA510FCB18727E1C00C01F27 /* Supporting Files */,
 			);
 			path = "Top Places";
@@ -134,6 +131,9 @@
 		AA510FCB18727E1C00C01F27 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				AA510FDF18727E1C00C01F27 /* Images.xcassets */,
+				AA510FD318727E1C00C01F27 /* TopPlacesAppDelegate.h */,
+				AA510FD418727E1C00C01F27 /* TopPlacesAppDelegate.m */,
 				AA510FCC18727E1C00C01F27 /* Top Places-Info.plist */,
 				AA510FCD18727E1C00C01F27 /* InfoPlist.strings */,
 				AA510FD018727E1C00C01F27 /* main.m */,
@@ -167,7 +167,8 @@
 				AA510FFE18727E3200C01F27 /* FlickrFetcher.h */,
 				AA510FFF18727E3200C01F27 /* FlickrFetcher.m */,
 			);
-			path = "Flickr Fetcher";
+			name = "Flickr Fetcher";
+			path = "Top Places/Flickr Fetcher";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -309,6 +310,7 @@
 				AA510FD718727E1C00C01F27 /* Base */,
 			);
 			name = Main_iPhone.storyboard;
+			path = "Top Places";
 			sourceTree = "<group>";
 		};
 		AA510FD918727E1C00C01F27 /* Main_iPad.storyboard */ = {
@@ -317,6 +319,7 @@
 				AA510FDA18727E1C00C01F27 /* Base */,
 			);
 			name = Main_iPad.storyboard;
+			path = "Top Places";
 			sourceTree = "<group>";
 		};
 		AA510FEF18727E1C00C01F27 /* InfoPlist.strings */ = {
@@ -491,6 +494,7 @@
 				AA510FF818727E1C00C01F27 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AA510FF918727E1C00C01F27 /* Build configuration list for PBXNativeTarget "Top PlacesTests" */ = {
 			isa = XCConfigurationList;
@@ -499,6 +503,7 @@
 				AA510FFB18727E1C00C01F27 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
