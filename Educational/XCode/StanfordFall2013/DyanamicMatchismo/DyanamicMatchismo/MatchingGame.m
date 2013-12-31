@@ -29,17 +29,29 @@
 
 - (NSMutableArray *)cardsInPlay
 {
-    if (!_cardsInPlay) {
-        _cardsInPlay = [[NSMutableArray alloc] init];
-        for (Card *card in self.cards) {
-            if (!card.isMatched) {
-                [_cardsInPlay addObject:card];
-            }
-        }
-    }
+    if (!_cardsInPlay) [self resetCardsInPlay];
     return _cardsInPlay;
 }
 
+- (void)resetCardsInPlay
+{
+    _cardsInPlay = [[NSMutableArray alloc] init];
+    for (Card *card in self.cards) {
+        if (!card.isMatched) {
+            [_cardsInPlay addObject:card];
+        }
+    }
+}
+
+- (Card *)addCardToGame
+{
+    Card *newCard = [self.deck drawRandomCard];
+    NSMutableArray *newCardsArray = [self.cards mutableCopy];
+    [newCardsArray addObject:newCard];
+    self.cardsInPlay = nil;
+    self.cards = [newCardsArray copy];
+    return newCard;
+}
 
 - (Card *)cardAtIndex:(NSUInteger)index
 {
@@ -77,7 +89,6 @@
             [self.cards addObject:card]; /* calls constructor if necessary */
         }
     }
-    self.cardsInPlay = [self.cards mutableCopy];
     return self;
 }
 

@@ -9,5 +9,6 @@
 #import "BaseViewController.h"
 
 @interface SetViewController : BaseViewController
+@property (weak, nonatomic) IBOutlet UIButton *addThreeCardsButton;
 
 @end

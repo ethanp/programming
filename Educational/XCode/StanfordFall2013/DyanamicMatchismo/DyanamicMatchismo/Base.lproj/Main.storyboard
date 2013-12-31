@@ -120,6 +120,17 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="63a-jt-xTk">
+                                <rect key="frame" x="188" y="469" width="48" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <state key="normal" title="3 More">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="pressedAddCardsButton:" destination="bz3-bw-2hQ" eventType="touchUpInside" id="BsC-QT-q4m"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.50196081400000003" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -131,12 +142,15 @@
                             <constraint firstAttribute="trailing" secondItem="Gho-57-qgP" secondAttribute="trailing" constant="18" id="b74-pf-GIS"/>
                             <constraint firstItem="Gho-57-qgP" firstAttribute="top" secondItem="OGh-wF-AvS" secondAttribute="bottom" constant="8" symbolic="YES" id="boK-uL-2gK"/>
                             <constraint firstAttribute="bottom" secondItem="OGh-wF-AvS" secondAttribute="bottom" constant="58" id="fV2-CI-vy7"/>
+                            <constraint firstItem="Gho-57-qgP" firstAttribute="leading" secondItem="63a-jt-xTk" secondAttribute="trailing" constant="18" id="hdC-4A-Q60"/>
                             <constraint firstItem="OGh-wF-AvS" firstAttribute="top" secondItem="zk9-C0-chg" secondAttribute="top" constant="39" id="m7u-pY-wPy"/>
+                            <constraint firstItem="63a-jt-xTk" firstAttribute="baseline" secondItem="Gho-57-qgP" secondAttribute="baseline" id="wbC-Vv-OIB"/>
                         </constraints>
                     </view>
                     <extendedEdge key="edgesForExtendedLayout"/>
                     <tabBarItem key="tabBarItem" title="Set" id="XNG-p1-3sZ"/>
                     <connections>
+                        <outlet property="addThreeCardsButton" destination="63a-jt-xTk" id="Lul-9d-9KY"/>
                         <outlet property="layoutContainerView" destination="OGh-wF-AvS" id="PoQ-Qa-ONh"/>
                         <outlet property="redealButton" destination="Gho-57-qgP" id="Hsk-mC-cav"/>
                         <outlet property="scoreLabel" destination="SnR-Xc-OkP" id="Ywa-Dm-Jx2"/>

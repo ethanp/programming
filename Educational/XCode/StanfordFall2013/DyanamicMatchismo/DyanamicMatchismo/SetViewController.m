@@ -44,6 +44,14 @@
     return [UIImage imageNamed:card.isChosen ? @"selectedcard" : @"cardfront"];
 }
 
+- (IBAction)pressedAddCardsButton:(UIButton *)sender
+{
+    for (int i = 0; i < 3; i++) {
+        Card *card = [self.game addCardToGame];
+        [self addCardToView:card];
+    }
+    [self updateUI];
+}
 
 - (void)putCardInViewAtIndex:(int)index intoViewInRect:(CGRect)rect
 {

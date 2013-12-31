@@ -35,6 +35,10 @@ static const int NUM_CARDS_TO_MATCH = 3;
     return self;
 }
 
+- (Card *)addCardToGame
+{
+    return [super addCardToGame];
+}
 
 - (NSAttributedString *)chooseCardAtIndex:(NSUInteger)index
 {

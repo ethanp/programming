@@ -32,12 +32,10 @@
 - (Card *)cardAtIndex:(NSUInteger)index;
 
 /* designated initializer
- * must be called from any of our other initializers
- * or from any subclass's initializers */
+ * must be called from any of our other initializers or from any subclass's initializers */
 - (instancetype)initWithCardCount:(NSUInteger)count;
-
 - (void)markAllCardsAsMatched;
-
 - (NSAttributedString *)chooseCardAtIndex:(NSUInteger)index;
+- (Card *)addCardToGame;
 
 @end

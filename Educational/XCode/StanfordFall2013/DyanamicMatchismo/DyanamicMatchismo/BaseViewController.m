@@ -68,13 +68,10 @@
 
 - (void)resetGridSize
 {
-    CGFloat height = self.layoutContainerView.bounds.size.height;
-    CGFloat width  = self.layoutContainerView.bounds.size.width;
-    NSLog(@"Height: %f; Width: %f", height, width);
     [self.grid setCellAspectRatio:1.3/2.0];
-    [self.grid setSize:CGSizeMake(width, height)];
+    [self.grid setSize:CGSizeMake(self.layoutContainerView.bounds.size.width,
+                                  self.layoutContainerView.bounds.size.height)];
     [self.grid setMinimumNumberOfCells:[self.game.cardsInPlay count]];
-    NSLog(@"Grid Size: %@", NSStringFromCGSize([self.grid size]));
 }
 
 // doesn't check that these cards aren't already in the view
@@ -95,23 +92,10 @@
 
 - (void)addCardToView:(Card *)card
 {
-    // ensure the grid has enough space
-    int gridCapacity = [self.grid columnCount] * [self.grid rowCount];
-    int newIndex = [self.cardsInView count];
-    int newCount = newIndex + 1;
-    if (newCount > gridCapacity) {
-        [NSException raise:@"Grid is wrong size"
-                    format:@"Has capacity %d, should have capacity %d", gridCapacity, newCount];
-    }
-    
-    // add the view to self.cardsInView and redrawAllCards()
-    int row = newIndex / self.grid.columnCount;
-    int col = newIndex % self.grid.columnCount;
-    
-    CGRect rect =
-        CGRectOffset([self.grid frameOfCellAtRow:row inColumn:col], 0.9, 0.9);
-    
-    [self putCardInViewAtIndex:newIndex intoViewInRect:rect];
+    int row = [self.cardsInView count] / self.grid.columnCount;
+    int col = [self.cardsInView count] % self.grid.columnCount;
+    CGRect rect = CGRectOffset([self.grid frameOfCellAtRow:row inColumn:col], 0.9, 0.9);
+    [self putCardInViewAtIndex:[self.cardsInView count] intoViewInRect:rect];
     CardView *brandNewCardView = [self.cardsInView objectForKey:card.attributedContents];
     [self.layoutContainerView addSubview:brandNewCardView];
     [brandNewCardView animateCardInsertion];
@@ -138,11 +122,15 @@
     for (NSString *cardName in viewDictCopy.allKeys)
         [self removeCardFromView:cardName];
     
+    
     // update score
     self.scoreLabel.text = [NSString stringWithFormat:@"Score: %d", self.game.score];
 
     // relayout the grid of cards if need-be
     if ([self.cardsInView count] <= ([self.grid rowCount] - 1) * ([self.grid columnCount] - 1))
+        [self redrawAllCards];
+    
+    if ([self.cardsInView count] > [self.grid rowCount] * [self.grid columnCount])
         [self redrawAllCards];
 }
 

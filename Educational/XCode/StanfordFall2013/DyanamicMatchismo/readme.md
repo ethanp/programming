@@ -6,7 +6,8 @@ Started 12/19/13
 Evolving List of Next-Steps to Persue
 -------------------------------------
 
-1. Start with 12 Set Cards, but have the option of dealing 3 more at any time
+###DONE!!
+Nothing left to do.
 
 OVERALL
 -------
@@ -59,7 +60,7 @@ SET CARDS
     * Green, Red, or Purple
     * 1, 2, or 3
 
-3. Start with 12 cards, but have the option of dealing 3 more at any time
+3. Start with 12 cards, but have the option of dealing 3 more at any time **CHECK**
     * Handle the case when there are no cards left in the deck
 
 4. The API must be generalized for the contents to be rendered in whatever way
