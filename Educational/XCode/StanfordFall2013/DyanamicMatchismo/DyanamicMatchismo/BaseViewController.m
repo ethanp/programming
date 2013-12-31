@@ -33,13 +33,9 @@
     [self redrawAllCards];
 }
 
-// NOTE: this gets called when the layout is about to switch btn portrait/landscape
-- (void)viewDidLayoutSubviews
+- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation
 {
-    [super viewDidLayoutSubviews];
-    // TODO: resize self.grid in here
     [self redrawAllCards];
-    return;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -86,8 +82,7 @@
 {
     [self resetGridSize];
     for (Card *card in self.game.cardsInPlay)
-        if (!card.isMatched)
-            [self addCardToView:card];
+        [self addCardToView:card];
     [self updateUI];
 }
 
@@ -126,7 +121,7 @@
 {
     /* update which cards are "chosen" or "matched" */
     NSMutableDictionary *viewDictCopy = [self.cardsInView mutableCopy];
-    for (Card *card in self.game.cardsInPlay) {
+    for (Card *card in self.game.cards) {
         CardView *cardView = [viewDictCopy objectForKey:card.attributedContents];
         if (card.chosen != cardView.thinksItsChosen) {
             cardView.thinksItsChosen = card.chosen;
