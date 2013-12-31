@@ -29,6 +29,8 @@
 - (void)animateCardInsertion;
 - (void)animateCardRemoval;
 - (void)animateChooseCard;
+- (void)animateReturnFromPile;
+- (void)animateMoveToPile;
 - (CGFloat)cornerScaleFactor;
 - (CGFloat)cornerRadius;
 - (CGFloat)cornerOffset;

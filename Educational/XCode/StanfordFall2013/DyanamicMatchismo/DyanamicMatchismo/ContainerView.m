@@ -7,6 +7,7 @@
 //
 
 #import "ContainerView.h"
+#import "CardView.h"
 
 @interface ContainerView ()
 - (void)handlePinch:(UIPinchGestureRecognizer *)gesture;
@@ -14,9 +15,17 @@
 
 @implementation ContainerView
 
-// TODO
 - (void)handlePinch:(UIPinchGestureRecognizer *)gesture
 {
+    for (id subview in self.subviews) {
+        if ([subview isKindOfClass:[CardView class]]) {
+            CardView *cardView = (CardView *)subview;
+            if (!cardView.bounds.origin.x)
+                [cardView animateMoveToPile];
+            else
+                [cardView animateReturnFromPile];
+        }
+    }
     return;
 }
 

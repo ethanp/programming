@@ -35,6 +35,27 @@
                      completion:nil];
 }
 
+- (void)animateMoveToPile
+{
+    CGRect homeLoc = self.bounds;
+    homeLoc.origin = CGPointZero;
+    [UIView animateWithDuration:0.5
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{ self.frame = homeLoc; }
+                     completion:nil
+     ];
+}
+
+- (void)animateReturnFromPile
+{
+    [UIView animateWithDuration:0.5
+                          delay:0
+                        options:UIViewAnimationOptionCurveEaseInOut
+                     animations:^{ self.frame = self.homeFrame; }
+                     completion:nil];
+}
+
 // pretty sloppy
 - (void)animateCardRemoval
 {

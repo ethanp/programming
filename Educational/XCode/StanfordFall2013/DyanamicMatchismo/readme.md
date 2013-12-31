@@ -6,7 +6,6 @@ Started 12/19/13
 Evolving List of Next-Steps to Persue
 -------------------------------------
 
-1. Implement `handlePinch:`
 1. Start with 12 Set Cards, but have the option of dealing 3 more at any time
 
 OVERALL
@@ -35,7 +34,7 @@ OVERALL
     * No code specific to any layout
         * I.e. no "magic numbers" or "`if (landscape) then`"
 
-6. Create an animated "pinch" gesture
+6. Create an animated "pinch" gesture **CHECK**
     * Pinching gathers the cards into a pile
     * Tapping the stack returns the cards unharmed back to their normal positions
     * Remember that an `attachment` behavior's `length` and `anchorPoint` can be
