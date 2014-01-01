@@ -8,34 +8,52 @@
 
 #import "PlacePhotosObject.h"
 #import "FlickrFetcher.h"
+#import "PlacePhotoListViewController.h"
 
 
 @interface PlacePhotosObject ()
 
-@property (nonatomic) NSURL *url;
+@property (nonatomic) PlacePhotoListViewController *parentController;
 
 @end
+
 
 @implementation PlacePhotosObject
 
 #define NUM_PHOTOS 50
 
-- (NSURL *)url
+- (void)loadPhotos
 {
-    if (!_url)
-        _url = [FlickrFetcher URLforPhotosInPlace:self.place_id maxResults:NUM_PHOTOS];
-    return _url;
+    NSURLRequest *request =
+            [NSURLRequest requestWithURL:
+                    [FlickrFetcher URLforPhotosInPlace:self.place_id
+                                            maxResults:NUM_PHOTOS]];
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:
+                             [NSURLSessionConfiguration ephemeralSessionConfiguration]];
+    
+    NSURLSessionDownloadTask *task =
+        [session downloadTaskWithRequest:request completionHandler:
+             ^(NSURL *localFile, NSURLResponse *response, NSError *error) {
+                 if (!error) {
+                     NSData *data = [NSData dataWithContentsOfURL:localFile];
+                     NSDictionary *baseDict = [NSJSONSerialization
+                                               JSONObjectWithData:data
+                                               options:0 error:nil];
+                     self.photos = [baseDict valueForKeyPath:FLICKR_RESULTS_PHOTOS];
+                     NSLog(@"%@", self.photos);
+                     
+                     // TODO sort the photos for display
+                     
+                     dispatch_async(dispatch_get_main_queue(), ^{
+                         [self.parentController doneLoading];
+                     });
+                 }
+             }
+         ];
+    [task resume];
 }
 
-- (NSDictionary *)baseDict
-{
-    if (!_baseDict) {
-        // TODO: move this to another thread and put a spinner
-        NSData *data = [NSData dataWithContentsOfURL:self.url];
-        _baseDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSLog(@"%@", _baseDict);
-    }
-    return _baseDict;
-}
+
 
 @end

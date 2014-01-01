@@ -100,7 +100,6 @@
             NSString *countryName = [placeName substringWithRange:
                                      [match rangeAtIndex:3]];
             
-            NSLog(@"%@", countryName);
             NSMutableArray *countryArray = mutablePBC[countryName];
             NSDictionary *dictToInsert = @{@"city" : cityName,
                                            @"subtitle"  : etcName,
@@ -112,7 +111,6 @@
                                        initWithArray:@[dictToInsert]]
                                forKey:countryName];
             }
-            NSLog(@"%@", countryArray);
         }
 
         // sort array of each country by city name

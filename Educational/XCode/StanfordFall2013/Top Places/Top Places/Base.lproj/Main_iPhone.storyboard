@@ -87,6 +87,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" id="eoo-3p-mQm">
+                            <rect key="frame" x="0.0" y="130" width="320" height="37"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="PhotoList Cell" textLabel="qrf-gg-JK5" detailTextLabel="JHf-1M-rzV" style="IBUITableViewCellStyleSubtitle" id="xZB-hq-U2L">
                                 <rect key="frame" x="0.0" y="86" width="320" height="44"/>
@@ -119,6 +124,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="Oxv-s4-byZ"/>
+                    <connections>
+                        <outlet property="spinner" destination="eoo-3p-mQm" id="ywy-oq-Nhs"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iuA-lN-jj6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

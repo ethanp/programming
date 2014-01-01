@@ -10,6 +10,7 @@
 
 @interface PhotoListViewController : UITableViewController
 
-@property (nonatomic) NSString *city;  // TODO: put this in the title bar somehow
+@property (nonatomic) NSString *putAtTop;
+- (void)doneLoading;
 
 @end

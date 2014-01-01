@@ -21,15 +21,14 @@
 
 - (TopPlacesObject *)topPlacesObject
 {
-    if (!_topPlacesObject) _topPlacesObject = [[TopPlacesObject alloc] initWithController:self];
+    if (!_topPlacesObject)
+        _topPlacesObject = [[TopPlacesObject alloc] initWithController:self];
     return _topPlacesObject;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
-    // MAKE THE SPINNER START TO SPIN
     [self.spinner startAnimating];
     [self.topPlacesObject loadPlaceDictArray];
 }
@@ -82,7 +81,8 @@
     return cell;
 }
 
-- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+- (NSString *)tableView:(UITableView *)tableView
+titleForHeaderInSection:(NSInteger)section
 {
     return [self sectionNameOfNum:section];
 }
@@ -90,7 +90,8 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     // `sender` is the `UITableViewCell`
-    if ([segue.destinationViewController isKindOfClass:[PlacePhotoListViewController class]]) {
+    if ([segue.destinationViewController
+         isKindOfClass:[PlacePhotoListViewController class]]) {
         PlacePhotoListViewController *placeVC = segue.destinationViewController;
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         placeVC.city = [self getDictForRow:indexPath.row

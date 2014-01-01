@@ -7,16 +7,30 @@
 //
 
 #import "PhotoListViewController.h"
+#import "PlacePhotosObject.h"
 
 @interface PhotoListViewController ()
 
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
+@property (nonatomic) PlacePhotosObject *photosHolder;
+
 @end
+
 
 @implementation PhotoListViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    self.title = self.putAtTop;
+    [self.spinner startAnimating];
+    [self.photosHolder loadPhotos];
+}
+
+- (void)doneLoading
+{
+    [self.spinner stopAnimating];
+    [self.tableView reloadData];
 }
 
 #pragma mark - Table view data source
@@ -36,7 +50,8 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoList Cell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoList Cell"
+                                                            forIndexPath:indexPath];
     
     // Configure the cell...
     

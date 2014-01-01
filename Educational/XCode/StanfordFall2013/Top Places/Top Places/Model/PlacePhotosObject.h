@@ -7,10 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PhotosHolderObject.h"
 
-@interface PlacePhotosObject : NSObject
+@interface PlacePhotosObject : PhotosHolderObject
 
-@property (nonatomic) NSDictionary *baseDict; // TODO just move this private
 @property (nonatomic) NSString *place_id;
 
 @end

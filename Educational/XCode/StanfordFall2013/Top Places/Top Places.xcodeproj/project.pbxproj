@@ -26,6 +26,7 @@
 		AA97249B1873C397009E5016 /* PhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA97249A1873C397009E5016 /* PhotoListViewController.m */; };
 		AA97249E1873D195009E5016 /* PlacePhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA97249D1873D195009E5016 /* PlacePhotoListViewController.m */; };
 		AA9724A11874A8DC009E5016 /* PlacePhotosObject.m in Sources */ = {isa = PBXBuildFile; fileRef = AA9724A01874A8DC009E5016 /* PlacePhotosObject.m */; };
+		AA9724A41874D36A009E5016 /* PhotosHolderObject.m in Sources */ = {isa = PBXBuildFile; fileRef = AA9724A31874D36A009E5016 /* PhotosHolderObject.m */; };
 		AADBB88D1872AD74009D4B10 /* BrowseTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */; };
 		AADBB8901872AD88009D4B10 /* HistoryTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AADBB88F1872AD88009D4B10 /* HistoryTabViewController.m */; };
 /* End PBXBuildFile section */
@@ -70,6 +71,8 @@
 		AA97249D1873D195009E5016 /* PlacePhotoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PlacePhotoListViewController.m; sourceTree = "<group>"; };
 		AA97249F1874A8DC009E5016 /* PlacePhotosObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PlacePhotosObject.h; path = "Top Places/Model/PlacePhotosObject.h"; sourceTree = SOURCE_ROOT; };
 		AA9724A01874A8DC009E5016 /* PlacePhotosObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlacePhotosObject.m; path = "Top Places/Model/PlacePhotosObject.m"; sourceTree = SOURCE_ROOT; };
+		AA9724A21874D36A009E5016 /* PhotosHolderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotosHolderObject.h; path = ../Model/PhotosHolderObject.h; sourceTree = "<group>"; };
+		AA9724A31874D36A009E5016 /* PhotosHolderObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotosHolderObject.m; path = ../Model/PhotosHolderObject.m; sourceTree = "<group>"; };
 		AADBB88B1872AD74009D4B10 /* BrowseTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowseTabViewController.h; sourceTree = "<group>"; };
 		AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowseTabViewController.m; sourceTree = "<group>"; };
 		AADBB88E1872AD88009D4B10 /* HistoryTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryTabViewController.h; sourceTree = "<group>"; };
@@ -191,11 +194,21 @@
 			children = (
 				AA972495187395A1009E5016 /* TopPlacesObject.h */,
 				AA972496187395A1009E5016 /* TopPlacesObject.m */,
-				AA97249F1874A8DC009E5016 /* PlacePhotosObject.h */,
-				AA9724A01874A8DC009E5016 /* PlacePhotosObject.m */,
+				AA9724A51874D375009E5016 /* PhotosHolders */,
 			);
 			name = Model;
 			path = "Flickr Fetcher";
+			sourceTree = "<group>";
+		};
+		AA9724A51874D375009E5016 /* PhotosHolders */ = {
+			isa = PBXGroup;
+			children = (
+				AA97249F1874A8DC009E5016 /* PlacePhotosObject.h */,
+				AA9724A01874A8DC009E5016 /* PlacePhotosObject.m */,
+				AA9724A21874D36A009E5016 /* PhotosHolderObject.h */,
+				AA9724A31874D36A009E5016 /* PhotosHolderObject.m */,
+			);
+			name = PhotosHolders;
 			sourceTree = "<group>";
 		};
 		AADBB8911872AD97009D4B10 /* ViewControllers */ = {
@@ -315,6 +328,7 @@
 				AA510FD518727E1C00C01F27 /* TopPlacesAppDelegate.m in Sources */,
 				AA51100018727E3200C01F27 /* FlickrFetcher.m in Sources */,
 				AA510FD118727E1C00C01F27 /* main.m in Sources */,
+				AA9724A41874D36A009E5016 /* PhotosHolderObject.m in Sources */,
 				AA9724A11874A8DC009E5016 /* PlacePhotosObject.m in Sources */,
 				AA97249E1873D195009E5016 /* PlacePhotoListViewController.m in Sources */,
 				AADBB88D1872AD74009D4B10 /* BrowseTabViewController.m in Sources */,

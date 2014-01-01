@@ -22,16 +22,16 @@
 
 - (PlacePhotosObject *)placePhotosObject
 {
-    if (!_placePhotosObject) _placePhotosObject = [[PlacePhotosObject alloc] init];
+    if (!_placePhotosObject) {
+        _placePhotosObject = [[PlacePhotosObject alloc] init];
+        _placePhotosObject.place_id = self.place_id;
+    }
     return _placePhotosObject;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.title = self.city;
-    self.placePhotosObject.place_id = self.place_id;
-    NSLog(@"%@", self.placePhotosObject.baseDict);
 }
 
 #pragma mark - Table view data source
