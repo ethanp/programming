@@ -11,26 +11,35 @@
 
 @interface BrowseTabViewController ()
 
+@property (nonatomic) NSDictionary *topPlaces;
+
 @end
 
 @implementation BrowseTabViewController
 
+- (NSDictionary *)topPlaces
+{
+    if (!_topPlaces) {
+        NSData *data = [NSData dataWithContentsOfURL:[FlickrFetcher URLforTopPlaces]];
+        _topPlaces = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    }
+    return _topPlaces;
+}
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSData *data = [NSData dataWithContentsOfURL:[FlickrFetcher URLforTopPlaces]];
-    NSDictionary *jsonDict = [NSJSONSerialization JSONObjectWithData:data
-                                                             options:0 error:nil];
-    NSLog(@"%@", jsonDict);
-    NSDictionary *placesDict = jsonDict[@"places"];
-    NSLog(@"%@", placesDict);
-    NSArray *placeArray = placesDict[@"place"];
-    NSLog(@"%@", placeArray);
-    NSDictionary *firstPlace = placeArray[0];
-    NSLog(@"%@", firstPlace);
-    NSString *placeString = firstPlace[@"_content"];
-    NSLog(@"%@", placeString);
+//    NSLog(@"%@", self.topPlaces);
+//    NSDictionary *placesDict = self.topPlaces[@"places"];
+//    NSLog(@"%@", placesDict);
+//    NSArray *placeArray = placesDict[@"place"];
+//    NSLog(@"%@", placeArray);
+//    NSDictionary *firstPlace = placeArray[0];
+//    NSLog(@"%@", firstPlace);
+//    NSString *placeString = firstPlace[@"_content"];
+//    NSLog(@"%@", placeString);
+    [self numberOfSectionsInTableView:nil];
+    
 }
 
 
@@ -38,9 +47,19 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-#warning Potentially incomplete method implementation.
-    // Return the number of sections.
-    return 0;
+    NSArray *placeDictArray = self.topPlaces[@"places"][@"place"];
+    NSMutableSet *countriesSet = [[NSMutableSet alloc] init];
+    NSRegularExpression *getCountry = [NSRegularExpression regularExpressionWithPattern:@".*, (.*$)" options:0 error:nil];
+    for (NSDictionary *placeDict in placeDictArray) {
+        NSString *placeName = placeDict[FLICKR_PLACE_NAME];
+        NSLog(@"%@", placeName);
+        NSTextCheckingResult *match = [getCountry firstMatchInString:placeName options:0 range:NSMakeRange(0, [placeName length])];
+        NSString *countryName = [placeName substringWithRange:[match rangeAtIndex:1]];
+        NSLog(@"Country: %@", countryName);
+        [countriesSet addObject:countryName];
+    }
+    NSLog(@"%@", countriesSet);
+    return [countriesSet count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
@@ -54,8 +73,7 @@
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier
-                                                            forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
     
     // Configure the cell...
     
