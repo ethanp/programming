@@ -16,9 +16,16 @@
 
 @implementation BrowseTabViewController
 
+- (TopPlacesObject *)topPlacesObject
+{
+    if (!_topPlacesObject) _topPlacesObject = [[TopPlacesObject alloc] init];
+    return _topPlacesObject;
+}
+
 - (void)viewDidLoad
 {
-    [super viewDidLoad];    
+    [super viewDidLoad];
+    [self numberOfSectionsInTableView:nil];
 }
 
 
