@@ -69,7 +69,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OKe-kp-p9N" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1239" y="29"/>
+            <point key="canvasLocation" x="1148" y="29"/>
         </scene>
         <!--Photo List View Controller-->
         <scene sceneID="au6-US-HgQ">
@@ -98,7 +98,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iuA-lN-jj6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1686" y="29"/>
+            <point key="canvasLocation" x="1577" y="29"/>
         </scene>
         <!--History Tab View Controller - History-->
         <scene sceneID="5jZ-f4-xDT">

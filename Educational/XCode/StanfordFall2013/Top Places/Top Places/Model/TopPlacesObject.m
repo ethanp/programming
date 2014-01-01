@@ -51,6 +51,14 @@
 - (NSDictionary *)countryDict
 {
     if (!_countryDict) {
+
+        /* The fastest way I can come up with is inserting the cities into
+           a `tree` attached to the country, so that they can be retrieved sorted
+           by doing an in-order traversal of that tree. This ends up being rougly
+           logn+nlogn, and I believe what I've got is roughly n+nlogn for insertion and
+           one removal, so it's better than 1/2 as fast + way simpler. Optimization is
+           not justified. */
+        
         NSMutableDictionary *mutablePBC = [[NSMutableDictionary alloc] init];
         NSRegularExpression *parsePlace = [NSRegularExpression
                                            regularExpressionWithPattern:@"([^,]*), (.*, )?(.*$)"
