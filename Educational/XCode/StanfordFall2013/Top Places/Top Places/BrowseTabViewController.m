@@ -7,39 +7,18 @@
 //
 
 #import "BrowseTabViewController.h"
-#import "FlickrFetcher.h"
+#import "TopPlacesObject.h"
 
 @interface BrowseTabViewController ()
 
-@property (nonatomic) NSDictionary *topPlaces;
-
+@property (nonatomic) TopPlacesObject *topPlacesObject;
 @end
 
 @implementation BrowseTabViewController
 
-- (NSDictionary *)topPlaces
-{
-    if (!_topPlaces) {
-        NSData *data = [NSData dataWithContentsOfURL:[FlickrFetcher URLforTopPlaces]];
-        _topPlaces = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-    }
-    return _topPlaces;
-}
-
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-//    NSLog(@"%@", self.topPlaces);
-//    NSDictionary *placesDict = self.topPlaces[@"places"];
-//    NSLog(@"%@", placesDict);
-//    NSArray *placeArray = placesDict[@"place"];
-//    NSLog(@"%@", placeArray);
-//    NSDictionary *firstPlace = placeArray[0];
-//    NSLog(@"%@", firstPlace);
-//    NSString *placeString = firstPlace[@"_content"];
-//    NSLog(@"%@", placeString);
-    [self numberOfSectionsInTableView:nil];
-    
+    [super viewDidLoad];    
 }
 
 
@@ -47,19 +26,7 @@
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    NSArray *placeDictArray = self.topPlaces[@"places"][@"place"];
-    NSMutableSet *countriesSet = [[NSMutableSet alloc] init];
-    NSRegularExpression *getCountry = [NSRegularExpression regularExpressionWithPattern:@".*, (.*$)" options:0 error:nil];
-    for (NSDictionary *placeDict in placeDictArray) {
-        NSString *placeName = placeDict[FLICKR_PLACE_NAME];
-        NSLog(@"%@", placeName);
-        NSTextCheckingResult *match = [getCountry firstMatchInString:placeName options:0 range:NSMakeRange(0, [placeName length])];
-        NSString *countryName = [placeName substringWithRange:[match rangeAtIndex:1]];
-        NSLog(@"Country: %@", countryName);
-        [countriesSet addObject:countryName];
-    }
-    NSLog(@"%@", countriesSet);
-    return [countriesSet count];
+    return [[self.topPlacesObject alphabeticalArrayOfCountries] count];
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section

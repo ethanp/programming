@@ -22,6 +22,7 @@
 		AA510FF118727E1C00C01F27 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AA510FEF18727E1C00C01F27 /* InfoPlist.strings */; };
 		AA510FF318727E1C00C01F27 /* Top_PlacesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA510FF218727E1C00C01F27 /* Top_PlacesTests.m */; };
 		AA51100018727E3200C01F27 /* FlickrFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = AA510FFF18727E3200C01F27 /* FlickrFetcher.m */; };
+		AA972497187395A1009E5016 /* TopPlacesObject.m in Sources */ = {isa = PBXBuildFile; fileRef = AA972496187395A1009E5016 /* TopPlacesObject.m */; };
 		AADBB88D1872AD74009D4B10 /* BrowseTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */; };
 		AADBB8901872AD88009D4B10 /* HistoryTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AADBB88F1872AD88009D4B10 /* HistoryTabViewController.m */; };
 /* End PBXBuildFile section */
@@ -58,6 +59,8 @@
 		AA510FFD18727E3200C01F27 /* FlickrAPIKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrAPIKey.h; sourceTree = "<group>"; };
 		AA510FFE18727E3200C01F27 /* FlickrFetcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FlickrFetcher.h; sourceTree = "<group>"; };
 		AA510FFF18727E3200C01F27 /* FlickrFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrFetcher.m; sourceTree = "<group>"; };
+		AA972495187395A1009E5016 /* TopPlacesObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TopPlacesObject.h; path = "Top Places/Model/TopPlacesObject.h"; sourceTree = SOURCE_ROOT; };
+		AA972496187395A1009E5016 /* TopPlacesObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TopPlacesObject.m; path = "Top Places/Model/TopPlacesObject.m"; sourceTree = SOURCE_ROOT; };
 		AADBB88B1872AD74009D4B10 /* BrowseTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowseTabViewController.h; sourceTree = "<group>"; };
 		AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowseTabViewController.m; sourceTree = "<group>"; };
 		AADBB88E1872AD88009D4B10 /* HistoryTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryTabViewController.h; sourceTree = "<group>"; };
@@ -124,6 +127,7 @@
 		AA510FCA18727E1C00C01F27 /* Top Places */ = {
 			isa = PBXGroup;
 			children = (
+				AA972498187395A7009E5016 /* Model */,
 				AADBB8911872AD97009D4B10 /* Tab ViewControllers */,
 				AA510FCB18727E1C00C01F27 /* Supporting Files */,
 			);
@@ -171,6 +175,16 @@
 			);
 			name = "Flickr Fetcher";
 			path = "Top Places/Flickr Fetcher";
+			sourceTree = "<group>";
+		};
+		AA972498187395A7009E5016 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				AA972495187395A1009E5016 /* TopPlacesObject.h */,
+				AA972496187395A1009E5016 /* TopPlacesObject.m */,
+			);
+			name = Model;
+			path = "Flickr Fetcher";
 			sourceTree = "<group>";
 		};
 		AADBB8911872AD97009D4B10 /* Tab ViewControllers */ = {
@@ -287,6 +301,7 @@
 				AA51100018727E3200C01F27 /* FlickrFetcher.m in Sources */,
 				AA510FD118727E1C00C01F27 /* main.m in Sources */,
 				AADBB88D1872AD74009D4B10 /* BrowseTabViewController.m in Sources */,
+				AA972497187395A1009E5016 /* TopPlacesObject.m in Sources */,
 				AADBB8901872AD88009D4B10 /* HistoryTabViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
