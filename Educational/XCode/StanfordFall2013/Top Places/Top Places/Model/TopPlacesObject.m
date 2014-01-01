@@ -43,8 +43,7 @@
 - (NSArray *)alphabeticalArrayOfCountries
 {
     if (!_alphabeticalArrayOfCountries) {
-        _alphabeticalArrayOfCountries = [[self.citiesByCountry allKeys]
-                                         sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        _alphabeticalArrayOfCountries = [[self.citiesByCountry allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     }
     return _alphabeticalArrayOfCountries;
 }
@@ -53,30 +52,29 @@
 {
     if (!_citiesByCountry) {
         NSMutableDictionary *mutablePBC = [[NSMutableDictionary alloc] init];
-        NSRegularExpression *parsePlace = [NSRegularExpression regularExpressionWithPattern:@"([^,]*),(.*,)?(.*$)" options:0 error:nil];
+        NSRegularExpression *parsePlace = [NSRegularExpression regularExpressionWithPattern:@"([^,]*), (.*, )?(.*$)" options:0 error:nil];
         for (NSDictionary *placeDict in self.placeDictArray) {
             NSString *placeName = placeDict[FLICKR_PLACE_NAME];
-            NSLog(@"%@", placeName);
             NSTextCheckingResult *match = [parsePlace firstMatchInString:placeName options:0 range:NSMakeRange(0, [placeName length])];
             NSString *cityName = [placeName substringWithRange:[match rangeAtIndex:1]];
-            NSLog(@"City: %@", cityName);
             NSRange etcRange = [match rangeAtIndex:2];
             NSString *etcName = @"";
             if (etcRange.length) {
-                etcRange.length -= 1;
+                etcRange.length -= 2;
                 etcName = [placeName substringWithRange:etcRange];
-                NSLog(@"Etc: %@", etcName);
             }
             NSString *countryName = [placeName substringWithRange:[match rangeAtIndex:3]];
-            NSLog(@"Country: %@", countryName);
-            NSMutableArray *countryArray = [mutablePBC objectForKey:countryName];
-            NSArray *arrayToInsert = @[cityName, etcName];
+            NSLog(@"%@", countryName);
+            NSMutableArray *countryArray = mutablePBC[countryName];
+            NSDictionary *dictToInsert = @{@"city" : cityName,
+                                           @"etc"  : etcName};
             if ([countryArray count]) {
-                [countryArray addObject:arrayToInsert];
+                [countryArray addObject:dictToInsert];
             } else {
-                [mutablePBC setObject:[[NSMutableArray alloc] initWithArray:@[arrayToInsert]]
+                [mutablePBC setObject:[[NSMutableArray alloc] initWithArray:@[dictToInsert]]
                                forKey:countryName];
             }
+            NSLog(@"%@", countryArray);
         }
         _citiesByCountry = [mutablePBC copy];
     }
