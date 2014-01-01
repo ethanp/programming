@@ -6,6 +6,8 @@ Started 12/30/13
 Evolving List of Next-Steps to Persue
 -------------------------------------
 
+1. Set the `PhotoListViewController`'s `title` to be the `@"city"`
+
 1. Just start making the Browse Tab and see what happens
 
 Notes

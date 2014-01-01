@@ -15,7 +15,7 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="naE-7E-oI2" kind="relationship" relationship="viewControllers" id="ITE-3A-fyp"/>
+                        <segue destination="vWF-8M-CbZ" kind="relationship" relationship="viewControllers" id="ITE-3A-fyp"/>
                         <segue destination="yY9-4c-vaY" kind="relationship" relationship="viewControllers" id="uvq-2E-uQh"/>
                     </connections>
                 </tabBarController>
@@ -23,7 +23,7 @@
             </objects>
             <point key="canvasLocation" x="138" y="138"/>
         </scene>
-        <!--Browse Tab View Controller - Browse-->
+        <!--Browse Tab View Controller - Places-->
         <scene sceneID="zOw-Cd-DoP">
             <objects>
                 <tableViewController id="naE-7E-oI2" customClass="BrowseTabViewController" sceneMemberID="viewController">
@@ -32,11 +32,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="BrowseTab Cell" textLabel="FSj-bQ-MWj" detailTextLabel="hRa-VS-BaW" style="IBUITableViewCellStyleSubtitle" id="VHg-RV-cTk">
-                                <rect key="frame" x="0.0" y="55" width="320" height="44"/>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="BrowseTab Cell" textLabel="FSj-bQ-MWj" detailTextLabel="hRa-VS-BaW" style="IBUITableViewCellStyleSubtitle" id="VHg-RV-cTk">
+                                <rect key="frame" x="0.0" y="119" width="320" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="VHg-RV-cTk" id="H2x-ap-czE">
-                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="287" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="left" text="Title" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="FSj-bQ-MWj">
@@ -55,6 +55,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="iKu-E7-kVO" kind="push" id="rDk-AH-fdd"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -62,11 +65,40 @@
                             <outlet property="delegate" destination="naE-7E-oI2" id="CWG-wh-0Mh"/>
                         </connections>
                     </tableView>
-                    <tabBarItem key="tabBarItem" title="Browse" id="rnD-Yz-qWU"/>
+                    <navigationItem key="navigationItem" title="Places" id="k0p-cc-cpF"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OKe-kp-p9N" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="713" y="29"/>
+            <point key="canvasLocation" x="1239" y="29"/>
+        </scene>
+        <!--Photo List View Controller-->
+        <scene sceneID="au6-US-HgQ">
+            <objects>
+                <tableViewController id="iKu-E7-kVO" customClass="PhotoListViewController" sceneMemberID="viewController">
+                    <tableView key="view" opaque="NO" clipsSubviews="YES" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" id="zMw-Hd-ilp">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" id="xZB-hq-U2L">
+                                <rect key="frame" x="0.0" y="86" width="320" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="xZB-hq-U2L" id="VhT-dc-pRc">
+                                    <rect key="frame" x="0.0" y="0.0" width="320" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="iKu-E7-kVO" id="KqX-FQ-Ly0"/>
+                            <outlet property="delegate" destination="iKu-E7-kVO" id="G5d-y6-ekv"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="Oxv-s4-byZ"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iuA-lN-jj6" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1686" y="29"/>
         </scene>
         <!--History Tab View Controller - History-->
         <scene sceneID="5jZ-f4-xDT">
@@ -96,6 +128,25 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="7wE-9u-W4S" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="700" y="710"/>
+        </scene>
+        <!--Navigation Controller - Browse-->
+        <scene sceneID="iOo-kS-Leo">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="vWF-8M-CbZ" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Browse" id="rnD-Yz-qWU"/>
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="tZw-Dn-eef">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="naE-7E-oI2" kind="relationship" relationship="rootViewController" id="hz8-cb-o2Y"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Af9-5q-Ybb" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="713" y="29"/>
         </scene>
     </scenes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

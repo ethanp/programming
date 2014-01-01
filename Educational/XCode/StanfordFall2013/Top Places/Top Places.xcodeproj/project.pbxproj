@@ -23,6 +23,7 @@
 		AA510FF318727E1C00C01F27 /* Top_PlacesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AA510FF218727E1C00C01F27 /* Top_PlacesTests.m */; };
 		AA51100018727E3200C01F27 /* FlickrFetcher.m in Sources */ = {isa = PBXBuildFile; fileRef = AA510FFF18727E3200C01F27 /* FlickrFetcher.m */; };
 		AA972497187395A1009E5016 /* TopPlacesObject.m in Sources */ = {isa = PBXBuildFile; fileRef = AA972496187395A1009E5016 /* TopPlacesObject.m */; };
+		AA97249B1873C397009E5016 /* PhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA97249A1873C397009E5016 /* PhotoListViewController.m */; };
 		AADBB88D1872AD74009D4B10 /* BrowseTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */; };
 		AADBB8901872AD88009D4B10 /* HistoryTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AADBB88F1872AD88009D4B10 /* HistoryTabViewController.m */; };
 /* End PBXBuildFile section */
@@ -61,6 +62,8 @@
 		AA510FFF18727E3200C01F27 /* FlickrFetcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FlickrFetcher.m; sourceTree = "<group>"; };
 		AA972495187395A1009E5016 /* TopPlacesObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TopPlacesObject.h; path = "Top Places/Model/TopPlacesObject.h"; sourceTree = SOURCE_ROOT; };
 		AA972496187395A1009E5016 /* TopPlacesObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TopPlacesObject.m; path = "Top Places/Model/TopPlacesObject.m"; sourceTree = SOURCE_ROOT; };
+		AA9724991873C397009E5016 /* PhotoListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoListViewController.h; sourceTree = "<group>"; };
+		AA97249A1873C397009E5016 /* PhotoListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoListViewController.m; sourceTree = "<group>"; };
 		AADBB88B1872AD74009D4B10 /* BrowseTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowseTabViewController.h; sourceTree = "<group>"; };
 		AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowseTabViewController.m; sourceTree = "<group>"; };
 		AADBB88E1872AD88009D4B10 /* HistoryTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryTabViewController.h; sourceTree = "<group>"; };
@@ -128,7 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				AA972498187395A7009E5016 /* Model */,
-				AADBB8911872AD97009D4B10 /* Tab ViewControllers */,
+				AADBB8911872AD97009D4B10 /* ViewControllers */,
 				AA510FCB18727E1C00C01F27 /* Supporting Files */,
 			);
 			path = "Top Places";
@@ -187,15 +190,17 @@
 			path = "Flickr Fetcher";
 			sourceTree = "<group>";
 		};
-		AADBB8911872AD97009D4B10 /* Tab ViewControllers */ = {
+		AADBB8911872AD97009D4B10 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				AA9724991873C397009E5016 /* PhotoListViewController.h */,
+				AA97249A1873C397009E5016 /* PhotoListViewController.m */,
 				AADBB88E1872AD88009D4B10 /* HistoryTabViewController.h */,
 				AADBB88F1872AD88009D4B10 /* HistoryTabViewController.m */,
 				AADBB88B1872AD74009D4B10 /* BrowseTabViewController.h */,
 				AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */,
 			);
-			name = "Tab ViewControllers";
+			name = ViewControllers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -301,6 +306,7 @@
 				AA51100018727E3200C01F27 /* FlickrFetcher.m in Sources */,
 				AA510FD118727E1C00C01F27 /* main.m in Sources */,
 				AADBB88D1872AD74009D4B10 /* BrowseTabViewController.m in Sources */,
+				AA97249B1873C397009E5016 /* PhotoListViewController.m in Sources */,
 				AA972497187395A1009E5016 /* TopPlacesObject.m in Sources */,
 				AADBB8901872AD88009D4B10 /* HistoryTabViewController.m in Sources */,
 			);
