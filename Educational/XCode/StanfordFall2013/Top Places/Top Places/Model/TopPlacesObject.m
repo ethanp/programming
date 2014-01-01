@@ -8,31 +8,47 @@
 
 #import "TopPlacesObject.h"
 #import "FlickrFetcher.h"
+#import "BrowseTabViewController.h"
 
 
 @interface TopPlacesObject ()
 
 @property (nonatomic) NSArray *placeDictArray;
 @property (nonatomic) NSDictionary *countryDict;
+@property (nonatomic) BrowseTabViewController *parentController;
 
 @end
 
 
 @implementation TopPlacesObject
 
+- (TopPlacesObject *)initWithController:(UIViewController *)viewController
+{
+    self = [super init];
+    if ([viewController isKindOfClass:[BrowseTabViewController class]])
+        self.parentController = (BrowseTabViewController *)viewController;
+    return self;
+}
+
 - (void)loadPlaceDictArray
 {
     NSURLRequest *request = [NSURLRequest requestWithURL:[FlickrFetcher URLforTopPlaces]];
-    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration]];
-    NSURLSessionDownloadTask *task = [session downloadTaskWithRequest:request completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
-        NSData *data = [NSData dataWithContentsOfURL:[FlickrFetcher URLforTopPlaces]];
-        NSDictionary *baseDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSLog(@"%@", baseDict);
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:
+                             [NSURLSessionConfiguration ephemeralSessionConfiguration]];
+    NSURLSessionDownloadTask *task = [session
+                                      downloadTaskWithRequest:request completionHandler:
+                                      ^(NSURL *localFile, NSURLResponse *response,
+                                        NSError *error) {
+        NSData *data = [NSData dataWithContentsOfURL:localFile];
+        NSDictionary *baseDict = [NSJSONSerialization
+                                  JSONObjectWithData:data options:0 error:nil];
+        self.placeDictArray = [baseDict valueForKeyPath:FLICKR_RESULTS_PLACES];
+        NSLog(@"%@", self.placeDictArray);
         dispatch_async(dispatch_get_main_queue(), ^{
-            self.placeDictArray = [baseDict valueForKeyPath:FLICKR_RESULTS_PLACES];
+            [self.parentController doneLoading];
         });
     }];
-    [task resume];
+    [task resume]; /* starts this task in a different thread */
 }
 
 - (NSArray *)alphabeticalArrayOfCountries

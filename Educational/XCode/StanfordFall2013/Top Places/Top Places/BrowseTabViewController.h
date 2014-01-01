@@ -10,4 +10,6 @@
 
 @interface BrowseTabViewController : UITableViewController
 
+- (void)doneLoading;
+
 @end

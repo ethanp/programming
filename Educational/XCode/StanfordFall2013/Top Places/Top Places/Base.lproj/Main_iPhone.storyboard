@@ -31,6 +31,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                        <activityIndicatorView key="tableFooterView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" animating="YES" style="whiteLarge" id="TnM-3H-kBv">
+                            <rect key="frame" x="0.0" y="173" width="320" height="37"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        </activityIndicatorView>
                         <prototypes>
                             <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="BrowseTab Cell" textLabel="FSj-bQ-MWj" detailTextLabel="hRa-VS-BaW" style="IBUITableViewCellStyleSubtitle" id="VHg-RV-cTk">
                                 <rect key="frame" x="0.0" y="119" width="320" height="44"/>
@@ -66,6 +71,9 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Places" id="k0p-cc-cpF"/>
+                    <connections>
+                        <outlet property="spinner" destination="TnM-3H-kBv" id="HfB-zy-NWW"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OKe-kp-p9N" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

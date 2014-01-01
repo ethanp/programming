@@ -13,21 +13,31 @@
 @interface BrowseTabViewController ()
 
 @property (nonatomic) TopPlacesObject *topPlacesObject;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
+
 @end
 
 @implementation BrowseTabViewController
 
 - (TopPlacesObject *)topPlacesObject
 {
-    if (!_topPlacesObject) _topPlacesObject = [[TopPlacesObject alloc] init];
+    if (!_topPlacesObject) _topPlacesObject = [[TopPlacesObject alloc] initWithController:self];
     return _topPlacesObject;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    // MAKE THE SPINNER START TO SPIN
+    [self.spinner startAnimating];
     [self.topPlacesObject loadPlaceDictArray];
-    [self.topPlacesObject alphabeticalArrayOfCountries];
+}
+
+- (void)doneLoading
+{
+    [self.spinner stopAnimating];
+    /* TODO: MAKE IT LOAD THE TABLE NOW */
 }
 
 #pragma mark - Table view data source

@@ -14,5 +14,6 @@
 
 - (NSArray *)countryArrayForCountry:(NSString *)country;
 - (void)loadPlaceDictArray;
+- (TopPlacesObject *)initWithController:(UIViewController *)viewController;
 
 @end
