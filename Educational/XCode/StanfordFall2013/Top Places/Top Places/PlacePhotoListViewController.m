@@ -8,10 +8,11 @@
 
 #import "PlacePhotoListViewController.h"
 #import "FlickrFetcher.h"
+#import "PlacePhotosObject.h"
 
 @interface PlacePhotoListViewController ()
 
-@property (nonatomic) NSURL *photosURL;  // try to abstract this to base-class
+@property (nonatomic) PlacePhotosObject *placePhotosObject;
 
 @end
 
@@ -19,18 +20,18 @@
 
 #define NUM_PHOTOS_TO_DISPLAY 50
 
-- (NSURL *)photosURL
+- (PlacePhotosObject *)placePhotosObject
 {
-    if (!_photosURL)
-        _photosURL = [FlickrFetcher URLforPhotosInPlace:self.place_id
-                                             maxResults:NUM_PHOTOS_TO_DISPLAY];
-    return _photosURL;
+    if (!_placePhotosObject) _placePhotosObject = [[PlacePhotosObject alloc] init];
+    return _placePhotosObject;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.title = self.city;
+    self.placePhotosObject.place_id = self.place_id;
+    NSLog(@"%@", self.placePhotosObject.baseDict);
 }
 
 #pragma mark - Table view data source
