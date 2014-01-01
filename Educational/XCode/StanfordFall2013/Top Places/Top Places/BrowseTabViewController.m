@@ -71,6 +71,11 @@
     return cell;
 }
 
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+    return [self sectionNameOfNum:section];
+}
+
 /*
 #pragma mark - Navigation
 
