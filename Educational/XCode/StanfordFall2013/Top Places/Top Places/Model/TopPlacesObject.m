@@ -80,16 +80,21 @@
             }
             NSLog(@"%@", countryArray);
         }
-        for (__strong NSArray *countryArray in [mutablePBC allValues]) {
-            countryArray = [countryArray
-                            sortedArrayUsingComparator:
-                            ^NSComparisonResult(id obj1, id obj2) {
-                                NSString *city1 = ((NSDictionary *)obj1)[@"city"];
-                                NSString *city2 = ((NSDictionary *)obj2)[@"city"];
-                                return [city1 caseInsensitiveCompare:city2];
-                            }];
+
+        NSMutableDictionary *secondPBC = [[NSMutableDictionary alloc] init];
+        for (NSString *countryName in [mutablePBC allKeys]) {
+            NSArray *countryArray = mutablePBC[countryName];
+            NSArray *sortedCountryArray =
+                        [countryArray sortedArrayUsingComparator:
+                               ^NSComparisonResult(id obj1, id obj2) {
+                                   NSString *city1 = ((NSDictionary *)obj1)[@"city"];
+                                   NSString *city2 = ((NSDictionary *)obj2)[@"city"];
+                                   return [city1 caseInsensitiveCompare:city2];
+                               }];
+            [secondPBC setValue:sortedCountryArray forKey:countryName];
         }
-        _countryDict = [mutablePBC copy];
+        _countryDict = [secondPBC copy];
+
     }
     return _countryDict;
 }
