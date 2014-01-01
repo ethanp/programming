@@ -14,9 +14,7 @@
 
 @property (nonatomic) NSDictionary *baseDict;
 @property (nonatomic) NSArray *placeDictArray;
-@property (nonatomic) NSArray *alphabeticalArrayOfCountries;
-@property (nonatomic) NSDictionary *citiesByCountry;
-
+@property (nonatomic) NSDictionary *countryDict;
 
 @end
 
@@ -43,14 +41,14 @@
 - (NSArray *)alphabeticalArrayOfCountries
 {
     if (!_alphabeticalArrayOfCountries) {
-        _alphabeticalArrayOfCountries = [[self.citiesByCountry allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        _alphabeticalArrayOfCountries = [[self.countryDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     }
     return _alphabeticalArrayOfCountries;
 }
 
-- (NSDictionary *)citiesByCountry
+- (NSDictionary *)countryDict
 {
-    if (!_citiesByCountry) {
+    if (!_countryDict) {
         NSMutableDictionary *mutablePBC = [[NSMutableDictionary alloc] init];
         NSRegularExpression *parsePlace = [NSRegularExpression regularExpressionWithPattern:@"([^,]*), (.*, )?(.*$)" options:0 error:nil];
         for (NSDictionary *placeDict in self.placeDictArray) {
@@ -76,10 +74,14 @@
             }
             NSLog(@"%@", countryArray);
         }
-        _citiesByCountry = [mutablePBC copy];
+        _countryDict = [mutablePBC copy];
     }
-    return _citiesByCountry;
+    return _countryDict;
 }
 
+- (NSArray *)countryArrayForCountry:(NSString *)country;
+{
+    return self.countryDict[country];
+}
 
 @end

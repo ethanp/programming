@@ -36,11 +36,15 @@
     return [[self.topPlacesObject alphabeticalArrayOfCountries] count];
 }
 
+- (NSString *)sectionNameOfNum:(NSInteger)sectionNum
+{
+    return self.topPlacesObject.alphabeticalArrayOfCountries[sectionNum];
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-#warning Incomplete method implementation.
-    // Return the number of rows in the section.
-    return 0;
+    NSString *countryName = [self sectionNameOfNum:section];
+    return [[self.topPlacesObject countryArrayForCountry:countryName] count];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView

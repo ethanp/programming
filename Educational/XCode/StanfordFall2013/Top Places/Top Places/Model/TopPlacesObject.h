@@ -10,6 +10,8 @@
 
 @interface TopPlacesObject : NSObject
 
-- (NSArray *)alphabeticalArrayOfCountries;
+@property (nonatomic) NSArray *alphabeticalArrayOfCountries;
+
+- (NSArray *)countryArrayForCountry:(NSString *)country;
 
 @end
