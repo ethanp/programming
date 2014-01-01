@@ -37,7 +37,7 @@
 - (void)doneLoading
 {
     [self.spinner stopAnimating];
-    /* TODO: MAKE IT LOAD THE TABLE NOW */
+    [self.tableView reloadData];
 }
 
 #pragma mark - Table view data source
