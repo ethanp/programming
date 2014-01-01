@@ -52,16 +52,10 @@
     return [[self getRowDictsForSectionNum:section ] count];
 }
 
-- (NSString *)titleForRow:(NSInteger)row inSection:(NSInteger)section
+- (NSDictionary *)getDictForRow:(NSInteger)row inSection:(NSInteger)section
 {
     NSArray *rowDicts = [self getRowDictsForSectionNum:section];
-    NSDictionary *thisRow = rowDicts[row];
-    return thisRow[@"city"];
-}
-
-- (NSString *)subTitleForRow:(NSInteger)row inSection:(NSInteger)section
-{
-    return @"";
+    return rowDicts[row];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
@@ -69,9 +63,11 @@
 {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"BrowseTab Cell"
                                                             forIndexPath:indexPath];
-    // set title and subtitle
-    cell.textLabel.text = [self titleForRow:indexPath.row inSection:indexPath.section];
-    cell.detailTextLabel.text = [self subTitleForRow:indexPath.row inSection:indexPath.section];
+    cell.textLabel.text = [self getDictForRow:indexPath.row
+                                    inSection:indexPath.section][@"city"];
+    
+    cell.detailTextLabel.text = [self getDictForRow:indexPath.row
+                                          inSection:indexPath.section][@"etc"];
     return cell;
 }
 

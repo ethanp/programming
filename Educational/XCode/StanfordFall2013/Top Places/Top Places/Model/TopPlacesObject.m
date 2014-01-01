@@ -55,6 +55,8 @@
         NSRegularExpression *parsePlace = [NSRegularExpression
                                            regularExpressionWithPattern:@"([^,]*), (.*, )?(.*$)"
                                            options:0 error:nil];
+        
+        // add array of cities to each country
         for (NSDictionary *placeDict in self.placeDictArray) {
             NSString *placeName = placeDict[FLICKR_PLACE_NAME];
             NSTextCheckingResult *match = [parsePlace
@@ -81,7 +83,7 @@
             NSLog(@"%@", countryArray);
         }
 
-        NSMutableDictionary *secondPBC = [[NSMutableDictionary alloc] init];
+        // sort array of each country by city name
         for (NSString *countryName in [mutablePBC allKeys]) {
             NSArray *countryArray = mutablePBC[countryName];
             NSArray *sortedCountryArray =
@@ -91,9 +93,9 @@
                                    NSString *city2 = ((NSDictionary *)obj2)[@"city"];
                                    return [city1 caseInsensitiveCompare:city2];
                                }];
-            [secondPBC setValue:sortedCountryArray forKey:countryName];
+            [mutablePBC setValue:sortedCountryArray forKey:countryName];
         }
-        _countryDict = [secondPBC copy];
+        _countryDict = [mutablePBC copy];
 
     }
     return _countryDict;
