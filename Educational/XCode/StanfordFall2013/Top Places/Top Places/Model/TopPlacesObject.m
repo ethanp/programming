@@ -41,7 +41,9 @@
 - (NSArray *)alphabeticalArrayOfCountries
 {
     if (!_alphabeticalArrayOfCountries) {
-        _alphabeticalArrayOfCountries = [[self.countryDict allKeys] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
+        _alphabeticalArrayOfCountries = [[self.countryDict allKeys]
+                                         sortedArrayUsingSelector:
+                                         @selector(caseInsensitiveCompare:)];
     }
     return _alphabeticalArrayOfCountries;
 }
@@ -50,10 +52,14 @@
 {
     if (!_countryDict) {
         NSMutableDictionary *mutablePBC = [[NSMutableDictionary alloc] init];
-        NSRegularExpression *parsePlace = [NSRegularExpression regularExpressionWithPattern:@"([^,]*), (.*, )?(.*$)" options:0 error:nil];
+        NSRegularExpression *parsePlace = [NSRegularExpression
+                                           regularExpressionWithPattern:@"([^,]*), (.*, )?(.*$)"
+                                           options:0 error:nil];
         for (NSDictionary *placeDict in self.placeDictArray) {
             NSString *placeName = placeDict[FLICKR_PLACE_NAME];
-            NSTextCheckingResult *match = [parsePlace firstMatchInString:placeName options:0 range:NSMakeRange(0, [placeName length])];
+            NSTextCheckingResult *match = [parsePlace
+                                           firstMatchInString:placeName options:0
+                                           range:NSMakeRange(0, [placeName length])];
             NSString *cityName = [placeName substringWithRange:[match rangeAtIndex:1]];
             NSRange etcRange = [match rangeAtIndex:2];
             NSString *etcName = @"";
@@ -73,6 +79,15 @@
                                forKey:countryName];
             }
             NSLog(@"%@", countryArray);
+        }
+        for (__strong NSArray *countryArray in [mutablePBC allValues]) {
+            countryArray = [countryArray
+                            sortedArrayUsingComparator:
+                            ^NSComparisonResult(id obj1, id obj2) {
+                                NSString *city1 = ((NSDictionary *)obj1)[@"city"];
+                                NSString *city2 = ((NSDictionary *)obj2)[@"city"];
+                                return [city1 caseInsensitiveCompare:city2];
+                            }];
         }
         _countryDict = [mutablePBC copy];
     }

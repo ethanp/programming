@@ -8,6 +8,11 @@ Evolving List of Next-Steps to Persue
 
 1. Just start making the Browse Tab and see what happens
 
+Notes
+-----
+
+1. Cells in the BrowseTab are called `@"BrowseTab Cell"`s
+
 OVERALL
 -------
 ### (don't edit this, it's not an as-you-go type of list)

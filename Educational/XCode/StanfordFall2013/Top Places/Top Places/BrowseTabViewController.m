@@ -41,20 +41,37 @@
     return self.topPlacesObject.alphabeticalArrayOfCountries[sectionNum];
 }
 
+- (NSArray *)getRowDictsForSectionNum:(NSInteger)sectionNum
+{
+    NSString *countryName = [self sectionNameOfNum:sectionNum];
+    return [self.topPlacesObject countryArrayForCountry:countryName];
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSString *countryName = [self sectionNameOfNum:section];
-    return [[self.topPlacesObject countryArrayForCountry:countryName] count];
+    return [[self getRowDictsForSectionNum:section ] count];
+}
+
+- (NSString *)titleForRow:(NSInteger)row inSection:(NSInteger)section
+{
+    NSArray *rowDicts = [self getRowDictsForSectionNum:section];
+    NSDictionary *thisRow = rowDicts[row];
+    return thisRow[@"city"];
+}
+
+- (NSString *)subTitleForRow:(NSInteger)row inSection:(NSInteger)section
+{
+    return @"";
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView
          cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *CellIdentifier = @"Cell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier forIndexPath:indexPath];
-    
-    // Configure the cell...
-    
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"BrowseTab Cell"
+                                                            forIndexPath:indexPath];
+    // set title and subtitle
+    cell.textLabel.text = [self titleForRow:indexPath.row inSection:indexPath.section];
+    cell.detailTextLabel.text = [self subTitleForRow:indexPath.row inSection:indexPath.section];
     return cell;
 }
 
