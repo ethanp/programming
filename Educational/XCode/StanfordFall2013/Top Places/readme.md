@@ -6,14 +6,13 @@ Started 12/30/13
 Evolving List of Next-Steps to Persue
 -------------------------------------
 
-1. Set the `PhotoListViewController`'s `title` to be the `@"city"`
-
-1. Just start making the Browse Tab and see what happens
+1. Make the `PlacePhotoListViewController` load in real content
 
 Notes
 -----
 
 1. Cells in the BrowseTab are called `@"BrowseTab Cell"`s
+1. Cells in a PhotoList are called `@"PhotoList Cell"`s
 
 OVERALL
 -------

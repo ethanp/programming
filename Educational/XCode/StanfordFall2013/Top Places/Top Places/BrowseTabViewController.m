@@ -8,6 +8,7 @@
 
 #import "BrowseTabViewController.h"
 #import "TopPlacesObject.h"
+#import "PlacePhotoListViewController.h"
 
 @interface BrowseTabViewController ()
 
@@ -67,7 +68,7 @@
                                     inSection:indexPath.section][@"city"];
     
     cell.detailTextLabel.text = [self getDictForRow:indexPath.row
-                                          inSection:indexPath.section][@"etc"];
+                                          inSection:indexPath.section][@"subtitle"];
     return cell;
 }
 
@@ -76,17 +77,23 @@
     return [self sectionNameOfNum:section];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a story board-based application,
-// you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    // `sender` is the `UITableViewCell`
+    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
+    if ([segue.destinationViewController isKindOfClass:[PlacePhotoListViewController class]]) {
+        PlacePhotoListViewController *placeVC = segue.destinationViewController;
+        
+        placeVC.city = [self getDictForRow:indexPath.row
+                             inSection:indexPath.section][@"city"];
+        
+        placeVC.place_id = [self getDictForRow:indexPath.row
+                                     inSection:indexPath.section][@"place_id"];
+        
+    } else [NSException raise:@"Wrong VC" format:@"VC of class: %@",
+                        [segue.destinationViewController class].description];
+    
+    
 }
-
- */
 
 @end

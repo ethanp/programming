@@ -81,7 +81,8 @@
             NSLog(@"%@", countryName);
             NSMutableArray *countryArray = mutablePBC[countryName];
             NSDictionary *dictToInsert = @{@"city" : cityName,
-                                           @"etc"  : etcName};
+                                           @"subtitle"  : etcName,
+                                           @"place_id" : placeDict[FLICKR_PLACE_ID]};
             if ([countryArray count]) {
                 [countryArray addObject:dictToInsert];
             } else {
