@@ -26,9 +26,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [self numberOfSectionsInTableView:nil];
+    [self.topPlacesObject loadPlaceDictArray];
+    [self.topPlacesObject alphabeticalArrayOfCountries];
 }
-
 
 #pragma mark - Table view data source
 
@@ -80,10 +80,9 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     // `sender` is the `UITableViewCell`
-    NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
     if ([segue.destinationViewController isKindOfClass:[PlacePhotoListViewController class]]) {
         PlacePhotoListViewController *placeVC = segue.destinationViewController;
-        
+        NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
         placeVC.city = [self getDictForRow:indexPath.row
                              inSection:indexPath.section][@"city"];
         

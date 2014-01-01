@@ -13,5 +13,6 @@
 @property (nonatomic) NSArray *alphabeticalArrayOfCountries;
 
 - (NSArray *)countryArrayForCountry:(NSString *)country;
+- (void)loadPlaceDictArray;
 
 @end

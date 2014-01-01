@@ -30,6 +30,7 @@
 - (NSDictionary *)baseDict
 {
     if (!_baseDict) {
+        // TODO: move this to another thread and put a spinner
         NSData *data = [NSData dataWithContentsOfURL:self.url];
         _baseDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
         NSLog(@"%@", _baseDict);

@@ -12,7 +12,6 @@
 
 @interface TopPlacesObject ()
 
-@property (nonatomic) NSDictionary *baseDict;
 @property (nonatomic) NSArray *placeDictArray;
 @property (nonatomic) NSDictionary *countryDict;
 
@@ -21,21 +20,19 @@
 
 @implementation TopPlacesObject
 
-- (NSDictionary *)baseDict
+- (void)loadPlaceDictArray
 {
-    if (!_baseDict) {
+    NSURLRequest *request = [NSURLRequest requestWithURL:[FlickrFetcher URLforTopPlaces]];
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration]];
+    NSURLSessionDownloadTask *task = [session downloadTaskWithRequest:request completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
         NSData *data = [NSData dataWithContentsOfURL:[FlickrFetcher URLforTopPlaces]];
-        _baseDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-        NSLog(@"%@", _baseDict);
-    }
-    return _baseDict;
-}
-
-- (NSArray *)placeDictArray
-{
-    if (!_placeDictArray)
-        _placeDictArray = [self.baseDict valueForKeyPath:FLICKR_RESULTS_PLACES];
-    return _placeDictArray;
+        NSDictionary *baseDict = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+        NSLog(@"%@", baseDict);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            self.placeDictArray = [baseDict valueForKeyPath:FLICKR_RESULTS_PLACES];
+        });
+    }];
+    [task resume];
 }
 
 - (NSArray *)alphabeticalArrayOfCountries
