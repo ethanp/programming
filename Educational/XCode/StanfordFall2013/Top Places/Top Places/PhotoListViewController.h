@@ -11,6 +11,7 @@
 @interface PhotoListViewController : UITableViewController
 
 @property (nonatomic) NSString *putAtTop;
+
 - (void)doneLoading;
 
 @end

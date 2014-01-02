@@ -94,16 +94,16 @@ titleForHeaderInSection:(NSInteger)section
          isKindOfClass:[PlacePhotoListViewController class]]) {
         PlacePhotoListViewController *placeVC = segue.destinationViewController;
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-        placeVC.city = [self getDictForRow:indexPath.row
+        placeVC.putAtTop = [self getDictForRow:indexPath.row
                              inSection:indexPath.section][@"city"];
         
         placeVC.place_id = [self getDictForRow:indexPath.row
                                      inSection:indexPath.section][@"place_id"];
         
-    } else [NSException raise:@"Wrong VC" format:@"VC of class: %@",
-                        [segue.destinationViewController class].description];
-    
-    
+    } else {
+        [NSException raise:@"Wrong VC" format:@"VC of class: %@",
+                [segue.destinationViewController class].description];
+    }
 }
 
 @end

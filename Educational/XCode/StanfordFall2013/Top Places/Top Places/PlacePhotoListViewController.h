@@ -11,8 +11,6 @@
 
 @interface PlacePhotoListViewController : PhotoListViewController
 
-@property (nonatomic) NSString *city;
 @property (nonatomic) NSString *place_id;
-
 
 @end

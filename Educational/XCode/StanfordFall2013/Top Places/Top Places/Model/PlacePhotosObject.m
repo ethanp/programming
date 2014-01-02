@@ -22,11 +22,18 @@
 
 #define NUM_PHOTOS 50
 
+- (instancetype)initWithController:(PlacePhotoListViewController *)parentVC
+{
+    self = [super init];
+    self.parentController = parentVC;
+    return self;
+}
+
 - (void)loadPhotos
 {
     NSURLRequest *request =
             [NSURLRequest requestWithURL:
-                    [FlickrFetcher URLforPhotosInPlace:self.place_id
+                    [FlickrFetcher URLforPhotosInPlace:self.parentController.place_id
                                             maxResults:NUM_PHOTOS]];
     
     NSURLSession *session = [NSURLSession sessionWithConfiguration:

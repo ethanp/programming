@@ -11,6 +11,4 @@
 
 @interface PlacePhotosObject : PhotosHolderObject
 
-@property (nonatomic) NSString *place_id;
-
 @end

@@ -9,7 +9,20 @@
 #import "PhotosHolderObject.h"
 #import "FlickrFetcher.h"
 
+@interface PhotosHolderObject ()
+
+@property (nonatomic) PhotoListViewController *parentController;
+
+@end
+
 @implementation PhotosHolderObject
+
+- (instancetype)initWithController:(PhotoListViewController *)parentVC
+{
+    self = [super init];
+    self.parentController = parentVC;
+    return self;
+}
 
 // ABSTRACT
 - (void)loadPhotos { [NSException raise:@"loadPhotos is Abstract" format:@""]; }

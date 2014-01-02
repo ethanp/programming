@@ -12,7 +12,7 @@
 @interface PhotoListViewController ()
 
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *spinner;
-@property (nonatomic) PlacePhotosObject *photosHolder;
+@property (nonatomic) PhotosHolderObject *photosHolder;
 
 @end
 
@@ -41,35 +41,25 @@
     return 1;
 }
 
-// abstract
+// ABSTRACT
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    [NSException raise:@"Abstract Method" format:@"numberOfRows is Abstract"];
-    return 0;
-}
+{ [NSException raise:@"Abstract Method" format:@"numberOfRows is Abstract"]; return 0; }
 
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView
+         cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PhotoList Cell"
-                                                            forIndexPath:indexPath];
+    UITableViewCell *cell =
+            [tableView dequeueReusableCellWithIdentifier:@"PhotoList Cell"
+                                            forIndexPath:indexPath];
     
-    // Configure the cell...
-    
-    /* Any list of photos should display the photo’s title as the table view cell’s
-     title and its description as the table view cell’s subtitle. If the photo
-     has no title, use its description as the title. If it has no title or
-     description, use “Unknown” as the title. Flickr photo dictionary keys are
-     #defined in FlickrFetcher.h. */
-    
-    cell.textLabel.text = @"TODO";
-    cell.detailTextLabel.text = @"TODO TOO";
-    
+    NSDictionary *cellDict = [self.photosHolder getInfoForPhotoNumber:indexPath.row];
+    cell.textLabel.text = cellDict[@"title"];
+    cell.detailTextLabel.text = cellDict[@"subtitle"];
     return cell;
 }
 
 #pragma mark - Navigation
 
-// In a story board-based application, you will often want to do a little preparation before navigation
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
     // Get the new view controller using [segue destinationViewController].

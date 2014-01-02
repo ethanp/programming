@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PhotoListViewController.h"
 
 @interface PhotosHolderObject : NSObject
 
@@ -14,5 +15,6 @@
 
 - (void)loadPhotos;
 - (NSDictionary *)getInfoForPhotoNumber:(NSInteger)num;
+- (instancetype)initWithController:(PhotoListViewController *)parentVC;
 
 @end

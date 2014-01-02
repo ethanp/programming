@@ -12,7 +12,7 @@
 
 @interface PlacePhotoListViewController ()
 
-@property (nonatomic) PlacePhotosObject *placePhotosObject;
+@property (nonatomic) PlacePhotosObject *photosHolder;
 
 @end
 
@@ -20,18 +20,11 @@
 
 #define NUM_PHOTOS_TO_DISPLAY 50
 
-- (PlacePhotosObject *)placePhotosObject
+- (PlacePhotosObject *)photosHolder
 {
-    if (!_placePhotosObject) {
-        _placePhotosObject = [[PlacePhotosObject alloc] init];
-        _placePhotosObject.place_id = self.place_id;
-    }
-    return _placePhotosObject;
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
+    if (!_photosHolder) _photosHolder = [[PlacePhotosObject alloc]
+                                         initWithController:self];
+    return  _photosHolder;
 }
 
 #pragma mark - Table view data source
