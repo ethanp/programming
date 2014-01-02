@@ -14,6 +14,7 @@
 @property (nonatomic) NSArray *photos;
 
 - (void)loadPhotos;
+- (void)loadCountPhotos:(NSInteger)num withURL:(NSURL *)url;
 - (NSDictionary *)getInfoForPhotoNumber:(NSInteger)num;
 - (instancetype)initWithController:(PhotoListViewController *)parentVC;
 

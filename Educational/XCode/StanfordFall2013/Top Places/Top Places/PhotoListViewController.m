@@ -22,9 +22,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.title = self.putAtTop;
     [self.spinner startAnimating];
-    [self.photosHolder loadPhotos];
 }
 
 - (void)doneLoading

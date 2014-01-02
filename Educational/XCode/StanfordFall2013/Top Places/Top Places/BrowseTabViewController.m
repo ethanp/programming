@@ -94,9 +94,8 @@ titleForHeaderInSection:(NSInteger)section
          isKindOfClass:[PlacePhotoListViewController class]]) {
         PlacePhotoListViewController *placeVC = segue.destinationViewController;
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-        placeVC.putAtTop = [self getDictForRow:indexPath.row
-                             inSection:indexPath.section][@"city"];
-        
+        placeVC.title = [self getDictForRow:indexPath.row
+                                     inSection:indexPath.section][@"city"];
         placeVC.place_id = [self getDictForRow:indexPath.row
                                      inSection:indexPath.section][@"place_id"];
         
