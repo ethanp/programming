@@ -49,9 +49,10 @@
     if ([segue.destinationViewController isKindOfClass:[PhotoViewController class]]) {
         PhotoViewController *photoVC = segue.destinationViewController;
         NSIndexPath *indexPath = [self.tableView indexPathForCell:sender];
-        photoVC.title = nil;
+        NSDictionary *photoDict = [self.photosHolder photos][indexPath.row];
+        photoVC.title = [self.photosHolder getInfoForPhotoNumber:indexPath.row][@"title"];
         photoVC.imageURL =
-                [FlickrFetcher URLforPhoto:[self.photosHolder photos][indexPath.row]
+                [FlickrFetcher URLforPhoto:photoDict
                                     format:FlickrPhotoFormatLarge];
     } else {
         [NSException raise:@"Wrong VC" format:@"VC of class: %@",
