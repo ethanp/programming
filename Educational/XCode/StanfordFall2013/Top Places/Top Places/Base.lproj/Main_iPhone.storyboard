@@ -116,6 +116,9 @@
                                         </label>
                                     </subviews>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="X3I-Ph-S5V" kind="push" id="Vq3-XK-jQo"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -131,6 +134,48 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iuA-lN-jj6" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1577" y="29"/>
+        </scene>
+        <!--Photo View Controller-->
+        <scene sceneID="qwJ-ir-Aj3">
+            <objects>
+                <viewController id="X3I-Ph-S5V" customClass="PhotoViewController" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="RMl-La-ftN"/>
+                        <viewControllerLayoutGuide type="bottom" id="WUN-Q0-U2f"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="Fyp-hf-9mR">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="519"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QHV-yq-8co">
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="565"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <subviews>
+                                    <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="whiteLarge" translatesAutoresizingMaskIntoConstraints="NO" id="796-MB-6nt">
+                                        <rect key="frame" x="142" y="172" width="37" height="37"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="color" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                            </scrollView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="QHV-yq-8co" secondAttribute="trailing" id="4rr-SN-4yR"/>
+                            <constraint firstItem="QHV-yq-8co" firstAttribute="leading" secondItem="Fyp-hf-9mR" secondAttribute="leading" id="caT-o1-fc6"/>
+                            <constraint firstAttribute="bottom" secondItem="QHV-yq-8co" secondAttribute="bottom" constant="-46" id="egf-Gq-4Uv"/>
+                            <constraint firstItem="QHV-yq-8co" firstAttribute="top" secondItem="Fyp-hf-9mR" secondAttribute="top" id="kMu-YE-boi"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="7aS-IH-9iH"/>
+                    <connections>
+                        <outlet property="scrollView" destination="QHV-yq-8co" id="Wdh-hC-Tiy"/>
+                        <outlet property="spinner" destination="796-MB-6nt" id="cT9-qx-7Z8"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="9x8-9M-dl7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2017" y="29"/>
         </scene>
         <!--History Tab View Controller - History-->
         <scene sceneID="5jZ-f4-xDT">

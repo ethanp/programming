@@ -27,6 +27,7 @@
 		AA97249E1873D195009E5016 /* PlacePhotoListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA97249D1873D195009E5016 /* PlacePhotoListViewController.m */; };
 		AA9724A11874A8DC009E5016 /* PlacePhotosObject.m in Sources */ = {isa = PBXBuildFile; fileRef = AA9724A01874A8DC009E5016 /* PlacePhotosObject.m */; };
 		AA9724A41874D36A009E5016 /* PhotosHolderObject.m in Sources */ = {isa = PBXBuildFile; fileRef = AA9724A31874D36A009E5016 /* PhotosHolderObject.m */; };
+		AA9724A91874EA21009E5016 /* PhotoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AA9724A81874EA21009E5016 /* PhotoViewController.m */; };
 		AADBB88D1872AD74009D4B10 /* BrowseTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */; };
 		AADBB8901872AD88009D4B10 /* HistoryTabViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AADBB88F1872AD88009D4B10 /* HistoryTabViewController.m */; };
 /* End PBXBuildFile section */
@@ -73,6 +74,8 @@
 		AA9724A01874A8DC009E5016 /* PlacePhotosObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PlacePhotosObject.m; path = "Top Places/Model/PlacePhotosObject.m"; sourceTree = SOURCE_ROOT; };
 		AA9724A21874D36A009E5016 /* PhotosHolderObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PhotosHolderObject.h; path = ../Model/PhotosHolderObject.h; sourceTree = "<group>"; };
 		AA9724A31874D36A009E5016 /* PhotosHolderObject.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PhotosHolderObject.m; path = ../Model/PhotosHolderObject.m; sourceTree = "<group>"; };
+		AA9724A71874EA21009E5016 /* PhotoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PhotoViewController.h; sourceTree = "<group>"; };
+		AA9724A81874EA21009E5016 /* PhotoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PhotoViewController.m; sourceTree = "<group>"; };
 		AADBB88B1872AD74009D4B10 /* BrowseTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BrowseTabViewController.h; sourceTree = "<group>"; };
 		AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BrowseTabViewController.m; sourceTree = "<group>"; };
 		AADBB88E1872AD88009D4B10 /* HistoryTabViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryTabViewController.h; sourceTree = "<group>"; };
@@ -211,7 +214,7 @@
 			name = PhotosHolders;
 			sourceTree = "<group>";
 		};
-		AADBB8911872AD97009D4B10 /* ViewControllers */ = {
+		AA9724A61874E9F9009E5016 /* Tables */ = {
 			isa = PBXGroup;
 			children = (
 				AA9724991873C397009E5016 /* PhotoListViewController.h */,
@@ -222,6 +225,24 @@
 				AADBB88F1872AD88009D4B10 /* HistoryTabViewController.m */,
 				AADBB88B1872AD74009D4B10 /* BrowseTabViewController.h */,
 				AADBB88C1872AD74009D4B10 /* BrowseTabViewController.m */,
+			);
+			name = Tables;
+			sourceTree = "<group>";
+		};
+		AA9724AA1874EA26009E5016 /* Photos */ = {
+			isa = PBXGroup;
+			children = (
+				AA9724A71874EA21009E5016 /* PhotoViewController.h */,
+				AA9724A81874EA21009E5016 /* PhotoViewController.m */,
+			);
+			name = Photos;
+			sourceTree = "<group>";
+		};
+		AADBB8911872AD97009D4B10 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				AA9724A61874E9F9009E5016 /* Tables */,
+				AA9724AA1874EA26009E5016 /* Photos */,
 			);
 			name = ViewControllers;
 			sourceTree = "<group>";
@@ -334,6 +355,7 @@
 				AADBB88D1872AD74009D4B10 /* BrowseTabViewController.m in Sources */,
 				AA97249B1873C397009E5016 /* PhotoListViewController.m in Sources */,
 				AA972497187395A1009E5016 /* TopPlacesObject.m in Sources */,
+				AA9724A91874EA21009E5016 /* PhotoViewController.m in Sources */,
 				AADBB8901872AD88009D4B10 /* HistoryTabViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
