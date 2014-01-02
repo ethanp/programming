@@ -27,17 +27,20 @@
 // ABSTRACT
 - (void)loadPhotos { [NSException raise:@"loadPhotos is Abstract" format:@""]; }
 
+
 - (NSDictionary *)getInfoForPhotoNumber:(NSInteger)num
 {
     NSDictionary *photoDict = self.photos[num];
     
     NSString *title = photoDict[FLICKR_PHOTO_TITLE];
-    NSString *description = @"";
+    NSString *sub = @"";
     if (!title) title = photoDict[FLICKR_PHOTO_DESCRIPTION];
-    else  description = photoDict[FLICKR_PHOTO_DESCRIPTION];
+    else          sub = photoDict[FLICKR_PHOTO_DESCRIPTION];
     
-    return @{@"title"    : (title ? title : @"unknown"),
-             @"subtitle" : (description ? description : @"")};
+    if (!title || [title isEqualToString:@""]) title = @"Unknown";
+    
+    return @{@"title"    : title,
+             @"subtitle" : (sub ? sub : @"")};
 }
 
 @end

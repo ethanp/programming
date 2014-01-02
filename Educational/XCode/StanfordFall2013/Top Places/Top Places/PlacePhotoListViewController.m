@@ -18,8 +18,6 @@
 
 @implementation PlacePhotoListViewController
 
-#define NUM_PHOTOS_TO_DISPLAY 50
-
 - (PlacePhotosObject *)photosHolder
 {
     if (!_photosHolder) _photosHolder = [[PlacePhotosObject alloc]
@@ -31,7 +29,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return NUM_PHOTOS_TO_DISPLAY;
+    return [[self.photosHolder photos] count];
 }
 
 #pragma mark - Navigation

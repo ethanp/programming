@@ -125,7 +125,7 @@
                     </tableView>
                     <navigationItem key="navigationItem" id="Oxv-s4-byZ"/>
                     <connections>
-                        <outlet property="spinner" destination="eoo-3p-mQm" id="ywy-oq-Nhs"/>
+                        <outlet property="spinner" destination="eoo-3p-mQm" id="Vkd-KN-T6y"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="iuA-lN-jj6" userLabel="First Responder" sceneMemberID="firstResponder"/>
