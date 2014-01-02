@@ -48,10 +48,13 @@
                                                JSONObjectWithData:data
                                                options:0 error:nil];
                      self.photos = [baseDict valueForKeyPath:FLICKR_RESULTS_PHOTOS];
+                     self.photos = [self.photos sortedArrayUsingComparator:
+                          ^NSComparisonResult(id obj1, id obj2) {
+                             NSString *t1 = ((NSDictionary *)obj1)[@"title"];
+                             NSString *t2 = ((NSDictionary *)obj2)[@"title"];
+                             return [t1 caseInsensitiveCompare:t2];
+                     }];
                      NSLog(@"%@", self.photos);
-                     
-                     // TODO sort the photos for display
-                     
                      dispatch_async(dispatch_get_main_queue(), ^{
                          [self.parentController doneLoading];
                      });

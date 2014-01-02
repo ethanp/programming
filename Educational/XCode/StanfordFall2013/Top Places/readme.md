@@ -6,9 +6,7 @@ Started 12/30/13
 Evolving List of Next-Steps to Persue
 -------------------------------------
 
-1. Make the `PlacePhotoListViewController` load in real content
-
-1. Make the PlacePhoto data downloads not *block the main thread*
+1. Get a `UIScrollView` working to actually view the photos
 
 Notes
 -----
