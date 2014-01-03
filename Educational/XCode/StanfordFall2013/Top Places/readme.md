@@ -8,6 +8,10 @@ Evolving List of Next-Steps to Persue
 
 1. The History Tab, uses `NSUserDefaults`
     * Need to watch the lecture on that first
+    * Use `FLICKR_PHOTO_ID`, unique, persistent photo identifier
+    * Collect all of your NSUserDefaults calls into a single utility class
+      somewhere rather than sprinkling the knowledge of the format of the
+      recents data you store there around in multiple classes.
 
 Notes
 -----
