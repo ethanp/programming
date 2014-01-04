@@ -54,10 +54,8 @@ set startDate to date startDate
 set endDate to date endDate
 tell application "Calendar"
 	tell (first calendar whose name is calendarName)
-		tell (last event whose summary is theSummary)
-			set start date to startDate
+		tell (last event whose start date is startDate)
 			set end date to endDate
-			set summary to theSummary
 		end tell
 	end tell
 end tell
