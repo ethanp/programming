@@ -27,6 +27,41 @@
 // ABSTRACT
 - (void)loadPhotos { [NSException raise:@"loadPhotos is Abstract" format:@""]; }
 
+- (void)loadCountPhotos:(NSInteger)num withURL:(NSURL *)url
+{
+    NSURLRequest *request =
+    [NSURLRequest requestWithURL:
+     [FlickrFetcher URLforPhotosInPlace:url
+                             maxResults:num]];
+    
+    NSURLSession *session = [NSURLSession sessionWithConfiguration:
+                             [NSURLSessionConfiguration ephemeralSessionConfiguration]];
+    
+    NSURLSessionDownloadTask *task =
+    [session downloadTaskWithRequest:request completionHandler:
+     ^(NSURL *localFile, NSURLResponse *response, NSError *error) {
+         if (!error) {
+             NSData *data = [NSData dataWithContentsOfURL:localFile];
+             NSDictionary *baseDict = [NSJSONSerialization
+                                       JSONObjectWithData:data
+                                       options:0 error:nil];
+             self.photos = [baseDict valueForKeyPath:FLICKR_RESULTS_PHOTOS];
+             self.photos = [self.photos sortedArrayUsingComparator:
+                            ^NSComparisonResult(id obj1, id obj2) {
+                                NSString *t1 = ((NSDictionary *)obj1)[@"title"];
+                                NSString *t2 = ((NSDictionary *)obj2)[@"title"];
+                                return [t1 caseInsensitiveCompare:t2];
+                            }];
+             NSLog(@"%@", self.photos);
+             dispatch_async(dispatch_get_main_queue(), ^{
+                 [self.parentController doneLoading];
+             });
+         }
+     }
+     ];
+    [task resume];
+}
+
 
 - (NSDictionary *)getInfoForPhotoNumber:(NSInteger)num
 {

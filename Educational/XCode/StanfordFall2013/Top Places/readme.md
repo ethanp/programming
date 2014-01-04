@@ -6,7 +6,12 @@ Started 12/30/13
 Evolving List of Next-Steps to Persue
 -------------------------------------
 
-1. Get a `UIScrollView` working to actually view the photos
+1. The History Tab, uses `NSUserDefaults`
+    * Need to watch the lecture on that first
+    * Use `FLICKR_PHOTO_ID`, unique, persistent photo identifier
+    * Collect all of your NSUserDefaults calls into a single utility class
+      somewhere rather than sprinkling the knowledge of the format of the
+      recents data you store there around in multiple classes.
 
 Notes
 -----
@@ -18,9 +23,9 @@ OVERALL
 -------
 ### (don't edit this, it's not an as-you-go type of list)
 
-1. Dictionary keys are `#define`d in `FlickerFetcher.h`
+1. Dictionary keys are `#define`d in `FlickerFetcher.h` **CHECK**
 
-1. Main Thread should never be *blocked*
+1. Main Thread should never be *blocked*  **CHECK**
 
 1. Must work for
     * Both *portrait and landscape*
@@ -33,7 +38,7 @@ OVERALL
 
 1. Make it work on a real iOS device (if they let me...lol)
 
-BROWSE TAB
+BROWSE TAB  *(DONE)*
 ----------
 
 1. List of places
@@ -43,7 +48,7 @@ BROWSE TAB
     * City Name is the Title
     * Rest of the name (state, province, etc.) is the Subtitle
 
-### Photo List
+### Photo List *(DONE)*
 
 1. Clicking on a place queries Flickr to get (an array of) 50 photos from there
     * Display them in a list
@@ -55,7 +60,7 @@ BROWSE TAB
     * If no photo title, use Description as Title
     * If no description either, use "Unknown" as Title
 
-Showing the Photo
+Showing the Photo  *(DONE)*
 -----------------
 
 1. On choosing a photo, show it inside a `UIScrollView`
