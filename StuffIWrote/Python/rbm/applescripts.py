@@ -24,6 +24,8 @@ set endDate to "{endDate}"
 set startDate to date startDate
 set endDate to date endDate
 
+tell application "Calendar" to launch
+delay 1
 tell application "Calendar"
 	tell (first calendar whose name is calendarName)
 		make new event at end of events with properties {summary:theSummary, start date:startDate, end date:endDate}
@@ -52,6 +54,9 @@ set endDate to "{endDate}"
     restOfTheScript='''
 set startDate to date startDate
 set endDate to date endDate
+
+tell application "Calendar" to launch
+delay 1
 tell application "Calendar"
 	tell (first calendar whose name is calendarName)
 		tell (last event whose start date is startDate)
