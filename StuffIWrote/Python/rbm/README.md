@@ -2,6 +2,11 @@ The REALLY Barebones Minco
 ===============================
 Goal: make something useful and usable that can be iterated if need be
 
+Usage Note
+----------
+**You *must* leave the event you want to `end` in the calendar**
+after you `start` it.
+
 Sample Usages
 -------------
 
