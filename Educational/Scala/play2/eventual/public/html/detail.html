@@ -1,0 +1,36 @@
+<div class="col-md-4">
+<form name="detailForm" role="form" class="form-horizontal">
+<fieldset>
+	<div class="control-group">
+		<label class="control-label" for="firstname">First Name</label>
+		<input type="text" class="form-control" id="firstname" name="firstname" data-ng-model="celebrity.name.first" placeholder="Enter first name" required>
+		<span data-ng-show="detailForm.firstname.$error.required" class="help-inline">Required</span>
+	</div>
+	
+	<div class="control-group">
+		<label class="control-label" for="lastname">Last Name</label>
+		<input type="text" class="form-control" id="lastname" name="lastname" data-ng-model="celebrity.name.last" placeholder="Enter last name" required>
+		<span data-ng-show="detailForm.lastname.$error.required" class="help-inline">Required</span>
+	</div>
+ 
+	<div class="control-group">
+		<label class="control-label" for="website">Website</label>
+		<input type="url" class="form-control" id="website" name="website" data-ng-model="celebrity.website" placeholder="Enter website" required>
+		<span data-ng-show="detailForm.website.$error.required" class="help-inline">Required</span>
+		<span data-ng-show="detailForm.website.$error.url" class="help-inline">Not a URL</span>
+	</div>
+	
+	<div class="control-group">
+		<label class="control-label" for="bio">Bio</label>
+		<textarea type="text" class="form-control" id="bio" name="bio" data-ng-model="celebrity.bio" placeholder="Enter bio"></textarea>
+	</div>
+
+	<br />
+	
+	<!--<a href="/" class="btn btn-default">Cancel</a>-->
+	<button data-ng-click="go('/')" class="btn btn-default">Cancel</button>
+	<button data-ng-click="save()" data-ng-disabled="noChange() || detailForm.$invalid" class="btn btn-primary">Save</button>
+	<button data-ng-click="delete()" data-ng-show="celebrity.id.$oid" class="btn btn-danger">Delete</button>
+</fieldset>
+</form>
+</div>

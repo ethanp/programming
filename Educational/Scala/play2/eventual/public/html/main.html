@@ -1,0 +1,18 @@
+<div>
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th>Website</th>
+				<th><a href="/create"><i class="glyphicon glyphicon-plus-sign"></i></a></th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="celebrity in celebrities | orderBy:['name.first','name.last']">
+				<td class="pad">{{celebrity.name.first}} {{celebrity.name.last}}</td>
+				<td class="pad"><a href="{{celebrity.website}}" target="_blank">{{celebrity.website}}</a></td>
+				<td><a href="/edit/{{celebrity.id.$oid}}"><i class="glyphicon glyphicon-pencil"></i></a></td>
+			</tr>
+		</tbody>
+	</table>
+</div>
