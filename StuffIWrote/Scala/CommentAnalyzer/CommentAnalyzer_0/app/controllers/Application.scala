@@ -1,13 +1,12 @@
 package controllers
 
-import play.api._
-import play.api.mvc._
 import com.google.gdata.client.youtube.YouTubeService
+import play.api.mvc.{Action, Controller}
 
 object Application extends Controller {
 
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Redirect(routes.Videos.list())
   }
 
   val lines = scala.io.Source.fromFile("/etc/googleIDKey").mkString.split("\n")

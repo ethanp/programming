@@ -1,3 +1,6 @@
+@*************************************************************
+ * use this to provide a consistent theme for the whole site *
+ *************************************************************@
 @(title: String)(content: Html)(implicit lang: Lang)
 
 <!DOCTYPE html>
@@ -24,6 +27,8 @@
                 </div>
                 <div class="container">
                     @content
+                    @* call debug template *@
+                    @debug()
                 </div>
             </div>
         </div>

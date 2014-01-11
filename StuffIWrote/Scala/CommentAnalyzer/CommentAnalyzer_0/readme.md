@@ -1,17 +1,6 @@
 Comment Analyzer, Version 0
 ==========================
 
-Notes
------
-v3 of youtube specifically is here
-http://maven-repository.com/artifact/com.google.apis/google-api-services-youtube/v3-rev64-1.13.2-beta
-
-v2 of youtube specifically is here
-http://maven-repository.com/artifact/com.google.api.client/google-api-data-youtube-v2/1.0.10-alpha
-
-not sure of the pros/cons of that v2 vs the whole client like I have,
-except that this one is probably much bigger and has a bunch of stuff I won't use
-
 Highest Level
 -------------
 
@@ -53,3 +42,35 @@ What makes this "Version 0"?
 1. I'm sure whatever I do will be a "*bad* way to do it"
 1. It totally sounds more "hacker" to start at zero
 1. I want to put Solr in the next version, so I gotta leave room for another vrsn no.
+1. It can't go on a server because I put the application.secret up on the web
+> The value of the application.secret configuration property will be something
+> else: this is a random string that Play uses in various places to generate
+> cryptographic signatures, most notably the session cookie. You should
+> always leave this generated property in your application configuration. The
+> “secret” in application.secret suggests that it should be kept secret. Be
+> sure to use a different secret for your production environment and never
+> check that into your source code repository.
+>
+> Peter Hilton, Erik Bakker, Francisco Canedo (2013-10-05).
+> Play for Scala: Covers Play 2 (Kindle Locations 766-769). Manning Publications.
+> Kindle Edition.
+
+### I got Help
+
+A bunch of my code and ideas come from *Play for Scala*, a book published by *Manning*, © 2014.
+Here's what they have to say about this:
+
+> Reuse of the code is permitted,
+> in whole or in part, including the creation of derivative works, provided
+> that you acknowledge that you are using it and identify the source:
+> title, publisher and year.
+
+Unimportant Notes
+-----------------
+v3 of youtube specifically is [here](http://maven-repository.com/artifact/com.google.apis/google-api-services-youtube/v3-rev64-1.13.2-beta)
+
+v2 of youtube specifically is [here](http://maven-repository.com/artifact/com.google.api.client/google-api-data-youtube-v2/1.0.10-alpha)
+
+Not sure of the pros/cons of that v2 vs the *whole client* like I have,
+except that this one is probably much bigger and has a bunch of stuff I won't use.
+
