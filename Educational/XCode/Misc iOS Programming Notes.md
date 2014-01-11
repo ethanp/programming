@@ -1,6 +1,78 @@
 Misc iOS Programming Notes
 ==========================
 
+Core Data
+---------
+
+* A wrapper around a database so you only see objects, not DB
+
+### [From Techotopia](http://www.techotopia.com/index.php/Working_with_iOS_7_Databases_using_Core_Data)
+
+#### Managed Objects
+
+* `NSManagedObject`
+* Object you create to store data
+* Like a DB row
+* Maintained and managed by the **managed object context**
+* You make one to store data, and you get one when you retrieve data
+
+#### Managed Object Context
+
+* Manages relationship between managed objects defined by
+    * The managed object model
+    * Your app
+    * The underlying data
+* You tell the context a bunch of things to do, then you tell it to execute them
+    * E.g. save data, etc.
+
+#### Managed Object Model
+
+* Defines *entities*
+
+#### Entity
+
+* The **schema** for *managed objects*
+* Can contain:
+    * Attributes
+        * E.g. name, phone number, etc.
+    * Relationships
+        * one-to-one
+        * one-to-many
+        * many-to-many
+    * Fetched property
+        * Weak, one-way relationships (??, no me importa)
+    * Fetch request
+        * Predefined query
+        * Referenced to retrieve objects corresponding to the query
+
+#### Persistent Store Coordinator
+
+* Coordinates access to multiple persistent object stores
+* A programmer needn't care much about this thing
+
+#### Persistent Object Store
+
+* Regardless of type, your code looks the same
+* Disk-Based
+    * SQLite (**default**)
+    * XML
+    * Binary
+* Memory-Based
+    * There aren't multiple options
+
+#### Defining an Entity Description
+
+* I'ma read this when I'm actually creating one of these,
+  I think I'ma pass on that for now though.
+
+### [Adding Core Data to existing project in XCode 4](http://stackoverflow.com/questions/6821719/adding-core-data-to-existing-project-in-xcode-4)
+
+1. Create a new *Empty Project* with Core Data support
+1. Copy over the relevant new code to your original project and compile
+1. Add `#import <CoreData/CoreData.h>` to the `.pch` file or to the relevant `.m` files
+1. Add the CoreData Framework via
+    * Project --> Targets --> Summary --> `+` in Linked Frameworks and Libraries
+
 @class AVCaptureSession
 -----------------------
 Coordinates flow of data from AV input devices to outputs.

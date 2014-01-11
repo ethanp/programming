@@ -3,12 +3,20 @@ Objective C Notes
 
 ### @property
 
-Setter and Getter* are synthesized automatically [*unless you use `(readonly)`]
+Setter and Getter auto-synthesized [except with `(readonly)`]
 
-**Dot notation** is "purely a convenient wrapper around accessor method calls."
+##### Dot notation
+"purely a convenient wrapper around accessor method calls."
 
-* `a.b = @"c";` is exactly the same as `[a setB:@"c"];`
+* `a.b = c` is *exactly* the same as `[a setB:c]`
 
+##### ivar (instance variable)
+
+    @interface Class : NSObject {
+        BOOL instanceVar;
+    }
+
+does *not* create the setter/getter, and does *not* add it to the ARC system.
 
 ### Forward Declarations
 
