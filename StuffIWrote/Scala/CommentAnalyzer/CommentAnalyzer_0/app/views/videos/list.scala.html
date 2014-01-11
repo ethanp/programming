@@ -1,0 +1,10 @@
+@(videos: List[Video])(implicit  lang: Lang)
+
+@main(Messages("application.name")) {
+    <dl class="videos">
+        @for(video <- videos) {
+            <dt>@video.title</dt>
+            <dd>@video.url</dd>
+        }
+    </dl>
+}
