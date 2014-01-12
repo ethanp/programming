@@ -17,4 +17,10 @@ object Videos extends Controller {
     val videos = Video.findAll
     Ok(views.html.videos.list(videos))
   }
+
+  def show(id: Long) = Action { implicit request =>
+    Video.findByID(id).map { video =>
+      Ok(views.html.videos.details(video))
+    }.getOrElse(NotFound)
+  }
 }

@@ -1,7 +1,7 @@
 @*************************************************************
  * use this to provide a consistent theme for the whole site *
  *************************************************************@
-@(title: String)(content: Html)(implicit lang: Lang)
+@(title: String)(content: Html)
 
 <!DOCTYPE html>
 
@@ -9,9 +9,7 @@
     <head>
         <title>@title</title>
 
-        @*<link rel="stylesheet" media="screen" type="text/css" href="@routes.Assets.at("stylesheets/bootstrap.css")">*@
         <link rel='stylesheet' href='@routes.WebJarAssets.at(WebJarAssets.locate("css/bootstrap.min.css"))'>
-
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <script type='text/javascript' src='@routes.WebJarAssets.at(WebJarAssets.locate("jquery.min.js"))'></script>
 
@@ -23,7 +21,7 @@
                 <div class="navbar-inner">
                     <div class="container">
                         <a class="brand" href="@routes.Application.index()">
-                            @Messages("application.name")
+                            @title
                         </a>
                     </div>
                 </div>
