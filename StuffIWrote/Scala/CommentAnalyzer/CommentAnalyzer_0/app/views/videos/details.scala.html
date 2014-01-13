@@ -1,9 +1,9 @@
-@(video: Video)
+@(video: Video)(implicit flash: play.api.mvc.Flash)
 
 @main(video.title) {
     <h2>
-        @*doesn't need to be called a 'tag'*@
-        @tags.embeddedVideo(video.embed)
+        @* doesn't *need* to be called a 'tag', but that's the convention *@
+        @tags.embeddedVideo(video.urlForEmbedding)
     </h2>
 
     <dl class="dl-horizontal">
@@ -13,4 +13,5 @@
         <dt>Title:</dt>
         <dd>@video.title</dd>
     </dl>
+    @* could add an `Edit` button in here, see ch02/first-sample for how *@
 }

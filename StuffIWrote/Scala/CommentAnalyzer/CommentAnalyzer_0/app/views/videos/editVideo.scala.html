@@ -1,0 +1,18 @@
+@(videoForm: Form[Video])(implicit flash: play.api.mvc.Flash)
+@import helper.twitterBootstrap._
+
+@main("Video Details") {
+    <h2>"Video Details"</h2>
+
+    @helper.form(action=routes.Videos.save()) {
+        <fieldset>
+            <legend>
+                "Video Details (new)"
+            </legend>
+            @helper.inputText(videoForm("id"))
+            @helper.inputText(videoForm("title"))
+            @helper.inputText(videoForm("url"))
+        </fieldset>
+        <p><input type="submit" class="btn primary" value="Add"></p>
+    }
+}

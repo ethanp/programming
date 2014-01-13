@@ -3,16 +3,22 @@
 # ~~~~
 
 # Home page
-GET        /                     controllers.Application.index
+GET         /                     controllers.Application.index
 
 # List all the videos
-GET        /videos               controllers.Videos.list
+GET         /videos               controllers.Videos.list
+
+# Form for saving new videos
+POST        /videos               controllers.Videos.save
+
+# this must be ABOVE /videos/:id, otw that one will match first, which would be an error
+GET         /videos/new           controllers.Videos.newVideo
 
 # Details about one video
-GET        /videos/:id           controllers.Videos.show(id: Long)
+GET         /videos/:id           controllers.Videos.show(id: Long)
 
 # Map static resources from the /public folder to the /assets URL path
-GET        /assets/*file         controllers.Assets.at(path="/public", file)
+GET         /assets/*file         controllers.Assets.at(path="/public", file)
 
 # Map static resources from the web, viz. Twitter-Bootstrap
-GET        /webjars/*file        controllers.WebJarAssets.at(file)
+GET         /webjars/*file        controllers.WebJarAssets.at(file)

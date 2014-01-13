@@ -1,7 +1,4 @@
 package models
-
-import scala.util.matching.Regex
-
 /**
  * Ethan Petuchowski
  * 1/9/14
@@ -9,8 +6,9 @@ import scala.util.matching.Regex
 
 case class Video(id: Long, title: String, url: String) {
 
-  // generate the url for embedding the video on a webpage
-  def embed: String = """.*//([^/]+)/.*=(.*)""".r.findFirstMatchIn(url) match {
+  // generate the url for embedding the video on a webpage:
+  //  http://www.youtube.com/watch?v=sTuf3 => http://www.youtube.com/embed/sTuf3
+  def urlForEmbedding: String = """.*//([^/]+)/.*=(.*)""".r.findFirstMatchIn(url) match {
     case Some(m) => "//" + m.group(1) + "/embed/" + m.group(2)
     case _ => throw new RuntimeException("embedding URL couldn't be extracted from stored URL")
   }
@@ -27,10 +25,7 @@ object Video {
 
   def findAll: List[Video] = videos.toList.sortBy(_.title)
 
-  def createNew(title: String, url: String): Video = Video.apply(videos.size, title, url)
-
-  def showExisting(id: Long): (Video) => Option[(Long, String, String)] = findByID(id) match {
-    case Some(v) => Video.unapply
-    case _ => None
+  def add(video: Video) {
+    videos += video
   }
 }

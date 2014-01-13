@@ -1,7 +1,7 @@
 @*************************************************************
  * use this to provide a consistent theme for the whole site *
  *************************************************************@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit flash: play.api.mvc.Flash)
 
 <!DOCTYPE html>
 
@@ -23,13 +23,38 @@
                         <a class="brand" href="@routes.Application.index()">
                             @title
                         </a>
+                        <ul class="nav">
+                            <li class="divider-vertical"></li>
+                            <li class="active">
+                                <a href="@routes.Videos.list()">List</a>
+                            </li>
+                            <li class="active">
+                                <a href="@routes.Videos.newVideo()">
+                                    <i class="icon-plus icon-white"></i>
+                                    New
+                                </a>
+                            </li>
+                            <li class="divider-vertical"></li>
+                        </ul>
                     </div>
                 </div>
-                <div class="container">
-                    @content
-                    @* call debug template *@
-                    @debug()
-                </div>
+            </div>
+            <div class="container">
+                @if(flash.get("success").isDefined) {
+                    <div class="alert alert-success">
+                    @flash.get("success")
+                    </div>
+                }
+
+                @if(flash.get("error").isDefined) {
+                    <div class="alert alert-error">
+                        @flash.get("error")
+                    </div>
+                }
+
+                @content
+                @* call debug template *@
+                @debug()
             </div>
         </div>
     </body>
