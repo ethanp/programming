@@ -56,6 +56,18 @@ function cs { cd "$1"; ls; }
 # as in Does Directory Have... ( Case insensitive bc -i )
 function ddh { ls "$1" | grep -i "$2"; }
 
+# remove the first 49 lines of each *.[mh] file in this- & sub-directories
+# assembled from the following:
+# stackoverflow.com/questions/9954680/how-to-store-directory-files-listing-into-an-array/15416377#15416377
+# stackoverflow.com/questions/316590/how-to-count-lines-of-code-including-sub-directories/316613#316613
+function decrust {
+    files=($(find . -name "*.[mh]"))  # create array of names matching *.[mh]
+    for item in ${files[*]}; do
+        tail +49 $item > ${item}.copy # put first 49 lines somewhere else
+        mv ${item}.copy $item         # overwrite the original file
+    done                              # it didn't work without the buffer file
+}
+
 # delete directory
 function dedir {
     if [[ $# != 1 ]]; then
