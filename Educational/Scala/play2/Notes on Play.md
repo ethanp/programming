@@ -1,6 +1,17 @@
 Notes on Playframework 2
 ========================
 
+Architecture
+------------
+
+A few perspectives from which one might like to consider how
+to architect the website:
+
+1. Data Model -- what are the tables, schemas, DBs, and APIs?
+1. HTTP Interface -- what will the resulting `Routes` file look like?
+    * Note that shorter URLs are better because they're more usable 
+1. User Interface -- what will the resulting website *feel* like?
+
 Important
 ---------
 

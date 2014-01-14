@@ -53,7 +53,7 @@ function json { cat $1 | python -mjson.tool | less; }
 # change & show
 function cs { cd "$1"; ls; }
 
-# as in Does Directory Have... ( Case insensitive bc -i )
+# as in Does Directory Have... ( -i := Case Insensitive )
 function ddh { ls "$1" | grep -i "$2"; }
 
 # remove the first 49 lines of each *.[mh] file in this- & sub-directories
@@ -63,9 +63,9 @@ function ddh { ls "$1" | grep -i "$2"; }
 function decrust {
     files=($(find . -name "*.[mh]"))  # create array of names matching *.[mh]
     for item in ${files[*]}; do
-        tail +49 $item > ${item}.copy # put first 49 lines somewhere else
-        mv ${item}.copy $item         # overwrite the original file
-    done                              # it didn't work without the buffer file
+        tail +49 $item > ${item}.copy # put all but first 49 lines in buffer
+        mv ${item}.copy $item         # overwrite original file with buffer
+    done                              # doesn't work without the buffer file
 }
 
 # delete directory
