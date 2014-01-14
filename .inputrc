@@ -1,0 +1,16 @@
+# changes here must be manually copied into the real one because I don't want
+# no funny stuff
+
+"\e[1;5C": forward-word
+"\e[1;5D": backward-word
+"\e[1~": beginning-of-line
+"\e[4~": end-of-line
+
+set completion-ignore-case On
+set bell-style none
+
+$if mode=vi
+    set keymap vi-command
+    set keymap vi-insert
+    "fj": vi-movement-mode
+    "\C-p": history-search-backward
