@@ -161,12 +161,12 @@ export CLASSPATH
 # 6/18/13
 # from http://jeethurao.com/blog/?p=217 for getting Scala to work with Intellij
 # (I don't think it made a difference, I'm still "using an external compiler")
-# TODO delete this and see what happens
-export JAVA_HOME=$(/usr/libexec/java_home)
-export SCALA_HOME=/usr/local/Cellar/scala/2.10.0/libexec
-export JAVACMD=drip
-export DRIP_SHUTDOWN=30
-export SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=128M -XX:MaxPermSize=512M"
+# deleted this and see what happens: 1/15/14
+# export JAVA_HOME=$(/usr/libexec/java_home)
+# export SCALA_HOME=/usr/local/Cellar/scala/2.10.0/libexec
+# export JAVACMD=drip
+# export DRIP_SHUTDOWN=30
+# export SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=128M -XX:MaxPermSize=512M"
 
 # These are only saved _this_ session
 HISTSIZE=2000
