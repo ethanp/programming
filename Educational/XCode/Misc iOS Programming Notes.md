@@ -1,10 +1,91 @@
 Misc iOS Programming Notes
 ==========================
 
+[File System](https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html)
+-------------
+
+* The file systems in OS X and iOS are both based on the UNIX file system.
+* All of the disks attached *in any way* to the computer contribute space to
+  create a **single collection of files**.
+* Directories create a hierarchical organization.
+* There are differences in the way OS X and iOS each system organize apps and user data.
+
+* Each app has its own "sandbox" which includes
+    * The `AppName.app`
+    * `Documents/`
+    * `Library/`
+    * `tmp/`
+
+### AppName.app
+
+[**Bundle**](https://developer.apple.com/library/ios/documentation/CoreFoundation/Conceptual/CFBundles/AboutBundles/AboutBundles.html#//apple_ref/doc/uid/10000123i-CH100)
+directory containing the app itself. Don't write to this or your app will not be
+allowed to launch anymore.
+
+### Documents/
+
+Directory for app that can't be recreated on load by your app, e.g. user-generated
+content. It is backed up by iTunes.
+
+#### Documents/Inbox
+
+`Mail` puts email attachments associated with your app in here. Your app may only
+read and delete files in here unless you move them somewhere else.
+
+### Library/
+
+Files that are *not* user-data (stuff you don't even want them to know about).
+There are several standard subdirectories one may want to use.
+
+### tmp/
+
+Temporary files that needn't persist between launches of the app.
+You should still delete them when you're done with them,
+though the system may also do so when your app's not running.
+
+### OS X and iOS provide support for encrypting files on disk
+
+### Thread Safety
+
+For most tasks, it is safe to use the default `NSFileManager` object
+simultaneously from multiple background threads. Unless your tasks interact
+with the file manager's delegate, in which case use a *unique* instance from
+one thread at a time.
+
+Don't use the same `NSFileHandle`'s or `NSData`'s from multiple threads at the
+same time.
+
+`NSURL`s and `NSString`s are immutable, so you can use them in multiple threads
+simultaneously.
+
+`NSEnumerator`s (i.e. "Collections", e.g. `NSArray`, `NSDictionary`, `NSSet`)
+
+Bundle
+------
+
+* A bundle is a directory in the file system that groups executable code and
+  related resources such as images and sounds together in one place.
+* In iOS and OS X, applications, frameworks, plug-ins, and other types of
+  software are bundles.
+* A bundle is a directory with a standardized hierarchical structure that holds
+  executable code and resources used by that code.
+* Foundation and Core Foundation include facilities for locating and loading
+  code and resources in bundles.
+* Most types of Xcode projects create a bundle for you when you build the executable.
+
 Core Data
 ---------
 
 * A wrapper around a database so you only see objects, not DB
+
+### [From Apple](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/CoreData/Articles/cdBasics.html)
+
+**Think of a managed object context as an intelligent scratch pad**.
+
+1. You fetch objects from a persistent store, bringing temporary copies onto the scratch pad
+2. They form an object graph (or a collection of object graphs).
+3. If modify those objects without *saving* the changes, the persistent store
+   doesn't change.
 
 ### [From Techotopia](http://www.techotopia.com/index.php/Working_with_iOS_7_Databases_using_Core_Data)
 
@@ -72,6 +153,24 @@ Core Data
 1. Add `#import <CoreData/CoreData.h>` to the `.pch` file or to the relevant `.m` files
 1. Add the CoreData Framework via
     * Project --> Targets --> Summary --> `+` in Linked Frameworks and Libraries
+
+### Getting the managedObjectContext out of the AppDelegate
+
+    FocusTestAppDelegate *appDel = (FocusTestAppDelegate *)[UIApplication sharedApplication].delegate;
+    NSManagedObjectContext moc = appDel.managedObjectContext;
+
+### [Saving Image to Core Data](http://stackoverflow.com/questions/10311271/saving-image-to-core-data)
+
+##### To save:
+
+    NSData *imageData = UIImagePNGRepresentation(myUIImage);
+    [newManagedObject setValue:imageData forKey:@"imageKey"];
+
+##### To Retrieve Image:
+
+    NSManagedObject *selectedObject = [[self fetchedResultsController] objectAtIndexPath:indexPath];
+    UIImage *image = [UIImage imageWithData:[selectedObject valueForKey:@"imageKey"]];
+    [[newCustomer yourImageView] setImage:image];
 
 @class AVCaptureSession
 -----------------------
