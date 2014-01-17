@@ -5,6 +5,9 @@ package models
  * 1/9/14
  */
 
+import play.api.Play.current
+import play.api.db.DB
+
 case class Video(id: String, title: String) {
   def urlForEmbedding: String = "//www.youtube.com/embed/"+id
   def urlForWebsite: String = "http://www.youtube.com/watch?v="+id
@@ -15,6 +18,82 @@ object Video {
     Video("cdaAWFoWr2c", "R Kelly - Real Talk"),
     Video("zEfIkuTtzQ4", "Parliament Funkadelic - Swing Down Sweet Chariot - 1976")
   )
+
+  // SQL Querying using Anorm
+  import anorm.{SQL, SqlQuery}
+
+  val sql: SqlQuery = SQL("select * from videos order by title asc")
+
+  // Using the Anorm's Stream API
+  def getAllWithAnorm: List[Video] = DB.withConnection {
+    implicit connection =>
+      sql(/*apply*/).map ( row /*SqlRow*/ =>
+        Video(row[String]("id"), row[String]("title"))
+      ).toList
+  }
+
+  // Using Pattern Matching
+  def getAllWithPatterns: List[Video] = DB.withConnection {
+    implicit connection =>
+      import anorm.Row
+      sql().collect {
+        /* NULL values would be a None */
+        case Row(Some(id: String), Some(title: String)) => Video(id, title)
+      }.toList /*call toList on Stream to actually retrieve contents*/
+  }
+
+  // Using Parser Combinators
+
+  import anorm.RowParser
+  import anorm.~
+  import anorm.SqlParser._
+  import anorm.ResultSetParser
+
+  val videoParser: RowParser[Video] = {
+    str("id") ~ str("title") map {
+      case id ~ title => Video(id, title) /* turn (pattern) =into=> (this) */
+    }
+  }
+  val videosParser: ResultSetParser[List[Video]] = videoParser *
+
+  def getAllWithParser: List[Video] = DB.withConnection {
+    implicit connection =>
+      sql.as(videosParser)
+  }
+
+  // Insert, Update, Delete
+  def insert(video: Video): Boolean = DB.withConnection {
+    implicit connection =>
+      val addedRows = SQL(
+        /* Identifiers surrounded by curly braces denote named
+           parameters to be mapped with the elements in on(...) */
+        "insert into videos values ({id}, {title})").on(
+          "id" -> video.id,
+          "title" -> video.title
+        ).executeUpdate(/*implicit connection*/) /* returns num rows affected */
+      addedRows == 1
+  }
+
+  def update(video: Video): Boolean = DB.withConnection {
+    implicit connection =>
+      val updatedRows = SQL("update videos set id = {id}, title = {title}").on(
+        "id" -> video.id,
+        "title" -> video.title
+      ).executeUpdate()
+      updatedRows == 1
+  }
+
+  def delete(video: Video): Boolean = DB.withConnection {
+    implicit connection =>
+      val updatedRows = SQL("delete from videos where id = {id}").on(
+        "id" -> video.id
+      ).executeUpdate()
+      updatedRows == 0  // why zero? this came from List-5.8 but is it right?
+  }
+
+
+  // TODO SQL Querying using Squeryl
+
 
   def makeVideoFromURL(url: String, title: String) = Video(getIDFromURL(url), title)
 
