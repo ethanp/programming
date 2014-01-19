@@ -27,6 +27,7 @@ if [[ -d ~/Dropbox/CSyStuff/ProgrammingGit ]]; then
 else
     PROGRAMMINGGIT=~/code/programming
 fi
+alias ca='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentAnalyzer_0'
 
 
 # 4lolz

@@ -1,18 +1,17 @@
-name := "CommentAnalyzer_0"
+name := "Comment Collector"
 
-version := "1.0-SNAPSHOT"
+organization := "na.ethanp"
+
+version := "0.0"
+
+scalaVersion := "2.10.3"
 
 libraryDependencies ++= Seq(
-  jdbc,
-  anorm,
-  cache,
+  "org.scalatest" % "scalatest_2.10" % "2.0" % "test",
   "com.google.api-client" % "google-api-client" % "1.17.0-rc",
   "com.google.apis" % "google-api-services-plus" % "v1-rev116-1.17.0-rc",
-  "com.google.gdata" % "core" % "1.47.1",
-  "postgresql" % "postgresql" % "9.1-901.jdbc4"
+  "com.google.gdata" % "core" % "1.47.1"
 )
 
 addCommandAlias("generate-project",
   ";update-classifiers;update-sbt-classifiers;gen-idea sbt-classifiers")
-
-play.Project.playScalaSettings
