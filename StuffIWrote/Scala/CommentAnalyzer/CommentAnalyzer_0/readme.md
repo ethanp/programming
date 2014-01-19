@@ -1,10 +1,22 @@
 Comment Analyzer, Version 0
 ==========================
 
+Short List
+----------
+1. Download comments from the Youtube API and see what I actually have 
+   to work with
+1. Plug the DB in in such a way that it verifiably *is* saving my form
+   data there and rendering it to the view
+1. Go the [Parser Combinator](http://en.wikipedia.org/wiki/Parser_combinator)
+   route for retrieving results from the DB.
+    * I feel like they're nice to know for parsing and making DSLs,
+      plus the other methods are boring.
+
+
 Highest Level
 -------------
 
-I'd like way to visualize interesting things about comments.
+I'd like a way to visualize interesting things about comments.
 
 How I'm going to try to achieve that
 ------------------------------------
@@ -37,11 +49,11 @@ What makes this "Version 0"?
 1. I have no idea where this is going
 1. I don't know how the Internet works
 1. I've never used the `Playframework` or made web-app back-end beyond the Tutorial
-1. I've never used `(JavaScript || jQuery || HTML || CSS)` before
+1. I've never used `(JavaScript || jQuery || HTML || CSS || Database || Web-framework)` before
 1. I don't know if my basic plan is possible
 1. I'm sure whatever I do will be a "*bad* way to do it"
 1. It totally sounds more "hacker" to start at zero
-1. I want to put Solr in the next version, so I gotta leave room for another vrsn no.
+1. I want to put Solr in the next version, so I gotta leave room for another vsn no.
 1. It can't go on a server because I put the application.secret up on the web
 > The value of the application.secret configuration property will be something
 > else: this is a random string that Play uses in various places to generate

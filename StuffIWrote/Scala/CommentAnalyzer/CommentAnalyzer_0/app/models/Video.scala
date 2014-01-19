@@ -32,7 +32,7 @@ object Video {
       ).toList
   }
 
-  // Using Pattern Matching
+  // Using Pattern Matching  (the way to go, it seems)
   def getAllWithPatterns: List[Video] = DB.withConnection {
     implicit connection =>
       import anorm.Row
@@ -92,12 +92,9 @@ object Video {
   }
 
 
-  // TODO SQL Querying using Squeryl
-
-
   def makeVideoFromURL(url: String, title: String) = Video(getIDFromURL(url), title)
 
-  def getIDFromURL(url: String): String = """(http)?(s)?(://)?www.youtube.com/watch\?v=(.*)""".r.findFirstMatchIn(url) match {
+  def getIDFromURL(url: String): String = """(http)?(s)?(://)?www.youtube.com/watch\?v=([^#&]*)""".r.findFirstMatchIn(url) match {
     case Some(m) => m.group(4)
     case _ => ""  // this works for the form because now it won't validate
   }
