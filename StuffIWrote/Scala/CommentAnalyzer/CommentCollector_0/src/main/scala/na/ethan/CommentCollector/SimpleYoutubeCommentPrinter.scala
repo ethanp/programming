@@ -7,7 +7,7 @@ package na.ethan.CommentCollector
  * Reference: https://developers.google.com/youtube/2.0/developers_guide_java
  */
 
-import com.google.gdata.client.youtube.YouTubeService
+import com.google.gdata.client.youtube.{YouTubeQuery, YouTubeService}
 import com.google.gdata.data.geo.impl.GeoRssWhere
 import com.google.gdata.data.media.mediarss.MediaThumbnail
 import com.google.gdata.data.youtube._
@@ -31,8 +31,31 @@ object SimpleYoutubeCommentPrinter extends App {
   val commentUrl = videoEntry.getComments.getFeedLink.getHref
 
   val commentFeed = service.getFeed(new URL(commentUrl), classOf[CommentFeed])
-  for (comment: CommentEntry <- commentFeed.getEntries.asScala)
-    println(comment.getPlainTextContent)
+  if (videoEntry.getComments != null) {
+    val commentUrl = videoEntry.getComments.getFeedLink.getHref
+    println(commentUrl)
+
+    // Get the comment feed use a new query
+    val youtubeQuery = new YouTubeQuery(new URL(commentUrl))
+    youtubeQuery.setMaxResults(50)
+
+
+    youtubeQuery.setStartIndex(1)
+    val commentUrlFeed = youtubeQuery.getUrl.toString
+    val commentFeed = service.getFeed(new URL(commentUrlFeed), classOf[CommentFeed])
+
+    // The response should contain an url for the next feed, if any, already with an updated start-index.
+    for { i <- 0 until commentFeed.getEntries.size
+          if commentFeed.getEntries.get(i) != null }
+    {
+      val authorId = commentFeed.getEntries.get(i).getAuthors.get(0).getUri.substring(41)
+      val commentId = commentFeed.getEntries.get(i).getId.substring(47)
+      val commentContent = commentFeed.getEntries.get(i).getPlainTextContent
+      println(authorId+":\n\t"+commentId+":"+commentContent)
+    }
+  // TODO Loop through next comment feed call, if more can be expected.
+  // Use updated url from the response or set start-index = start-index + max-results.
+  }
 
   def printVideoEntry(videoEntry: VideoEntry, detailed: Boolean) {
     println("Title: " + videoEntry.getTitle.getPlainText)
