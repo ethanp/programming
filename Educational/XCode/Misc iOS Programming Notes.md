@@ -1,6 +1,66 @@
 Misc iOS Programming Notes
 ==========================
 
+[AVFoundation](https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/00_Introduction.html#//apple_ref/doc/uid/TP40010188-CH1-SW3)
+--------------
+
+#### AVFoundation *Fun*damentals
+**AVFoundation** is one of several **frameworks** that you can use to **play and create
+time-based audiovisual media**. It provides an Objective-C interface you use to
+work on a detailed level with time-based audiovisual data. For example, you can
+use it to **examine, create, edit, or reencode media files**. You can also get
+input streams from devices and *manipulate video during realtime capture and playback*.
+
+**AVAsset** is an **abstract class** to represent **timed audiovisual media such as
+videos and sounds**. Each asset contains a collection of tracks that are intended
+to be presented or processed together, each of a uniform media type, including
+but not limited to audio, video, text, closed captions, and subtitles.
+
+The primary class that the AV Foundation framework uses to represent media is AVAsset.
+AVAsset provides information about the collection as a whole, such as its
+title, duration, natural presentation size, and so on. AVAsset is not tied to
+particular data format. AVAsset is the superclass of other classes used to
+create asset instances from media at a URL.
+
+Each of the individual pieces of media data in the asset is of a uniform type
+and called a track. In a typical simple case, one track represents the audio
+component, and another represents the video component; in a complex
+composition, however, there may be multiple overlapping tracks of audio and
+video. Assets may also have metadata.
+
+A vital concept in AV Foundation is that **initializing an asset or a track does
+not necessarily mean that it is ready for use**. It may require some time to
+calculate even the duration of an item (an MP3 file, for example, may not
+contain summary information). Rather than blocking the current thread while a
+value is being calculated, **you ask for values and get an answer back
+asynchronously through a callback that you define using a block**.
+
+**To create thumbnail images of video presentations**, you initialize an instance
+of AVAssetImageGenerator using the asset from which you want to generate thumbnails.
+
+Recording input from cameras and microphones is managed by a capture session. A
+capture session coordinates the flow of data from input devices to outputs such
+as a movie file. You can configure multiple inputs and outputs for a single
+session, even when the session is running. You send messages to the session to
+start and stop data flow.  In addition, you can use an instance of preview
+layer to show the user what a camera is recording.
+
+Callouts from AV Foundation—invocations of blocks, key-value observers, and
+notification handlers—are not guaranteed to be made on any particular thread or
+queue. Instead, AV Foundation invokes these handlers on threads or queues on
+which it performs its internal tasks.
+
+#### [Playback](https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/02_Playback.html#//apple_ref/doc/uid/TP40010188-CH3-SW1)
+
+#### [Media Capture](https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/04_MediaCapture.html)
+
+An `AVCaptureDevice`, an `AVCaptureInput`, an `AVCaptureOutput`, and an `AVCaptureSession`
+
+A connection between a capture input and a capture output in a capture session
+is represented by an `AVCaptureConnection` object.
+
+You can add and remove outputs as you want while the session is running.
+
 [File System](https://developer.apple.com/library/ios/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html)
 -------------
 

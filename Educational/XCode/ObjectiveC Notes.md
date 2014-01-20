@@ -1,6 +1,29 @@
 Objective C Notes
 =================
 
+[Atomic vs nonatomic properties](http://stackoverflow.com/questions/588866/atomic-vs-nonatomic-properties)
+--------------------------------
+
+Assuming that you are allowing setters/getters to be @synthesized, the
+atomic vs. non-atomic changes their generated code. If you are writing your own
+setter/getters, atomic/nonatomic/retain/assign/copy are merely advisory.
+
+With "atomic", the synthesized setter/getter will ensure that a whole value is
+always returned from the getter or set by the setter, regardless of setter
+activity on any other thread. That is, if thread A is in the middle of the
+getter while thread B calls the setter, an actual viable value -- an
+autoreleased object, most likely -- will be returned to the caller in A.
+
+In nonatomic, no such guarantees are made. Thus, nonatomic is considerably
+faster than "atomic".
+
+What "atomic" does not do is make any guarantees about thread safety. If thread
+A is calling the getter simultaneously with thread B and C calling the setter
+with different values, thread A may get any one of the three values returned.
+Ensuring data integrity -- one of the primary challenges of multi-threaded
+programming -- is achieved by other means. Atomicity does not generally
+contribute to thread safety.
+
 [Blocks](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithBlocks/WorkingwithBlocks.html#//apple_ref/doc/uid/TP40011210-CH8-SW1)
 --------
 
