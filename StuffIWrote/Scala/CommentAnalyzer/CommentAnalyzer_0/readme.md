@@ -8,6 +8,14 @@ Downloading Comments from the Youtube API
    * [Docs on that](https://developers.google.com/youtube/2.0/developers_guide_protocol_comments)
 * However *comment threads* have been moved out of the Youtube API to G+, so now
   you have to use that to retrieve responses to comments
+  
+### [Youtube Developer Guide: Java](https://developers.google.com/youtube/2.0/developers_guide_java)
+
+> Your client application can use the YouTube Data API to fetch video
+feeds, comments, responses, and playlists, as well as query for
+videos that match particular criteria.
+
+
 
 ### According to [Changes to Comments](https://developers.google.com/youtube/articles/changes_to_comments#threading):
 
@@ -134,6 +142,15 @@ Here's what they have to say about this:
 > in whole or in part, including the creation of derivative works, provided
 > that you acknowledge that you are using it and identify the source:
 > title, publisher and year.
+
+Ideas for the Future
+--------------------
+[User's playlists feed](https://developers.google.com/youtube/2.0/reference?hl=en#User_favorites_feed),
+retrieves a list of videos that a particular user has explicitly flagged as a favorite video.
+
+[Playlist feed](https://developers.google.com/youtube/2.0/reference?hl=en#Playlist_feed)
+is also retrievable.
+
 
 Unimportant Notes
 -----------------
