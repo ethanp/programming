@@ -12,7 +12,8 @@ libraryDependencies ++= Seq(
   "com.google.apis" % "google-api-services-plus" % "v1-rev116-1.17.0-rc",
   "com.google.gdata" % "core" % "1.47.1",
   "io.spray" %% "spray-json" % "1.2.5",
-  "com.google.http-client" % "google-http-client-jackson2" % "1.17.0-rc"
+  "com.google.http-client" % "google-http-client-jackson2" % "1.17.0-rc",
+  "edu.stanford.nlp" % "stanford-corenlp" % "3.3.0"
 )
 
 resolvers += "spray" at "http://repo.spray.io/"

@@ -41,6 +41,7 @@ object SimpleYoutubeCommentParser extends App {
     allComments ++= comments
     startIndex += COMMENT_STEP_SIZE
     commentsReturned = entries.size
+    println(ctsComsIds.size)
     println(allComments.size)
   } while ((commentsReturned == COMMENT_STEP_SIZE) && (startIndex < COMMENT_LIMIT))
 
