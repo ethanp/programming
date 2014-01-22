@@ -11,6 +11,9 @@ import com.google.gdata.client.youtube.{YouTubeQuery, YouTubeService}
 import com.google.gdata.data.geo.impl.GeoRssWhere
 import com.google.gdata.data.media.mediarss.MediaThumbnail
 import com.google.gdata.data.youtube._
+import scala.xml.factory.XMLLoader
+import com.google.gdata.data.ExtensionProfile
+import scala.xml.XML
 
 // Java/Scala library
 import scala.collection.JavaConverters._
@@ -26,25 +29,56 @@ object SimpleYoutubeCommentPrinter extends App {
   val service : YouTubeService = new YouTubeService(lines(0), lines(1))
   val sampleVideoID = "ADos_xW4_J0" // <== Intro to Google Data
   val videoEntryUrl = "http://gdata.youtube.com/feeds/api/videos/" + sampleVideoID
-  val videoEntry: VideoEntry = service.getEntry(new URL(videoEntryUrl), classOf[VideoEntry])
-  printVideoEntry(videoEntry, detailed=true)
-  val commentUrl = videoEntry.getComments.getFeedLink.getHref
+  val videoEntry = service.getEntry(new URL(videoEntryUrl), classOf[VideoEntry])
+//  printVideoEntry(videoEntry, detailed=true)
+  val commentsUrl = videoEntry.getComments.getFeedLink.getHref
 
-  val commentFeed = service.getFeed(new URL(commentUrl), classOf[CommentFeed])
+  // TODO check out what the YouTubeReadOnlyClient.java already has built-in for me to use (replies DNE!)
+  // TODO one of these XML blobs only has 25 comments, and the other has 48
+  // I'm not sure but I'd sure guess this is the one with just 25
+  println(XML.load(new java.net.URL(commentsUrl).openStream))
+
+  // TODO the rest of this needs to be much cleaner
+  val commentFeed = service.getFeed(new URL(commentsUrl), classOf[CommentFeed])
   if (videoEntry.getComments != null) {
-    val commentUrl = videoEntry.getComments.getFeedLink.getHref
-    println(commentUrl)
+    val commentsUrl: String = videoEntry.getComments.getFeedLink.getHref
+    println(commentsUrl)
 
     // Get the comment feed use a new query
-    val youtubeQuery = new YouTubeQuery(new URL(commentUrl))
-    youtubeQuery.setMaxResults(50)
-
-
+    val youtubeQuery = new YouTubeQuery(new URL(commentsUrl))
+    youtubeQuery.setMaxResults(50) // this is the max
     youtubeQuery.setStartIndex(1)
-    val commentUrlFeed = youtubeQuery.getUrl.toString
-    val commentFeed = service.getFeed(new URL(commentUrlFeed), classOf[CommentFeed])
+    val commentUrlFeed = youtubeQuery.getUrl
+    println("commentUrlFeed" + commentUrlFeed)
+    val commentFeed = service.getFeed(commentUrlFeed, classOf[CommentFeed])
+    val entriesList = commentFeed.getEntries
+    commentFeed.getNextLink
+    commentFeed.getTotalResults
 
-    // The response should contain an url for the next feed, if any, already with an updated start-index.
+    /*entriesList.asScala.foreach { c : CommentEntry =>*/
+    val c = entriesList.get(0)
+    println(c)
+
+//    scala.xml.XML.loadString(c)
+    println(c.hasSpamHint) // "true if the comment is marked as spam"
+    println(c.getAuthors) // supposedly .get(0).getUri.substring(41) for the author id or something
+    println(c.getCategories) // "comment", not very helpful
+    println(c.getTotalRating)
+    println(c.getContent)
+    println(c.getId) // supposedly .substring(47) for the id itself
+    println(c.getContributors)
+    println(c.getHtmlLink)
+    println(c.getLinks)
+    println(c.getPlainTextContent)
+    println(c.getPublished)
+    println(c.getService)
+    println(c.getSource)
+    println(c.getSummary)
+    println(c.getTextContent)
+    println(c.getTitle)
+//    }
+    /*************************** Other Guy's Code
+    // The response should contain a url for the next feed, if any, already with an updated start-index.
     for { i <- 0 until commentFeed.getEntries.size
           if commentFeed.getEntries.get(i) != null }
     {
@@ -55,6 +89,7 @@ object SimpleYoutubeCommentPrinter extends App {
     }
   // TODO Loop through next comment feed call, if more can be expected.
   // Use updated url from the response or set start-index = start-index + max-results.
+      ***************************/
   }
 
   def printVideoEntry(videoEntry: VideoEntry, detailed: Boolean) {
