@@ -54,8 +54,8 @@ object Video {
   import anorm.ResultSetParser
 
   val videoParser: RowParser[Video] = {
-    str("id") ~ str("title") ~ get[Option[String]]("dateLastRetrieved") map {
-      case id ~ title ~ dateLastRetrieved => Video(id, title, dateLastRetrieved.map(new Date(_))) /* turn (pattern) =into=> (this) */
+    str("id") ~ str("title") ~ get[Option[Date]]("dateLastRetrieved") map {
+      case id ~ title ~ dateLastRetrieved => Video(id, title, dateLastRetrieved) /* turn (pattern) =into=> (this) */
     }
   }
   val videosParser: ResultSetParser[List[Video]] = videoParser *
@@ -71,7 +71,7 @@ object Video {
       val addedRows = SQL(
         /* Identifiers surrounded by curly braces denote named
            parameters to be mapped with the elements in on(...) */
-        "insert into videos values ({id}, {title})").on(
+        "insert into videos values ({id}, {title}, {dateLastRetrieved})").on(
           "id" -> video.id,
           "title" -> video.title,
           "dateLastRetrieved" -> video.dateLastRetrieved
@@ -81,7 +81,7 @@ object Video {
 
   def update(video: Video): Boolean = DB.withConnection {
     implicit connection =>
-      val updatedRows = SQL("update videos set id = {id}, title = {title}").on(
+      val updatedRows = SQL("update videos set id = {id}, title = {title}, dateLastRetrieved = {dateLastRetrieved}").on(
         "id" -> video.id,
         "title" -> video.title,
         "dateLastRetrieved" -> video.dateLastRetrieved
