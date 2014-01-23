@@ -109,12 +109,11 @@ object Video {
     case _ => ""  // this works for the form because now it won't validate
   }
 
-  def findByURL(url: String): Option[Video] = findAll.find(_.id == getIDFromURL(url))
+  def findByURL(url: String): Option[Video] = getAllWithParser.find(_.id == getIDFromURL(url))
 
-  def findByID(id: String): Option[Video] = findAll.find(_.id == id)
+  def findByID(id: String): Option[Video] = getAllWithParser.find(_.id == id)
 
-  def findAll: List[Video] = getAllWithParser.sortBy(_.title)
-
+//  def findAll: List[Video] = videos.sortBy(_.title)
 //  def add(video: Video) {
 //    videos += video
 //  }

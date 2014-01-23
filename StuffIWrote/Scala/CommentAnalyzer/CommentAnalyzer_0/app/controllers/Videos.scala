@@ -23,7 +23,7 @@ object Videos extends Controller {
   )
 
   def list = Action { implicit request =>
-    val videos = Video.findAll
+    val videos = Video.getAllWithParser
     Ok(views.html.videos.list(videos))
   }
 
