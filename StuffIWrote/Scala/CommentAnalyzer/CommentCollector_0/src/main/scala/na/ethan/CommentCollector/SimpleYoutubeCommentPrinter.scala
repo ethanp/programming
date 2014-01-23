@@ -33,11 +33,6 @@ object SimpleYoutubeCommentPrinter extends App {
 //  printVideoEntry(videoEntry, detailed=true)
   val commentsUrl = videoEntry.getComments.getFeedLink.getHref
 
-  // TODO check out what the YouTubeReadOnlyClient.java already has built-in for me to use (replies DNE!)
-  // TODO one of these XML blobs only has 25 comments, and the other has 48
-  // I'm not sure but I'd sure guess this is the one with just 25
-  println(XML.load(new java.net.URL(commentsUrl).openStream))
-
   // TODO the rest of this needs to be much cleaner
   val commentFeed = service.getFeed(new URL(commentsUrl), classOf[CommentFeed])
   if (videoEntry.getComments != null) {

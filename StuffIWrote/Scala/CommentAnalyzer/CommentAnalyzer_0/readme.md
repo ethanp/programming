@@ -4,13 +4,19 @@ Comment Analyzer, Version 0
 
 Short List
 ----------
-1. Plug the DB in in such a way that it verifiably *is* saving my form
-   data there and rendering it to the view
 1. Add a new table to hold the comments
+    * This will require a DB "evolution", docs [here](http://www.playframework.com/documentation/1.2.2/evolutions)
+    * I will have to change the video validation/parsing/etc. to have a default date of `new java.util.Date()`
+      or however one gets the current time into a `java.util.Date`
 
-Should look roughly like this
+Should end up looking roughly like this
 
     [Video {id, title, lastCommentRetrievalTime}] <---->> [Comment {id, replyCount, text, date}]
+
+1. Make it download and fill in the video's title for the DB automatically
+
+Generally
+---------
 
 1. Go the [Parser Combinator](http://en.wikipedia.org/wiki/Parser_combinator)
    route for retrieving results from the DB.

@@ -52,7 +52,7 @@ object Videos extends Controller {
             ("error" -> "Please correct the errors in the form."))
       },
       success = { newVideo =>
-        Video.add(newVideo)
+        Video.insert(newVideo)
         val message = "Successfully added video " + newVideo.title
         Redirect(routes.Videos.show(newVideo.id)).
           flashing("success" -> message)
