@@ -1,3 +1,11 @@
+Postgres DB Viewer
+------------------
+
+There's a *really nice-looking one* **built-in** to IntelliJ, and **it sees my data!**.
+
+Just click on the `Database` button on the right side of the screen.
+
+I found it when I clicked randomly on the screen by accident.
 
 Downloading Comments from the Youtube API
 -----------------------------------------

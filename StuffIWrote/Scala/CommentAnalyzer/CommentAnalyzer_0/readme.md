@@ -13,7 +13,6 @@ Should end up looking roughly like this
 
     [Video {id, title, lastCommentRetrievalTime}] <---->> [Comment {id, replyCount, text, date}]
 
-1. Make it download and fill in the video's title for the DB automatically
 
 Generally
 ---------

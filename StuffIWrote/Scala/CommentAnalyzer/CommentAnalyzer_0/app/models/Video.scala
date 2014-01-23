@@ -7,10 +7,13 @@ package models
 
 import play.api.Play.current
 import play.api.db.DB
+import com.google.gdata.client.youtube.YouTubeService
+import java.net.URL
+import com.google.gdata.data.youtube.VideoEntry
 
 case class Video(id: String, title: String) {
-  def urlForEmbedding: String = "//www.youtube.com/embed/"+id
-  def urlForWebsite: String = "http://www.youtube.com/watch?v="+id
+  val urlForEmbedding: String = "//www.youtube.com/embed/"+id
+  val urlForWebsite: String = "http://www.youtube.com/watch?v="+id
 }
 
 object Video {
@@ -18,7 +21,7 @@ object Video {
 //    Video("cdaAWFoWr2c", "R Kelly - Real Talk"),
 //    Video("zEfIkuTtzQ4", "Parliament Funkadelic - Swing Down Sweet Chariot - 1976")
 //  )
-
+  def someURL(v: Video) = Some(v.urlForWebsite)
   // SQL Querying using Anorm
   import anorm.{SQL, SqlQuery}
 
@@ -92,7 +95,14 @@ object Video {
   }
 
 
-  def makeVideoFromURL(url: String, title: String) = Video(getIDFromURL(url), title)
+  def makeVideoFromURL(url: String) = {
+    val lines = scala.io.Source.fromFile("/etc/googleIDKey").mkString.split("\n")
+    val service: YouTubeService = new YouTubeService(lines(0), lines(1))
+    val videoEntryUrl = "http://gdata.youtube.com/feeds/api/videos/" + getIDFromURL(url)
+    val videoEntry = service.getEntry(new URL(videoEntryUrl), classOf[VideoEntry])
+    val title = videoEntry.getTitle.getPlainText
+    Video(getIDFromURL(url), title)
+  }
 
   def getIDFromURL(url: String): String = """(http)?(s)?(://)?www.youtube.com/watch\?v=([^#&]*)""".r.findFirstMatchIn(url) match {
     case Some(m) => m.group(4)

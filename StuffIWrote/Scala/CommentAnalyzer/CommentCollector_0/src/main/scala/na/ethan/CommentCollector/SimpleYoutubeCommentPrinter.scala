@@ -11,9 +11,7 @@ import com.google.gdata.client.youtube.{YouTubeQuery, YouTubeService}
 import com.google.gdata.data.geo.impl.GeoRssWhere
 import com.google.gdata.data.media.mediarss.MediaThumbnail
 import com.google.gdata.data.youtube._
-import scala.xml.factory.XMLLoader
-import com.google.gdata.data.ExtensionProfile
-import scala.xml.XML
+
 
 // Java/Scala library
 import scala.collection.JavaConverters._

@@ -2,15 +2,14 @@
 @import helper.twitterBootstrap._
 
 @main("Video Details") {
-    <h2>"Video Details"</h2>
+    <h2>Search for Youtube Video</h2>
 
     @helper.form(action=routes.Videos.save()) {
         <fieldset>
             <legend>
-                "Video Details (new)"
+                @* this is a subheading area *@
             </legend>
             @helper.inputText(videoForm("url"))
-            @helper.inputText(videoForm("title"))
         </fieldset>
         <p><input type="submit" class="btn primary" value="Add"></p>
     }

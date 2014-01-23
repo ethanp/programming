@@ -18,9 +18,8 @@ import play.api.mvc.Flash
 object Videos extends Controller {
   private def videoForm: Form[Video] = Form(
     mapping(
-      "url" -> nonEmptyText.verifying("A video with this ID already exists", Video.findByURL(_).isEmpty),
-      "title" -> nonEmptyText
-    )(Video.makeVideoFromURL)(Video.unapply)
+      "url" -> nonEmptyText.verifying("A video with this ID already exists", Video.findByURL(_).isEmpty)
+    )(Video.makeVideoFromURL)(Video.someURL)
   )
 
   def list = Action { implicit request =>
