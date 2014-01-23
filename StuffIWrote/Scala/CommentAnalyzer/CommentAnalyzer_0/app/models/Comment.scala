@@ -9,16 +9,16 @@ import play.api.Play.current
 import play.api.db.DB
 import java.util.Date
 import anorm.{ResultSetParser, RowParser, SqlQuery, SQL, ~}
-import anorm.SqlParser.{str, date, int}
+import anorm.SqlParser.{str, get, int}
 
-case class Comment(id: String, text: String, published: Date, numReplies: Int, videos_id: String)
+case class Comment(id: String, text: String, published: Option[Date], numReplies: Int, videos_id: String)
 
 object Comment {
   val sql: SqlQuery = SQL("select * from comments order by videos_id asc")
 
   val commentParser: RowParser[Comment] = {
-    str("id")~str("text")~date("published")~int("numReplies")~str("videos_id") map {
-      case id~text~published~numReplies~videos_id => Comment(id,text,published,numReplies,videos_id)
+    str("id")~str("text")~get[Option[String]]("published")~int("numReplies")~str("videos_id") map {
+      case id~text~published~numReplies~videos_id => Comment(id,text,published.map(new Date(_)),numReplies,videos_id)
     }
   }
 

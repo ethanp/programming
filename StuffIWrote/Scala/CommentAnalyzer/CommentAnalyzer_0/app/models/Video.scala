@@ -10,8 +10,9 @@ import play.api.db.DB
 import com.google.gdata.client.youtube.YouTubeService
 import java.net.URL
 import com.google.gdata.data.youtube.VideoEntry
+import java.util.Date
 
-case class Video(id: String, title: String) {
+case class Video(id: String, title: String, dateLastRetrieved: Option[Date]) {
   val urlForEmbedding: String = "//www.youtube.com/embed/"+id
   val urlForWebsite: String = "http://www.youtube.com/watch?v="+id
 }
@@ -31,7 +32,7 @@ object Video {
   def getAllWithAnorm: List[Video] = DB.withConnection {
     implicit connection =>
       sql(/*apply*/).map ( row /*SqlRow*/ =>
-        Video(row[String]("id"), row[String]("title"))
+        Video(row[String]("id"), row[String]("title"), row[Option[Date]]("dateLastRetrieved"))
       ).toList
   }
 
@@ -41,7 +42,7 @@ object Video {
       import anorm.Row
       sql().collect {
         /* NULL values would be a None */
-        case Row(Some(id: String), Some(title: String)) => Video(id, title)
+        case Row(Some(id: String), Some(title: String), Some(dateLastRetrieved: Option[Date])) => Video(id, title, dateLastRetrieved)
       }.toList /*call toList on Stream to actually retrieve contents*/
   }
 
@@ -53,8 +54,8 @@ object Video {
   import anorm.ResultSetParser
 
   val videoParser: RowParser[Video] = {
-    str("id") ~ str("title") map {
-      case id ~ title => Video(id, title) /* turn (pattern) =into=> (this) */
+    str("id") ~ str("title") ~ get[Option[String]]("dateLastRetrieved") map {
+      case id ~ title ~ dateLastRetrieved => Video(id, title, dateLastRetrieved.map(new Date(_))) /* turn (pattern) =into=> (this) */
     }
   }
   val videosParser: ResultSetParser[List[Video]] = videoParser *
@@ -72,7 +73,8 @@ object Video {
            parameters to be mapped with the elements in on(...) */
         "insert into videos values ({id}, {title})").on(
           "id" -> video.id,
-          "title" -> video.title
+          "title" -> video.title,
+          "dateLastRetrieved" -> video.dateLastRetrieved
         ).executeUpdate(/*implicit connection*/) /* returns num rows affected */
       addedRows == 1
   }
@@ -81,7 +83,8 @@ object Video {
     implicit connection =>
       val updatedRows = SQL("update videos set id = {id}, title = {title}").on(
         "id" -> video.id,
-        "title" -> video.title
+        "title" -> video.title,
+        "dateLastRetrieved" -> video.dateLastRetrieved
       ).executeUpdate()
       updatedRows == 1
   }
@@ -101,7 +104,7 @@ object Video {
     val videoEntryUrl = "http://gdata.youtube.com/feeds/api/videos/" + getIDFromURL(url)
     val videoEntry = service.getEntry(new URL(videoEntryUrl), classOf[VideoEntry])
     val title = videoEntry.getTitle.getPlainText
-    Video(getIDFromURL(url), title)
+    Video(getIDFromURL(url), title, Some(new Date(/*right now*/)))
   }
 
   def getIDFromURL(url: String): String = """(http)?(s)?(://)?www.youtube.com/watch\?v=([^#&]*)""".r.findFirstMatchIn(url) match {

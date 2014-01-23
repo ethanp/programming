@@ -1,17 +1,20 @@
-# Add comments and update videos
+# Add comments and
 
 # --- !Ups
-ALTER TABLE videos ADD COLUMN dateLastRetrieved DATE;
 
 CREATE TABLE comments (
-  id VARCHAR,
+  id VARCHAR UNIQUE,
   text VARCHAR,
   published DATE,
   numReplies INT,
-  FOREIGN KEY (videos_id) REFERENCES videos(id)
+  videos_id VARCHAR,
+  CONSTRAINT FK_videos_id
+    FOREIGN KEY(videos_id)
+    REFERENCES videos(id)
+    MATCH SIMPLE
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
 );
 
-# --- !Downs
-ALTER TABLE videos DROP COLUMN dateLastRetrieved;
-
+-- # --- !Downs
 DROP TABLE IF EXISTS comments

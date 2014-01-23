@@ -1,8 +1,9 @@
 # --- !Ups
 
 CREATE TABLE videos (
-  id varchar,
-  title varchar
+  id varchar UNIQUE,
+  title varchar,
+  dateLastRetrieved date
 );
 
 # --- !Downs
