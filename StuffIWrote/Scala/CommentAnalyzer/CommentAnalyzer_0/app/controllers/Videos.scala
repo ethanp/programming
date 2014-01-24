@@ -1,7 +1,7 @@
 package controllers
 
 import play.api.mvc.{Action, Controller}
-import models.Video
+import models.{Comment, Video}
 import play.api.data.Form
 import play.api.data.Forms.{mapping, longNumber, nonEmptyText}
 import play.api.mvc.Flash
@@ -38,7 +38,7 @@ object Videos extends Controller {
       videoForm.bind(flash.data)
     else
       videoForm
-    Ok(views.html.videos.editVideo(form))
+    Ok(views.html.videos.addVideo(form))
   }
 
   def save = Action { implicit request =>
@@ -53,6 +53,7 @@ object Videos extends Controller {
       success = { newVideo =>
         Video.insert(newVideo)
         val message = "Successfully added video " + newVideo.title
+        Comment.downloadCommentsFromVideo(newVideo.id)
         Redirect(routes.Videos.show(newVideo.id)).
           flashing("success" -> message)
       }

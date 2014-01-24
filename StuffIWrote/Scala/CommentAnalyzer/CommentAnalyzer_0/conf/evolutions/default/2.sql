@@ -3,18 +3,16 @@
 # --- !Ups
 
 CREATE TABLE comments (
-  id VARCHAR UNIQUE,
-  text VARCHAR,
-  published DATE,
-  numReplies INT,
-  videos_id VARCHAR,
-  CONSTRAINT FK_videos_id
-    FOREIGN KEY(videos_id)
-    REFERENCES videos(id)
-    MATCH SIMPLE
-    ON UPDATE CASCADE
-    ON DELETE CASCADE
+  id varchar UNIQUE,
+  text varchar,
+  published date,
+  numReplies int,
+  videos_id varchar CONSTRAINT FK_videos_id
+    references videos(id)
+    match simple
+    on update cascade
+    on delete cascade
 );
 
--- # --- !Downs
+# --- !Downs
 DROP TABLE IF EXISTS comments

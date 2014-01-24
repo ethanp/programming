@@ -15,6 +15,9 @@ import java.util.Date
 case class Video(id: String, title: String, dateLastRetrieved: Option[Date]) {
   val urlForEmbedding: String = "//www.youtube.com/embed/"+id
   val urlForWebsite: String = "http://www.youtube.com/watch?v="+id
+  def getComments: List[Comment] = {
+    Comment.getAllForVideoID(id)
+  }
 }
 
 object Video {
@@ -36,7 +39,7 @@ object Video {
       ).toList
   }
 
-  // Using Pattern Matching  (the way to go, it seems)
+  // Using Pattern Matching
   def getAllWithPatterns: List[Video] = DB.withConnection {
     implicit connection =>
       import anorm.Row
@@ -46,7 +49,7 @@ object Video {
       }.toList /*call toList on Stream to actually retrieve contents*/
   }
 
-  // Using Parser Combinators
+  // Using Parser Combinators  (the way to go, it seems)
 
   import anorm.RowParser
   import anorm.~
@@ -55,7 +58,8 @@ object Video {
 
   val videoParser: RowParser[Video] = {
     str("id") ~ str("title") ~ get[Option[Date]]("dateLastRetrieved") map {
-      case id ~ title ~ dateLastRetrieved => Video(id, title, dateLastRetrieved) /* turn (pattern) =into=> (this) */
+       case id ~ title ~ dateLastRetrieved =>
+      Video(id,  title,  dateLastRetrieved) /* turn (pattern) =into=> (this) */
     }
   }
   val videosParser: ResultSetParser[List[Video]] = videoParser *
@@ -72,8 +76,8 @@ object Video {
         /* Identifiers surrounded by curly braces denote named
            parameters to be mapped with the elements in on(...) */
         "insert into videos values ({id}, {title}, {dateLastRetrieved})").on(
-          "id" -> video.id,
-          "title" -> video.title,
+          "id"                -> video.id,
+          "title"             -> video.title,
           "dateLastRetrieved" -> video.dateLastRetrieved
         ).executeUpdate(/*implicit connection*/) /* returns num rows affected */
       addedRows == 1
@@ -82,8 +86,8 @@ object Video {
   def update(video: Video): Boolean = DB.withConnection {
     implicit connection =>
       val updatedRows = SQL("update videos set id = {id}, title = {title}, dateLastRetrieved = {dateLastRetrieved}").on(
-        "id" -> video.id,
-        "title" -> video.title,
+        "id"                -> video.id,
+        "title"             -> video.title,
         "dateLastRetrieved" -> video.dateLastRetrieved
       ).executeUpdate()
       updatedRows == 1
@@ -97,14 +101,19 @@ object Video {
       updatedRows == 0  // why zero? this came from List-5.8 but is it right?
   }
 
-
+  /**
+   * Called by the Form on the +New page when a url is entered
+   * Takes url, extracts the id, downloads the title, sets Now as the date last retrieved
+   * Also goes and retrieves the video's comments
+   */
   def makeVideoFromURL(url: String) = {
+    val id = getIDFromURL(url)
     val lines = scala.io.Source.fromFile("/etc/googleIDKey").mkString.split("\n")
     val service: YouTubeService = new YouTubeService(lines(0), lines(1))
-    val videoEntryUrl = "http://gdata.youtube.com/feeds/api/videos/" + getIDFromURL(url)
+    val videoEntryUrl = "http://gdata.youtube.com/feeds/api/videos/" + id
     val videoEntry = service.getEntry(new URL(videoEntryUrl), classOf[VideoEntry])
     val title = videoEntry.getTitle.getPlainText
-    Video(getIDFromURL(url), title, Some(new Date(/*right now*/)))
+    Video(id, title, Some(new Date(/*right now*/)))
   }
 
   def getIDFromURL(url: String): String = """(http)?(s)?(://)?www.youtube.com/watch\?v=([^#&]*)""".r.findFirstMatchIn(url) match {
