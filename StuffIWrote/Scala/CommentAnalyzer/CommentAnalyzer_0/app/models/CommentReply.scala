@@ -25,50 +25,50 @@ object CommentReply {
 
   val sql: SqlQuery = SQL("select * from comment_replies order by comments_id asc")
 
-  val commentParser: RowParser[Comment] = {
-    str("id")~str("text")~get[Option[String]]("published")~
+  val commentReplyParser: RowParser[CommentReply] = {
+    str("id")~str("text")~get[Option[Date]]("published")~
       int("numReplies")~int("depth")~str("comments_id") map {
-      case id~text~published~numReplies~depth~videos_id =>
-        Comment(id, text, published.map(new Date(_)), numReplies, videos_id)
+             case  id ~ text ~ published ~ numReplies ~ depth ~ comments_id =>
+      CommentReply(id,  text,  published,  numReplies,  depth,  comments_id)
     }
   }
 
-  val commentsParser: ResultSetParser[List[Comment]] = commentParser *
+  val commentRepliesParser: ResultSetParser[List[CommentReply]] = commentReplyParser *
 
-  def getAll: List[Comment] = DB.withConnection {
+  def getAll: List[CommentReply] = DB.withConnection {
     implicit connection =>
-      sql.as(commentsParser)
+      sql.as(commentRepliesParser)
   }
 
   // Insert, Update, Delete; copied from Video
 
-  def insert(comment: Comment): Boolean = DB.withConnection {
+  def insert(comment: CommentReply): Boolean = DB.withConnection {
     implicit connection =>
       val addedRows = SQL(
-        "insert into comments values ({id}, {text}, {published}, {numReplies}, {videos_id})").on(
+        "insert into comments values ({id}, {text}, {published}, {numReplies}, {comments_id})").on(
           "id" -> comment.id,
           "title" -> comment.text,
           "published" -> comment.published,
           "numReplies" -> comment.numReplies,
-          "videos_id" -> comment.videos_id /* after I get this working, maybe this can be moved into a val */
+          "comments_id" -> comment.comments_id /* after I get this working, maybe this can be moved into a val */
         ).executeUpdate()
       addedRows == 1
   }
 
-  def update(comment: Comment): Boolean = DB.withConnection {
+  def update(comment: CommentReply): Boolean = DB.withConnection {
     implicit connection =>
       val updatedRows = SQL("update comments set id = {id}, text = {text}, published = {published}, " +
-        "numReplies = {numReplies}, videos_id = {videos_id}").on(
+        "numReplies = {numReplies}, comments_id = {comments_id}").on(
           "id" -> comment.id,
           "title" -> comment.text,
           "published" -> comment.published,
           "numReplies" -> comment.numReplies,
-          "videos_id" -> comment.videos_id
+          "comments_id" -> comment.comments_id
         ).executeUpdate()
       updatedRows == 1
   }
 
-  def delete(comment: Comment): Boolean = DB.withConnection {
+  def delete(comment: CommentReply): Boolean = DB.withConnection {
     implicit connection =>
       val updatedRows = SQL("delete from comments where id = {id}").on(
         "id" -> comment.id

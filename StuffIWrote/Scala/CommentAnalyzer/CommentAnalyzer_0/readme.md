@@ -4,23 +4,25 @@ Comment Analyzer, Version 0
 
 Short List
 ----------
-1. Add a new table to hold the comments
-    * This will require a DB "evolution", docs [here](http://www.playframework.com/documentation/1.2.2/evolutions)
-    * I will have to change the video validation/parsing/etc. to have a default date of `new java.util.Date()`
-      or however one gets the current time into a `java.util.Date`
+
+##### Change the comments table to hold sentiment value
 
 Should end up looking roughly like this
 
-    [Video {id, title, lastCommentRetrievalTime}] <---->> [Comment {id, replyCount, text, date}]
+    Comment {id, text, published, sentimentVal, numReplies, videos_id}
+    
+##### Be able to delete videos from the database
+That should automatically remove the associated comments anyway, which is nice.
 
+##### Add a new table to hold the comment_replies
 
-Generally
----------
+Should end up looking roughly like this
 
-1. Go the [Parser Combinator](http://en.wikipedia.org/wiki/Parser_combinator)
-   route for retrieving results from the DB.
-    * I feel like they're nice to know for parsing and making DSLs,
-      plus the other methods are boring.
+    videos {id, title, lastCommentRetrievalTime} <---->> 
+    
+    comments {id, text, published, sentimentVal, numReplies, videos_id} <---->>
+    
+    comment_replies {id, text, published, sentimentVal numReplies, depth, comments_id}
 
 
 Highest Level

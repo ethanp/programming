@@ -14,27 +14,26 @@ import com.google.gdata.client.youtube.{YouTubeQuery, YouTubeService}
 import java.net.URL
 import com.google.gdata.data.youtube.VideoEntry
 import scala.xml.XML
+import util.SentimentAnalysis
 
-case class Comment(id        : String,
-                   text      : String,
-                   published : Option[Date],
-                   numReplies: Int,
-                   videos_id : String)
+case class Comment(id             : String,
+                   text           : String,
+                   published      : Option[Date],
+                   numReplies     : Int,
+                   videos_id      : String,
+                   sentimentValue : Option[Double])
 
 object Comment {
+
   // TODO optimize by using SQL
   def getAllForVideoID(video_id: String): List[Comment] = {
-    val allComments = getAll
-    val filteredComments = allComments.filter(_.videos_id == video_id)
-    println(allComments.length)
-    println(filteredComments.length)
-    filteredComments
+    getAll.filter(_.videos_id == video_id)
   }
 
   def downloadCommentsFromVideo(id: String) {
     // TODO: delete existing comments for this video first
     val NUM_PAGES = 1
-    val COMMENT_STEP_SIZE = 50 // this is the max
+    val COMMENT_STEP_SIZE = 50 // 50 is the max
     val COMMENT_LIMIT = COMMENT_STEP_SIZE * NUM_PAGES
     val lines = scala.io.Source.fromFile("/etc/googleIDKey").mkString.split("\n")
     val service: YouTubeService = new YouTubeService(lines(0), lines(1))
@@ -52,6 +51,7 @@ object Comment {
       println("commentUrlFeed:\t" + commentUrlFeed)
       val entries = XML.load(commentUrlFeed.openStream) \\ "entry"
       val comments: Seq[String] = (entries \\ "content").map(_.text)
+      val sentimentVals = comments.map(c => SentimentAnalysis.analyzeText(c))
       val replyCounts = (entries \\ "replyCount").filter(_.prefix == "yt").map(_.text.toInt)
       val ids = (entries \\ "id").map(_.text).map(".*/comments/(.*)".r.findFirstMatchIn(_).get.group(1))
       val dates = (entries \\ "published").map(tag => format.parse(tag.text))
@@ -61,7 +61,7 @@ object Comment {
              entries.length == dates.length,
         s"${entries.length}, ${comments.length}, ${replyCounts.length}, ${ids.length}, ${dates.length}, all must match")
       for (i <- 0 until dates.length)
-        insert(Comment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id))
+        insert(Comment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id, Some(sentimentVals(i))))
 
       println(dates.size + " comments added to " + id)
       startIndex += COMMENT_STEP_SIZE
@@ -73,9 +73,10 @@ object Comment {
   val sql: SqlQuery = SQL("select * from comments order by videos_id asc")
 
   val commentParser: RowParser[Comment] = {
-    str("id") ~ str("text") ~ get[Option[Date]]("published") ~ int("numReplies") ~ str("videos_id") map {
-         case id ~ text ~ published ~ numReplies ~ videos_id =>
-      Comment(id,  text,  published,  numReplies,  videos_id)
+    str("id") ~ str("text") ~ get[Option[Date]]("published") ~ int("numReplies") ~
+    str("videos_id") ~ get[Option[Double]]("sentimentValue") map {
+         case id ~ text ~ published ~ numReplies ~ videos_id ~ sentimentValue =>
+      Comment(id,  text,  published,  numReplies,  videos_id,  sentimentValue)
     }
   }
 
@@ -91,12 +92,13 @@ object Comment {
   def insert(comment: Comment): Boolean = DB.withConnection {
     implicit connection =>
       val addedRows = SQL(
-        "insert into comments values ({id}, {text}, {published}, {numReplies}, {videos_id})").on(
-          "id"         -> comment.id,
-          "text"      -> comment.text,
-          "published"  -> comment.published,
-          "numReplies" -> comment.numReplies,
-          "videos_id"  -> comment.videos_id  /* after I get this working, maybe this can be moved into a def */
+        "insert into comments values ({id}, {text}, {published}, {numReplies}, {videos_id}, {sentimentValue})").on(
+          "id"             -> comment.id,
+          "text"           -> comment.text,
+          "published"      -> comment.published,
+          "numReplies"     -> comment.numReplies,
+          "videos_id"      -> comment.videos_id,  /* after I get this working, maybe this can be moved into a def */
+          "sentimentValue" -> comment.sentimentValue
         ).executeUpdate()
       addedRows == 1
   }
@@ -104,12 +106,13 @@ object Comment {
   def update(comment: Comment): Boolean = DB.withConnection {
     implicit connection =>
       val updatedRows = SQL("update comments set id = {id}, text = {text}, published = {published}, " +
-                            "numReplies = {numReplies}, videos_id = {videos_id}").on(
-        "id"         -> comment.id,
-        "title"      -> comment.text,
-        "published"  -> comment.published,
-        "numReplies" -> comment.numReplies,
-        "videos_id"  -> comment.videos_id
+                            "sentimentValue = {sentimentValue}, numReplies = {numReplies}, videos_id = {videos_id}").on(
+          "id"             -> comment.id,
+          "text"           -> comment.text,
+          "published"      -> comment.published,
+          "numReplies"     -> comment.numReplies,
+          "videos_id"      -> comment.videos_id,
+          "sentimentValue" -> comment.sentimentValue
       ).executeUpdate()
       updatedRows == 1
   }
