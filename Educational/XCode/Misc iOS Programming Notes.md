@@ -1,10 +1,123 @@
 Misc iOS Programming Notes
 ==========================
 
+[About iOS App Programming](https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007072)
+---------------------------
+
+> This document is the starting point for creating iOS apps. It describes the
+> fundamental architecture of iOS apps, including how the code you write fits
+> together with the code provided by iOS. This document also offers practical
+> guidance to help you make better choices during your design and planning
+> phase and guides you to the other documents in the iOS developer library that
+> contain more detailed information about how to address a specific task.
+
+> The contents of this document apply to all iOS apps running on all types of
+> iOS devices, including iPad, iPhone, and iPod touch. The starting point for
+> any new app is identifying the design choices you need to make and
+> understanding how those choices map to an appropriate implementation.
+
+[Model View Controller](https://developer.apple.com/library/ios/documentation/General/Conceptual/CocoaEncyclopedia/Model-View-Controller/Model-View-Controller.html#//apple_ref/doc/uid/TP40010810-CH14)
+---------------------
+
+### Advantages
+
+* More **reusable** objects
+* Better-defined **interfaces**
+* More easily **extensible**
+
+### Sometimes, Models must be Observed
+
+* The Model doesn't *only* update when it receives stuff from the View via
+  the Controller, it may also
+    * Receive stuff from *network*
+    * Have stuff that happens on a *timer*
+* This is when you need to add *observers* and notifications or something
+
+[Document-Based Apps](https://developer.apple.com/library/ios/documentation/DataManagement/Conceptual/DocumentBasedAppPGiOS/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011149)
+---------------------
+
+Manage multiple documents, with each document containing a unique set of data
+that is stored in a file located either in the application sandbox or in
+iCloud.
+
+Must create a subclass of UIDocument that loads document data into its
+in-memory data structures and supplies UIDocument with the data to write to the
+document file.
+
+UIDocument takes care of many details related to document management for you.
+Besides its integration with iCloud, UIDocument reads and writes document data
+in the background so that your application’s user interface does not become
+unresponsive during these operations. It also saves document data automatically
+and periodically, freeing your users from the need to explicitly save.
+
+Instances of subclasses of `UIDocument` are "model controllers". They manage
+model objects that represent what the user is viewing and editing. A document
+object is in turn managed by a view controller that presents a document to
+users.
+
+NSCoding
+----------
+[NSHipster 2013](http://nshipster.com/nscoding/)
+
+[Ray Wenderlich 2010](http://www.raywenderlich.com/1914/nscoding-tutorial-for-ios-how-to-save-your-app-data)
+
+For apps with heavy data requirements, `Core Data` is often the best way to go.
+However, for apps with light data requirements, `NSCoding` with `NSFileManager` can
+be a nice way to go because it’s such a simple alternative.
+
+You can use `NSCoding` to persist your normal app data, and use `NSFileManager` to
+store large files for efficiency.
+
+**NSCoding is a protcol** that *you can implement on your data classes to support
+encoding and decoding your data into a data buffer, which can then be persisted
+to disk*. Implementing NSCoding is actually ridiculously easy.
+
+We have to include the `<NSCoding>` protocol, and implement two methods
+
+* `(void)encodeWithCoder:(NSCoder *)encoder`
+* `(id)initWithEncoder:(NSCoder *)decoder`
+
+##### Example
+
+    @prop NSString *title;
+    @prop float rating;
+    ...
+    - (void) encodeWithCoder:(NSCoder *)encoder {
+        [encoder encodeObject:self.title forKey:@"title"];
+        [encoder encodeFloat:self.rating forKey:@"rating"];
+    }
+
+    - (id)initWithCoder:(NSCoder *)decoder {
+        NSString *title = [decoder decodeObjectForKey:@"title"];
+        float rating = [decoder decodeFloatForKey:@"rating"];
+        return [self initWithTitle:title rating:rating];
+    }
+
+##### Moving on
+
+We provide methods to:
+
+* Load data from disk
+* Save data to disk
+* Delete document
+* Create new docuement
+
+
+*corner*        | Core Data | NSKeyedArchiver
+----------------|-----------|----------------
+Persists State  | Yes       | Yes
+Pain in the Ass | Yes       | No
+Entity Modeling | Yes       | No
+Querying        | Yes       | No
+Speed           | Fast      | Slow
+Serialization Formats | SQLite, XML, NSData | NSData
+Migrations      | Automatic | Manual
+Undo Manager    | Automatic | Manual
+
 [AVFoundation](https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/00_Introduction.html#//apple_ref/doc/uid/TP40010188-CH1-SW3)
 --------------
 
-#### AVFoundation *Fun*damentals
+#### AVFoundation Fundamentals
 **AVFoundation** is one of several **frameworks** that you can use to **play and create
 time-based audiovisual media**. It provides an Objective-C interface you use to
 work on a detailed level with time-based audiovisual data. For example, you can
