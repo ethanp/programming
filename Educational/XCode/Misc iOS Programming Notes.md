@@ -1,6 +1,70 @@
 Misc iOS Programming Notes
 ==========================
 
+Notifications
+-------------
+
+* Per-process singleton, `NSNotificationCenter`
+* Object posts notification there, which broadcasts it to anyone who registered
+  to receive it
+
+### To Observe
+
+Get a `NSNotificationCenter` instance and send it
+
+    [instance addObserver:??
+                 selector:@selector(myNotificationHandler)
+                     name:PrefixGlobalStringNotificationName
+                   object:??]
+
+And implement
+
+    - (void)myNotificationHandler:(NSNotification *)notif
+
+### To Post
+
+First make a global string constant for the name
+
+    NSString *PrefixGlobalStringNotificationName = @"NameOfMyNotification";
+
+Now post the notification that looks like (some variation of the following header)
+
+    [[NSNotificationCenter instance]
+     postNotificationName:PrefixGlobalStringNotificationName
+     object:??
+     userInfo:??]
+
+Delegates
+-------------------------
+
+The **delegate is the object informed when specific events happen to the delegator**.
+This gives the delegate the chance to respond to whatever happened.
+
+In other words, it "declares that it is registered as an observer of the
+notifications posted by the observing object."
+
+Similarly, a data sourcer asks its **data source** for data it needs.
+
+###Implementation ([Docs](https://developer.apple.com/library/ios/documentation/general/conceptual/CocoaEncyclopedia/DelegatesandDataSources/DelegatesandDataSources.html))
+
+#### Initialize
+**Delegator.h**
+
+    - (id)delegate;
+    - (void)setDelegate:(id)newDelegate;
+
+**Delegator.m**
+
+    - (id)delegate { return delegate; }
+    - (void)setDelegate:(id)newDelegate { delegate = newDelegate; }
+
+#### Ask delegate whether `operationShouldProcede`
+**Delegator.m**
+
+    - (void)someMethod {
+        if ( [delegate respondsToSelector:@selector(operationShouldProceed)] ) {
+            if ( [delegate operationShouldProceed] ) { /*ok, so do this*/ } } }
+
 [About iOS App Programming](https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007072)
 ---------------------------
 

@@ -165,6 +165,28 @@ Now we must ***execute* the request**
     UIImage *image = [UIImage imageWithData:[selectedObject valueForKey:@"imageKey"]];
     [[newCustomer yourImageView] setImage:image];
 
+### Getting a Managed Object Context, best practices
+
+According to the [docs](https://developer.apple.com/library/ios/documentation/DataManagement/Conceptual/CoreDataSnippets/Articles/stack.html)
+and various SOQs
+
+* **a view controller typically shouldn’t retrieve the context from a global
+  object such as the application delegate** because that makes the application
+  architecture too rigid.
+* **Neither should a view controller create a context for its own use** (unless
+  it’s a nested context).
+    * This may mean that operations performed using the
+      controller’s context aren’t registered with other contexts, so different view
+      controllers will have different perspectives on the data.
+* *By convention*, you get a context from a view controller.
+* When you implement a view controller that integrates with Core Data, you add
+  an `@prop NSManagedObjectContext moc`.
+* **When you create a view controller, you pass it the context it should use.**
+* You pass an existing context, or (in a situation where you want the new
+  controller to manage a discrete set of edits) a new context that you create
+  for it.
+* The **application delegate creates the context to pass to the first view
+  controller** that’s displayed.
 
 Important Classes
 -----------------
