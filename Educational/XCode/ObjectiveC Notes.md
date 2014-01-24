@@ -1,27 +1,134 @@
 Objective C Notes
 =================
 
+Misc, but Useful
+----------------
+
+### Encoding dict into JSON
+[From SOQ](http://stackoverflow.com/questions/11207483/how-to-correctly-convert-an-nsdictionary-to-a-json-format-in-ios)
+
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:myNSDictionary options:NSJSONWritingPrettyPrinted error:&error];
+    NSString *str = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+
+[Collection Operators](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/KeyValueCoding/Articles/CollectionOperators.html)
+----------------------
+
+* Perform action on items in collection using key-path notation and an action operator
+
+##### Normal
+avg, count, max, min, sum
+
+##### Unions
+distinctUnionOfObjects, unionOfObjects (a 'bag')
+
+##### Nested Collections
+distinctUnionOfArrays, unionOfArrays, distinctUnionOfSets (takes Set, makes Set)
+
+
+
+#### Format
+
+    keypathToCollection.@collectionOperator.keypathToProperty
+
+#### Examples
+
+You have an NSArray of Transactions, and each has an `amount`, so you do
+
+    NSNumber *avg = transactions.@avg.amount
+
+You want the date of the latest transaction
+
+    NSNumber *latestDate = transactions.@max.date
+
+You have an NSArray of Customers, and each has a `lastname`, so you do
+
+    NSArray *lastnames = customers.@distinctUnionOfObjects.lastname
+
+You have an NSArray of NSArrays of Customers, and each has a `lastname`, so you do
+
+    NSArray *lastnames = myArrayOfArraysOfCustomers.@distinctUnionOfArrays.lastname
+
+[Collections](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/Collections/Collections.html#//apple_ref/doc/uid/10000034i)
+-----------
+
+Primarily
+
+* `NSArray`
+* `NSSet`
+* `NSDictionary`
+
+Also
+
+* `NSPointerArray`
+    * mutable
+    * can hold `NULL` pointers
+    * pointers in array, and @count can be set manually
+* `NSHashTable`
+* `NSMapTable`
+* `NSCountedSet` --- same as Python's `collections.Counter()`
+
+
+### [NSSets](http://stackoverflow.com/questions/3826789/getting-an-object-from-an-nsset)
+
+There are several use cases for a set. You could enumerate through (e.g. with
+`enumerateObjectsUsingBlock` or `NSFastEnumeration`), call `containsObject` to test
+for membership, use `anyObject` to get a member (not random), or convert it to an
+array (in no particular order) with `allObjects`.
+
+A set is appropriate when you don't want duplicates, don't care about order,
+and want fast membership testing.
+
+Properties
+==========
+
+@dynamic
+------------------
+These are where you *would* see `@synthesize`, inside the `@implementation`.
+
+#### From Stanford Lecture 12, slide 52.
+
+It says “I do not implement the setter or getter for this property, but send me
+the message anyway and I’ll use the Objective-C runtime to figure out what to
+do.”
+
+There is a mechanism in the Objective-C runtime to “trap” a message sent to you
+that you don’t implement.
+
+`NSManagedObject` does this and calls
+`valueForKey:` or `setValue:forKey:`. Pretty cool.
+
+The declarations are really just there to suppress compiler warnings.
+
+[Strong vs. Weak Retain vs. Copy vs. Assign](http://stackoverflow.com/questions/9859719/objective-c-declared-property-attributes-nonatomic-copy-strong-weak)
+----------------------------
+
+* **Strong** --- for pointers to objects, adds one to reference count of the object
+* **Weak** --- like *strong*, but doesn't add to reference count
+* **Assign** --- [I think *was*] default, to be used for non-pointer attributes
+* **Retain** --- old word for strong, before ARC
+* **Copy** --- cause the setter for that property to create a copy of the object
+    * when object is mutable, use this to make it not show changes made
+      by object's other owners
+
+[This SOQ](http://stackoverflow.com/questions/4995254/nsmutablestring-as-retain-copy/5002646)
+looks like a good place to find out more about when/why/how to use `(copy)`
+
 [Atomic vs nonatomic properties](http://stackoverflow.com/questions/588866/atomic-vs-nonatomic-properties)
 --------------------------------
 
-Assuming that you are allowing setters/getters to be @synthesized, the
-atomic vs. non-atomic changes their generated code. If you are writing your own
-setter/getters, atomic/nonatomic/retain/assign/copy are merely advisory.
+* **atomic** --- setter/getter ensure that a whole value is always set/gotten,
+                 regardless of setter activity on any other thread.
+    * If `thread A` is inside the getter when `thread B` calls the setter, a
+      viable value will still be returned to `thread A`.
 
-With "atomic", the synthesized setter/getter will ensure that a whole value is
-always returned from the getter or set by the setter, regardless of setter
-activity on any other thread. That is, if thread A is in the middle of the
-getter while thread B calls the setter, an actual viable value -- an
-autoreleased object, most likely -- will be returned to the caller in A.
+* **nonatomic** --- no such guarantees are made.
+    * Thus, *nonatomic is considerably faster than atomic*.
 
-In nonatomic, no such guarantees are made. Thus, nonatomic is considerably
-faster than "atomic".
-
-What "atomic" does not do is make any guarantees about thread safety. If thread
+**Atomic does not do is make any guarantees about thread safety**. If thread
 A is calling the getter simultaneously with thread B and C calling the setter
 with different values, thread A may get any one of the three values returned.
-Ensuring data integrity -- one of the primary challenges of multi-threaded
-programming -- is achieved by other means. Atomicity does not generally
+Ensuring data integrity is achieved by other means. Atomicity does not generally
 contribute to thread safety.
 
 [Blocks](https://developer.apple.com/library/ios/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/WorkingwithBlocks/WorkingwithBlocks.html#//apple_ref/doc/uid/TP40011210-CH8-SW1)
@@ -131,6 +238,8 @@ You can also use categories of your own classes to:
   files. For example, you could group the methods of a large class into several
   categories and put each category in a different file.
 * Declare private methods.
+
+However, categories *cannot* have instance variables (doesn't count `@props`).
 
 You add methods to a class by declaring them in an interface file under a
 category name and defining them in an implementation file under the same name.
