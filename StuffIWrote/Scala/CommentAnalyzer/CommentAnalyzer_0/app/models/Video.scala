@@ -15,8 +15,15 @@ import java.util.Date
 case class Video(id: String, title: String, dateLastRetrieved: Option[Date]) {
   val urlForEmbedding: String = "//www.youtube.com/embed/"+id
   val urlForWebsite: String = "http://www.youtube.com/watch?v="+id
-  def getComments: List[Comment] = {
-    Comment.getAllForVideoID(id)
+  def getComments: List[Comment] = Comment.getAllForVideoID(id)
+  def avgCommentScore = Comment.avgCommentScoreForVideoID(id)
+  def commentScoreStatement = {
+    if (avgCommentScore > 2.4)
+      "Wow!"
+    else if (avgCommentScore > 1.6)
+      "Meh."
+    else
+      "Bleh!"
   }
 }
 

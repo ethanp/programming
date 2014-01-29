@@ -16,9 +16,9 @@ import play.api.mvc.Flash
  */
 
 object Videos extends Controller {
+
   private def videoForm: Form[Video] = Form(
-    mapping(
-      "url" -> nonEmptyText.verifying("A video with this ID already exists", Video.findByURL(_).isEmpty)
+    mapping("url" -> nonEmptyText.verifying("A video with this ID already exists", Video.findByURL(_).isEmpty)
     )(Video.makeVideoFromURL)(Video.someURL)
   )
 
@@ -40,7 +40,6 @@ object Videos extends Controller {
 
   def save = Action { implicit request =>
     val newVideoForm : Form[Video] = videoForm.bindFromRequest()
-
     newVideoForm.fold(
       hasErrors = { form =>
         Redirect(routes.Videos.newVideo()).

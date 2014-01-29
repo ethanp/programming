@@ -3,21 +3,35 @@
 @*I think Scala `Messages` class is generated from the `conf/messages` file*@
 @main("Comment Analyzer") {
 
-    <dl class="videos">
+    <table border="3">
+        <tr>
+            <th>Title</th>
+            <th>Comment Sentiment</th>
+            <th>Compare?</th>
+            <th>Date Last Retrieved</th>
+        </tr>
         @for(video <- videos) {
-            <dt>
-                <a href="@controllers.routes.Videos.show(video.id)">
-                    @video.title
-                </a>
-            </dt>
-            <dd>
-                <a href="@video.urlForWebsite">Watch on Youtube</a>
-            </dd>
-            <dd>
-                Update comments (TODO)
-            </dd>
+            <tr>
+                <td>
+                    <a href="@controllers.routes.Videos.show(video.id)">
+                        @video.title
+                    </a>
+                </td>
+                <td>
+                    @video.commentScoreStatement
+                </td>
+                <td>
+                    <form>
+                        <label for="compareBox@video.id"></label>
+                        <input type="checkbox" name="compare@video.id" value="checked@video.id" id="compareBox@video.id">
+                    </form>
+                </td>
+                <td>
+                    @video.dateLastRetrieved.get
+                </td>
+            </tr>
         }
-    </dl>
+    </table>
 
     <p>
         <a href="@controllers.routes.Videos.newVideo()" class="btn">

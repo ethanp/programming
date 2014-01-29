@@ -8,13 +8,16 @@ package models
 import play.api.Play.current
 import play.api.db.DB
 import java.util.Date
-import anorm.{ResultSetParser, RowParser, SqlQuery, SQL, ~}
+import anorm._
 import anorm.SqlParser.{str, get, int}
 import com.google.gdata.client.youtube.{YouTubeQuery, YouTubeService}
 import java.net.URL
 import com.google.gdata.data.youtube.VideoEntry
 import scala.xml.XML
 import util.SentimentAnalysis
+import anorm.SqlQuery
+import scala.Some
+import anorm.~
 
 case class Comment(id             : String,
                    text           : String,
@@ -27,6 +30,11 @@ object Comment {
 
   // TODO optimize by using SQL
   def getAllForVideoID(video_id: String): List[Comment] = getAll.filter(_.videos_id == video_id)
+
+  def avgCommentScoreForVideoID(video_id: String): Double = {
+    val comments = getAllForVideoID(video_id)
+    comments.map(_.sentimentValue.get).sum / comments.length
+  }
 
   def downloadCommentsFromVideo(id: String) {
     // TODO: delete existing comments for this video first
@@ -85,18 +93,20 @@ object Comment {
       sql.as(commentsParser)
   }
 
-  // Insert, Update, Delete; copied from Video
+  def commentStringMap(comment: Comment): List[(Any, ParameterValue[_])] = List(
+    "id"              -> comment.id,
+    "text"            -> comment.text,
+    "published"       -> comment.published,
+    "numReplies"      -> comment.numReplies,
+    "videos_id"       -> comment.videos_id,
+    "sentimentValue"  -> comment.sentimentValue
+  )
 
   def insert(comment: Comment): Boolean = DB.withConnection {
     implicit connection =>
       val addedRows = SQL(
         "insert into comments values ({id}, {text}, {published}, {numReplies}, {videos_id}, {sentimentValue})").on(
-          "id"             -> comment.id,
-          "text"           -> comment.text,
-          "published"      -> comment.published,
-          "numReplies"     -> comment.numReplies,
-          "videos_id"      -> comment.videos_id,  /* after I get this working, maybe this can be moved into a def */
-          "sentimentValue" -> comment.sentimentValue
+          commentStringMap(comment):_*
         ).executeUpdate()
       addedRows == 1
   }
@@ -105,13 +115,8 @@ object Comment {
     implicit connection =>
       val updatedRows = SQL("update comments set id = {id}, text = {text}, published = {published}, " +
                             "sentimentValue = {sentimentValue}, numReplies = {numReplies}, videos_id = {videos_id}").on(
-          "id"             -> comment.id,
-          "text"           -> comment.text,
-          "published"      -> comment.published,
-          "numReplies"     -> comment.numReplies,
-          "videos_id"      -> comment.videos_id,
-          "sentimentValue" -> comment.sentimentValue
-      ).executeUpdate()
+          commentStringMap(comment):_*
+        ).executeUpdate()
       updatedRows == 1
   }
 
