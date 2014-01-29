@@ -45,8 +45,8 @@ Ray's [2nd tutorial](http://www.raywenderlich.com/12170/core-data-tutorial-how-t
 shows you how to use a simple command-line app to
 
 1. take a schema from *another app*
-1. take *existing* data from any number of JSON, XML, another DB, CSV, a spreadsheet,
-  the Internet, etc.
+1. take *existing* data from any number of JSON, XML, another DB, CSV,
+   a spreadsheet, the Internet, etc.
 1. import that into a database
 1. copy that imported data back into the original app
 1. provide that data for use from the DB on startup in the original app
@@ -104,7 +104,7 @@ Stop after fetching 100
 
 Some `@selectors` can be performed on the database side (faster).
 
-If you have multiple sortDescriptors in the @[array], you first sort by the
+If you have multiple `sortDescriptors` in the `@[array]`, you first sort by the
 first, then sort within those by the second, etc.
 
     NSSortDescriptor *sortDescriptor = [NSSortDescriptor
@@ -115,7 +115,7 @@ first, then sort within those by the second, etc.
     request.sortDescriptors = @[sortDescriptor];
 
 See the documentation for [NSPredicate](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/Foundation/Classes/NSPredicate_Class/Reference/NSPredicate.html)
-for many more options. [Some predicates](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/KeyValueCoding/Articles/CollectionOperators.html), 
+for many more options. [Some predicates](https://developer.apple.com/library/ios/documentation/cocoa/conceptual/KeyValueCoding/Articles/CollectionOperators.html),
 like `results.@count` are done in the database.
 
     NSPredicate *predicate1 = [NSPredicate predicateWithFormat:@name contains[c] %@", (NSString *)];
@@ -147,6 +147,8 @@ Now we must ***execute* the request**
 ### Hooking your Core Data into a UITableView
 
 #### NSFetchedResultsController
+
+[Ray Wenderlich's Tutorial, Core Data 3 for iOS 5](http://www.raywenderlich.com/999/core-data-tutorial-for-ios-how-to-use-nsfetchedresultscontroller)
 
 * Much faster because it can be set to retrieve only a subset of the data at a time
 * Make it an `@property`
@@ -255,7 +257,7 @@ Important Classes
 * Regardless of type, your code looks the same
 * Disk-Based
     * SQLite (**default**)
-    * XML
+    * XML ([not on iOS](https://developer.apple.com/library/mac/documentation/cocoa/conceptual/coredata/articles/cdPersistentStores.html))
     * Binary
 * Memory-Based
     * There aren't multiple options

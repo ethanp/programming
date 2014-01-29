@@ -1,5 +1,51 @@
-Misc iOS Programming Notes
-==========================
+NSUserDefaults
+--------------
+### [mobile.tuts+ Tutorial](http://mobile.tutsplus.com/tutorials/iphone/nsuserdefaults_iphone-sdk/)
+
+* **Save user data, settings, and properties** for your application
+    * E.g. profile image, or color scheme
+* **Saved persistently** in the iOS "defaults system"
+* You can save the "standard" set of class types
+    * `NSData, NSString, NSNumber, NSDate, NSArray, NSDictionary`
+
+Storing the data
+
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    [defaults setObject:firstName forKey:@"firstName"];
+    [defaults setObject:lastName forKey:@"lastname"];
+    [defaults setInteger:/*(int)*/age forKey:@"age"];
+    [defaults setObject:imageData forKey:@"image"];
+    [defaults synchronize];
+    NSLog(@"Data saved");
+
+Retrieving the data
+
+    - (void)viewDidLoad
+    {
+        // Get the stored data before the view loads
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        NSString *firstName = [defaults objectForKey:@"firstName"];
+        NSString *lastName = [defaults objectForKey:@"lastname"];
+        int age = [defaults integerForKey:@"age"];
+        NSString *ageString = [NSString stringWithFormat:@"%i",age];
+        NSData *imageData = [defaults dataForKey:@"image"];
+        UIImage *contactImage = [UIImage imageWithData:imageData];
+        /* update UI with the retrieved data, then */
+        [super viewDidLoad];
+    }
+
+
+[Implementing NSCoding](https://www.mikeash.com/pyblog/friday-qa-2010-08-12-implementing-nscoding.html)
+-----------------------
+
+Objects in memory can't be directly saved or moved to other programs. They
+contain data, such as pointers, which are only valid in the context of your
+process's memory space. Move the contents of an object into another program and
+all of those pointers suddenly make no sense. Serialization is the process of
+converting the non-portable, in-memory representation of an object into a
+portable stream of bytes that can be stored and moved between processes.
+
+The rest must be some other time.
 
 Notifications
 -------------
@@ -12,14 +58,28 @@ Notifications
 
 Get a `NSNotificationCenter` instance and send it
 
-    [instance addObserver:??
-                 selector:@selector(myNotificationHandler)
-                     name:PrefixGlobalStringNotificationName
-                   object:??]
+    [instance addObserver:(id)observer // you (the object to get notified)
+                 selector:(SEL)methodToSendIfSomethingHappens
+                     name:(NSString *)name // what you’re observing (a constant somewhere)
+                   object:(id)sender] // whose changes you’re interested in (nil is anyone’s)
 
 And implement
 
-    - (void)myNotificationHandler:(NSNotification *)notif
+    - (void)methodToSendIfSomethingHappens:(NSNotification *)notif
+
+
+#### E.g.
+Put this in `viewDidAppear:`
+
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center addObserver:self
+               selector:@selector(documentChanged:)
+                   name:UIDocumentStateChangedNotification
+                 object:self.document];
+
+Put this in `viewWillDisappear:`
+
+    [center removeObserver:self];
 
 ### To Post
 
@@ -35,7 +95,7 @@ Now post the notification that looks like (some variation of the following heade
      userInfo:??]
 
 Delegates
--------------------------
+---------
 
 The **delegate is the object informed when specific events happen to the delegator**.
 This gives the delegate the chance to respond to whatever happened.
