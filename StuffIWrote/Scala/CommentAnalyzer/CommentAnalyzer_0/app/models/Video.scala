@@ -18,7 +18,7 @@ case class Video(id: String, title: String, dateLastRetrieved: Option[Date]) {
   def getComments: List[Comment] = Comment.getAllForVideoID(id)
   def avgCommentScore = Comment.avgCommentScoreForVideoID(id)
   def commentScoreStatement = {
-    if (avgCommentScore > 2.4)
+    if (avgCommentScore > 2.1)
       "Wow!"
     else if (avgCommentScore > 1.6)
       "Meh."

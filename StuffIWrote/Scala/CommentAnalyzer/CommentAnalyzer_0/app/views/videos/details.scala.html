@@ -1,6 +1,11 @@
 @(video: Video)(implicit flash: play.api.mvc.Flash)
 
 @main(video.title) {
+    <script>
+        $(function() {
+            $('#comment-1' ).html('<h1>Hello Web-World!</h1>');
+        });
+    </script>
     <h2>
         @* doesn't *need* to be called a 'tag', but that's the Java convention *@
         @tags.embeddedVideo(video.urlForEmbedding)
@@ -21,18 +26,18 @@
             }}
         </dd>
     </dl>
-    <h3>First Ten Comments</h3>
+    <h3>First Fifty Comments</h3>
     <table class="table table-bordered table-striped">
         <tr>
             <th>Comment</th>
             <th>Sentiment Value</th>
         </tr>
-        @for(i <- 0 until 10 if video.getComments.length > i) {
-            <tr>
-                <td>@video.getComments(i).text</td>
-                <td>
+        @for(i <- 0 until 50 if video.getComments.length > i) {
+            <tr id="comment-@i">
+                <td id="comment-text-@i">@video.getComments(i).text</td>
+                <td id="comment-value-@i">
                     @{video.getComments(i).sentimentValue match {
-                            case Some(value) => value
+                            case Some(value) => video.getComments(i).formatted
                             case _ => "None specified"
                         }
                     }

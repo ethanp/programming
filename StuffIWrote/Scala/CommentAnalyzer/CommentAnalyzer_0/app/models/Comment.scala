@@ -24,7 +24,9 @@ case class Comment(id             : String,
                    published      : Option[Date],
                    numReplies     : Int,
                    videos_id      : String,
-                   sentimentValue : Option[Double])
+                   sentimentValue : Option[Double]) {
+  def formatted = "%.2f".format(sentimentValue.get)
+}
 
 object Comment {
 
