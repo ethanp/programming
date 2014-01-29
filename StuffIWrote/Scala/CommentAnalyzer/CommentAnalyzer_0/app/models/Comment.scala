@@ -26,9 +26,7 @@ case class Comment(id             : String,
 object Comment {
 
   // TODO optimize by using SQL
-  def getAllForVideoID(video_id: String): List[Comment] = {
-    getAll.filter(_.videos_id == video_id)
-  }
+  def getAllForVideoID(video_id: String): List[Comment] = getAll.filter(_.videos_id == video_id)
 
   def downloadCommentsFromVideo(id: String) {
     // TODO: delete existing comments for this video first

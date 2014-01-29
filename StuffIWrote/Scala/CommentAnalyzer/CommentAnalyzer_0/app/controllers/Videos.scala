@@ -34,10 +34,7 @@ object Videos extends Controller {
   }
 
   def newVideo = Action { implicit request =>
-    val form = if (flash.get("error").isDefined)
-      videoForm.bind(flash.data)
-    else
-      videoForm
+    val form = if (flash.get("error").isDefined) videoForm.bind(flash.data) else videoForm
     Ok(views.html.videos.addVideo(form))
   }
 
@@ -58,5 +55,11 @@ object Videos extends Controller {
           flashing("success" -> message)
       }
     )
+  }
+
+  def delete(id: String) = Action { implicit request =>
+    Video.findByID(id).map(Video.delete)
+    Comment.getAllForVideoID(id).map(Comment.delete)
+    Redirect(routes.Videos.list())
   }
 }

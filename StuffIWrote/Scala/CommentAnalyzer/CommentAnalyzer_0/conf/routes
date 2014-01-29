@@ -17,6 +17,9 @@ GET         /videos/new           controllers.Videos.newVideo
 # Details about one video
 GET         /videos/:id           controllers.Videos.show(id: String)
 
+# TODO should be better...
+GET         /videos/delete/:id    controllers.Videos.delete(id: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file         controllers.Assets.at(path="/public", file)
 
