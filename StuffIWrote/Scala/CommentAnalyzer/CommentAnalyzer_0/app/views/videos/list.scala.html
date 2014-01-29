@@ -3,12 +3,12 @@
 @*I think Scala `Messages` class is generated from the `conf/messages` file*@
 @main("Comment Analyzer") {
 
-    <table border="3">
+    <table class="table table-hover table-bordered table-striped">
         <tr>
             <th>Title</th>
-            <th>Comment Sentiment</th>
-            <th>Compare?</th>
-            <th>Date Last Retrieved</th>
+            <th style="text-align : center">Comment Sentiment</th>
+            <th style="text-align : center">Compare?</th>
+            <th style="text-align : center">Date Last Retrieved</th>
         </tr>
         @for(video <- videos) {
             <tr>
@@ -17,22 +17,22 @@
                         @video.title
                     </a>
                 </td>
-                <td>
+                <td style="text-align : center">
                     @video.commentScoreStatement
                 </td>
-                <td>
+                <td style="text-align : center">
                     <form>
                         <label for="compareBox@video.id"></label>
-                        <input type="checkbox" name="compare@video.id" value="checked@video.id" id="compareBox@video.id">
+                        <input type="checkbox" name="compare@video.id" value="checked@video.id" id="compareBox@video.id"/>
                     </form>
                 </td>
-                <td>
+                <td style="text-align : center">
                     @video.dateLastRetrieved.get
                 </td>
             </tr>
         }
     </table>
-
+    <p></p>
     <p>
         <a href="@controllers.routes.Videos.newVideo()" class="btn">
             <i class="icon-plus"></i>

@@ -20,19 +20,26 @@
                 case _ => "None specified"
             }}
         </dd>
-        <dt>Ten First Comments</dt>
-        <dd>
-            @for(i <- 0 until 10 if video.getComments.length > i) {
-                <p>@video.getComments(i).text</p>
-                <p><b>Sentiment Value:</b>
-                   @{video.getComments(i).sentimentValue match {
-                       case Some(value) => value
-                       case _ => "None specified"
-                   }}
-                </p><p>-----</p>
-            }
-        </dd>
     </dl>
+    <h3>First Ten Comments</h3>
+    <table class="table table-bordered table-striped">
+        <tr>
+            <th>Comment</th>
+            <th>Sentiment Value</th>
+        </tr>
+        @for(i <- 0 until 10 if video.getComments.length > i) {
+            <tr>
+                <td>@video.getComments(i).text</td>
+                <td>
+                    @{video.getComments(i).sentimentValue match {
+                            case Some(value) => value
+                            case _ => "None specified"
+                        }
+                    }
+                </td>
+            </tr>
+        }
+    </table>
     <p>
         <a class="btn btn-danger" href="@controllers.routes.Videos.delete(video.id)">
             <i class="icon-minus"></i>Delete
