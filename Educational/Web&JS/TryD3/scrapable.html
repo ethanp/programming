@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<!-- Ethan Petuchowski : 1/29/14 -->
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Still workin it out</title>
+        <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
+        <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+        <script src="scraper.js" type="text/javascript"></script>
+    </head>
+    <body>
+        <table border="3">
+            <tr>
+                <th>key</th>
+                <th>value</th>
+            </tr>
+            <tr id="row-1" class="row">
+                <td id="key-1" class="key">a</td>
+                <td id="value-1" class="value">23</td>
+            </tr>
+            <tr id="row-2" class="row">
+                <td id="key-2" class="key">b</td>
+                <td id="value-2" class="value">32</td>
+            </tr>
+        </table>
+        <br/>
+        <button>GraphIt</button>
+        <style>
+            .chart div {
+              font: 10px sans-serif;
+              background-color: steelblue;
+              text-align: right;
+              padding: 3px;
+              margin: 1px;
+              color: white;
+            }
+        </style>
+        <div class="chart" id="graph">
+        </div>
+    </body>
+</html>

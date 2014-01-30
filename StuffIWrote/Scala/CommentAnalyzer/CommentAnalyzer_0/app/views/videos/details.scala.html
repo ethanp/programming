@@ -2,9 +2,10 @@
 
 @main(video.title) {
     <script>
-        $(function() {
-            $('#comment-1' ).html('<h1>Hello Web-World!</h1>');
-        });
+    $(function(){
+    var values = $('.comment-value').val();
+    $('#summary').html("<b>Values:</b>"+values.join(","));
+    });
     </script>
     <h2>
         @* doesn't *need* to be called a 'tag', but that's the Java convention *@
@@ -26,6 +27,7 @@
             }}
         </dd>
     </dl>
+    <p id="summary"></p>
     <h3>First Fifty Comments</h3>
     <table class="table table-bordered table-striped">
         <tr>
@@ -33,9 +35,9 @@
             <th>Sentiment Value</th>
         </tr>
         @for(i <- 0 until 50 if video.getComments.length > i) {
-            <tr id="comment-@i">
-                <td id="comment-text-@i">@video.getComments(i).text</td>
-                <td id="comment-value-@i">
+            <tr class="comment" id="comment-@i">
+                <td class="comment-text" id="comment-text-@i">@video.getComments(i).text</td>
+                <td class="comment-value" id="comment-value-@i">
                     @{video.getComments(i).sentimentValue match {
                             case Some(value) => video.getComments(i).formatted
                             case _ => "None specified"
