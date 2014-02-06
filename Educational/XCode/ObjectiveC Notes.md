@@ -1,10 +1,33 @@
 Objective C Notes
 =================
 
-Misc, but Useful
-----------------
+__bridge cast
+---------------
 
-### Encoding dict into JSON
+[ARC Docs#ref](http://clang.llvm.org/docs/AutomaticReferenceCounting.html#bridged-casts)
+
+**"These casts are required in order to transfer objects in and out of ARC control."**
+
+`(__bridge Type) operand` casts `operand` to `Type`,
+where `operand.isRetainable != Type.isRetainable`
+
+> In general, a program which attempts to implicitly or explicitly convert a
+> value of retainable object pointer type to any non-retainable type, or
+> vice-versa, is ill-formed. For example, an Objective-C object pointer shall
+> not be converted to `void*`. As an exception, cast to `intptr_t` is allowed
+> because such casts are not transferring ownership. The bridged casts may be
+> used to perform these conversions where necessary.
+
+> *Rationale*
+
+> We cannot ensure the correct management of the lifetime of objects if they
+> may be freely passed around as unmanaged types. The bridged casts are
+> provided so that the programmer may explicitly describe whether the cast
+> transfers control into or out of ARC.
+
+Encoding dict into JSON
+-----------------------
+
 [From SOQ](http://stackoverflow.com/questions/11207483/how-to-correctly-convert-an-nsdictionary-to-a-json-format-in-ios)
 
     NSData *jsonData = [NSJSONSerialization dataWithJSONObject:myNSDictionary options:NSJSONWritingPrettyPrinted error:&error];

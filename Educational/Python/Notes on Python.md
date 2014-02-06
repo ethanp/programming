@@ -1,6 +1,29 @@
 Notes on Python
 ===============
 
+Regex
+-----
+
+**Create** a regex object
+
+    m = re.compile(r'MyRegex@\{\"\w:;\s+')
+
+Name a **group** like so
+
+    (?P<group_name>[^regex]+)
+
+**Match** *starts* the match at the *beginning of the string*
+
+    m.match(string)
+
+**Findall** allows for *more than one* (non-overlapping) *match* in your string
+
+    m.findall(string)
+
+**Search** returns the *first match* it finds within the string
+
+    m.search(string)
+
 Decorators
 ----------
 
