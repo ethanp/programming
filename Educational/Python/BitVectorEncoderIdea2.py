@@ -1,5 +1,5 @@
 # if I use '-' and '_' I can use BASE 64, which saves a LOT of effort.
-# so I'm going to do that. It's just ascii anyhow, so SQL and QR coders should have no issues with it...right??
+# so I'm going to do that. It's just ascii anyhow, so nobody got issues with it...right??
 class EBVEncoder:
     int size = 0
     NSStr encosion = ''
