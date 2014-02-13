@@ -1,5 +1,110 @@
-Objective C Notes
-=================
+Asynchronous Programming
+========================
+
+NSOperation
+-----------
+
+Resources:
+
+* [NSHipster](http://nshipster.com/nsoperation/)
+* [The Docs](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/NSOperation_class/Reference/Reference.html)
+* [From Concurrency Guide](https://developer.apple.com/library/mac/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationObjects/OperationObjects.html)
+
+Notes:
+
+* Represents a single unit of computation wrapped up into an object
+* Good for repeatable, structured, long-running tasks that return processed data
+    * E.g. network requests, image resizing, language processing
+* Use `NSOperationQueue` which is a priority queue for objects that inherit
+  from `NSOperation`
+    * `queuePriority` is settable on `NSOperation` objects
+        * E.g. `NSOperationQueuePriorityVeryHigh`, `NSOperationQueuePriorityLow`, etc.
+    * It executes operations concurrently, according to its settable
+      `maxConcurrentOperationCount`
+* Start it by calling its `-start` method, or by adding it to an `NSOperationQueue`
+  which starts it automatically
+* `NSOperations` are *state machines* that go from `isReady -> isExecuting -> isFinished`
+    * But these are determined implicitly by KVO notifications on those keypaths
+        * So when your `NSOperation` is ready to be executed, make it send a KVO
+          notification for the `isReady` keypath, whose corresponding property
+          then returns `YES`
+* When an `NSOperation` finishes, it will execute its `@prop Block completionBlock`
+  exactly once. This is a good way to customize its behavior within a Model or VC
+* *This is quite cool:* you can express *depencies* between `NSOperations`
+    * An operation won't start until all of its dependencies return `YES` to `isFinished`
+
+E.g.
+
+    [resizePicture addDependency:downloadPicture];
+    [operationQueue addOperation:downloadPicture];
+    [operationQueue addOperation:resizePicture];
+
+Grand Central Dispatch
+----------------------
+
+### dispatch_once
+
+So you have a class, and you want to access it throughout your app as a
+Singleton object that is always available to be sent a message.  Let the name
+of the object's class be `SingletonObject`, and let its getter be named
+`singletonGetter`.  Add the method in the following manner:
+
+    + (instancetype)singletonGetter
+    {
+        static dispatch_once_t once;
+        static id singletonGetter;
+        dispatch_once(&once, ^{
+            singletonGetter = [[self alloc] init];
+        });
+        return singletonGetter;
+    }
+
+So now we could access the Singleton like so:
+
+    SingletonObject *myGloballyAccessibleInstance = [SingletonObject singletonGetter];
+
+
+Automatic Reference Counting
+============================
+
+@autoreleasepool blocks
+-----------------------
+
+[From the Advanced Memory Management Docs](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/mmAutoreleasePools.html#//apple_ref/doc/uid/20000047-CJBFBEDI)
+
+At the end of the `@autoreleasepool` block, objects created within the block
+are sent a `release` message for each time it was sent an `autorelease` message
+within the block.
+
+You can decleare one `@autoreleasepool` block within another. E.g. there is one
+wrapping the whole program in `main.m`, and you may have another one within one
+of your source files.
+
+I believe that Apple's ARC system sends an `autorelease` message to every
+object that you send an `alloc]init]` message to.
+
+Since AppKit and UIKit frameworks process each event-loop iteration within an
+`@autoreleasepool` block, you typically don't have to create these yourself.
+
+However, there are 3 occasions when you may want to manually create your own
+`@autoreleasepool` block:
+
+1. In a command-line tool or other program not based on a UI framework
+2. **In a loop that creates many temporary objects** to reduce peak memory footprint
+3. In a thread you spawn inside a Foundation-only program
+   or in a "detached" thread that makes Cocoa calls
+
+Here's an example of using it inside a giant `for`-loop
+
+    NSArray *urls = <# An array of file URLs #>;
+    for (NSURL *url in urls) {
+        @autoreleasepool {
+            NSError *error;
+            NSString *fileContents = [NSString stringWithContentsOfURL:url
+                                            encoding:NSUTF8StringEncoding error:&error];
+            /* Process the string, creating and autoreleasing more objects. */
+        }
+    }
 
 __bridge cast
 ---------------
