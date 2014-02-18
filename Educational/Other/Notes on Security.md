@@ -1,3 +1,17 @@
+latex input:		mmd-article-header
+Title:		Notes on Security
+Author:		Ethan C. Petuchowski
+Base Header Level:		1
+latex mode:		memoir
+Keywords:		Security, Matthew Koontz, Inherited, Questions
+CSS:		http://fletcherpenney.net/css/document.css
+xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+copyright:			2014 Ethan C. Petuchowski
+latex input:		mmd-natbib-plain
+latex input:		mmd-article-begin-doc
+latex footer:		mmd-memoir-footer
+
 Glossary
 --------
 
@@ -47,7 +61,7 @@ Glossary
     * Often created using a **keyed (cryptographic) hash function**
         * I.e. one that accepts as input a **secret key**
 * **Modular arithmetic** --- \\(a \equiv b\\) (mod \\(n\\)) **if** \\(((a-b)\,\%\,n == 0 \\))
-    * E.g. 38 = 14 (mod 12) because (14-2) % 12 == (38-2) % 12 == 0
+    * E.g. \\(\,38 = 14 \,( \mathrm{mod}\, 12) \\) because \\((14-2)\, \% \,12 == (38-2) \,\%\, 12 == 0 \\)
     * I guess I might summarize this operation as saying: "a and b are the same distance from being multiples of n"
 * **Nonce** --- arbitrary (generally pseudorandom) number used only once in a cryptographic communication
     * E.g. used to **authenticate** users in a way that can't be reused in **replay attacks**
@@ -72,7 +86,8 @@ Glossary
     * *Uses:* eCommerce and banking
 
 
-### Cryptographic Hash Functions
+Cryptographic Hash Functions
+------------------------------------
 
 #### Message-Digest
 
@@ -94,7 +109,7 @@ Glossary
     * The public key is the product of two large prime numbers along with an auxiliary value
     * The private key is the two large prime numbers
     * It is an open question whether the "RSA Problem" (break ing RSA) is as 'hard' as the factoring problem
-    * **[Operation](http://en.wikipedia.org/wiki/RSA_(algorithm)#Operation)**
+    * **[Operation](http://en.wikipedia.org/wiki/RSA_(algorithm))**
         * Choose two *distinct* prime numbers *p* and *q* (at random, of similar bit-length)
         * Compute \\(n = pq\\) and \\(\Phi(n) = (p-1)(q-1)\\)
         * Choose an integer \\(e\\) s.t. \\(1 < e < \Phi(n)\\), and also \\(e\\) & \\(\Phi(n)\\) are *coprime* (share no prime factors)
@@ -103,12 +118,12 @@ Glossary
         * *d* := multiplicative inverse of *e* (modulo \\(\Phi(n)\\)) [sic]
             * *d* is the *private key exponent*
         * **Encryption**:
-            1. Alice sends public key (n, e) to Bob
-            2. Bob turns message M into an integer m s.t. \\(0 ≤ m < n\\) using an agreed-upon reversible **padding scheme** protocol
+            1. Alice sends public key \\((n, e)\\) to Bob
+            2. Bob turns message \\(M\\) into an integer m s.t. \\(0 \leq m < n\\) using an agreed-upon reversible **padding scheme** protocol
             3. Bob computes the ciphertext \\(c \equiv {m}^{e}\\) (mod \\(n\\)) and transmits \\(c\\) to Alice
         * **Decryption**:
-            1. Alice recovers m from c by computing \\(m \equiv {c}^{d}\\) (mod \\(n\\))
-            2. Now she reverses the padding scheme to recover M from m
+            1. Alice recovers \\(m\\) from \\(c\\) by computing \\(m \equiv {c}^{d} \;(\mathrm{mod} \; n\\))
+            2. Now she reverses the padding scheme to recover \\(M\\) from \\(m\\)
         * **Signing Messages**: note that Bob (the public key holder) can **authenticate**
           messages Alice **signs** using her private key. This means that Bob can verify
           both that Alice sent it, and that the message hasn't been tampered with in
@@ -118,8 +133,8 @@ Glossary
         * Padding is very difficult, so there is a patent-expired secure padding scheme known as **RSA-PSS**
         * Padding schemes "are as essential for the security of message signing as they are for message encryption"
     * Integer factorization and the RSA problem
-        * For len(n) ≤ 300, n can be factored in a few hours on a PC using free software
-        * For len(n) ≥ 2048, you should be safe for a while
+        * For \\( \mathrm{len}(n)  \leq 300 \\), \\(n\\) can be factored in a few hours on a PC using free software
+        * For \\( \mathrm{len}(n) \geq 2048 \\), you should be safe for a while
         * Shor's algorithm shows that a quantum computer would be able to factor in polynomial time, breaking RSA
 
 Big Idea
@@ -132,7 +147,8 @@ Big Idea
 2. An **encryption algorithm** (e.g. RSA) gives you a tool to make your data secret as
    you transmit it, and verify that it was sent by whoever said they sent it.
 
-### Notes about Practice
+Notes about Practice
+------------------------
 
 Asymmetric encryption is often used for establishing a shared communication
 channel. Because asymmetric encryption is computationally expensive, the two
@@ -152,11 +168,9 @@ The sender computes a hash of the message and encrypts it with the private key.
 The recipient also computes a hash and then uses the corresponding public key
 to decrypt the sender’s hash and compares the hashes. If they are the same, the
 data was not modified in transit, and you can safely trust that the data was
-sent by the owner of that key.
+sent by the owner of that key. [Ref: Apple][Apple on Public, Private Keys]
 
-[Ref: Apple][Apple on Public, Private Keys]
-
-#### Typical use of Public Key, and Reason it is Naive
+### Typical use of Public Key, and Reason it is Naive
 
 1. Alice uses one of the public key algorithms to generate a pair of encryption
    keys: a private key, which she keeps secret, and a public key. She also
@@ -174,7 +188,7 @@ sent by the owner of that key.
    private key needed to decrypt it.
 6. Alice decrypts the message with her private key.
 
-###### Problem:
+#### Problem:
 Since encryption and authentication are subjects of great interest in national
 security and protecting corporate secrets, some extremely smart people are
 engaged both in creating secure systems and in trying to break them. Therefore,
@@ -196,7 +210,4 @@ these security problems. These techniques are described later in this chapter.
 
 [Ref: Apple][Apple on Public, Private Keys]
 
-{**
-
-<!-- Bibliography -->
 [Apple on Public, Private Keys]: https://developer.apple.com/library/ios/documentation/Security/Conceptual/Security_Overview/CryptographicServices/CryptographicServices.html

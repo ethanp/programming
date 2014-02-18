@@ -7,7 +7,7 @@ Keywords:		Security, Matthew Koontz, Inherited, Questions
 CSS:		http://fletcherpenney.net/css/document.css
 xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
-copyright:			2014 Ethan C. Petuchowski 
+copyright:			2014 Ethan C. Petuchowski
 latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
