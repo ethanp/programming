@@ -1,5 +1,19 @@
-NSUserDefaults
---------------
+latex input:		mmd-article-header
+Title:		Misc iOS Programming Notes
+Author:		Ethan C. Petuchowski
+Base Header Level:		2
+latex mode:		memoir
+Keywords:		Security, Matthew Koontz, Inherited, Questions
+CSS:		http://fletcherpenney.net/css/document.css
+xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+copyright:			2014 Ethan C. Petuchowski 
+latex input:		mmd-natbib-plain
+latex input:		mmd-article-begin-doc
+latex footer:		mmd-memoir-footer
+
+# NSUserDefaults
+
 ### [mobile.tuts+ Tutorial](http://mobile.tutsplus.com/tutorials/iphone/nsuserdefaults_iphone-sdk/)
 
 * **Save user data, settings, and properties** for your application
@@ -35,8 +49,7 @@ Retrieving the data
     }
 
 
-[Implementing NSCoding](https://www.mikeash.com/pyblog/friday-qa-2010-08-12-implementing-nscoding.html)
------------------------
+# [Implementing NSCoding](https://www.mikeash.com/pyblog/friday-qa-2010-08-12-implementing-nscoding.html)
 
 Objects in memory can't be directly saved or moved to other programs. They
 contain data, such as pointers, which are only valid in the context of your
@@ -47,8 +60,7 @@ portable stream of bytes that can be stored and moved between processes.
 
 The rest must be some other time.
 
-Notifications
--------------
+# Notifications
 
 * Per-process singleton, `NSNotificationCenter`
 * Object posts notification there, which broadcasts it to anyone who registered
@@ -94,8 +106,7 @@ Now post the notification that looks like (some variation of the following heade
      object:??
      userInfo:??]
 
-Delegates
----------
+# Delegates
 
 The **delegate is the object informed when specific events happen to the delegator**.
 This gives the delegate the chance to respond to whatever happened.
@@ -125,7 +136,7 @@ Similarly, a data sourcer asks its **data source** for data it needs.
         if ( [delegate respondsToSelector:@selector(operationShouldProceed)] ) {
             if ( [delegate operationShouldProceed] ) { /*ok, so do this*/ } } }
 
-[About iOS App Programming](https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40007072)
+[About iOS App Programming](https://developer.apple.com/library/ios/documentation/iPhone/Conceptual/iPhoneOSProgrammingGuide/Introduction/Introduction.html)
 ---------------------------
 
 > This document is the starting point for creating iOS apps. It describes the
@@ -140,7 +151,7 @@ Similarly, a data sourcer asks its **data source** for data it needs.
 > any new app is identifying the design choices you need to make and
 > understanding how those choices map to an appropriate implementation.
 
-[Model View Controller](https://developer.apple.com/library/ios/documentation/General/Conceptual/CocoaEncyclopedia/Model-View-Controller/Model-View-Controller.html#//apple_ref/doc/uid/TP40010810-CH14)
+[Model View Controller](https://developer.apple.com/library/ios/documentation/General/Conceptual/CocoaEncyclopedia/Model-View-Controller/Model-View-Controller.html)
 ---------------------
 
 ### Advantages
@@ -157,7 +168,7 @@ Similarly, a data sourcer asks its **data source** for data it needs.
     * Have stuff that happens on a *timer*
 * This is when you need to add *observers* and notifications or something
 
-[Document-Based Apps](https://developer.apple.com/library/ios/documentation/DataManagement/Conceptual/DocumentBasedAppPGiOS/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011149)
+[Document-Based Apps](https://developer.apple.com/library/ios/documentation/DataManagement/Conceptual/DocumentBasedAppPGiOS/Introduction/Introduction.html)
 ---------------------
 
 Manage multiple documents, with each document containing a unique set of data
@@ -238,7 +249,7 @@ Serialization Formats | SQLite, XML, NSData | NSData
 Migrations      | Automatic | Manual
 Undo Manager    | Automatic | Manual
 
-[AVFoundation](https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/00_Introduction.html#//apple_ref/doc/uid/TP40010188-CH1-SW3)
+[AVFoundation](https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/00_Introduction.html)
 --------------
 
 #### AVFoundation Fundamentals
@@ -287,7 +298,7 @@ notification handlers—are not guaranteed to be made on any particular thread o
 queue. Instead, AV Foundation invokes these handlers on threads or queues on
 which it performs its internal tasks.
 
-#### [Playback](https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/02_Playback.html#//apple_ref/doc/uid/TP40010188-CH3-SW1)
+#### [Playback](https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/02_Playback.html)
 
 #### [Media Capture](https://developer.apple.com/library/ios/documentation/AudioVideo/Conceptual/AVFoundationPG/Articles/04_MediaCapture.html)
 
@@ -315,7 +326,7 @@ You can add and remove outputs as you want while the session is running.
 
 ### AppName.app
 
-[**Bundle**](https://developer.apple.com/library/ios/documentation/CoreFoundation/Conceptual/CFBundles/AboutBundles/AboutBundles.html#//apple_ref/doc/uid/10000123i-CH100)
+[**Bundle**](https://developer.apple.com/library/ios/documentation/CoreFoundation/Conceptual/CFBundles/AboutBundles/AboutBundles.html)
 directory containing the app itself. Don't write to this or your app will not be
 allowed to launch anymore.
 
@@ -381,10 +392,12 @@ Coordinates flow of data from AV input devices to outputs.
 5. Invoke `stopRunning` to stop the flow (I have it in `viewDidDisappear`)
 
 <a name="lifecycle_diagram"></a>
-[VIEW CONTROLLER LIFECYCLE DIAGRAM!!](http://rdkw.wordpress.com/2013/02/24/ios-uiviewcontroller-lifecycle/)
+[VIEW CONTROLLER LIFECYCLE DIAGRAM!!](http://rdkw.files.wordpress.com/2013/02/uiviewcontroller_lifecycle.jpg?w=630)
 -------------------------------------
 
-![](http://rdkw.files.wordpress.com/2013/02/uiviewcontroller_lifecycle.jpg?w=630)
+![Must be removed before LaTeXiFying][fig1]
+
+[fig1]: http://rdkw.files.wordpress.com/2013/02/uiviewcontroller_lifecycle.jpg?w=630 "Title"
 
 
 viewWillAppear: vs. viewDidLoad
