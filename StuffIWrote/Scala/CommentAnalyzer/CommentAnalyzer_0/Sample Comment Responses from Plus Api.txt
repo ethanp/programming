@@ -1,0 +1,81 @@
+Sample from asking api for comments responding to comment id: "z12jcvs5spvzzlw2122bgrugssb1dna0e"  // <== comment on Gangnam Style
+
+Poster's Name:              Jae Kim
+Poster's ID:                100195761185429623280
+Comment Text:               because he has more talent than you
+Comment ID:                 z12jcvs5spvzzlw2122bgrugssb1dna0e.1390180867955737
+Comments this replies to:   [{"id":"z12jcvs5spvzzlw2122bgrugssb1dna0e","url":"https://plus.google.com/115559837482731111031/posts/C29DYtS26aR"}]
+Plus-one'rs:                {"totalItems":22}
+eTag:                       "KmFlUTDKo0bNqNhpeBygvIv8XvA/zFZYqGJAWvGisZASIePdPw6aU48"
+Kind:                       plus#comment
+Published:                  2014-01-20T01:21:07.955Z
+Updated:                    2014-01-20T01:21:07.955Z
+Verb:                       post
+
+# I believe this one was auto-linked to another user because they used the G+
+# syntax OOOOHHH! This one is actually a reply to the reply above.  this
+# happens because google doesn't let you reply to a reply in the normal way,
+# the only way to do it is this way. So this is how you get to depth = 2, etc.
+# this ought to restrict the depth of the comments.  So I need to create this
+# graph by hand and then traverse it? that seems quite cumbersome...but the
+# YouTube site doesn't let me quickly navigate between comments either, in fact
+# sometimes it won't get me to the linked comment *at all* and google+ itself
+# won't let me reply to a comment on a comment in any way other than the way
+# they did it below. Also, even though the comment below actually replies to
+# the comment above, the ONLY comment in "Comments this replies to" is the ORIG
+# comment, which is certainly the truth, but definitely not the whole truth.
+
+# Side note: yeesh, these are basically all racial slurs...hopefully I can get
+# some of that info out in the sentimentalizer.
+
+Poster's Name:              Andy slewo
+Poster's ID:                111401620553853148206
+Comment Text:               <span class="proflinkWrapper"><span class="proflinkPrefix">+</span><a href="https://plus.google.com/100195761185429623280" class="proflink" oid="100195761185429623280">Jae Kim</a></span><br />oooooo get em jackie ****
+Comment ID:                 z12jcvs5spvzzlw2122bgrugssb1dna0e.1390181178744434
+Comments this replies to:   [{"id":"z12jcvs5spvzzlw2122bgrugssb1dna0e","url":"https://plus.google.com/115559837482731111031/posts/C29DYtS26aR"}]
+Plus-one'rs:                {"totalItems":2}
+eTag:                       "KmFlUTDKo0bNqNhpeBygvIv8XvA/LDOWSBjKH7QT8Wor8wq6nTffnKg"
+Kind:                       plus#comment
+Published:                  2014-01-20T01:26:18.744Z
+Updated:                    2014-01-20T01:26:18.744Z
+Verb:                       post
+
+
+Poster's Name:              yazid ajidz
+Poster's ID:                100552010470573071851
+Comment Text:               cause his **** are more valuable than u! haha
+Comment ID:                 z12jcvs5spvzzlw2122bgrugssb1dna0e.1390181684371411
+Comments this replies to:   [{"id":"z12jcvs5spvzzlw2122bgrugssb1dna0e","url":"https://plus.google.com/115559837482731111031/posts/C29DYtS26aR"}]
+Plus-one'rs:                {"totalItems":17}
+eTag:                       "KmFlUTDKo0bNqNhpeBygvIv8XvA/lpsAnPTKCKDog0klV3-jIAgxth8"
+Kind:                       plus#comment
+Published:                  2014-01-20T01:34:44.371Z
+Updated:                    2014-01-20T01:34:44.371Z
+Verb:                       post
+
+
+Poster's Name:              Sapphire Contender
+Poster's ID:                100381611195379228917
+Comment Text:               he actually made this clip as a troll thing people loved it so much he became a billionaire, then he made a second clip just to show what a troll he wants to be but people love him for being a troll, true story.
+Comment ID:                 z12jcvs5spvzzlw2122bgrugssb1dna0e.1390181950448084
+Comments this replies to:   [{"id":"z12jcvs5spvzzlw2122bgrugssb1dna0e","url":"https://plus.google.com/115559837482731111031/posts/C29DYtS26aR"}]
+Plus-one'rs:                {"totalItems":5}
+eTag:                       "KmFlUTDKo0bNqNhpeBygvIv8XvA/laZW9ePKjUiPsTuDu4lZANOBzTk"
+Kind:                       plus#comment
+Published:                  2014-01-20T01:39:10.448Z
+Updated:                    2014-01-20T01:39:10.448Z
+Verb:                       post
+
+
+Poster's Name:              ROLLING STONE
+Poster's ID:                115559837482731111031
+Comment Text:               **** my **** you ****** c****s.
+Comment ID:                 z12jcvs5spvzzlw2122bgrugssb1dna0e.1390241887682102
+Comments this replies to:   [{"id":"z12jcvs5spvzzlw2122bgrugssb1dna0e","url":"https://plus.google.com/115559837482731111031/posts/C29DYtS26aR"}]
+Plus-one'rs:                {"totalItems":1}
+eTag:                       "KmFlUTDKo0bNqNhpeBygvIv8XvA/nbffJnjrEmmzeKq0ucH1YNHwj5Y"
+Kind:                       plus#comment
+Published:                  2014-01-20T18:18:07.682Z
+Updated:                    2014-01-20T18:18:07.682Z
+Verb:                       post
+

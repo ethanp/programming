@@ -81,7 +81,8 @@ object SimpleCommentResponsePrinter {
       val listComments = client.comments.list(activityId)
       listComments.setMaxResults(500) // it looks like this might be the max
       val commentFeed = listComments.execute()
-      printComments(commentFeed.getItems.asScala.toList)
+      val comments : List[Comment] = commentFeed.getItems.asScala.toList
+      printComments(comments)
     }
     catch {
       case e: IOException => System.err.println(e.getMessage)
@@ -89,6 +90,25 @@ object SimpleCommentResponsePrinter {
     }
     System.exit(1)
   }
-  def printComments(comments: List[Comment]) { comments.foreach(c =>
-    println(c.getActor.getDisplayName + " says:\n\t" + c.getObject.getContent)) }
+  def printComments(comments: List[Comment]) {
+    comments.foreach(c => {
+      println("Poster's Name: " + c.getActor.getDisplayName)
+      println("Poster's ID: " + c.getActor.getId)
+      println("Comment Text: " + c.getObject.getContent)
+      println("Comment ID: " + c.getId)
+      println("Comments this replies to: " + c.getInReplyTo)
+      println("Plus-one'rs: " + c.getPlusoners)
+      println("eTag: " + c.getEtag)
+      println("Kind: " + c.getKind)
+      println("Published: " + c.getPublished)
+      println("Updated: " + c.getUpdated)
+      println("Verb: " + c.getVerb)
+      println("Key-set: " + c.keySet())
+      println("Values: " + c.values())
+      println("Pretty string: " + c.toPrettyString)
+      println("Simple string: " + c.toString)
+      println("Just printed: " + c)
+      println()
+    })
+  }
 }
