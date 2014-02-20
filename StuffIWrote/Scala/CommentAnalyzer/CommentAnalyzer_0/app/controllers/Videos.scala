@@ -49,7 +49,7 @@ object Videos extends Controller {
       success = { newVideo =>
         Video.insert(newVideo)
         val message = "Successfully added video " + newVideo.title
-        Comment.downloadCommentsFromVideo(newVideo.id)
+        Comment.downloadCommentsFromVideo(newVideo.id)  // TODO: should be asynchronous
         Redirect(routes.Videos.show(newVideo.id)).
           flashing("success" -> message)
       }

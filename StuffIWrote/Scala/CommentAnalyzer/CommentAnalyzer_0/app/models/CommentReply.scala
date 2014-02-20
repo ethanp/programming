@@ -6,30 +6,32 @@ package models
  */
 
 import java.util.Date
-import anorm.{ResultSetParser, RowParser, SqlQuery, SQL, ~}
+import anorm._
 import anorm.SqlParser.{str, get, int}
 import play.api.db.DB
 import play.api.Play.current
+import anorm.~
+import anorm.SqlQuery
 
-case class CommentReply(id        : String,
-                        text      : String,
-                        published : Option[Date],
-                        numReplies: Int,
-                        depth     : Int,
-                        comments_id: String)
+case class CommentReply(id          : String,
+                        text        : String,
+                        published   : Option[Date],
+                        numReplies  : Int,
+                        depth       : Int,
+                        comments_id : String,  // <== this isn't a real FK because depending on the depth,
+                        sentimentValue: Option[Double]) // it might be in here, or the Comments table
+object CommentReply {                                   // this means there's "on delete or update, cascade"
+  def downloadCommentsOnComment(id: String) {
 
-object CommentReply {
-  def retrieveCommentsFromComment(id: String) {}
-
-  // TODO finish converting this from the Comment class
+  }
 
   val sql: SqlQuery = SQL("select * from comment_replies order by comments_id asc")
 
   val commentReplyParser: RowParser[CommentReply] = {
     str("id")~str("text")~get[Option[Date]]("published")~
-      int("numReplies")~int("depth")~str("comments_id") map {
-             case  id ~ text ~ published ~ numReplies ~ depth ~ comments_id =>
-      CommentReply(id,  text,  published,  numReplies,  depth,  comments_id)
+      int("numReplies")~int("depth")~str("comments_id") ~ get[Option[Double]]("sentimentValue") map {
+             case  id ~ text ~ published ~ numReplies ~ depth ~ comments_id ~ sentimentValue =>
+      CommentReply(id,  text,  published,  numReplies,  depth,  comments_id, sentimentValue)
     }
   }
 
@@ -40,17 +42,21 @@ object CommentReply {
       sql.as(commentRepliesParser)
   }
 
-  // Insert, Update, Delete; copied from Video
+  def commentStringMap(comment: CommentReply): List[(Any, ParameterValue[_])] = List(
+          "id"              -> comment.id,
+          "title"           -> comment.text,
+          "published"       -> comment.published,
+          "numReplies"      -> comment.numReplies,
+          "depth"           -> comment.depth,
+          "comments_id"     -> comment.comments_id,
+          "sentimentValue"  -> comment.sentimentValue
+  )
 
   def insert(comment: CommentReply): Boolean = DB.withConnection {
     implicit connection =>
       val addedRows = SQL(
-        "insert into comments values ({id}, {text}, {published}, {numReplies}, {comments_id})").on(
-          "id" -> comment.id,
-          "title" -> comment.text,
-          "published" -> comment.published,
-          "numReplies" -> comment.numReplies,
-          "comments_id" -> comment.comments_id /* after I get this working, maybe this can be moved into a val */
+        "insert into comments values ({id}, {text}, {published}, {numReplies}, {depth}, {comments_id}, {sentimentValue})").on(
+          commentStringMap(comment):_*
         ).executeUpdate()
       addedRows == 1
   }
@@ -59,11 +65,7 @@ object CommentReply {
     implicit connection =>
       val updatedRows = SQL("update comments set id = {id}, text = {text}, published = {published}, " +
         "numReplies = {numReplies}, comments_id = {comments_id}").on(
-          "id" -> comment.id,
-          "title" -> comment.text,
-          "published" -> comment.published,
-          "numReplies" -> comment.numReplies,
-          "comments_id" -> comment.comments_id
+          commentStringMap(comment):_*
         ).executeUpdate()
       updatedRows == 1
   }

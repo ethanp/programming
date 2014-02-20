@@ -43,8 +43,8 @@ object Comment {
     val NUM_PAGES = 1
     val COMMENT_STEP_SIZE = 50 // 50 is the max
     val COMMENT_LIMIT = COMMENT_STEP_SIZE * NUM_PAGES
-    val lines = scala.io.Source.fromFile("/etc/googleIDKey").mkString.split("\n")
-    val service: YouTubeService = new YouTubeService(lines(0), lines(1))
+    val creds = scala.io.Source.fromFile("/etc/googleIDKey").mkString.split("\n")
+    val service = new YouTubeService(creds(0), creds(1))
     val videoEntryUrl = "http://gdata.youtube.com/feeds/api/videos/" + id
     val videoEntry = service.getEntry(new URL(videoEntryUrl), classOf[VideoEntry])
     val commentsUrl = videoEntry.getComments.getFeedLink.getHref
@@ -57,17 +57,22 @@ object Comment {
       youtubeQuery.setStartIndex(startIndex)
       val commentUrlFeed = youtubeQuery.getUrl
       println("commentUrlFeed:\t" + commentUrlFeed)
+
+      // list of 'entry' blobs from the xml returned by the comment-feed's url
       val entries = XML.load(commentUrlFeed.openStream) \\ "entry"
+
+      // extract the comments
       val comments: Seq[String] = (entries \\ "content").map(_.text)
       val sentimentVals = comments.map(c => SentimentAnalysis.analyzeText(c))
       val replyCounts = (entries \\ "replyCount").filter(_.prefix == "yt").map(_.text.toInt)
-      val ids = (entries \\ "id").map(_.text).map(".*/comments/(.*)".r.findFirstMatchIn(_).get.group(1))
+      val ids = (entries \\ "id").map(_.text).map("/comments/(.*)".r.findFirstMatchIn(_).get.group(1))
       val dates = (entries \\ "published").map(tag => format.parse(tag.text))
-      assert(entries.length == comments.length &&
-             entries.length == replyCounts.length &&
-             entries.length == ids.length &&
-             entries.length == dates.length,
+      assert(entries.length == comments.length
+          && entries.length == replyCounts.length
+          && entries.length == ids.length
+          && entries.length == dates.length,
         s"${entries.length}, ${comments.length}, ${replyCounts.length}, ${ids.length}, ${dates.length}, all must match")
+
       for (i <- 0 until dates.length)
         insert(Comment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id, Some(sentimentVals(i))))
 
