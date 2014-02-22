@@ -24,7 +24,10 @@ case class Comment(id             : String,
                    published      : Option[Date],
                    numReplies     : Int,
                    videos_id      : String,
-                   sentimentValue : Option[Double]) {
+                   sentimentValue : Option[Double], // TODO evolve to NOT NULL
+                   comments_id    : Option[String],
+                   depth          : Option[Int])  // TODO evolve to NOT NULL
+{
   def formatted = "%.2f".format(sentimentValue.get)
 }
 
@@ -74,31 +77,29 @@ object Comment {
         s"${entries.length}, ${comments.length}, ${replyCounts.length}, ${ids.length}, ${dates.length}, all must match")
 
       for (i <- 0 until dates.length)
-        insert(Comment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id, Some(sentimentVals(i))))
+        insert(Comment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id, Some(sentimentVals(i)), null, Some(0)))
 
       println(dates.size + " comments added to " + id)
       startIndex += COMMENT_STEP_SIZE
       commentsReturned = entries.size
     } while ((commentsReturned == COMMENT_STEP_SIZE) && (startIndex < COMMENT_LIMIT))
-
   }
 
-  val sql: SqlQuery = SQL("select * from comments order by videos_id asc")
-
   val commentParser: RowParser[Comment] = {
-    str("id") ~ str("text") ~ get[Option[Date]]("published") ~ int("numReplies") ~
-    str("videos_id") ~ get[Option[Double]]("sentimentValue") map {
-         case id ~ text ~ published ~ numReplies ~ videos_id ~ sentimentValue =>
-      Comment(id,  text,  published,  numReplies,  videos_id,  sentimentValue)
+    str("id") ~ str("text") ~ get[Option[Date]]("published") ~ int("numReplies") ~ str("videos_id") ~
+      get[Option[Double]]("sentimentValue") ~ get[Option[String]]("comments_id") ~ get[Option[Int]]("depth") map {
+         case id ~ text ~ published ~ numReplies ~ videos_id ~ sentimentValue ~ comments_id ~ depth =>
+      Comment(id,  text,  published,  numReplies,  videos_id,  sentimentValue,  comments_id,  depth)
     }
   }
 
-  val commentsParser: ResultSetParser[List[Comment]] = commentParser *
-
   def getAll: List[Comment] = DB.withConnection {
     implicit connection =>
-      sql.as(commentsParser)
+      SQL("select * from comments order by videos_id asc").as(commentParser *)
   }
+
+  // TODO get these via reflection
+  val columnList = List("id", "text", "published", "numReplies", "videos_id", "sentimentValue", "comments_id", "depth")
 
   def commentStringMap(comment: Comment): List[(Any, ParameterValue[_])] = List(
     "id"              -> comment.id,
@@ -106,24 +107,27 @@ object Comment {
     "published"       -> comment.published,
     "numReplies"      -> comment.numReplies,
     "videos_id"       -> comment.videos_id,
-    "sentimentValue"  -> comment.sentimentValue
+    "sentimentValue"  -> comment.sentimentValue,
+    "comments_id"     -> comment.comments_id,
+    "depth"           -> comment.depth
   )
 
   def insert(comment: Comment): Boolean = DB.withConnection {
     implicit connection =>
-      val addedRows = SQL(
-        "insert into comments values ({id}, {text}, {published}, {numReplies}, {videos_id}, {sentimentValue})").on(
+      val addedRows = SQL(fullInsertString).on(
           commentStringMap(comment):_*
         ).executeUpdate()
       addedRows == 1
   }
 
+  def fullInsertString = "insert into comments values " + columnList.map(col => s"{$col}").mkString("(",", ",")")
+  def fullUpdateString = "update comments set " + columnList.map(col => s"$col = {$col}").mkString(", ")
+
   def update(comment: Comment): Boolean = DB.withConnection {
     implicit connection =>
-      val updatedRows = SQL("update comments set id = {id}, text = {text}, published = {published}, " +
-                            "sentimentValue = {sentimentValue}, numReplies = {numReplies}, videos_id = {videos_id}").on(
-          commentStringMap(comment):_*
-        ).executeUpdate()
+      val updatedRows = SQL(fullUpdateString).on(
+        commentStringMap(comment):_*
+      ).executeUpdate()
       updatedRows == 1
   }
 
