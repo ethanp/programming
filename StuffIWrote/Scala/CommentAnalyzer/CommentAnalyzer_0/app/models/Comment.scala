@@ -24,11 +24,11 @@ case class Comment(id             : String,
                    published      : Option[Date],
                    numReplies     : Int,
                    videos_id      : String,
-                   sentimentValue : Option[Double], // TODO evolve to NOT NULL
+                   sentimentValue : Option[Double],
                    comments_id    : Option[String],
-                   depth          : Option[Int])  // TODO evolve to NOT NULL
+                   depth          : Int)
 {
-  def formatted = "%.2f".format(sentimentValue.get)
+  def formattedSentimentValue = "%.2f".format(sentimentValue.get)
 }
 
 object Comment {
@@ -77,7 +77,7 @@ object Comment {
         s"${entries.length}, ${comments.length}, ${replyCounts.length}, ${ids.length}, ${dates.length}, all must match")
 
       for (i <- 0 until dates.length)
-        insert(Comment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id, Some(sentimentVals(i)), null, Some(0)))
+        insert(Comment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id, Some(sentimentVals(i)), null, 0))
 
       println(dates.size + " comments added to " + id)
       startIndex += COMMENT_STEP_SIZE
@@ -87,7 +87,7 @@ object Comment {
 
   val commentParser: RowParser[Comment] = {
     str("id") ~ str("text") ~ get[Option[Date]]("published") ~ int("numReplies") ~ str("videos_id") ~
-      get[Option[Double]]("sentimentValue") ~ get[Option[String]]("comments_id") ~ get[Option[Int]]("depth") map {
+      get[Option[Double]]("sentimentValue") ~ get[Option[String]]("comments_id") ~ int("depth") map {
          case id ~ text ~ published ~ numReplies ~ videos_id ~ sentimentValue ~ comments_id ~ depth =>
       Comment(id,  text,  published,  numReplies,  videos_id,  sentimentValue,  comments_id,  depth)
     }

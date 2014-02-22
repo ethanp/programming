@@ -39,7 +39,7 @@
                 <td class="comment-text" id="comment-text-@i">@video.getComments(i).text</td>
                 <td class="comment-value" id="comment-value-@i">
                     @{video.getComments(i).sentimentValue match {
-                            case Some(value) => video.getComments(i).formatted
+                            case Some(value) => video.getComments(i).formattedSentimentValue
                             case _ => "None specified"
                         }
                     }
