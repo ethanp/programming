@@ -41,13 +41,14 @@ object Comment {
     comments.map(_.sentimentValue.get).sum / comments.length
   }
 
-  // TODO: delete existing comments for this video first
+  // TODO delete existing comments for this video first
   def downloadCommentsFromVideo(id: String) {
+    // TODO make the called method execute in another thread
     CommentDownloader.downloadCommentsFromVideo(id) foreach insert
   }
 
-  def downloadCommentsFromComment(id: String) {
-    CommentDownloader.downloadCommentsFromComment(id) foreach insert
+  def downloadCommentsFromComment(comment: Comment) {
+    CommentDownloader.downloadCommentsFromComment(comment) foreach insert
   }
 
   def downloadCommentRepliesFromVideo(id: String) {
