@@ -130,7 +130,7 @@ object CommentDownloader {
       val commentFeed = listComments.execute()
       val gComments : List[gComment] = commentFeed.getItems.asScala.toList
 
-      return gComments.map { c =>
+      return gComments map { c =>
         val text = c.getObject.getContent
         mComment(
           id              = c.getId,

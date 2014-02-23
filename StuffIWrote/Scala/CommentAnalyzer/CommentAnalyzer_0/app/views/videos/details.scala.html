@@ -33,6 +33,7 @@
         <tr>
             <th>Comment</th>
             <th>Sentiment Value</th>
+            <th>depth</th>
         </tr>
         @for(i <- 0 until 50 if video.getComments.length > i) {
             <tr class="comment" id="comment-@i">
@@ -44,6 +45,7 @@
                         }
                     }
                 </td>
+                <td class="comment-depth" id="comment-depth-@i">@video.getComments(i).depth</td>
             </tr>
         }
     </table>

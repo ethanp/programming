@@ -43,8 +43,12 @@ object Comment {
 
   // TODO delete existing comments for this video first
   def downloadCommentsFromVideo(id: String) {
-    // TODO make the called method execute in another thread
-    CommentDownloader.downloadCommentsFromVideo(id) foreach insert
+    // TODO make the called methods execute in another thread
+    CommentDownloader.downloadCommentsFromVideo(id) foreach { c =>
+      insert(c)
+      if (c.numReplies > 0)
+        downloadCommentsFromComment(c)
+    }
   }
 
   def downloadCommentsFromComment(comment: Comment) {

@@ -5,25 +5,7 @@ Comment Analyzer, Version 0
 Short List
 ----------
 
-##### Change the comments table to hold sentiment value
-
-Should end up looking roughly like this
-
-    Comment {id, text, published, sentimentVal, numReplies, videos_id}
-    
-##### Be able to delete videos from the database
-That should automatically remove the associated comments anyway, which is nice.
-
-##### Add a new table to hold the comment_replies
-
-Should end up looking roughly like this
-
-    videos {id, title, lastCommentRetrievalTime} <---->> 
-    
-    comments {id, text, published, sentimentVal, numReplies, videos_id} <---->>
-    
-    comment_replies {id, text, published, sentimentVal numReplies, depth, comments_id}
-
+Graph stuff
 
 Highest Level
 -------------
