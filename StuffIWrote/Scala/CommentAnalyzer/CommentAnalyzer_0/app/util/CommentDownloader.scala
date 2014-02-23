@@ -74,7 +74,7 @@ object CommentDownloader {
         s"${entries.length}, ${comments.length}, ${replyCounts.length}, ${ids.length}, ${dates.length}, all must match")
 
       for (i <- 0 until dates.length)
-        commentsList ::= mComment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id, Some(sentimentVals(i)), null, 0)
+        commentsList ::= mComment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id, Some(sentimentVals(i)), None, 0)
 
       println(dates.size + " comments added to " + id)
       startIndex += COMMENT_STEP_SIZE
