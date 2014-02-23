@@ -33,8 +33,10 @@ case class Comment(id             : String,
 
 object Comment {
 
-  // TODO optimize by using SQL
-  def getAllForVideoID(video_id: String): List[Comment] = getAll filter (_.videos_id == video_id)
+  def getAllForVideoID(videos_id: String): List[Comment] = DB.withConnection {
+    implicit connection =>
+      SQL(s"SELECT * FROM comments WHERE videos_id='$videos_id' ORDER BY videos_id ASC").as(commentParser *)
+  }
 
   def avgCommentScoreForVideoID(video_id: String): Double = {
     val comments = getAllForVideoID(video_id)
@@ -53,14 +55,6 @@ object Comment {
 
   def downloadCommentsFromComment(comment: Comment) {
     CommentDownloader.downloadCommentsFromComment(comment) foreach insert
-  }
-
-  def downloadCommentRepliesFromVideo(id: String) {
-    // query DB for comments where numReplies > 0
-
-
-    // download json blob for each of their id's from Google Plus
-    // parse that and make a new DB entry for it
   }
 
   val commentParser: RowParser[Comment] = {

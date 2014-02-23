@@ -35,18 +35,19 @@
             <th>Sentiment Value</th>
             <th>depth</th>
         </tr>
-        @for(i <- 0 until 50 if video.getComments.length > i) {
-            <tr class="comment" id="comment-@i">
-                <td class="comment-text" id="comment-text-@i">@video.getComments(i).text</td>
-                <td class="comment-value" id="comment-value-@i">
-                    @{video.getComments(i).sentimentValue match {
-                            case Some(value) => video.getComments(i).formattedSentimentValue
+        @defining(video.getComments) { comments =>
+            @for(i <- 0 until 50 if comments.length > i) {
+                <tr class="comment" id="comment-@i">
+                    <td class="comment-text" id="comment-text-@i">@comments(i).text</td>
+                    <td class="comment-value" id="comment-value-@i">
+                        @{comments(i).sentimentValue match {
+                            case Some(value) => comments(i).formattedSentimentValue
                             case _ => "None specified"
-                        }
-                    }
-                </td>
-                <td class="comment-depth" id="comment-depth-@i">@video.getComments(i).depth</td>
-            </tr>
+                        }}
+                    </td>
+                    <td class="comment-depth" id="comment-depth-@i">@comments(i).depth</td>
+                </tr>
+            }
         }
     </table>
     <p>
