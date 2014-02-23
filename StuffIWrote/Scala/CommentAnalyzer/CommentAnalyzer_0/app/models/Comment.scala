@@ -14,7 +14,7 @@ import com.google.gdata.client.youtube.{YouTubeQuery, YouTubeService}
 import java.net.URL
 import com.google.gdata.data.youtube.VideoEntry
 import scala.xml.XML
-import util.SentimentAnalysis
+import util.{CommentDownloader, SentimentAnalysis}
 import anorm.SqlQuery
 import scala.Some
 import anorm.~
@@ -28,61 +28,34 @@ case class Comment(id             : String,
                    comments_id    : Option[String],
                    depth          : Int)
 {
-  def formattedSentimentValue = "%.2f".format(sentimentValue.get)
+  def formattedSentimentValue = sentimentValue.get formatted "%.2f"
 }
 
 object Comment {
 
   // TODO optimize by using SQL
-  def getAllForVideoID(video_id: String): List[Comment] = getAll.filter(_.videos_id == video_id)
+  def getAllForVideoID(video_id: String): List[Comment] = getAll filter (_.videos_id == video_id)
 
   def avgCommentScoreForVideoID(video_id: String): Double = {
     val comments = getAllForVideoID(video_id)
     comments.map(_.sentimentValue.get).sum / comments.length
   }
 
+  // TODO: delete existing comments for this video first
   def downloadCommentsFromVideo(id: String) {
-    // TODO: delete existing comments for this video first
-    val NUM_PAGES = 1
-    val COMMENT_STEP_SIZE = 50 // 50 is the max
-    val COMMENT_LIMIT = COMMENT_STEP_SIZE * NUM_PAGES
-    val creds = scala.io.Source.fromFile("/etc/googleIDKey").mkString.split("\n")
-    val service = new YouTubeService(creds(0), creds(1))
-    val videoEntryUrl = "http://gdata.youtube.com/feeds/api/videos/" + id
-    val videoEntry = service.getEntry(new URL(videoEntryUrl), classOf[VideoEntry])
-    val commentsUrl = videoEntry.getComments.getFeedLink.getHref
-    val youtubeQuery = new YouTubeQuery(new URL(commentsUrl))
-    youtubeQuery.setMaxResults(COMMENT_STEP_SIZE)
-    var startIndex = 1
-    var commentsReturned = 0
-    val format = new java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.000Z'")
-    do {
-      youtubeQuery.setStartIndex(startIndex)
-      val commentUrlFeed = youtubeQuery.getUrl
-      println("commentUrlFeed:\t" + commentUrlFeed)
+    CommentDownloader.downloadCommentsFromVideo(id) foreach insert
+  }
 
-      // list of 'entry' blobs from the xml returned by the comment-feed's url
-      val entries = XML.load(commentUrlFeed.openStream) \\ "entry"
+  def downloadCommentsFromComment(id: String) {
+    CommentDownloader.downloadCommentsFromComment(id) foreach insert
+  }
 
-      // extract the comments
-      val comments: Seq[String] = (entries \\ "content").map(_.text)
-      val sentimentVals = comments.map(c => SentimentAnalysis.analyzeText(c))
-      val replyCounts = (entries \\ "replyCount").filter(_.prefix == "yt").map(_.text.toInt)
-      val ids = (entries \\ "id").map(_.text).map("/comments/(.*)".r.findFirstMatchIn(_).get.group(1))
-      val dates = (entries \\ "published").map(tag => format.parse(tag.text))
-      assert(entries.length == comments.length
-          && entries.length == replyCounts.length
-          && entries.length == ids.length
-          && entries.length == dates.length,
-        s"${entries.length}, ${comments.length}, ${replyCounts.length}, ${ids.length}, ${dates.length}, all must match")
+  def downloadCommentRepliesFromVideo(id: String) {
+    // query DB for comments where numReplies > 0
 
-      for (i <- 0 until dates.length)
-        insert(Comment(ids(i), comments(i), Some(dates(i)), replyCounts(i), id, Some(sentimentVals(i)), null, 0))
 
-      println(dates.size + " comments added to " + id)
-      startIndex += COMMENT_STEP_SIZE
-      commentsReturned = entries.size
-    } while ((commentsReturned == COMMENT_STEP_SIZE) && (startIndex < COMMENT_LIMIT))
+    // download json blob for each of their id's from Google Plus
+    // parse that and make a new DB entry for it
   }
 
   val commentParser: RowParser[Comment] = {
