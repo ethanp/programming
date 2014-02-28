@@ -3,7 +3,7 @@ Title:		Misc iOS Programming Notes
 Author:		Ethan C. Petuchowski
 Base Header Level:		2
 latex mode:		memoir
-Keywords:		Security, Matthew Koontz, Inherited, Questions
+Keywords:		Stuff
 CSS:		http://fletcherpenney.net/css/document.css
 xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
@@ -11,6 +11,42 @@ copyright:			2014 Ethan C. Petuchowski
 latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
+
+# The [URL Loading System](https://developer.apple.com/library/mac/documentation/Cocoa/Conceptual/URLLoadingSystem/URLLoadingSystem.html)
+
+### NSURL
+
+An `NSURL` object lets you manipulate URLs and the resources they reference. You
+can use an `NSURL` object to refer to a file, which is the preferred way to do
+so. An `NSURL` object is composed of two parts—a potentially nil base URL and a
+string that is resolved relative to the base URL. An `NSURL` object whose string
+is fully resolved without a base is considered absolute; all others are
+considered relative. If you are creating `NSURL` objects using file system paths,
+you should use `fileURLWithPath:` or `initFileURLWithPath:`, which handle the
+subtle differences between URL paths and file system paths.
+
+Known to work:
+
+    NSURL *url = [NSURL URLWithString:@"http://www.vickiwenderlich.com/2011/06/game-art-pack-monkey-platformer/"];
+
+### UIWebView
+
+You use the UIWebView class to embed web content in your application. To do so,
+you simply create a UIWebView object, attach it to a window, and send it a
+request to load web content. You can also use this class to move back and
+forward in the history of webpages, and you can even set some web content
+properties programmatically.
+
+Snazzy trick to get HTML from web view
+
+    NSString *html = [webView stringByEvaluatingJavaScriptFromString:@"document.documentElement.outerHTML"];
+
+
+# Assorted Things to Note
+
+### Screen Size
+
+* **iPhone 5** --- 320 x 568 pts
 
 # NSUserDefaults
 
@@ -457,11 +493,10 @@ Here's how you set it up
 
 **Step 1.** Register as an observer
 
-    [changingInstance
-     addObserver:observingInstance
-      forKeyPath:@"observedProperty"
-         options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOld)
-         context:NULL];
+    .[changingInstance addObserver:observingInstance
+                        forKeyPath:@"observedProperty"
+                           options:(NSKeyValueObservingOptionNew|NSKeyValueObservingOld)
+                           context:NULL];
 
 * **Note:** Only the *instances* are now connected, not the classes.
 
