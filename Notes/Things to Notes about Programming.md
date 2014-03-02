@@ -1,3 +1,30 @@
+C, the Language
+---------------
+
+##### 2/27/14
+
+### string.h
+
+    char *strcpy(char *dest, char *src)
+
+* Also copies null-terminator.
+* Returns `dest`
+
+    char *strncpy(char *dest, char *src, size_t count)
+
+* Only copies count characters
+    * `if count ≤ strlen(src):` `dest` will not have a null-terminator
+    * `else:` Will be padded with nulls
+* Returns `dest`
+
+### stdio.h
+
+    sprintf(char *buffer, char *format, ...)
+
+* Basically, it calls `printf` on the `format` argument
+* But instead of writing the output to `stdout`, it writes it into the `buffer` argument
+* Returns the number of characters written, or a negative value if there was an error
+
 Reactive Applications
 ---------------------
 ##### 2/23/14

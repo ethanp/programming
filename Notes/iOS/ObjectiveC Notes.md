@@ -1,16 +1,55 @@
 Asynchronous Programming
 ========================
 
-NSOperation
------------
-
-Resources:
+Resources I'm quoting/paraphrasing/notetaking-upon here:
 
 * [NSHipster](http://nshipster.com/nsoperation/)
 * [The Docs](https://developer.apple.com/library/mac/documentation/Cocoa/Reference/NSOperation_class/Reference/Reference.html)
 * [From Concurrency Guide](https://developer.apple.com/library/mac/documentation/General/Conceptual/ConcurrencyProgrammingGuide/OperationObjects/OperationObjects.html)
+* [Ray Wenderlich on GCD](http://www.raywenderlich.com/4295/multithreading-and-grand-central-dispatch-on-ios-for-beginners-tutorial)
+* [Ray Wenderlich on NSOperation](http://www.raywenderlich.com/19788/how-to-use-nsoperations-and-nsoperationqueues)
 
-Notes:
+The traditional way for an application to use multiple cores is to create
+multiple threads. However, as the number of cores increases, there are problems
+with threaded solutions. The biggest problem is that threaded code does not
+scale very well to arbitrary numbers of cores. You cannot create as many
+threads as there are cores and expect a program to run well. The amount of work
+performed by a single application also needs to be able to scale dynamically to
+accommodate changing system conditions.
+
+Instead of relying on threads, OS X and iOS take an asynchronous design
+approach to solving the concurrency problem. Typically, this work involves
+acquiring a background thread, starting the desired task on that thread, and
+then sending a notification to the caller (usually through a callback function)
+when the task is done. OS X and iOS provide technologies to allow you to
+perform any task asynchronously without having to manage the threads yourself.
+
+On iOS, the methods you’re used to implementing (like viewDidLoad, button tap
+callbacks, etc.) all run on the main thread. You don’t want to perform time
+intensive work on the main thread, or else you’ll get an unresponsive UI.
+
+##### Killing a thread is a no-no, according to everyone
+
+> You should not ever need to "kill" a thread. You should signal to the thread
+that it should exit. The thread itself should be structured so that it
+periodically checks for this notification from the main UI thread. The
+notification can be as simple as a global flag, or some other data that both
+threads can reference.
+
+NSOperation
+-----------
+
+### Overview
+
+Whereas dispatch queues always execute tasks in first-in, first-out order,
+operation queues take other factors into account when determining the execution
+order of tasks. You configure dependencies when defining your tasks and can use
+them to create complex execution-order graphs for your tasks. The tasks you
+submit to an operation queue must be instances of the NSOperation class.
+Operation objects generate key-value observing (KVO) notifications, which can
+be a useful way of monitoring the progress of your task.
+
+### Notes:
 
 * Represents a single unit of computation wrapped up into an object
 * Good for repeatable, structured, long-running tasks that return processed data
@@ -35,14 +74,25 @@ Notes:
 
 E.g.
 
-    [resizePicture addDependency:downloadPicture];
-    [operationQueue addOperation:downloadPicture];
-    [operationQueue addOperation:resizePicture];
+    -[resizePicture addDependency:downloadPicture];
+     [operationQueue addOperation:downloadPicture];
+     [operationQueue addOperation:resizePicture];
 
 Grand Central Dispatch
 ----------------------
 
-### dispatch_once
+### Overview
+
+A C-based mechanism for executing custom tasks. All you have to do is define
+the tasks you want to execute and add them to an appropriate dispatch queue.
+GCD takes care of creating the needed threads and of scheduling your tasks to
+run on those threads. A **serial dispatch queue runs only one task at a time**,
+waiting until that task is complete before dequeuing and starting a new one. By
+contrast, a **concurrent dispatch queue starts as many tasks as it can without
+waiting** for already started tasks to finish. The asynchronous dispatching of
+tasks to a dispatch queue cannot deadlock the queue.
+
+### Singleton using dispatch_once
 
 So you have a class, and you want to access it throughout your app as a
 Singleton object that is always available to be sent a message.  Let the name
@@ -81,7 +131,7 @@ wrapping the whole program in `main.m`, and you may have another one within one
 of your source files.
 
 I believe that Apple's ARC system sends an `autorelease` message to every
-object that you send an `alloc]init]` message to.
+object that you send an `alloc] init]` message to.
 
 Since AppKit and UIKit frameworks process each event-loop iteration within an
 `@autoreleasepool` block, you typically don't have to create these yourself.
@@ -282,6 +332,14 @@ contribute to thread safety.
 * use only one block argument to a method
 * the block argument should come last (to make the method call easier to read)
 * declare `__weak wkSlf = self` before the block, and use it inside instead of `self`
+
+##### For Concurrency
+Instead of defining blocks in their own lexical scope, you typically define
+blocks inside another function or method so that they can access other
+variables from that function or method. Blocks can also be moved out of their
+original scope and copied onto the heap, which is what happens when you submit
+them to a dispatch queue. All of these semantics make it possible to implement
+very dynamic tasks with relatively little code.
 
 [Protocols](https://developer.apple.com/library/ios/documentation/General/Conceptual/DevPedia-CocoaCore/Protocol.html#//apple_ref/doc/uid/TP40008195-CH45-SW1)
 ----------
