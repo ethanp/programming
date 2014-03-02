@@ -1,3 +1,23 @@
+Reactive Applications
+---------------------
+##### 2/23/14
+
+According to [Typesafe](http://typesafe.com/platform)
+
+Reactive applications have one or more of the following defining traits:
+
+* **Event driven** -- enables parallel, asynchronous processing of messages or events with ease.
+* **Scalable** -- across nodes elastically
+* **Resilient** -- recovers and repairs automatically
+* **Responsive** -- single-page UIs that provide instant feedback
+
+In particular, the *Typesafe Reactive Platform* consists of
+
+* Play Framework
+* Akka
+* Scala
+* Typesafe Console
+
 Regex --- Lookahead & Lookbehind = "Lookaround"
 -----------------------------------------------
 ##### 2/17/14
@@ -51,7 +71,7 @@ Mainly from [AlBlue's Blog](http://alblue.bandlem.com/2009/02/why-do-people-stil
 * FTP was created for transferring files
     * That's why it gives you options for binary or ASCII modes
 * HTTP was created for transmitting HTML
-    * The file tipe is guessed based on the extension, though it can be specified
+    * The file type is guessed based on the extension, though it can be specified
       in the header
 * Originally, FTP was better for file downloads because HTTP/1.0 didn't
   support resumable downloads (where client disconnects part-way through and
@@ -60,7 +80,7 @@ Mainly from [AlBlue's Blog](http://alblue.bandlem.com/2009/02/why-do-people-stil
 * HTTP also supports automatic data-compression, querying data-type before downloading,
   proxy support, running over SSL with HTTPS
 * **People only use FTP over HTTP out of ignorance**
-* In particular, WebDAV -- an extension of HTTP -- allows collaborative editying
+* In particular, WebDAV -- an extension of HTTP -- allows collaborative editing
   and management of documents stored on Web servers.
 
 Glossary
