@@ -24,17 +24,20 @@ object SentimentAnalysis {
     val pipeline = new StanfordCoreNLP(props)
     var avgSentiment = 0.0
     val length = text.length.asInstanceOf[Double]
+    var empty = false
     if (text == null || length == 0) {
       println("can't analyze this crap")
-      return 1.7
+      empty = true
     }
-    val annotation = pipeline.process(text)
-    for (sentence: CoreMap <- annotation.get(classOf[CoreAnnotations.SentencesAnnotation]).asScala) {
-      val tree = sentence.get(classOf[SentimentCoreAnnotations.AnnotatedTree])
-      val sentiment = RNNCoreAnnotations.getPredictedClass(tree)
-      val partText = sentence.toString
-      avgSentiment += sentiment * partText.length.asInstanceOf[Double] / length
+    if (!empty) {
+      val annotation = pipeline.process(text)
+      for (sentence: CoreMap <- annotation.get(classOf[CoreAnnotations.SentencesAnnotation]).asScala) {
+        val tree = sentence.get(classOf[SentimentCoreAnnotations.AnnotatedTree])
+        val sentiment = RNNCoreAnnotations.getPredictedClass(tree)
+        val partText = sentence.toString
+        avgSentiment += sentiment * partText.length.asInstanceOf[Double] / length
+      }
     }
-    avgSentiment
+    if (!empty) avgSentiment else 1.7
   }
 }
