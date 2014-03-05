@@ -16,7 +16,6 @@ Add these lines to `conf/application.conf`
     akka.debug.receive = on
 
 
-
 A "Hello Akka" set of notes, Written by Me
 ------------------------------------------
 
@@ -45,7 +44,7 @@ E.g. to get the `Actor` to `receive` the `msg` with *no* sender `ActorRef`, use
 #### ActorSystem
 
 * Creates and manages the actors
-* Has a `name` parameter in the constructor, not sure why
+* Has a `name` parameter in the constructor, not sure why, maybe just for logging
 
 Constructor usage example:
 
@@ -55,7 +54,7 @@ Now we can use the ActorSystem's 'factory' to create an instance of a class that
 
     val greeter: ActorRef = system.actorOf(props=Props[Greeter], name="greeter")
 
-Again, I'm not sure what the `name` is useful for.
+Again, I'm not sure what the `name` is useful for, maybe just for logging.
 
 #### Inbox
 
@@ -67,6 +66,8 @@ Again, I'm not sure what the `name` is useful for.
 * It can `receive` the reply from that `Actor` with a *timeout*
 
         val Greeting(message1: String) = inbox.receive(max=5.seconds)
+        
+* Useful when writing code outside of actors which shall communicate with actors
 
 #### Scheduler
 
@@ -76,6 +77,22 @@ Again, I'm not sure what the `name` is useful for.
 
 [Akka Scala Documentation](http://doc.akka.io/docs/akka/2.2.1/scala.html)
 --------------------------
+
+3/1/14
+
+### [Akka Actors Docs](http://doc.akka.io/docs/akka/2.2.1/scala/actors.html)
+
+####Send messages
+
+Messages are sent to an Actor through one of the following methods.
+
+1. `!` means **“fire-and-forget”**, e.g. send a message asynchronously and return immediately. **Also known as `tell`**.
+2. `?` sends a message asynchronously and **returns a Future representing a possible reply**. **Also known as `ask`**.
+
+Message ordering is guaranteed on a per-sender basis.
+
+2/25/14
+
 Using Akka with SBT:
 
     resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"

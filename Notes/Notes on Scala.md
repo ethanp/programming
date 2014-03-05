@@ -162,7 +162,7 @@ In the case that the future fails, the caller is forwarded the exception that th
 
 Alternatively, calling `Await.ready` waits until the future becomes completed, but does not retrieve its result. In the same way, calling `Await.ready` will not throw an exception if the future is failed.
 
-The `Future` trait implements the `Awaitable` trait with methods method `ready()` and `result()`. These methods cannot be called directly by the clients– they can only be called by the execution context.
+The `Future` trait implements the `Awaitable` trait with methods method `ready()` and `result()`. These methods **cannot** be called directly by the clients– they can only be called by the execution context.
 
 To allow clients to call 3rd party code which is potentially blocking and avoid implementing the `Awaitable` trait, the same `blocking` primitive can also be used in the following form:
 
@@ -184,7 +184,7 @@ Read my comments to understand what's going on
     import scala.concurrent.ExecutionContext.Implicits.global
 
     val p = promise[T]
-    val f = p.future                      // the future *inside* of promise p
+    val f = p.future                      // get the future from *inside* of promise p
 
     val producer = future {
       val r = produceSomething()
@@ -236,7 +236,7 @@ Implicit Variables and Parameters
 
 #### Defining an implicit val makes it available to future uses of implicit parameters
 
-Must be last variable list
+Must be last argument to function's last set of arguments
 
 [This](http://www.drmaciver.com/2008/03/an-introduction-to-implicit-arguments/)
 article spells them out quite simply, and the following example is based on theirs.
@@ -249,18 +249,20 @@ article spells them out quite simply, and the following example is based on thei
     res0: String = a b
 
     scala> implicit val w = "it's scary!"
+    
     scala> foo("Implicit variables:")
     res1: String = Implicit variables: it's scary!
 
 
-Iterator.collect[B](pf: PartialFunction[A,B|)
+Iterator.collect[B]\\(pf: PartialFunction[A,B|)
 ----------------------------------------------
 
-#### A convenient way to **simultaneously map and filter**.
+### A convenient way to **simultaneously map and filter**.
 
-The PartialFunction parameter means you can use a *Pattern Matching Anonymous Function* as the argument
+The `PartialFunction` parameter means you can use a *Pattern Matching Anonymous Function* as the argument,
+and if none of your `cases` match an element, that element gets filtered
 
-##### E.g.
+#### E.g.
   
     scala> (1 to 10) collect { 
         case x if x % 2 == 0 => -x

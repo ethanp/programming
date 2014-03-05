@@ -15,13 +15,14 @@ or simply
 According to the [Docs](http://www.postgresql.org/docs/8.3/static/ddl-constraints.html#DDL-CONSTRAINTS-FK)
 (which look very well-done in general):
 
-* They are by default
-    * Allowed to be NULL
-    * `MATCH SIMPLE` --- allows some foreign key columns (of a multiple 
-      column FK) to be null while other parts of the foreign key are
-      not null. 
-    * `on (UPDATE|DELETE) no action` ---  if any referencing rows still
-      exist when the constraint is checked, an error is raised
+They are by default
+
+* Allowed to be NULL
+* `MATCH SIMPLE` --- allows some foreign key columns (of a multiple 
+    column FK) to be null while other parts of the foreign key are
+    not null. 
+* `on (UPDATE|DELETE) no action` ---  if any referencing rows still
+    exist when the constraint is checked, an error is raised
 
 Though you can also do
 

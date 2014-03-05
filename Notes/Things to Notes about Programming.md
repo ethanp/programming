@@ -10,19 +10,18 @@ C, the Language
 * Also copies null-terminator.
 * Returns `dest`
 
-    char *strncpy(char *dest, char *src, size_t count)
+        char *strncpy(char *dest, char *src, size_t count)
 
-* Only copies count characters
+* Only copies `count` characters
     * `if count ≤ strlen(src):` `dest` will not have a null-terminator
     * `else:` Will be padded with nulls
 * Returns `dest`
 
 ### stdio.h
 
-    sprintf(char *buffer, char *format, ...)
+    int sprintf(char *buffer, char *format, ...)
 
-* Basically, it calls `printf` on the `format` argument
-* But instead of writing the output to `stdout`, it writes it into the `buffer` argument
+* Basically, it calls `printf` on the `format` argument, but instead of writing the output to `stdout`, it writes it into the `buffer` argument
 * Returns the number of characters written, or a negative value if there was an error
 
 Reactive Applications
@@ -117,3 +116,4 @@ Glossary
   execution and then safely called again ("re-entered") before its previous
   invocations complete execution. Once the reentered invocation completes, the
   previous invocations will resume correct execution.
+* **[Partial Function](http://en.wikipedia.org/wiki/Partial_function)** -- 3/1/14 -- *normally* a function maps an *entire* domain to some range. In a **Partial Function**, however, not *every* element of the domain must be mapped. Some values in the domain may be *undefined* after passing through the partial function.
