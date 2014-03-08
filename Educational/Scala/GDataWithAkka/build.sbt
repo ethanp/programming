@@ -1,20 +1,3 @@
-//
-// Copyright 2012 Damian Helme
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-//
-
 name := "Google Data With Akka"
 
 version := "1.0"
@@ -43,40 +26,8 @@ resolvers ++= Seq(
 
 scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
-// seq(ScctPlugin.scctSettings: _*)
-
-// add compile dependencies on some dispatch modules
-// libraryDependencies ++= Seq(
-	// "net.databinder" %% "dispatch-meetup" % "0.7.8",
-	// "net.databinder" %% "dispatch-twitter" % "0.7.8"
-// )
-
-// Set a dependency based partially on a val.
-// {
-  // val libosmVersion = "2.5.2-RC1"
-  // libraryDependencies += "net.sf.travelingsales" % "osmlib" % libosmVersion from "http://downloads.sourceforge.net/project/travelingsales/libosm/"+libosmVersion+"/libosm-"+libosmVersion+".jar"
-// }
-
-// reduce the maximum number of errors shown by the Scala compiler
-// maxErrors := 20
-
-// increase the time between polling for file changes when using continuous execution
-// pollInterval := 1000
-
 // append several options to the list of options passed to the Java compiler
 // javacOptions ++= Seq("-source", "1.5", "-target", "1.5")
-
-// define the statements initially evaluated when entering 'console', 'console-quick', or 'console-project'
-// initialCommands := """
-  // import System.{currentTimeMillis => now}
-  // def time[T](f: => T): T = {
-    // val start = now
-    // try { f } finally { println("Elapsed: " + (now - start)/1000.0 + " s") }
-  // }
-// """
-
-// set the initial commands when entering 'console' only
-// initialCommands in console := "import damianhelme._"
 
 // set the main class for packaging the main jar
 // 'run' will still auto-detect and prompt
@@ -87,44 +38,11 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 // change Compile to Test to set it for 'test:run'
 // mainClass in (Compile, run) := Some("myproject.MyMain")
 
-// add <base>/input to the files that '~' triggers on
-// watchSources <+= baseDirectory map { _ / "input" }
-
-// add a maven-style repository
-// resolvers += "name" at "url"
-
-// add a sequence of maven-style repositories
-// resolvers ++= Seq("name" at "url")
-
-// define the repository to publish to
-// publishTo := Some("name" at "url")
-
 // set Ivy logging to be at the highest level
 // ivyLoggingLevel := UpdateLogging.Full
 
 // disable updating dynamic revisions (including -SNAPSHOT versions)
 // offline := true
-
-// set the prompt (for this build) to include the project id.
-// shellPrompt in ThisBuild := { state => Project.extract(state).currentRef.project + "> " }
-
-// set the prompt (for the current project) to include the username
-// shellPrompt := { state => System.getProperty("user.name") + "> " }
-
-// disable printing timing information, but still print [success]
-// showTiming := false
-
-// disable printing a message indicating the success or failure of running a task
-// showSuccess := false
-
-// change the format used for printing task completion time
-// timingFormat := {
-	// import java.text.DateFormat
-	// DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT)
-// }
-
-// disable using the Scala version in output paths and artifacts
-// crossPaths := false
 
 // fork a new JVM for 'run' and 'test:run'
 // fork := true
@@ -158,7 +76,7 @@ scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature")
 
 // only show warnings and errors on the screen for all tasks (the default is Info)
 //  individual tasks can then be more verbose using the previous setting
-logLevel := Level.Info
+// logLevel := Level.Info
 
 // only store messages at info and above (the default is Debug)
 //   this is the logging level for replaying logging with 'last'
@@ -170,22 +88,5 @@ logLevel := Level.Info
 // only show stack traces up to the first sbt stack frame
 // traceLevel := 0
 
-// add SWT to the unmanaged classpath
-// unmanagedJars in Compile += file("/usr/share/java/swt.jar")
-
 // publish test jar, sources, and docs
 // publishArtifact in Test := true
-
-// disable publishing of main docs
-// publishArtifact in (Compile, packageDoc) := false
-
-// change the classifier for the docs artifact
-// artifactClassifier in packageDoc := Some("doc")
-
-// Copy all managed dependencies to <build-root>/lib_managed/
-//   This is essentially a project-local cache and is different
-//   from the lib_managed/ in sbt 0.7.x.  There is only one
-//   lib_managed/ in the build root (not per-project).
-// retrieveManaged := true
-
-
