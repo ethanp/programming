@@ -12,12 +12,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// 
-// 
+//
+//
 
-addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.1.0")
+// addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "2.1.0") // vrsn needs update
 
-addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.1.0")
+// current as of 3/8/14, see https://github.com/mpeltonen/sbt-idea
+addSbtPlugin("com.github.mpeltonen" % "sbt-idea" % "1.6.0")
 
 // scct
 // addSbtPlugin("ch.craven" % "scct-plugin" % "0.2.1")
