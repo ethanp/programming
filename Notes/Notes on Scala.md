@@ -1,6 +1,15 @@
 Notes on Scala
 ==============
 
+Override Keyword
+----------------
+
+3/8/14
+
+* The `override` keyword **must be used** when overriding a **concrete implementation** of a member
+* If you override an **abstract** member, the `override` keyword is **optional**
+* If a declaration (whether a class, a trait, or a member) includes the `final` keyword then it may not be overridden
+
 Futures and Promises
 --------------------
 
@@ -269,4 +278,4 @@ and if none of your `cases` match an element, that element gets filtered
         case 1 => 11 
     }
     res0: Vector(11, -2, -4, -6, -8, -10)
-    
+
