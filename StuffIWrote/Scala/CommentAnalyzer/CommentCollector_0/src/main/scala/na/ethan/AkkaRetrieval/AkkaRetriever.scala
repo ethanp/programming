@@ -40,19 +40,32 @@ case class ParseYouTubeComments(comments: List[CommentEntry])
 
 // TODO create abstract base Retriever class
 
+case class YouTubeVideoManager(var id: String) extends Actor {
+    def this() = this("")
+
+    // TODO find out how many total (first-level) comments the video has to its name
+    // TODO create YouTubeCommentPageRetrievers to retrieve all the pages (viz. #TotalComments / RESULTS_PER_PAGE)
+    //      and of course tell them to do so
+
+    def receive = ???
+}
+
 /**
  * Downloads a given page of comments from youtube
  */
-class YouTubeRetriever extends Actor {
-    var video_id = ""
-    var page_num = 0
-    var has_more = true
+case class YouTubeCommentPageRetriever(var id: String, var page_num: Int, var has_more: Boolean) extends Actor {
+
+    def this() = this("", 0, true) // it doesn't seem like you can accomplish this with default arguments
+
+    // TODO this should be invoked by the YouTubeVideoManager to download 1 page,
+    // TODO it should *be able to assume* that that page of comments exists
+
     val parser = context.actorOf(Props[YouTubeCommentParser], "YouTubeCommentParser")
     val lines = scala.io.Source.fromFile("/etc/googleIDKey").mkString.split("\n")
     val service : YouTubeService = new YouTubeService(lines(0), lines(1))
 
     def getComments = {
-        val videoEntryUrl = "http://gdata.youtube.com/feeds/api/videos/" + video_id
+        val videoEntryUrl = "http://gdata.youtube.com/feeds/api/videos/" + id
         val videoEntry = service.getEntry(new URL(videoEntryUrl), classOf[VideoEntry])
         val comments = videoEntry.getComments
         if (comments != null) {
@@ -72,8 +85,7 @@ class YouTubeRetriever extends Actor {
             val numResults = commentFeed.getTotalResults
             println(s"Total Results = $numResults")
 
-            if (numResults < RESULTS_PER_PAGE)
-                has_more = false
+            has_more = numResults >= RESULTS_PER_PAGE
 
             parser ! ParseYouTubeComments(entriesList)
         }
@@ -82,8 +94,9 @@ class YouTubeRetriever extends Actor {
     def receive: Actor.Receive = {
         case IDToLookFor(id) => {
             println(s"looking for: $id")
-            video_id = id
+            this.id = id
             page_num = 0
+            has_more = true
         }
         case RetrieveNextPage => {
             if (has_more) {
@@ -125,6 +138,7 @@ class YouTubeCommentParser extends Actor {
     def receive = {
         case ParseYouTubeComments(comments) => {
             comments.foreach(c => println(c.getPlainTextContent))
+            // TODO analyze the sentiment of all de comments
         }
     }
 }
@@ -150,7 +164,11 @@ class SentimentAnalyzer extends Actor {
 object HelloGDataWithAkka extends App {
     println("First Line")
     val system = ActorSystem(name="helloGData")
-    val retriever : ActorRef = system.actorOf(props=Props[YouTubeRetriever], name="retriever")
+
+    // TODO ask the YouTubeVideoManager to retrieve ALL the pages for a given video, instead of
+    //      trying to download a set number of pages
+    
+    val retriever : ActorRef = system.actorOf(props=Props[YouTubeCommentPageRetriever], name="retriever")
     val inbox = Inbox.create(system)
     retriever ! IDToLookFor("ADos_xW4_J0")  // <== "Intro to Google Data...etc."
     retriever ! RetrieveNextPage
