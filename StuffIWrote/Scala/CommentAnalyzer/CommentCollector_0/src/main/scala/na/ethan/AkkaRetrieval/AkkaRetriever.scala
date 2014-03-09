@@ -46,6 +46,7 @@ case class ParseYouTubeComments(comments: List[CommentEntry])
 class YouTubeRetriever extends Actor {
     var video_id = ""
     var page_num = 0
+    var has_more = true
     val parser = context.actorOf(Props[YouTubeCommentParser], "YouTubeCommentParser")
     val lines = scala.io.Source.fromFile("/etc/googleIDKey").mkString.split("\n")
     val service : YouTubeService = new YouTubeService(lines(0), lines(1))
@@ -62,16 +63,18 @@ class YouTubeRetriever extends Actor {
             val youtubeQuery = new YouTubeQuery(new URL(commentsUrl))
             val RESULTS_PER_PAGE = 50 // this is the max
             youtubeQuery.setMaxResults(RESULTS_PER_PAGE)
-            youtubeQuery.setStartIndex(page_num * RESULTS_PER_PAGE + 1) // TODO this doesn't seem to work
+            youtubeQuery.setStartIndex(page_num * RESULTS_PER_PAGE + 1) // TODO find out if this actually works
             val commentUrlFeed = youtubeQuery.getUrl
             println("commentUrlFeed" + commentUrlFeed)
             val commentFeed = service.getFeed(commentUrlFeed, classOf[CommentFeed])
             val entriesList = commentFeed.getEntries.asScala.toList
 
-            commentFeed.getNextLink      // TODO use this to download the next time
-            commentFeed.getTotalResults  // TODO use this to decide whether there are more available
+            val numResults = commentFeed.getTotalResults
+            println(s"Total Results = $numResults")
 
-            /*entriesList.asScala.foreach { c : CommentEntry =>*/
+            if (numResults < RESULTS_PER_PAGE)
+                has_more = false
+
             parser ! ParseYouTubeComments(entriesList)
         }
     }
@@ -83,9 +86,13 @@ class YouTubeRetriever extends Actor {
             page_num = 0
         }
         case RetrieveNextPage => {
-            println(s"retrieving page: $page_num")
-            getComments
-            page_num += 1
+            if (has_more) {
+                println(s"retrieving page: $page_num")
+                getComments
+                page_num += 1
+            } else {
+                println("\nthere are no more comments\n")
+            }
         }
     }
 }
