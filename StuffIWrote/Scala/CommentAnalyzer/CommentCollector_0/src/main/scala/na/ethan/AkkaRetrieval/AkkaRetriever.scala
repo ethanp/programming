@@ -37,15 +37,28 @@
 
 package na.ethan.AkkaRetrieval
 
-import akka.actor.{ActorSystem, ActorRef, Actor, Props}
+import akka.actor._
+
+case class VideoToLookFor(id: String)
+case object RetrieveNextPage
 
 /**
  * Downloads a given page of comments from youtube
  */
 class YouTubeRetriever extends Actor {
-    // TODO receive
+    var video_id = ""
+    var page_num = 0
+
     def receive: Actor.Receive = {
-        case _ => None
+        case VideoToLookFor(id) => {
+            println(s"looking for: $id")
+            video_id = id
+            page_num = 0
+        }
+        case RetrieveNextPage => {
+            println(s"retrieving page: $page_num")
+            page_num += 1
+        }
     }
 }
 
@@ -53,5 +66,7 @@ object HelloGDataWithAkka extends App {
     println("First Line")
     val system = ActorSystem(name="helloGData")
     val retriever : ActorRef = system.actorOf(props=Props[YouTubeRetriever], name="retriever")
+    val inbox = Inbox.create(system)
+    retriever ! VideoToLookFor("asdjf9")
     println("Final Line")
 }
