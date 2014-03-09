@@ -113,7 +113,7 @@ case class YouTubeCommentPageRetriever(var id: String, var page_num: Int, var ha
 /**
  * Downloads a given page of comments from Google Plus
  */
-class GPlusRetriever extends Actor {
+case class GPlusRetriever extends Actor {
     var gplus_id = ""
     var page_num = 0
     val parser = context.actorOf(Props[GPlusCommentParser], "GPlusCommentParser")
@@ -134,7 +134,7 @@ class GPlusRetriever extends Actor {
 /**
  * Turns a page of comments into a list of comment components
  */
-class YouTubeCommentParser extends Actor {
+case class YouTubeCommentParser extends Actor {
     def receive = {
         case ParseYouTubeComments(comments) => {
             comments.foreach(c => println(c.getPlainTextContent))
@@ -146,7 +146,7 @@ class YouTubeCommentParser extends Actor {
 /**
  * Turns a page of comments into a list of comment components
  */
-class GPlusCommentParser extends Actor {
+case class GPlusCommentParser extends Actor {
     def receive = {
         case _ => ???
     }
@@ -155,19 +155,19 @@ class GPlusCommentParser extends Actor {
 /**
  * Returns the sentiment value of a given piece of text
  */
-class SentimentAnalyzer extends Actor {
+case class SentimentAnalyzer extends Actor {
     def receive = {
         case _ => ???
     }
 }
 
-object HelloGDataWithAkka extends App {
+case object HelloGDataWithAkka extends App {
     println("First Line")
     val system = ActorSystem(name="helloGData")
 
     // TODO ask the YouTubeVideoManager to retrieve ALL the pages for a given video, instead of
     //      trying to download a set number of pages
-    
+
     val retriever : ActorRef = system.actorOf(props=Props[YouTubeCommentPageRetriever], name="retriever")
     val inbox = Inbox.create(system)
     retriever ! IDToLookFor("ADos_xW4_J0")  // <== "Intro to Google Data...etc."
