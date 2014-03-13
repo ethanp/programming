@@ -1,3 +1,37 @@
+Networking
+----------
+
+##### 3/7/14
+
+### OSI Layers
+
+1. Physical
+2. Data Link
+3. Network
+4. Transport
+5. Session
+6. Presentation
+7. Application
+
+### TCP/IP Layers
+
+1. Network Interface -- (OSI 1,2) -- uses the hardware to do the above layers
+    * TCP/IP is designed to be hardware independent
+2. Internet -- (OSI 3) -- congestion control and routing global unique IP addresses and IP packets
+3. Transport -- (OSI 4) -- error control, segmentation, congestion control, application addresssing
+4. Application -- (OSI 5,6,7) -- protocols used by applications
+    * FTP -- for transmitting files, out-of-date (see below)
+    * SMTP (Simple Mail Transfer Protocol) -- for sending mail between mail servers
+    * HTTP -- used by the WWW
+    * POP3 (Post Office Protocol Version 3) -- for retrieving email from mail server
+    * IMAP (Internet Message Access Protocol) -- for retrieving email from mail server
+    * DNS (Domain Name System) -- for translating name to an IP address
+    * TCP (Transmission Control Protocol) -- creates *reliable* connection between 2 computers
+    * IP (Internet Protocol) -- addresses hosts and routes packets across 1+ IP networks
+    * ICMP (Internet Control Message Protocol) -- provides error messages
+    * UDP (User Datagram Protocol) -- *broadcasts* messages over a network
+
+
 C, the Language
 ---------------
 

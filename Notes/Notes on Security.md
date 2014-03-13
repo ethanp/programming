@@ -211,3 +211,29 @@ these security problems. These techniques are described later in this chapter.
 [Ref: Apple][Apple on Public, Private Keys]
 
 [Apple on Public, Private Keys]: https://developer.apple.com/library/ios/documentation/Security/Conceptual/Security_Overview/CryptographicServices/CryptographicServices.html
+
+HTTPS
+-----
+
+#### HTTP Secure
+
+* [Wiki](http://en.wikipedia.org/wiki/HTTP_Secure)
+* [Security Stack Exchange](http://security.stackexchange.com/questions/19616/why-is-it-possible-to-sniff-an-https-ssl-request)
+
+In short *https* sessions work this way:
+
+1. Client and server exchange some initial information
+2. Using this information the client is able to authenticate the server, making sure it is trust worth
+3. The client uses the server's public key to send him an encrypted secret
+4. The server decrypts this secret using his private key (only the authenticated server can do that!)
+5. Both the client and the server use the secret to locally generate the session symmetric key
+6. Now the can talk to each other safely because no one else knows their session symmetric key
+
+If some how along the way a third party is able to get access to the shared
+secret he will also be able to generate the session symmetric key and decrypt
+the communication.
+
+The problem is that step 2 (authenticating the server) is hard.  SSL is only as
+strong as your certificate validation. It all comes down to: Do you accept the
+MitM's certificate as valid. The logic of out current browsers is: Accept if
+it's signed by a trusted CA or if the user decides to override
