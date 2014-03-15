@@ -85,7 +85,7 @@ From [Regular-Expresions.info](http://www.regular-expressions.info/lookaround.ht
   regex vocabulary, but the specifics vary (quite a bit) by language
 
 ### Notes:
-* They do not consume characters in the string, they only assert whether a match is possible or not
+* **They do not consume characters** in the string, they only assert whether a match is possible or not
 * Some regexes would be impossible without them
 
 Newlines
