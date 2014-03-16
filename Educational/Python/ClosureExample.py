@@ -1,3 +1,7 @@
+##################################################
+# Simple example of the power: December 24, 2012 #
+##################################################
+
 def makeInc(x):
     def inc(y):
         # x is "closed" in the definition of inc

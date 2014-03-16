@@ -1,12 +1,11 @@
 '''
 Created on Dec 24, 2012
-http://stackoverflow.com/questions/739654/
-        understanding-python-decorators/1594484#1594484
-@author: Ethan
+stackoverflow.com/questions/739654/understanding-python-decorators
+
+THE POINT HERE!:
+ @DECORATOR is (literally, see bottom) a shortcut to
+   hello = DECORATOR(hello)
 '''
-# THE POINT HERE!:
-#  @DECORATOR is (literally, see bottom) a shortcut to
-#    hello = DECORATOR(hello)
 
 def makebold(fn):
     def wrapped(): # Doesn't HAVE to be called this, can be whatever
@@ -29,5 +28,5 @@ def hello2():
     return "Hello"
 
 print hello2()
-hello2 = makebold(makeitalic(hello2))
+hello2 = makebold(makeitalic(hello2))   # this is equivalent
 print hello2()
