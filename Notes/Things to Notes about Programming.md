@@ -13,6 +13,71 @@ On the Method of Understanding a Programme
 Networking
 ----------
 
+##### 3/15/14
+
+[Apples Networking Concepts](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/NetworkingConcepts/NetworkingTerminology/NetworkingTerminology.html)
+
+* **Host** -- any device **provides an endpoint for networked communication**
+    * It is called a host because it **hosts the applications and daemons that run on it**
+    * E.g.s
+        * desktop computer
+        * server
+        * iOS device
+        * virtual machine running on a server
+        * the VoIP telephone sitting on your desk
+
+* **Packets** -- small pieces of the data to be sent
+    * **Header** -- says **where** the packet should be sent
+    * **Payload** -- the actual **data**
+    * **Trailer** -- contains a **checksum** to ensure the packet was received correctly
+        * Sometimes this is inside the header
+    * **Encapsulation** -- often one packet contains another packet
+        * E.g. an Ethernet packet might hold an entire TCP packet as its payload
+* **Latency** -- **round-trip time** of a request (to and from the destination machine)
+    * Satellite connections are "painfully" slow because of the distance that must be travelled
+
+* **Firewall** -- any router that inspects traffic, modifies traffic, or blocks
+  specific subsets of traffic that flows through it.
+
+[Apples Networking Overview](https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Introduction/Introduction.html)
+
+Higher-level APIs also solve many of the most complex and difficult networking
+problems for you -- caching, proxies, choosing from among multiple IP addresses
+for a host, and so on. If you write your own low-level code to perform the same
+tasks, you have to handle that complexity yourself (and debug and maintain
+the code in question).
+
+Be wary of all incoming data. Any data received from an untrusted source may be
+a malicious attack. Your app should carefully inspect incoming data and
+immediately discard anything that looks suspicious.
+
+Although your software cannot magically fix a truly broken network, poorly
+written networking code can easily make things much, much worse. For example,
+suppose a server is heavily overloaded and is taking 45 seconds to respond to
+each request. If your software connects to that server with a 30-second
+timeout, it contributes to the server’s workload, but never successfully
+receives any data.
+
+And even when the network is working perfectly, poorly written networking code
+can cause problems for the user—poor battery life, poor performance, and so on.
+
+##### Batch Your Transfers, and Idle Whenever Possible
+
+When writing code in general, to the maximum extent possible, you should
+perform as much work as you can and then return to an idle state. This applies
+doubly for network activity. If you keep their radio on, you're wasting their
+battery life.
+
+##### Cache Resources Locally
+
+Only redownload the thing if you know it has changed.
+
+##### TLS (Transport Layer Security)
+
+TLS is the successor to the SSL protocol. In addition to encrypting data over
+the wire, TLS authenticates a server with a certificate to prevent spoofing.
+
+
 ##### 3/7/14
 
 ### OSI Layers

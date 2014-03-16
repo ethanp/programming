@@ -60,7 +60,7 @@ Which will be expanded to
             func1(x);
             func2(x);
             func3(x);
-        } while (0)
+        } while (0);
 
     else
         bar(a);
