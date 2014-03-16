@@ -6,7 +6,8 @@ B = [ 5, 1, 20, 20]
 
 n = len(A) - 1
 
-def compute_opt(i, L, d={}):
+def compute_opt(i, L, d=None):
+    if not d: d = {}
 
     # base case
     if i < 0:
