@@ -1,3 +1,15 @@
+
+On the Method of Understanding a Programme
+------------------------------------------
+
+#### 3/13/14
+
+* Run the program in a debugger
+* Put breakpoints everywhere
+* When it catches the first one, walk up the stack
+* Put a breakpoint at the top of that stack
+* Now restart from that outermost function and watch the thing unfold
+
 Networking
 ----------
 
@@ -33,34 +45,31 @@ Networking
 
 Reactive Applications
 ---------------------
-##### 2/23/14
+#### 2/23/14
 
 According to [Typesafe](http://typesafe.com/platform)
 
-Reactive applications have one or more of the following defining traits:
+Reactive applications have one or more of the following **defining traits:**
 
 * **Event driven** -- enables parallel, asynchronous processing of messages or events with ease.
 * **Scalable** -- across nodes elastically
 * **Resilient** -- recovers and repairs automatically
 * **Responsive** -- single-page UIs that provide instant feedback
 
-In particular, the *Typesafe Reactive Platform* consists of
+In particular, the **Typesafe Reactive Platform** consists of the following **stack:**
 
-* Play Framework
-* Akka
-* Scala
-* Typesafe Console
+* **Play!** -- Web Framework
+* **Akka** -- Actor Model concurrency library
+* **Scala** -- Programming Language
+* **Typesafe Console** -- Console
 
 Regex --- Lookahead & Lookbehind = "Lookaround"
 -----------------------------------------------
-##### 2/17/14
+#### 2/17/14
 
 From [Regular-Expresions.info](http://www.regular-expressions.info/lookaround.html)
 
-* They do not consume characters in the string, they only assert whether a match is possible or not
-* Some regexes would be impossible without them
-
-#### Lookahead
+### Lookahead
 * **Negative lookahead** --- match something *not* followed by something else
     * E.g. `q` *not* followed by `u` --- `q(?!u)`
 * **Positive lookahead** --- match something *only if* it's followed by something else
@@ -69,7 +78,7 @@ From [Regular-Expresions.info](http://www.regular-expressions.info/lookaround.ht
 * Any valid regular expression can be used inside the lookahead
   (even capture groups, which do require their own set of parentheses within the lookahead)
 
-#### Lookbehind
+### Lookbehind
 * **Negative lookbehind** --- match something *not* preceded by something else
     * E.g. `b` *not* preceded by `a` --- `(?<!a)b`
 * **Positive lookbehind** --- match something *only if* it's preceded by something else
@@ -77,9 +86,13 @@ From [Regular-Expresions.info](http://www.regular-expressions.info/lookaround.ht
 * Lookbehinds are generally restricted to only allowing some subset of the normal
   regex vocabulary, but the specifics vary (quite a bit) by language
 
+### Notes:
+* **They do not consume characters** in the string, they only assert whether a match is possible or not
+* Some regexes would be impossible without them
+
 Newlines
 --------
-##### 2/16/14
+#### 2/16/14
 
 * On **Windows**, they use carriage-return & line-feed (`"\r\n"`)
 * On **UNIX/Mac**, they use new-line, which is represented by the same
@@ -87,7 +100,7 @@ Newlines
 
 ASCII vs. UTF-8
 ---------------
-##### 2/16/14
+#### 2/16/14
 
 Both use the same number of bits, but ASCII is faster to read because it is not
 a variable-width encoding, so the interpreter doesn't need to check the width
@@ -97,7 +110,7 @@ UTF-8 instead of ASCII, and that is generally what people do.
 
 FTP vs. HTTP
 ------------
-##### 2/16/14
+#### 2/16/14
 
 Mainly from [AlBlue's Blog](http://alblue.bandlem.com/2009/02/why-do-people-still-use-ftp.html)
 

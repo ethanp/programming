@@ -47,7 +47,7 @@
 
 (define (expI b n)
   (cond ((= n 0) 1)
-        (iter-exp 1 b n)))
+        (else (iter-exp 1 b n))))
 
 (define (iter-exp a b n)
   (cond ((= n 1) (* a b))
