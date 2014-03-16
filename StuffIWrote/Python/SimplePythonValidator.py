@@ -14,7 +14,7 @@ def validate(input_text):
         1. Lines ending in a colon must be followed by another line, whose indentation must be greater
         2. Lines not ending in a colon must not be followed by a line with greater indentation
         3. Lines receding indentation levels must match a previous indentation level
-        4. Ignore comments, but comments can't start inside a *single-quoted* string
+        4. Ignore comments, but comments can't start inside a string (' or ")
 
     BUG: this validator stumbles parsing the line that says
     `if line.count("'", 0, hash_loc) % 2 == 0:   # if it's not in a 'string'`
@@ -38,6 +38,8 @@ def validate(input_text):
 
     SOLUTION 3: make it a global variable
     This is too hackish, though the soln I went with is just as hackish
+
+    TODO: ignore the text in a docstring
     '''
     stack = [0]                             # default starting values
     follows_colon = False
