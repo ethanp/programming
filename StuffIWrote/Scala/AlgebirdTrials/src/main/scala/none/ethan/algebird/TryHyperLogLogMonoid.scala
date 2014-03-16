@@ -24,8 +24,7 @@ object TryHyperLogLogMonoid extends App {
     approxIntersect(userSets).toInt
   )
 }
-/* these functions come from com.twitter.algebird.HyperLogLogTest
- * not my code, etc. */
+/* these functions come from com.twitter.algebird.HyperLogLogTest */
 object HLLMUtilityFuncs {
 
   def exactCount[T](it : Iterable[T]) : Int = it.toSet.size
@@ -48,8 +47,6 @@ object HLLMUtilityFuncs {
   }
 }
 
-/* these tests from from com.twitter.algebird.HyperLogLogTest
- * to make sure all is functioning normally; not my code, etc. */
 object HyperLogLogMonoidTests {
   import HLLMUtilityFuncs._
 
