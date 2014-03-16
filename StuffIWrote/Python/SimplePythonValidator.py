@@ -22,7 +22,7 @@ def validate(input_text):
     comment is in a 'string' because there's only one "'" before it.  So sure, I could
     count the number of '"'s to its left, but that's turtles all the way down.
 
-    SOLUTION: see discover_comment()
+    SOLUTION: see remove_comment_from_line()
 
 
     BUG: closure scoping wasn't as simple as I was expecting
@@ -36,7 +36,7 @@ def validate(input_text):
     line_list[0] = line_list[0][:close_loc[0]] etc.
     it's certainly gross but it's worth it for the debugger functionality
 
-    SOLUTION 3: just make it a global variable
+    SOLUTION 3: make it a global variable
     This is too hackish, though the soln I went with is just as hackish
     '''
     stack = [0]                             # default starting values
@@ -62,7 +62,7 @@ def validate(input_text):
                         close_strt[_STRT] = end_dbl+1
 
                 if hash_loc == -1:                      # nothing to be done if no '#' exists
-                    return False
+                    return
 
                 if -1 < sgl_quot_loc < dbl_quot_loc:    # use the first type of quote found, ignore the other
                     dbl_quot_loc = -1
