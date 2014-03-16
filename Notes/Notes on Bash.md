@@ -18,7 +18,7 @@ Commands to Command
     $ basename "./dir space/other dir/file.txt"
     file.txt
 
-    # DON'T do this by accident (i.e. quote the filename)
+    # DON'T do this by accident (viz. ALWAYS quote the filename)
     $ basename ./KF Audio/9_20832/KF Audio/FakeSerialNumber-08_00_29_Test_Set/Test_Summary_DB_List.txt
     KF
     KF
@@ -34,4 +34,15 @@ Commands to Command
     ./a/anotherFile.txt
     ./a space b
     ./a space b/file.txt
+
+### read
+
+[linuxcommand.org](http://linuxcommand.org/wss0110.php)
+
+    echo -n "Enter some text > "
+    read text
+    echo "You entered: $text"
+
+    Enter some text > this is some text
+    You entered: this is some text
 
