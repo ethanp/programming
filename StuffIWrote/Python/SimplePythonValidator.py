@@ -25,7 +25,7 @@ def validate(input_text):
     SOLUTION: see remove_comment_from_line()
 
 
-    BUG: closure scoping wasn't as simple as I was expecting
+    BUG: closure scoping isn't as simple as I anticipated
 
     SOLUTION 1: make it variable to modify inside closure an attribute of its declaring function
     stackoverflow.com/questions/3190706/nonlocal-keyword-in-python-2-x
@@ -40,6 +40,7 @@ def validate(input_text):
     This is too hackish, though the soln I went with is just as hackish
 
     TODO: ignore the text in a docstring
+    TODO: get rid of the nested functions and closure-vars because they are gross
     '''
     stack = [0]                             # default starting values
     follows_colon = False
@@ -51,6 +52,11 @@ def validate(input_text):
             COMMENT finding ALGORITHM: starting on the left of the line, scan for the first of ('|"|#).
             If it's a #, then the comment stands. If it's a ('|"), we've opened up a string. Now
             ignore everything up to the repeating \1, and start over.
+
+            TODO: maybe I could make this cleaner using a regex
+            e.g. the scoot() function could be replaced with something to the effect of
+            re.get_index_at_the_end_of_the_match_with(r"('|")[^\1]+\1", close_line[_LINE])
+            and it actually wouldn't matter for the algorithm if there's a '#' in that chunk or not.
             '''
             close_strt = [0]
             while close_strt[_STRT] < len(close_line[_LINE]):
