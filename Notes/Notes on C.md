@@ -1,6 +1,18 @@
-## 3/15/14
+
+### stdio.h
+
+##### 3/19/14
+
+#### memset
+
+    void *memset(void *str, int c, size_t n)
+
+* **does:** fills `n` bytes of `str` with `n` `(unsigned char)c`s
+* **returns:** `str` (possibly so that you can chain calls to different functions together)
 
 ### MACROS
+
+##### 3/15/14
 
 #### Macro that does nothing
 
@@ -68,14 +80,19 @@ Which will be expanded to
 which works as we expect!
 
 
-## 2/27/14
 
 ### string.h
+
+##### 2/27/14
+
+#### strcpy
 
     char *strcpy(char *dest, char *src)
 
 * Also copies null-terminator.
 * Returns `dest`
+
+#### strncpy
 
         char *strncpy(char *dest, char *src, size_t count)
 
