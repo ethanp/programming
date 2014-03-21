@@ -1,8 +1,48 @@
 Notes on Playframework 2
 ========================
 
+Templates
+---------
+### March 21, 2014
+#### From `play-websockets-chat-sample`, a GitHub project I've forked
+
+To dynamically show a link to a URL connected to your `routes` file, use
+
+    <a class="brand" href="@routes.Application.index()"> Link-Text </a>
+    
+I believe this is what they refer to as "reverse routing".
+
+Routes Files
+------------
+### March 21, 2014
+#### From `play-websockets-chat-sample`, a GitHub project I've forked
+
+* Matches are tried from the top down
+* To put a query param on a `GET`, add a param to the function call
+
+Example of `GET` **Query Parameter**
+
+    GET  /room  controllers.Application.chatRoom(username: String ?= null)
+    
+This will make it so that the `GET` request URL will be
+
+    http://localhost:9000/room?username=the+thing+I+typed
+    
+But the `?= null` means that if you send nothing, via
+
+    http://localhost:9000/room?username=
+    
+you will pass `null` to `chatRoom`, which in this case will render a
+    
+    if(username == null) {
+        flash("error", "Please choose a valid username.");
+        return redirect(routes.Application.index());
+    }
+
 Architecture
 ------------
+### February 2014
+#### From `Play for Scala` (Manning)
 
 A few perspectives from which one might like to consider how
 to architect the website:
@@ -14,7 +54,8 @@ to architect the website:
 
 Important
 ---------
-
+### February 2014
+#### From `Play for Scala` (Manning)
 ### 2.3.2. Form Object (@15%)
 
 ##### Listing 2.27
@@ -45,12 +86,14 @@ Important
 
 Conventions
 -----------
-
+### February 2014
+#### From `Play for Scala` (Manning)
 Put small or frequently used templates in a `app/views/tags/` package
 
 Other
 -----
-
+### February 2014
+#### From `Play for Scala` (Manning)
 ### Flash Scope
 
 * Like session scope, keeps data related to a client, 
