@@ -12,6 +12,39 @@ To dynamically show a link to a URL connected to your `routes` file, use
     
 I believe this is what they refer to as "reverse routing".
 
+
+#### JavaScript template
+
+#####To pull in a JavaScript source inside a Scala HTML template file
+
+1) Write
+
+    <script type="text/javascript" charset="utf-8" src="@routes.Application.chatRoomJs(username)"></script>
+
+2) Then in the `Application (Controller)` put
+
+    public static Result chatRoomJs(String username) {
+        return ok(views.js.chatRoom.render(username));
+    }
+ 
+Which I believe translates to having the following method in an `object Application`
+
+    def chatRoomJs(username: String) = Ok(views.js.chatRoom.render(username))
+    
+
+3) Then in the `routes` file, put
+
+    GET  /assets/javascripts/chatroom.js  controllers.Application.chatRoomJs(username)
+    
+4) Then in `app/views/chatRoom.scala.js`, put
+
+    @(username: String)
+    $(function() { /* jQuery for days */ })
+
+I believe at this point, *Play!* will dynamically serve `/assets/javascripts/chatroom.js`
+when asked for it, so you don't need to actually create a real file
+at that location.
+
 Routes Files
 ------------
 ### March 21, 2014
