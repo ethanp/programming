@@ -1,43 +1,72 @@
 Commands to Command
 -------------------
 
+#### 3/20/14
+
+### Iterate through files
+
+    find . -name '*.csv' | while read line; do
+        echo "$line"
+    done
+
+#### 3/12/14
+
 ### dirname
 
+**returns path to the input file, not including the file itself in that path**
+
+this is the **opposite of `basename`**
+
+##### Examples
+
     $ dirname a/b/myfile
-    a/b
+    > a/b
 
     $ dirname a/myfile
-    a
+    > a
 
     $ dirname myfile
-    .
+    > .
 
 
 ### basename
 
+**given a filepath, return the part after the last slash**
+
+This is the **opposite of `dirname`**
+
+##### Examples
+
     $ basename "./dir space/other dir/file.txt"
-    file.txt
+    > file.txt
 
     # DON'T do this by accident (viz. ALWAYS quote the filename)
-    $ basename ./KF Audio/9_20832/KF Audio/FakeSerialNumber-08_00_29_Test_Set/Test_Summary_DB_List.txt
-    KF
-    KF
-    Test_Summary_DB_List.txt
+    $ basename ./dir space/other dir/file.txt
+    > dir
+    > other
+    > file.txt
 
 ### find
 
+**recursive listing of all the files underneath given file**
+
+##### Example
+
     $ find .
-    # recursive listing of all the files with names like
-    ./.DS_STORE
-    ./file.txt
-    ./a
-    ./a/anotherFile.txt
-    ./a space b
-    ./a space b/file.txt
+    > ./.DS_STORE
+    > ./file.txt
+    > ./a
+    > ./a/anotherFile.txt
+    > ./a space b
+    > ./a space b/file.txt
 
 ### read
 
+**Read user input into local variable**
+
 [linuxcommand.org](http://linuxcommand.org/wss0110.php)
+
+##### Example
 
     echo -n "Enter some text > "
     read text
