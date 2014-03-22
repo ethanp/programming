@@ -29,7 +29,7 @@ else
 fi
 alias ca='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentAnalyzer_0'
 alias cc='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentCollector_0'
-
+alias playakka='cs $PROGRAMMINGGIT/StuffIWrote/Scala/akka-redis-websockets-play-scala_translation'
 
 # 4lolz
 set -o vi
