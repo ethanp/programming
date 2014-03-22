@@ -71,6 +71,7 @@ you will pass `null` to `chatRoom`, which in this case will render a
         flash("error", "Please choose a valid username.");
         return redirect(routes.Application.index());
     }
+    
 
 Architecture
 ------------
@@ -85,11 +86,11 @@ to architect the website:
     * Note that shorter URLs are better because they're more usable 
 1. User Interface -- what will the resulting website *feel* like?
 
-Important
+
+Form Object
 ---------
 ### February 2014
-#### From `Play for Scala` (Manning)
-### 2.3.2. Form Object (@15%)
+#### From `Play for Scala` (Manning) § 2.3.2 (@15%)
 
 ##### Listing 2.27
 
@@ -117,17 +118,11 @@ Important
 > class and the form, you’ll have to supply your own 
 > functions here.
 
-Conventions
------------
-### February 2014
-#### From `Play for Scala` (Manning)
-Put small or frequently used templates in a `app/views/tags/` package
 
-Other
+Flash Scope
 -----
 ### February 2014
 #### From `Play for Scala` (Manning)
-### Flash Scope
 
 * Like session scope, keeps data related to a client, 
   outside the context of a single request.
