@@ -10,7 +10,7 @@ import ExecutionContext.Implicits.global
 object Application extends Controller {
 
   def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+    Ok(views.html.index("This is the landing page"))
   }
 
   def chatRoom(username: Option[String]) = Action {
@@ -24,10 +24,11 @@ object Application extends Controller {
     println(s"received $username through the chatSocket")
 
     // this is explained to the best of my knowledge in my "Notes/Play Notes.md"
+    // Returns: a future of the
     Future[(Iteratee[JsValue,_],Enumerator[JsValue])](
       Done[JsValue,Unit]((),Input.EOF),
       Enumerator[JsValue](JsObject(
-        Seq("error" -> JsString("a sample error")))
+        Seq("user" -> JsString(username)))
       ).andThen(Enumerator.enumInput(Input.EOF))
     )
   }
