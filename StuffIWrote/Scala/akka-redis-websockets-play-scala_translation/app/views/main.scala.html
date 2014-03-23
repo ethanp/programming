@@ -15,16 +15,35 @@
             <div class="navbar-inner">
                 <div class="fill">
                     <div class="container">
-                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </a>
-                        <a class="navbar-brand" href="@routes.Application.index()">Websocket Chat-Room</a>
-                        <p class="pull-right">
-                        Logged in as No One —
-                            <a href="@routes.Application.index()">Disconnect</a>
-                        </p>
+                        <div class="navbar-header">
+                            @*Not sure what this part does*@
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span class="sr-only"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                            <a class="navbar-brand" href="@routes.Application.index()">Websocket Chat-Room</a>
+                        </div>
+                        <div class="navbar-collapse collapse">
+                            <form class="navbar-form navbar-right" role="form">
+                                <div class="form-group">
+                                    <input type="text" placeholder="Username" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" placeholder="Password (unchecked)" class="form-control">
+                                </div>
+                                <button type="submit" class="btn btn-success">
+                                    Sign in
+                                </button>
+                            </form>
+                        </div>
+                        @*TODO This will go in an IF dictating what's at the top there*@
+                        @*depending on whether the user is currently signed in or not*@
+                        @*<p class="pull-right">*@
+                            @*Logged in as No One —*@
+                            @*<a href="@routes.Application.index()">Disconnect</a>*@
+                        @*</p>*@
                     </div>
                 </div>
             </div>
