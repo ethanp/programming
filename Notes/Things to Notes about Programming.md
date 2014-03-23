@@ -1,3 +1,27 @@
+Redis
+-----
+
+#### 3/23/14
+
+[StackOverflow](http://stackoverflow.com/questions/7888880/what-is-redis-and-what-do-i-use-it-for)
+
+* [***RE**mote **DI**ctionary **S**erver*](http://redis.io/topics/faq)
+* **NoSQL** key-value data store
+* Data structure server
+* Similar to **Memcached**, but with built-in *persistence* and more datatypes
+* **Persistence** -- *snapshotting*, or *journaling* to disk
+* **Datatypes** -- *Dictionary*, *List*, *(Sorted) Set*
+* **Pub/Sub** transactions (see glossary at bottom)
+* **Optimistic locking** -- (see glossary at bottom)
+* The entire data set is stored in-memory (like Memcached)
+
+##### Use Cases:
+
+* Highly scalable data store shared by multiple processes, applications, or servers
+* Caching layer
+
+
+
 On the Method of Understanding a Programme
 ------------------------------------------
 
@@ -103,4 +127,23 @@ Glossary
   execution and then safely called again ("re-entered") before its previous
   invocations complete execution. Once the reentered invocation completes, the
   previous invocations will resume correct execution.
-* **[Partial Function](http://en.wikipedia.org/wiki/Partial_function)** -- 3/1/14 -- *normally* a function maps an *entire* domain to some range. In a **Partial Function**, however, not *every* element of the domain must be mapped. Some values in the domain may be *undefined* after passing through the partial function.
+* **[Partial Function](http://en.wikipedia.org/wiki/Partial_function)** -- 3/1/14 --
+  *normally* a function maps an *entire* domain to some range. In a **Partial Function**,
+  however, not *every* element of the domain must be mapped. Some values in the domain may
+  be *undefined* after passing * through the partial function.
+* **[Optimistic Locking](http://en.wikipedia.org/wiki/Optimistic_locking)** -- 3/23/14 -- Before
+  committing, each transaction verifies that no other transaction has modified the data it has
+  read. If the check reveals conflicting modifications, the committing transaction rolls back
+  and can be restarted.
+* **[Messanging pattern](http://en.wikipedia.org/wiki/Messaging_pattern)** -- 3/23/14 --
+  describes how two different parts of a message passing system connect and communicate
+  with each other.
+    * E.g. HTTP is a *request-response* pattern, UDP is a *one-way* pattern.
+    * **Request-response** -- requester sends request message, replier receives, processes,
+      and responds.
+    * **Publish-subscribe** -- *publishers* post to an *intermediary message broker*, and
+      *subscribers* register subscriptions with the broker. The broker might perform a
+      *store and forward* to route messages to their destinations, and may prioritize the
+      orderings.
+        * E.g. RSS feeds
+        * Provides better scalability than *request-response*
