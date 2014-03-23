@@ -1,6 +1,53 @@
 Notes on Scala
 ==============
 
+My Guide to a crazy function
+----------------------------
+
+Check out the following function from a nice [tutorial on Iteratees](http://blog.higher-order.com/blog/2010/10/14/scalaz-tutorial-enumeration-based-io-with-iteratees/)
+
+    def enumerate[E,A]: (List[E], IterV[E,A]) => IterV[E,A] = {
+      case (Nil, i) => i
+      case (_, i@Done(_, _)) => i
+      case (x :: xs, Cont(k)) => enumerate(xs, k(El(x)))
+    }
+
+### Now we translate:
+
+#### First line
+
+    def enumerate[E,A]: (List[E], IterV[E,A]) => IterV[E,A] = {
+
+* The **function** `enumerate` has an **input** type `E`, and a **result** type `A`.
+* It **returns** a *function* that
+    * **takes** 
+         * `List` of *inputs*
+         * `Iteratee` parameterized by the same input/result types as this function
+    * **returns** another `Iteratee`
+
+#### Case 1
+
+    case (Nil, i) => i
+
+* If the `List` passed in is empty, return the `Iteratee` as-is
+
+#### Case 2
+
+      case (_, i@Done(_, _)) => i
+
+* If the `Iteratee` is in the `Done` state (I think it means `isInstanceOf[Done]`),
+  return it as-is
+
+#### Case 3
+
+      case (x :: xs, Cont(k)) => enumerate(xs, k(El(x)))
+
+* If the `Iteratee` is in the `Cont` state, recurse on this method
+    * Pass the `tail` of this `List` as the new `List`
+    * For the `Iteratee`, pass that `Iteratee` obtained by creating an
+      **input** element from the `head` of the `List`, and (I think)
+      appending it to the `Iteratee` using the function `k()`
+
 Override Keyword
 ----------------
 

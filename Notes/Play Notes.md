@@ -20,9 +20,9 @@ Iteratees
 
 * Let's call the input type `Input[E]`
 * This chunk of input can be
-    * An `El[E]` containing some actual input
-    * An `Empty` chunk
-    * An `EOF` representing the end of the stream
+    * `El[E]` -- some actual input
+    * `Empty` -- nothing to input at this time, but hold on for more
+    * `EOF` -- nothing left at all
 * So `Input[String]` might be `El("Hello")`, `Empty`, or `EOF`
 * Functions describing what the `Iteratee[E,A]` does in each state all return type `Promise[B]`
     * This means you can register to retrieve their value of type `B` in a callback
@@ -62,6 +62,10 @@ The `Future` is type-parameterized by a `Tuple` containing
    (I think) tells the `Iteratee` to put itself into the `Done` state.
 
 So, overall, we are constructing a `JSON` message to pass into the `WebSocket`.
+
+[Better Tutorial on Iteratees]
+(http://blog.higher-order.com/blog/2010/10/14/scalaz-tutorial-enumeration-based-io-with-iteratees/)
+
 
 Templates
 ---------
