@@ -4,7 +4,7 @@ Notes on Scala
 Override Keyword
 ----------------
 
-3/8/14
+**3/8/14**
 
 * The `override` keyword **must be used** when overriding a **concrete implementation** of a member
 * If you override an **abstract** member, the `override` keyword is **optional**
@@ -13,7 +13,7 @@ Override Keyword
 Futures and Promises
 --------------------
 
-3/1/14
+**3/1/14**
 
 From the [Scala Docs](http://docs.scala-lang.org/overviews/core/futures.html)
 
@@ -228,7 +228,7 @@ The method `completeWith` completes the promise with another future. After the f
 Case Class vs. Regular Class
 ----------------------------
 
-2/23/14
+**2/23/14**
 
 From [Stack Overflow](http://stackoverflow.com/questions/5270752/difference-between-case-object-and-object)
 
@@ -242,6 +242,8 @@ Case classes just add to classes, they don't take away. They give you:
 
 Implicit Variables and Parameters
 ---------------------------------
+
+**2/2/14**
 
 #### Defining an implicit val makes it available to future uses of implicit parameters
 
@@ -265,6 +267,8 @@ article spells them out quite simply, and the following example is based on thei
 
 Iterator.collect[B]\\(pf: PartialFunction[A,B|)
 ----------------------------------------------
+
+**1/18/14**
 
 ### A convenient way to **simultaneously map and filter**.
 

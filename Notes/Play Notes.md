@@ -1,5 +1,67 @@
 Notes on Playframework 2
 ========================
+Iteratees
+---------
+
+**3/22/14**
+
+#### [Play Docs: Iteratees](http://www.playframework.com/documentation/2.0.4/Iteratees)
+
+* Iteratees allow a user to create, consume, and transform streams of data asynchronously
+* An Iteratees is a *consumer*, it describes how to consume input to produce some value
+* It returns the value it computes after being fed enough input
+* `Iteratee[E,A]` has two type parameters, *input* and *output*
+* It has 3 possible states
+    * `Cont` -- still accepting input ("Continuation")
+    * `Error` -- encountered an error
+    * `Done` -- contains the result
+
+##### Some types
+
+* Let's call the input type `Input[E]`
+* This chunk of input can be
+    * An `El[E]` containing some actual input
+    * An `Empty` chunk
+    * An `EOF` representing the end of the stream
+* So `Input[String]` might be `El("Hello")`, `Empty`, or `EOF`
+* Functions describing what the `Iteratee[E,A]` does in each state all return type `Promise[B]`
+    * This means you can register to retrieve their value of type `B` in a callback
+    
+##### Some Code
+
+Here is an untested example usage based on [PlayFramework's ChatRoom Example]
+(github.com/playframework/playframework/blob/samples/scala/websocket-chat/app/models/ChatRoom.scala)
+
+    def chatSocket(username: String) = WebSocket.async[JsValue] { request =>
+      Future[(Iteratee[JsValue,_],Enumerator[JsValue])](
+        Done[JsValue,Unit]((),Input.EOF),
+        Enumerator[JsValue](JsObject(
+          Seq("error" -> JsString("a sample error")))
+        ).andThen(Enumerator.enumInput(Input.EOF))
+      )
+    }
+
+Here's what I believe is going on here:
+
+Return a JSON `Future` with some default values.
+We're returning a `Future` --- a computation that will return a value
+in the Future, the event of which we can register to be notified about.
+The `Future` is type-parameterized by a `Tuple` containing
+
+1. an `Iteratee` (an object that can either be `Cont`, `Done`, or `Error`,
+   depending on whether it is ready to continue consuming input).
+   The `Iteratee` is parameterized by the types `[JsValue,_]`, meaning
+   that it *accepts* `JsValues`, and can return `Promises` of
+   anything (I think)
+
+2. an `Enumerator` --- "a source that pushes input into a given `Iteratee`".
+   Here, the `Enumerator` contains type `[JsValue]`, so we are passing it first
+   a `JsObject` (which [I think] is a `JsValue` that contains arbitrary JSON),
+   which we are constructing to be `{ error : "a sample error" }`.
+   Then we are adding a second item to the `Enumerator`, the `EOF`, which
+   (I think) tells the `Iteratee` to put itself into the `Done` state.
+
+So, overall, we are constructing a `JSON` message to pass into the `WebSocket`.
 
 Templates
 ---------
