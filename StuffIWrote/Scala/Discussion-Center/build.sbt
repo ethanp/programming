@@ -1,4 +1,4 @@
-name := "akka-redis-websockets-play-scala_translation"
+name := "Discussion-Center"
 
 version := "1.0-SNAPSHOT"
 

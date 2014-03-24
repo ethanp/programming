@@ -54,6 +54,18 @@ In particular, the **Typesafe Reactive Platform** consists of the following **st
 * **Scala** -- Programming Language
 * **Typesafe Console** -- Console
 
+
+#### 3/23/14
+
+The best description of what it really means, I've found to be this
+[lecture on Vimeo by Sadek Drobi](http://vimeo.com/48328895). He describes it
+as being a pattern in which you do all your computations on `Promises`, and then
+the whole string of events that will happen once you obtain your `Promise` is computed
+and then the actual computation takes place whenever you do obtain the `Promise`.
+But the point is that you're never waiting for the `Promise`, you just "react" by
+computing it when you *do* receive it. Something like that, anyway.
+
+
 Regex --- Lookahead & Lookbehind = "Lookaround"
 -----------------------------------------------
 #### 2/17/14
