@@ -1,4 +1,4 @@
-Websockets
+WebSockets
 ----------
 #### 3/21/14
 
@@ -41,7 +41,7 @@ Server response:
 * "HTML5 Web Sockets" provides a dramatic improvement from the old, convoluted
   hacks that are used to simulate a full-duplex connection in a browser
 * Older techniques for achieving this included *long-polling* and *streaming*,
-  often wrapped into **Comet**-based "pushes"
+  often wrapped into [**Comet**](#comet)-based "pushes"
 * Simply put, HTTP wasn't designed for real-time, full-duplex communication,
   it is a half-duplex model
 * WebSockets are in the HTML5 specification
@@ -57,7 +57,7 @@ Server response:
 * This adds a whole new dimension to the types of applications that can be
   constructed.
 * WebSockets are a boon to the *Internet of Things* (good point...)
-* "In point of fact, the entire AJAX protocol could be built using Websockets
+* "In point of fact, the entire [AJAX](#ajax) protocol could be built using Websockets
   technology. This makes Websockets a literal superset of AJAX."
 
 
@@ -118,7 +118,7 @@ Port
 Socket
 ------
 
-* IP Addres + Port
+* IP Address + [Port](#port)
 * A single bidirectional connection between two network applications (can even be on the same computer)
 
 Socket.IO
@@ -134,7 +134,7 @@ Comet
 -----
 #### 3/21/14
 
-* Old-school way of doing full-duplex over HTTP, replaced by WebSockets
+* Old-school way of doing full-duplex over HTTP, replaced by [WebSockets](#websockets)
 * A long-held HTTP request allows a web server to push data to a browser,
   without the browser explicitly requesting it.
 * Comet is an umbrella term, encompassing multiple techniques for achieving
