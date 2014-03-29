@@ -2,7 +2,7 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import play.api.libs.json.{JsString, JsObject, JsValue}
+import play.api.libs.json.{Json, JsString, JsObject, JsValue}
 import scala.concurrent.{ExecutionContext, Future}
 import play.api.libs.iteratee._
 import ExecutionContext.Implicits.global
@@ -23,18 +23,19 @@ object Application extends Controller {
   }
 
   def chatSocket(username: String) = WebSocket.using[JsValue] { implicit request =>
-    println(s"received $username through the chatSocket")
-
-    /* based on comment posted on
-     * blog.tksfz.org/2012/10/12/websockets-echo-using-play-scala-and-actors-part-i
-     */
+    println(s"\n$username sent the following message through the chatSocket:")
 
     // create Enumerator to send through client socket
 //    val (out, channel) = Concurrent.broadcast[JsValue]
+
+    // temporarily: send one item through websocket and leave it open
     val out = Enumerator[JsValue](JsObject(Seq("username" -> JsString(username))))
+
     // create Iteratee to receive from client socket
 //    val in = Iteratee.foreach[JsValue] { message => channel.push(message) }
-    val in = Iteratee.foreach[JsValue] { message => println(message) }
+
+    // temporarily: just pretty-print any received JSON to the console
+    val in = Iteratee.foreach[JsValue] { message => println(Json.prettyPrint(message)) }
 
     (in, out)
   }
