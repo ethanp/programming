@@ -3,11 +3,22 @@
 # ~~~~
 
 # Home page, with listing of available games
-GET     /                           controllers.Application.index
+GET     /                       controllers.Application.index
+
+# The page for a particular game
+GET     /game                   controllers.Application.game(id: Option[Int], user: Option[String])
 
 # URL of the WebSocket
-GET     /game/socket controllers.Application.gameSocket
+# through which the squares-to-turn and moves-played are funnelled back and forth
+GET     /game/socket            controllers.Application.gameSocket(user)
 
+# Allow Javascript game to be 'reverse routed' into other view-templates
+# must be before the /assets/*file route
+GET     /assets/javascripts/squareGame.js   controllers.Application.squareGameJs
 
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file           controllers.Assets.at(path="/public", file)
+
+# get resources like Bootstrap and jQuery from the web
+# see webjars.org/documentation
+GET     /webjars/*file          controllers.WebJarAssets.at(file)
