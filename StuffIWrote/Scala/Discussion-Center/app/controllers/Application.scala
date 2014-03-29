@@ -4,8 +4,10 @@ import play.api._
 import play.api.mvc._
 import play.api.libs.json.{JsString, JsObject, JsValue}
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.libs.iteratee.{Done, Input, Enumerator, Iteratee}
+import play.api.libs.iteratee._
 import ExecutionContext.Implicits.global
+import play.api.libs.concurrent.Akka
+import scala.Some
 
 object Application extends Controller {
 
@@ -20,16 +22,19 @@ object Application extends Controller {
     }
   }
 
-  def chatSocket(username: String) = WebSocket.async[JsValue] { request =>
+  def chatSocket(username: String) = WebSocket.using[JsValue] { request =>
     println(s"received $username through the chatSocket")
 
-    // this is explained to the best of my knowledge in my "Notes/Play Notes.md"
-    // Returns: a future of the
-    Future[(Iteratee[JsValue,_],Enumerator[JsValue])](
-      Done[JsValue,Unit]((),Input.EOF),
-      Enumerator[JsValue](JsObject(
-        Seq("user" -> JsString(username)))
-      ).andThen(Enumerator.enumInput(Input.EOF))
-    )
+    /* based on comment posted on
+     * blog.tksfz.org/2012/10/12/websockets-echo-using-play-scala-and-actors-part-i
+     */
+
+    // create Enumerator to send through client socket
+    val (out, channel) = Concurrent.broadcast[JsValue]
+
+    // create Iteratee to receive from client socket
+    val in = Iteratee.foreach[JsValue] { message => channel.push(message) }
+
+    (in, out)
   }
 }
