@@ -1,6 +1,12 @@
-##### 3/15/14
+## [SOAP](http://en.wikipedia.org/wiki/SOAP)
 
-[Apples Networking Concepts](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/NetworkingConcepts/NetworkingTerminology/NetworkingTerminology.html)
+### TODO
+
+### Simple Object Access Protocol
+
+## [Apples Networking Concepts](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/NetworkingConcepts/NetworkingTerminology/NetworkingTerminology.html)
+
+##### 3/15/14
 
 * **Host** -- any device **provides an endpoint for networked communication**
     * It is called a host because it **hosts the applications and daemons that run on it**
@@ -24,7 +30,9 @@
 * **Firewall** -- any router that inspects traffic, modifies traffic, or blocks
   specific subsets of traffic that flows through it.
 
-[Apples Networking Overview](https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Introduction/Introduction.html)
+## [Apples Networking Overview](https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Introduction/Introduction.html)
+
+##### 3/15/14
 
 Higher-level APIs also solve many of the most complex and difficult networking
 problems for you -- caching, proxies, choosing from among multiple IP addresses
@@ -68,9 +76,10 @@ TLS is the successor to the SSL protocol. In addition to encrypting data over
 the wire, TLS authenticates a server with a certificate to prevent spoofing.
 
 
-##### 3/7/14
 
 ### OSI Layers
+
+##### 3/7/14
 
 1. **Physical**
 2. **Data Link**
@@ -81,6 +90,8 @@ the wire, TLS authenticates a server with a certificate to prevent spoofing.
 7. **Application**
 
 ### TCP/IP Layers
+
+##### 3/7/14
 
 1. **Network Interface** -- (OSI 1,2) -- uses the hardware to do the above layers
     * TCP/IP is designed to be hardware independent

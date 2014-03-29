@@ -1,3 +1,20 @@
+File Descriptors
+----------------
+
+#### 3/24/14
+
+* **0** -- `stdin`
+* **1** -- `stdout`
+* **2** -- `stderr`
+
+##### Examples
+
+    make check 2>&1 | tee make-check.log
+
+We can think of **`2>&1`** as **"point `STDERR` to where `STDOUT` points"**
+
+And then of course `| tee file` means "and also print it to the log-file"
+
 Commands to Command
 -------------------
 
@@ -15,7 +32,7 @@ Commands to Command
 
 **returns path to the input file, not including the file itself in that path**
 
-this is the **opposite of `basename`**
+this is the **opposite of [`basename`](#basename)**
 
 ##### Examples
 
@@ -33,7 +50,7 @@ this is the **opposite of `basename`**
 
 **given a filepath, return the part after the last slash**
 
-This is the **opposite of `dirname`**
+This is the **opposite of [`dirname`](#dirname)**
 
 ##### Examples
 
