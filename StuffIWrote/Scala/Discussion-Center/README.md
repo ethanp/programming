@@ -39,13 +39,28 @@ The WebSocket powers:
 * The news feed
 * Invitation response actions
 
-The other stuff is done using normal HTTP
+`GET` requests are sent for
+
+* Requesting an existing Discussion
+* Creating a New Discussion
 
 
 ## New-discussion Page
 
+### Layout
+
 * A Form for adding members
-* Invite button (generates empty map and navigates you there)
+* Start button (generates empty map and navigates you there)
+
+### Implementation
+
+The WebSocket or AJAX powers:
+
+* A dropdown autocomplete with which member you want to join
+
+A `POST` request is sent for
+
+* Hitting the Start button
 
 ## Discussions Page
 
@@ -57,6 +72,11 @@ The other stuff is done using normal HTTP
 * On the right is a list of participants
     * People who haven't accepted the invitation to participate are noted too
 
+The WebSocket powers:
+
+* Submitting messages
+* Downloading messages for *any* of the conversations you are a part of
+* ds
 
 Server Side
 ===========
