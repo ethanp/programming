@@ -1,15 +1,23 @@
+Future Work
+===========
+The whole thing. I used trying to start this thing as an opportunity to learn
+how these things work. But it basically turned into me copy/pasting code from
+the internet to solve all the problems. That's not so much fun. So I'm going
+to move onto a new project that won't allow me to copy/paste the whole thing
+off the internet. But I can use a lot of foundation-layer code from this
+project in making the next project(s).
 
-| Question   | Answer                                                |
-| :--------: | ----------------------------------------------------- |
-| **What?**  | Chat Room Play! 2 app with a multi-chatroom model     |
-| **How?**   | Written from scratch, with help from examples online  |
-| **Tools?** | *Akka*, *WebSockets*, and *Redis*.                    |
+Learnt:
+
+* How to get `Bootstrap 3` to work with `Play` and make it look real nice
+* How to connect a `WebSocket` between the server's `(Iteratee, Enumerator)` and
+  the client's `new WebSocket(address)` object and send messages back and forth
 
 Client Side
 ===========
 
-Well, for now there are to be ***no GUI effects***, because that is not
-the primary goal here. The primary goal is to get a ***working infrastructure***.
+Well, for now there are to be ***no GUI effects***, because that is not the
+primary goal here. The primary goal is to get a ***working infrastructure***.
 If I actually finish that, the GUI can come next.
 
 ## Landing Page

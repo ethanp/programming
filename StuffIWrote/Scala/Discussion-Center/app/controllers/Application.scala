@@ -7,6 +7,7 @@ import scala.concurrent.ExecutionContext
 import play.api.libs.iteratee._
 import ExecutionContext.Implicits.global
 import scala.Some
+import actors.{DiscussionApp, Join}
 
 object Application extends Controller {
 
@@ -45,7 +46,6 @@ object Application extends Controller {
 
     // temporarily: just pretty-print any received JSON to the console
     val in = Iteratee.foreach[JsValue] { message => println(Json.prettyPrint(message)) }
-
     (in, out)
   }
 

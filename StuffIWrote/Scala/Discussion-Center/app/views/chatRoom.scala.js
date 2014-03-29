@@ -4,12 +4,15 @@ $(function(){
     /* access username with "@username" */
     var ws = new WebSocket("@routes.Application.chatSocket(username).webSocketURL()");
     ws.onmessage = function (event) {
-        var d = event.data;
-        d = JSON.parse(d);
-        $("#incoming").text(d.username);
+        var d = JSON.parse(event.data);
+        if (!!d.username)
+            $("#incoming").text(d.username);
+        else $("#incoming").text("no username sent");
         ws.send(JSON.stringify(
-            {text: "something"}
-        ))
+            {
+                text: "something"
+            }
+        ));
     }
 
 });
