@@ -2,9 +2,10 @@
 
 $(function(){
     /* access username with "@username" */
-
-    var ws = new WebSocket("@routes.Application.chatSocket(username).webSocketURL()")
+    var ws = new WebSocket("@routes.Application.chatSocket(username).webSocketURL()");
     ws.onmessage = function (event) {
-        alert(event.data)
+        var d = event.data;
+        d = JSON.parse(d);
+        $("#incoming").text(d.username);
     }
 });

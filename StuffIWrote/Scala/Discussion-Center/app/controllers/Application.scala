@@ -31,7 +31,7 @@ object Application extends Controller {
 
     // create Enumerator to send through client socket
 //    val (out, channel) = Concurrent.broadcast[JsValue]
-    val out = Enumerator[JsValue](JsObject(Seq("something" -> JsString("something else"))))
+    val out = Enumerator[JsValue](JsObject(Seq("username" -> JsString(username))))
     // create Iteratee to receive from client socket
 //    val in = Iteratee.foreach[JsValue] { message => channel.push(message) }
     val in = Iteratee.foreach[JsValue] { message => println(message) }
