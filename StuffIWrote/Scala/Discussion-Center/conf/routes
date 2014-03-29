@@ -8,9 +8,13 @@ GET     /                   controllers.Application.index
 # Hopefully this means the username is None if they didn't pass one in
 # and Some(username) if they did pass it in
 GET     /room               controllers.Application.chatRoom(username: Option[String])
+
+
+GET  /assets/javascripts/chatroom.js  controllers.Application.chatRoomJs(username: String)
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file       controllers.Assets.at(path="/public", file)
 
 # Map static resources from the web, viz. Bootstrap and jQuery
 # thanks to http://www.webjars.org/documentation
 GET         /webjars/*file        controllers.WebJarAssets.at(file)
+

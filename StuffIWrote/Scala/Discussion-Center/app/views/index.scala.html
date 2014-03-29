@@ -1,12 +1,9 @@
-@(message: String)
+@(username: Option[String])(implicit request: RequestHeader)
 
 @main("Discussion-Center Playground") {
-    <h1>@message</h1>
+    <h1>@username</h1>
 } {
-    <script type="text/javascript" charset="utf-8">
-    $(function(){
-        alert("hello")
-    });
+    <script type="text/javascript" charset="utf-8" src="@routes.Application.chatRoomJs(username.getOrElse("Not signed in"))">
     </script>
 
     <div class="container">

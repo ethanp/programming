@@ -11,18 +11,18 @@ import scala.Some
 
 object Application extends Controller {
 
-  def index = Action {
-    Ok(views.html.index("This is the landing page"))
+  def index = Action { implicit request =>
+    Ok(views.html.index(Some("This is the landing page")))
   }
 
-  def chatRoom(username: Option[String]) = Action {
+  def chatRoom(username: Option[String]) = Action { implicit request =>
     username match {
-      case Some(string) => Ok(views.html.index(string))
+      case Some(string) => Ok(views.html.index(Some(string)))
       case _ => Redirect(routes.Application.index())
     }
   }
 
-  def chatSocket(username: String) = WebSocket.using[JsValue] { request =>
+  def chatSocket(username: String) = WebSocket.using[JsValue] { implicit request =>
     println(s"received $username through the chatSocket")
 
     /* based on comment posted on
@@ -36,5 +36,9 @@ object Application extends Controller {
     val in = Iteratee.foreach[JsValue] { message => channel.push(message) }
 
     (in, out)
+  }
+
+  def chatRoomJs(username: String) = Action { implicit request =>
+    Ok(views.js.chatRoom(username))
   }
 }
