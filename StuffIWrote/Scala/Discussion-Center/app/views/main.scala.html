@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(body: Html)
 
 <!DOCTYPE html>
 
@@ -57,24 +57,19 @@
                 @content
             </div>
         </div>
+        @body
         <div class="container">
             <div class="row">
                 <div class="col-md-4">
-                    <h2>What say?</h2>
-                    <p>Not much</p>
-                    <p>
-                        <a class="btn btn-default" href="http://www.google.com" role="button">
-                            Plain vanilla
-                        </a>
-                    </p>
+                    <hr>@*Horizontal line across the page*@
+                    <footer>
+                        <p>
+                            <b>Footer:</b>
+                            <i>Because I can</i>
+                        </p>
+                    </footer>
                 </div>
             </div>
-            <hr>@*Horizontal line across the page*@
-            <footer>
-                <p>
-                    Because I can
-                </p>
-            </footer>
         </div>
     </body>
 </html>
