@@ -12,15 +12,15 @@ object Application extends Controller {
   /**
    * homepage, listing of available games
    */
-  def index = Action {
-    Ok(views.html.index("Your new application is ready."))
+  def index(user: Option[String]) = Action { implicit r =>
+    Ok(views.html.index(user))
   }
 
   /**
    * the page for a particular game
    */
   def game(id: Option[Int], user: Option[String]) = Action { implicit r =>
-    Redirect(routes.Application.index())
+    Redirect(routes.Application.index(None))
   }
 
   /**
@@ -35,11 +35,11 @@ object Application extends Controller {
 
     // temporarily: just pretty-print any received JSON to the console
     val in = Iteratee.foreach[JsValue] { msg => println(Json.prettyPrint(msg)) }
-    (in, out)
 
+    (in, out)
   }
 
   def squareGameJs = Action { implicit r =>
-    Redirect(routes.Application.index())
+    Redirect(routes.Application.index(None))
   }
 }

@@ -1,7 +1,26 @@
-@(message: String)
+@(username: Option[String])(implicit request: RequestHeader)
 
-@main("Welcome to Play") {
+@main(username) {
+    <script type="text/javascript" charset="utf-8" src="@routes.Application.squareGameJs()">
+    </script>
 
-    @play20.welcome(message)
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h2>What sayst thee?</h2><br/>
+                <label>Box<br/>
+                    <textarea rows="2" cols="40">Type text into this thang</textarea>
+                </label>
+                <p>
+                    <a class="btn btn-primary" href="http://www.google.com" role="button">
+                        Ooh shiny
+                    </a>
+                </p>
+                <div id="incoming">
+                    <!-- text sent from server will go here from WebSocket -->
+                </div>
+            </div>
+        </div>
+    </div>
 
 }

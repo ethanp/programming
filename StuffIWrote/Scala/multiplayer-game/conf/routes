@@ -2,8 +2,10 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page, with listing of available games
-GET     /                       controllers.Application.index
+# Home page, allows them to sign in
+# or if they're signed in, it shows a listing of available games
+# and a button to create a new game
+GET     /                       controllers.Application.index(user: Option[String])
 
 # The page for a particular game
 GET     /game                   controllers.Application.game(id: Option[Int], user: Option[String])
