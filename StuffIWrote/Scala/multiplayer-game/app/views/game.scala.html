@@ -4,20 +4,33 @@
      <div class="container">
         <div class="row">
             <div class="col-md-4">
+                <table id="gameboard"></table>
                 <style>
-                    @*TODO move to stylesheets*@
+                    @*TODO move to stylesheets?*@
                     table, th, td {
-                        border-collapse:collapse;
-                        border:1px solid black;
+                        border-collapse: collapse;
+                        border: 3px solid black;
                     }
                     th, td {
-                        padding:25px;
+                        height: 125px;
+                        width:  125px;
                     }
                     #redone {
-                        background-color:red
+                        background-color: red
                     }
                 </style>
-                <table style="width:300px">
+                <script type="text/javascript" charset="utf-8">
+                    @*TODO move to a game.scala.js file referenced from the correct 'route'*@
+                    var $gameboard = $("gameboard");
+                    var gameSize = 4;
+                    for (var row = 0; row < gameSize; row++) {
+                        /* add in table rows (tr's) */
+                        for (var col = 0; col < gameSize; col++) {
+                            /* add in table columns (td's) */
+                        }
+                    }
+                </script>
+                <table>
                     @*TODO generate with javascript*@
                     <tr>
                         <td></td>

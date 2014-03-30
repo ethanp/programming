@@ -1,8 +1,71 @@
+## REST
+
+##### 3/30/14
+
+[Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content, expires 8/10/14](http://tools.ietf.org/pdf/draft-ietf-httpbis-p2-semantics-26.pdf)
+
+### POST
+
+Used to **modify and update a resource** (*not create*).
+
+The `POST` method requests that the target resource process the 
+representation enclosed in the request according to the resource’s
+own specific semantics. For example, `POST` is used for the following
+functions (among others):
+
+* **Providing a block of data**, such as the fields entered into an HTML
+  form, to a data-handling process;
+* **Posting a message to a bulletin board**, newsgroup, mailing list,
+  blog, or similar group of articles;
+* **Creating a new resource** that has yet to be identified by the
+  origin server; and
+* **Appending data to a resource**’s existing representation(s).
+
+#### If your action is not idempotent, then you *MUST* use `POST`
+
+If you don't, you're just asking for trouble down the line.  `GET`, `PUT` and
+`DELETE` methods are required to be idempotent. Imagine what would happen in
+your application if the client was pre-fetching every possible `GET` request
+for your service -- if this would cause side effects visible to the client,
+then something's wrong. **This is true even if you're just sending a query
+string with no body.**
+
+### PUT
+
+Used to **create a resource, or overwrite it**. While you specify the resources new URL.
+
+The `PUT` method requests that the state of the target resource be
+created or replaced with the state defined by the representation
+enclosed in the request message payload.
+
+The `PUT` method requests that the state of the target resource be created or
+replaced with the state defined by the representation enclosed in the request
+message payload. A successful `PUT` of a given representation would suggest that
+a subsequent `GET` on that same target resource will result in an equivalent
+representation being sent in a `200 (OK)` response. However, there is no
+guarantee that such a state change will be observable, since the target
+resource might be acted upon by other user agents in parallel, or might be
+subject to dynamic processing by the origin server, before any subsequent `GET`
+is received.
+
+`PUT` is **idempotent**, so if you `PUT` an object twice, it has no effect [the second time].
+This is a nice property, so I would use `PUT` when possible.
+I think one cannot stress enough the fact that `PUT` is idempotent: 
+if the network is botched and the client is not sure whether his request made it through,
+it can just send it a second (or 100th) time, and it is guaranteed by the HTTP spec that
+this has exactly the same effect as sending once.
+
+It must be stressed that `PUT` is *defined* to be idempotent, but you still have to
+write your server in such a way that `PUT` behaves correctly.
+
 ## [SOAP](http://en.wikipedia.org/wiki/SOAP)
 
 ### TODO
 
 ### Simple Object Access Protocol
+
+Old school web-interface pattern that uses verbose XML.
+That's what I seem to remember it being anyway.
 
 ## [Apples Networking Concepts](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/NetworkingConcepts/NetworkingTerminology/NetworkingTerminology.html)
 
