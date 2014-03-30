@@ -20,7 +20,7 @@ object Application extends Controller {
    * the page for a particular game
    */
   def game(id: Option[Int], user: Option[String]) = Action { implicit r =>
-    Redirect(routes.Application.index(None))
+    Ok(views.html.game(user))
   }
 
   /**

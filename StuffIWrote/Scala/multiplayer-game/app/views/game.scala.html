@@ -1,0 +1,41 @@
+@(username: Option[String])(implicit request: RequestHeader)
+
+@main(username){
+     <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <style>
+                    @*TODO move to stylesheets*@
+                    table, th, td {
+                        border-collapse:collapse;
+                        border:1px solid black;
+                    }
+                    th, td {
+                        padding:25px;
+                    }
+                    #redone {
+                        background-color:red
+                    }
+                </style>
+                <table style="width:300px">
+                    @*TODO generate with javascript*@
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td id="redone"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+     </div>
+}
