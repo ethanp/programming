@@ -6,6 +6,7 @@ import scala.concurrent.{Future, ExecutionContext}
 import ExecutionContext.Implicits.global
 import play.api.libs.json.{Json, JsString, JsObject, JsValue}
 import play.api.libs.iteratee.{Iteratee, Enumerator}
+import models.GameApp
 
 object Application extends Controller {
 
@@ -40,10 +41,18 @@ object Application extends Controller {
 
   /**
    * User asked to create a new game instance
-   * It's a PUT because it should be idempotent
    */
   def create(user: Option[String], name: Option[String]) = Action { implicit r =>
-    Ok(views.html.game(user, name))
+    (user, name) match {
+      case (Some(u), Some(n)) =>
+        GameApp.createGame(u, n) match {
+          case Some(game) => Ok(views.html.game(user, name))
+
+          // TODO flash a little "Game already exists" or something
+          case None => Redirect(routes.Application.index(user))
+        }
+      case _ => Redirect(routes.Application.index(user))
+    }
   }
 
   /**
