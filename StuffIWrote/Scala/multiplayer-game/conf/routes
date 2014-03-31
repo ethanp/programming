@@ -7,8 +7,20 @@
 # and a button to create a new game
 GET     /                       controllers.Application.index(user: Option[String])
 
-# The page for a particular game
-GET     /game                   controllers.Application.game(id: Option[Int], user: Option[String])
+# The page for a particular game, as seen by a particular user
+GET     /game                   controllers.Application.game(user: Option[String], name: Option[String])
+
+# User pressed button to create a new game instance
+# It's a PUT not a POST because it should be idempotent
+# (not positive I got that all figured out though)
+PUT     /create                 controllers.Application.create(user: Option[String], name: Option[String])
+
+# User requested to join an existing game
+PUT     /join                   controllers.Application.join(user: Option[String], name: Option[String])
+
+# Called by the login form in the navbar
+# Should really be replaced with use of the WebSocket
+GET     /login                  controllers.Application.login(user: Option[String], password: Option[String])
 
 # URL of the WebSocket
 # through which the squares-to-turn and moves-played are funnelled back and forth

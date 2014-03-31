@@ -1,21 +1,25 @@
-@(username: Option[String])(implicit request: RequestHeader)
+@(loggedInAs: Option[String])(implicit request: RequestHeader)
 
-@main(username) {
+@main(loggedInAs) {
     <script type="text/javascript" charset="utf-8" src="@routes.Application.squareGameJs()">
     </script>
 
     <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <h3>Create a game</h3><br/>
-                <label>Game Title<br/>
-                    <textarea rows="2" cols="40">Type text into this thang</textarea>
-                </label>
-                <p>
-                    <a class="btn btn-primary" href="http://www.google.com" role="button">
-                        Ooh shiny
-                    </a>
-                </p>
+                @loggedInAs.map { username =>
+                    <h3>Create a game</h3><br/>
+                    <label>Game Title<br/>
+                        <textarea rows="2" cols="40">Type text into this thang</textarea>
+                    </label>
+                    <p>
+                        <a class="btn btn-primary" href="http://www.google.com" role="button">
+                            Ooh shiny
+                        </a>
+                    </p>
+                }.getOrElse {
+                    <h3>Please log in to create a game</h3>
+                }
                 <div id="incoming">
                     <!-- text sent from server will go here from WebSocket -->
                 </div>

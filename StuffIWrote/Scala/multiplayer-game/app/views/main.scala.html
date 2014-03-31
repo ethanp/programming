@@ -1,4 +1,4 @@
-@(username: Option[String])(body: Html)
+@(loggedInAs: Option[String])(body: Html)
 
 <!DOCTYPE html>
 
@@ -16,39 +16,41 @@
                 <div class="fill">
                     <div class="container">
                         <div class="navbar-header">
-                            @*Not sure what this part does*@
+                            <!-- This creates a dropdown menu button for mobile devices, but it doesn't do anything right now -->
                             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                                 <span class="sr-only"></span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                                 <span class="icon-bar"></span>
                             </button>
-                            <a class="navbar-brand" href="@routes.Application.index(username)">multiplayer-game</a>
+                            <a class="navbar-brand" href="@routes.Application.index(loggedInAs)">multiplayer-game</a>
                         </div>
+                        <!-- I think collapse means this part is in the drop-down when viewed on mobile -->
                         <div class="navbar-collapse collapse">
-                            <form class="navbar-form navbar-right" role="form">
-                                <div class="form-group">
-                                    <input type="text" placeholder="Username" class="form-control">
-                                </div>
-                                <div class="form-group">
-                                    <input type="password" placeholder="Password (unchecked)" class="form-control">
-                                </div>
-                                <button type="submit" class="btn btn-success">
-                                    Sign in
-                                </button>
-                            </form>
+                            @*Only show the login form if the user isn't already logged in, otw show their username*@
+                            @loggedInAs.map { username =>
+                                <p class="navbar-brand pull-right">
+                                    Logged in as <b>@username</b> -
+                                    <a class="btn btn-danger" href="@routes.Application.index(None)">Log out</a>
+                                </p>
+                            }.getOrElse {
+                                <form class="navbar-form navbar-right" role="form" action="@routes.Application.login(None, None)">
+                                    <div class="form-group">
+                                        <input type="text" name="user" placeholder="Username" class="form-control">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" name="password" placeholder="Password (unchecked)" class="form-control">
+                                    </div>
+                                    <button type="submit" class="btn btn-success">
+                                        Sign in
+                                    </button>
+                                </form>
+                            }
                         </div>
-                        @*TODO This will go in an IF dictating what's at the top there*@
-                        @*depending on whether the user is currently signed in or not*@
-                        @*<p class="pull-right">*@
-                            @*Logged in as No One —*@
-                            @*<a href="@routes.Application.index()">Disconnect</a>*@
-                        @*</p>*@
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="jumbotron">
             <div class="container">
                 <h1>Hello!</h1>

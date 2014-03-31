@@ -17,9 +17,39 @@ object Application extends Controller {
   }
 
   /**
+   * Called by the login form in the navbar
+   * Should really be replaced with use of the WebSocket
+   * Should also check whether the username is already taken
+   */
+  def login(user: Option[String], password: Option[String]) = Action { implicit r =>
+    user.filterNot(_.isEmpty).map { user =>
+      Ok(views.html.index(Some(user)))
+    }.getOrElse {
+      Redirect(routes.Application.index(None)).flashing(
+        "error" -> "Please choose a valid username."
+      )
+    }
+  }
+
+  /**
    * the page for a particular game
    */
-  def game(id: Option[Int], user: Option[String]) = Action { implicit r =>
+  def game(user: Option[String], name: Option[String]) = Action { implicit r =>
+    Ok(views.html.game(user))
+  }
+
+  /**
+   * User asked to create a new game instance
+   * It's a PUT because it should be idempotent
+   */
+  def create(user: Option[String], name: Option[String]) = Action { implicit r =>
+    Ok(views.html.game(user))
+  }
+
+  /**
+   * User requested to join an existing game
+   */
+  def join(user: Option[String], name: Option[String]) = Action { implicit r =>
     Ok(views.html.game(user))
   }
 
