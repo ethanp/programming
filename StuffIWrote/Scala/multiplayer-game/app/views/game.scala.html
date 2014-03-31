@@ -30,6 +30,10 @@
 
                 <script type="text/javascript" charset="utf-8">
                     @*TODO move to a game.scala.js file referenced from the correct 'route'*@
+
+                    var redSquare = '#row-1-col-2'; // this is just a random default redSquare
+
+                    // make the gameboard
                     var $gameboard = $('#gameboard');
                     var gameSize = 4;
                     for (var row = 0; row < gameSize; row++) {
@@ -44,7 +48,36 @@
                             $newRow.append($newCol);
                         }
                     }
-                    $('#row-1-col-2').addClass('redone');
+
+                    // TODO remove default red square
+                    $(redSquare).addClass('redone');
+
+                    var websocket = new WebSocket("@routes.Application.gameSocket(username.get)");
+
+                    websocket.onmessage = function (evt) {
+
+                        // someone scored, update location of red square
+                        if ('newRed' in evt.data) {
+                            var r = evt.data['row'];
+                            var c = evt.data['col'];
+                            redSquare.removeClass('redone');
+                            redSquare = '#row-' + r + '-col-' + c;
+                            $(redSquare).addClass('redone');
+                        }
+
+                        // someone won
+                        if ('gameOver' in evt.data) {
+                            // TODO end the game somehow
+                        }
+                    };
+
+                    // send cell-click success values to server
+                    $('.game-cell').click(function() {
+                        var allClasses = $(this).attr('class');
+                        var isRed = allClasses.indexOf('redone') > -1;
+                        websocket.send( JSON.stringify( { "clickedRedOne": isRed } ));
+                    });
+
                 </script>
             </div>
         </div>

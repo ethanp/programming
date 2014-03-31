@@ -45,11 +45,11 @@ object Application extends Controller {
   def create(user: Option[String], name: Option[String]) = Action { implicit r =>
     (user, name) match {
       case (Some(u), Some(n)) =>
-        GameApp.createGame(u, n) match {
-          case Some(game) => Ok(views.html.game(user, name))
-
+        GameApp.createGame(u, n) map { _ =>
+            Ok(views.html.game(user, name))
+        } getOrElse {
           // TODO flash a little "Game already exists" or something
-          case None => Redirect(routes.Application.index(user))
+           Redirect(routes.Application.index(user))
         }
       case _ => Redirect(routes.Application.index(user))
     }
