@@ -4,6 +4,8 @@
 
 [Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content, expires 8/10/14](http://tools.ietf.org/pdf/draft-ietf-httpbis-p2-semantics-26.pdf)
 
+HTML forms (up to and including HTML 5) can only send `GET` and `POST`.
+
 ### POST
 
 Used to **modify and update a resource** (*not create*).

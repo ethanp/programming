@@ -9,14 +9,16 @@
             <div class="col-md-4">
                 @loggedInAs.map { username =>
                     <h3>Create a game</h3><br/>
-                    <label>Game Title<br/>
-                        <textarea rows="2" cols="40">Type text into this thang</textarea>
-                    </label>
-                    <p>
-                        <a class="btn btn-primary" href="http://www.google.com" role="button">
+                    <form role="form" action="@routes.Application.create(None, None)">
+                        <div class="input-group input-group-lg">
+                            <span class="input-group-addon glyphicon glyphicon-plus"></span>
+                            <input type="text" name="name" class="form-control" placeholder="Type text into this thang">
+                        </div><p><br/></p>
+                        <input name="user" value="@loggedInAs" style="visibility: hidden">
+                        <button type="submit" class="btn btn-primary" role="button">
                             Ooh shiny
-                        </a>
-                    </p>
+                        </button>
+                    </form>
                 }.getOrElse {
                     <h3>Please log in to create a game</h3>
                 }
