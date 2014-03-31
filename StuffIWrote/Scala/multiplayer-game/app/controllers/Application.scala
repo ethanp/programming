@@ -35,7 +35,7 @@ object Application extends Controller {
    * the page for a particular game
    */
   def game(user: Option[String], name: Option[String]) = Action { implicit r =>
-    Ok(views.html.game(user))
+    Ok(views.html.game(user, name))
   }
 
   /**
@@ -43,14 +43,14 @@ object Application extends Controller {
    * It's a PUT because it should be idempotent
    */
   def create(user: Option[String], name: Option[String]) = Action { implicit r =>
-    Ok(views.html.game(user))
+    Ok(views.html.game(user, name))
   }
 
   /**
    * User requested to join an existing game
    */
   def join(user: Option[String], name: Option[String]) = Action { implicit r =>
-    Ok(views.html.game(user))
+    Ok(views.html.game(user, name))
   }
 
   /**

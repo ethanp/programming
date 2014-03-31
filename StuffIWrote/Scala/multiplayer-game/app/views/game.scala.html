@@ -1,53 +1,51 @@
-@(username: Option[String])(implicit request: RequestHeader)
+@(username: Option[String], gameTitle: Option[String])(implicit request: RequestHeader)
 
 @main(username){
      <div class="container">
         <div class="row">
             <div class="col-md-4">
-                <table id="gameboard"></table>
                 <style>
                     @*TODO move to stylesheets?*@
                     table, th, td {
                         border-collapse: collapse;
                         border: 3px solid black;
                     }
-                    th, td {
-                        height: 125px;
-                        width:  125px;
+                    td, .game-cell {
+                        height: 75px;
+                        width:  75px;
                     }
-                    #redone {
+                    .redone {
                         background-color: red
                     }
                 </style>
+                @gameTitle.map { title =>
+                  <h2>@title</h2>
+                }.getOrElse {
+                    <h4>Mysteriously, no one is signed in?!</h4>
+                }
+                <br/>
+                <table id="gameboard">
+                        <!--this is where the game gets inserted-->
+                </table>
+
                 <script type="text/javascript" charset="utf-8">
                     @*TODO move to a game.scala.js file referenced from the correct 'route'*@
-                    var $gameboard = $("gameboard");
+                    var $gameboard = $('#gameboard');
                     var gameSize = 4;
                     for (var row = 0; row < gameSize; row++) {
-                        /* add in table rows (tr's) */
+                        var $newRow = $('<tr></tr>');
+                        $newRow.addClass('game-row');
+                        $newRow.attr('id', 'row-'+row);
+                        $gameboard.append($newRow);
                         for (var col = 0; col < gameSize; col++) {
-                            /* add in table columns (td's) */
+                            var $newCol = $('<td></td>');
+                            $newCol.addClass('game-cell');
+                            $newCol.attr('id', 'row-'+row+'-col-'+col);
+                            $newRow.append($newCol);
                         }
                     }
+                    $('#row-1-col-2').addClass('redone');
                 </script>
-                <table>
-                    @*TODO generate with javascript*@
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td id="redone"></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                </table>
             </div>
         </div>
      </div>
