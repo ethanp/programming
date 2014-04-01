@@ -45,7 +45,10 @@ def pathfinder(cd_able, path):
     """
     if len(path) == 0 or not os.path.isdir(cd_able):
         l = [os.path.abspath(cd_able)]
-        os.chdir('..')
+        if os.path.isdir(cd_able):
+            os.chdir(cd_able)
+        else:
+            os.chdir('..')
         return l
 
     os.chdir(cd_able)
@@ -75,14 +78,16 @@ def pathfinder(cd_able, path):
     starts_with = head if starts_with else ''
     ends_with = head if ends_with else ''
 
-    return flatten([pathfinder(p, tail)
+    l = flatten([pathfinder(p, tail)
                     for p in os.listdir('.')
                     if head in p
                     and '.DS_Store' not in p
                     and p.startswith(starts_with)
                     and p.endswith(ends_with)
                     and os.path.isdir(p) != is_file])
+    return l
 
 
 if __name__ == '__main__':
-    pathfinder(['/Users/ethan/Desktop', ['New Files', '*', '^Something', '*', '.csv$=']])
+    files = pathfinder('/Users/ethan/Desktop', ['036 Vibe Data', '^KGB', '*', '*'])
+    for f in files: print f
