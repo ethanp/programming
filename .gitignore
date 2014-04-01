@@ -52,3 +52,4 @@ Educational/Scala/GDataWithAkka/target
 #SICP.rkt#1#
 *.rkt#1#
 *.rkt#2#
+.name
