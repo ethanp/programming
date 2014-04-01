@@ -19,10 +19,10 @@ object GameApp {
   // I'm using a var instead of a mutable.Map so that if
   // I pass this thing around, I can (maybe?) prevent other
   // users from modifying it
-  var games = Map[String, ActorRef]()
+  private var games = Map[String, ActorRef]()
 
   def createGame(user: String, name: String): Option[ActorRef] = {
-    games get name map { _ =>
+    games.get(name) map { _ =>
       println(s"The name $name is already taken.")
       None
     } getOrElse {
@@ -33,7 +33,7 @@ object GameApp {
     }
   }
 
-  def getGame(name: String): Option[ActorRef] = games get name
+  def getGame(name: String): Option[ActorRef] = games.get(name)
 }
 
 /**
@@ -46,14 +46,14 @@ case class Game(name: String) extends Actor {
 
   def receive = {
     case Join(username) =>
-      scoreboard get username map { _ =>
+      scoreboard.get(username) map { _ =>
         scoreboard += username -> 0
         sender ! Success
       } getOrElse {
         sender ! UsernameAlreadyTaken
       }
     case Point(username, addIt) =>
-      scoreboard get username map { oldScore =>
+      scoreboard.get(username) map { oldScore =>
         val newScore = if (addIt) oldScore + 1 else oldScore - 1
         scoreboard.put(username, newScore)
         sender ! NewScore(scoreboard.toMap)

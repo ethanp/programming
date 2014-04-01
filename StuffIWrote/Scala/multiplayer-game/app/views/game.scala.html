@@ -31,11 +31,9 @@
                 <script type="text/javascript" charset="utf-8">
                     @*TODO move to a game.scala.js file referenced from the correct 'route'*@
 
-                    var redSquare = '#row-1-col-2'; // this is just a random default redSquare
-
                     // make the gameboard
                     var $gameboard = $('#gameboard');
-                    var gameSize = 4;
+                    var gameSize = 4;  // could be set by user or randomly
                     for (var row = 0; row < gameSize; row++) {
                         var $newRow = $('<tr></tr>');
                         $newRow.addClass('game-row');
@@ -50,7 +48,7 @@
                     }
 
                     // TODO remove default red square
-                    $(redSquare).addClass('redone');
+                    $('#row-1-col-2').addClass('redone');
 
                     var websocket = new WebSocket("@routes.Application.gameSocket(username.get)");
 
@@ -58,11 +56,8 @@
 
                         // someone scored, update location of red square
                         if ('newRed' in evt.data) {
-                            var r = evt.data['row'];
-                            var c = evt.data['col'];
-                            redSquare.removeClass('redone');
-                            redSquare = '#row-' + r + '-col-' + c;
-                            $(redSquare).addClass('redone');
+                            $('.redone').removeClass('redone');
+                            $('#row-'+evt.data['row']+'-col-'+evt.data['col']).addClass('redone');
                         }
 
                         // someone won
@@ -73,9 +68,9 @@
 
                     // send cell-click success values to server
                     $('.game-cell').click(function() {
-                        var allClasses = $(this).attr('class');
-                        var isRed = allClasses.indexOf('redone') > -1;
-                        websocket.send( JSON.stringify( { "clickedRedOne": isRed } ));
+                        websocket.send( JSON.stringify(
+                            { "clickedRedOne": $(this).attr('class').indexOf('redone') > -1 }
+                        ));
                     });
 
                 </script>

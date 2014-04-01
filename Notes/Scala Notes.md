@@ -1,6 +1,19 @@
 Notes on Scala
 ==============
 
+Private instance variables
+--------------------------
+
+Make the variable unavailable to other classes,
+but available to other instances of the same class
+
+    private var compareIt = List[Int]()
+    
+Make the variable unavailable to *anyone* including other instances of this class.
+Now it will be *only* available to *this specific instance*.
+
+    private[this] var meOnly = List[Int]()
+
 My Guide to a crazy function
 ----------------------------
 
