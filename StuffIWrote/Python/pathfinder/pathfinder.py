@@ -47,7 +47,7 @@ def pathfinder(cd_able, path):
         l = [os.path.abspath(cd_able)]
         if os.path.isdir(cd_able):
             os.chdir(cd_able)
-        else:
+        if len(path) == 0:
             os.chdir('..')
         return l
 
@@ -89,5 +89,5 @@ def pathfinder(cd_able, path):
 
 
 if __name__ == '__main__':
-    files = pathfinder('/Users/ethan/Desktop', ['036 Vibe Data', '^KGB', '*', '*'])
+    files = pathfinder('/Users/ethan/Desktop', ['036 Vibe Data', '^KGB', '*', '*', '^Other'])
     for f in files: print f
