@@ -83,14 +83,23 @@ which works as we expect!
 
 ### string.h
 
+##### 3/26/14
+
+#### strchr
+
+    char *strchr(char *str, int character)
+
+* **Returns** a pointer to the first occurrence of `character` in `str`
+    * Returns `NULL` if `character` not in `str`
+
 ##### 2/27/14
 
 #### strcpy
 
     char *strcpy(char *dest, char *src)
 
+* **Returns** `dest`
 * Also copies null-terminator.
-* Returns `dest`
 
 #### strncpy
 
@@ -99,12 +108,12 @@ which works as we expect!
 * Only copies `count` characters
     * `if count ≤ strlen(src):` `dest` will not have a null-terminator
     * `else:` Will be padded with nulls
-* Returns `dest`
+* **Returns** `dest`
 
 ### stdio.h
 
     int sprintf(char *buffer, char *format, ...)
 
 * Basically, it calls `printf` on the `format` argument, but instead of writing the output to `stdout`, it writes it into the `buffer` argument
-* Returns the number of characters written, or a negative value if there was an error
+* **Returns** the number of characters written, or a negative value if there was an error
 

@@ -1,6 +1,17 @@
 Notes on Python
 ===============
 
+Sorting in-place & out-of-body
+------------------------------
+
+Sort the `list` in-place
+
+    myList.sort()
+
+Create a new list out of sorted values of given list
+
+    sorted(myList)
+
 Justifying Text
 ---------------
 
@@ -19,7 +30,7 @@ Raw Strings
 Usually patterns will be expressed in Python code using this raw string notation.
 
 * `r"\n"` is a **two-character string** containing `'\'` and `'n'`
-* `"\n"` is a **one-character string** containing a *newline*. 
+* `"\n"` is a **one-character string** containing a *newline*.
 
 Regex
 -----
@@ -74,7 +85,7 @@ the sequence
 is equivalent to
 
     result = re.match(pattern, string)
-    
+
 but using `re.compile()` saves the resulting regular expression object
 for reuse
 
@@ -94,7 +105,7 @@ match. Otw they are the same.
 ### Examples
 
 Find all repeated words
- 
+
     >>> p = re.compile(r'(\b\w+)\s+\1')
     >>> p.search('Paris in the the spring').group()
     'the the'
@@ -113,7 +124,7 @@ Groups can be nested
     ('abc', 'b')
     >>> m.group(2,1,2)
     ('b', 'abc', 'b')
-    
+
 You can use Named Groups
 
     >>> p = re.compile(r'(?P<word>\b\w+\b)')
@@ -126,12 +137,12 @@ Match a filename of the form `.*[.].*$` excluding `*.bat` files
 * Naive (aka horrendous)
 
         .*[.]([^b].?.?|.[^a]?.?|..?[^t]?)$
-    
+
 * Improved (using *negative lookahead*)
 
         .*[.](?!bat$).*$
 
-    * Excluding another filename extension is now easy; simply add it as an 
+    * Excluding another filename extension is now easy; simply add it as an
       alternative inside the assertion. The following pattern excludes
       filenames that end in *either* `bat` *or* `exe`:
 
@@ -141,7 +152,7 @@ Checkout the `re.split()` function
 
     >>> re.split('[\W]+', 'Words, words, words.', 1)
     ['Words', 'words, words.']
-    
+
 If capturing parentheses are used in the RE, their values are also returned
 as part of the list
 
@@ -156,11 +167,11 @@ Substitution
     >>> p = re.compile( '(blue|white|red)')
     >>> p.sub( 'colour', 'blue socks and red shoes', count=1)
     'colour socks and red shoes'
-    
+
     # subn return a tuple with the count
     >>> p.subn( 'colour', 'blue socks and red s    hoes')
     ('colour socks and colour shoes', 2)
-    
+
 Referring to *named groups*
 
     >>> p = re.compile('section{ (?P<name> [^}]* ) }', re.VERBOSE)
