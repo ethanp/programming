@@ -32,16 +32,18 @@ def pathfinder(cd_able, path):
         ...$ means "endswith"
         ...= means "is_not_dir"
     """
+
     if len(path) == 0 or os.path.isdir(cd_able):
         return [os.path.abspath(cd_able)]
 
     os.chdir(cd_able)
-    head = path[0]
-    tail = path[1:]
+
+    head, tail = path[0], path[1:]
     starts_with, ends_with, is_file = False, False, False
 
     if head[0] == '*':
-        return flatten([pathfinder(os.path.abspath('./'+f), tail) for f in os.listdir('.')])
+        return flatten([pathfinder(os.path.abspath('./'+f), tail)
+                        for f in os.listdir('.')])
 
     if head[0] == '^':
         starts_with = True
