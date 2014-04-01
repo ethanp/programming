@@ -3,9 +3,9 @@ Pathfinder
 
 This is a utility method for those times when you have a bunch of log files
 that you need to collect data out of, but they don't always come in the same
-directory structure. This utility will allow you to easily express the given
+directory structure. **This utility will allow you to easily express the given
 directory structure and return to you a list of the absolute paths of the
-files in question.
+files in question.**
 
 #### Given this directory structure
 
@@ -25,7 +25,7 @@ files in question.
 
     from pathfinder import pathfinder.pathfinder
 
-    my_files = pathfinder('.', ['upper_dir', '*', '^want', '.tsv$='])
+    my_files = pathfinder('.', ['upper_dir', '*', '^want', '.csv$='])
     
     print my_files
     
@@ -47,3 +47,6 @@ Signature
     * `^...` means **"starts with"**
     * `...$` means **"ends with"**
     * `...=` means **"is not a directory"**
+    * `$` must precede `=` if both are being used as directives
+    * There is no escape if you want the directives as literals
+      at the end of the path list
