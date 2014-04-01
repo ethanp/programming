@@ -7,7 +7,11 @@ import os
 
 def flatten(given):
     """
-    Flatten a given list.
+    e.g.
+
+        flatten([1,[2,3,4,[[5,6],7,8],9],[]])
+
+                ==>>  [1,2,3,4,5,6,7,8,9]
     """
     to_ret = []
     for l in given:
@@ -24,26 +28,31 @@ def test_flatten():
 
 def pathfinder(cd_able, path):
     """
-    1st thing must be a path we can `cd into`
+    @param  `cd_able`  either a path we can `cd into` or not a directory
+    @param  `path`  a list where each element follows the DSL given below
+    @return:  absolute path to all the matched files
 
-    next things follow the DSL:
-        *    means any file
-        ^... means "startswith"
-        ...$ means "endswith"
-        ...= means "is_not_dir"
+    The DSL:
+        *     means any file
+        ^...  means "startswith"
+        ...   means "contains"
+        ...$  means "endswith"
+        ...=  means "is_not_dir"
+        ...$= means "endswith and is_not_dir"
+        ...=$ means "endswith an '='" (i.e. = directive must be after desired $ directive)
+
+    e.g. `file_paths = pathfinder('/Users/ethan/Desktop/New Freqs', ['*', '*', '^Other_', '^Transform='])`
     """
-
     if len(path) == 0 or not os.path.isdir(cd_able):
         l = [os.path.abspath(cd_able)]
         os.chdir('..')
         return l
 
     os.chdir(cd_able)
-
     head, tail = path[0], path[1:]
     starts_with, ends_with, is_file = False, False, False
 
-    if head[0] == '*':
+    if head == '*':
         l = []
         for f in os.listdir('.'):
             if '.DS_Store' not in f:
@@ -66,15 +75,13 @@ def pathfinder(cd_able, path):
     starts_with = head if starts_with else ''
     ends_with = head if ends_with else ''
 
-    l =  flatten([pathfinder(p, tail)
-                  for p in os.listdir('.')
-                  if head in p
-                  and '.DS_Store' not in p
-                  and p.startswith(starts_with)
-                  and p.endswith(ends_with)
-                  and os.path.isdir(p) != is_file])
-    # os.chdir('..')
-    return l
+    return flatten([pathfinder(p, tail)
+                    for p in os.listdir('.')
+                    if head in p
+                    and '.DS_Store' not in p
+                    and p.startswith(starts_with)
+                    and p.endswith(ends_with)
+                    and os.path.isdir(p) != is_file])
 
 
 if __name__ == '__main__':

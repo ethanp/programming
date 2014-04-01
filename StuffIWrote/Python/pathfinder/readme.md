@@ -3,9 +3,10 @@ Pathfinder
 
 This is a utility method for those times when you have a bunch of log files
 that you need to collect data out of, but they don't always come in the same
-directory structure. **This utility will allow you to easily express the given
-directory structure and return to you a list of the absolute paths of the
-files in question.**
+directory structure. Or there is a bunch of logged data files and you only want
+the ones with a particular filename prefix/suffix/type. **This utility will
+allow you to easily and readably express the given directory structure and return to you a
+list of the absolute paths of *only* the files you want.**
 
 #### Given this directory structure
 
@@ -20,17 +21,17 @@ files in question.**
                                    \            > data I don't want.tsv
                                     \
                                      > don't want it
-                              
+
 #### Behold the following command
 
-    from pathfinder import pathfinder.pathfinder
+    from pathfinder import pathfinder
 
     my_files = pathfinder('.', ['upper_dir', '*', '^want', '.csv$='])
-    
+
     print my_files
-    
-            => ['pwd/upper_dir/files 1/want it 1/dat data1.csv',
-                'pwd/upper_dir/files b/want it 2/dat data2.csv']
+
+            => ['/Absolute...Path/pwd/upper_dir/files 1/want it 1/dat data1.csv',
+                '/Absolute...Path/pwd/upper_dir/files b/want it 2/dat data2.csv']
 
 #### Reference
 
@@ -41,7 +42,8 @@ Signature
 
 * **cd_able** must be *either* a directory one may `cd` into from
   the current directory, *or* not a directory at all.
-  
+
+
 * **path** is the part that has the following **DSL**:
     * `*`    means any file
     * `^...` means **"starts with"**
@@ -49,4 +51,4 @@ Signature
     * `...=` means **"is not a directory"**
     * `$` must precede `=` if both are being used as directives
     * There is no escape if you want the directives as literals
-      at the end of the path list
+
