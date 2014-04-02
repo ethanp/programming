@@ -14,7 +14,7 @@ object Application extends Controller {
    * homepage, listing of available games
    */
   def index(user: Option[String]) = Action { implicit r =>
-    Ok(views.html.index(user))
+    Ok(views.html.index(user, GameApp.gameSet))
   }
 
   /**
@@ -24,7 +24,7 @@ object Application extends Controller {
    */
   def login(user: Option[String], password: Option[String]) = Action { implicit r =>
     user.filterNot(_.isEmpty).map { user =>
-      Ok(views.html.index(Some(user)))
+      Ok(views.html.index(Some(user), GameApp.gameSet))
     }.getOrElse {
       Redirect(routes.Application.index(None)).flashing(
         "error" -> "Please choose a valid username."

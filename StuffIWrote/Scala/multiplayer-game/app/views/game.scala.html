@@ -62,18 +62,32 @@
 
                         // someone won
                         if ('gameOver' in evt.data) {
-                            // TODO end the game somehow
+                            // TODO end the game
+                            // maybe there's a Bool "you_won"
+                            // and the board is either replaced with
+                            // "You Won" or "You Lost"
                         }
                     };
 
-                    // send cell-click success values to server
+                    // send cell-click success values to server this way
+                    // if a second person clicks before the browser responds
+                    // to the first one, it will still count as a success
                     $('.game-cell').click(function() {
+                        var isRed = $(this).attr('class').indexOf('redone') > -1;
                         websocket.send( JSON.stringify(
-                            { "clickedRedOne": $(this).attr('class').indexOf('redone') > -1 }
+                            { "clickedSquare": isRed }
                         ));
                     });
-
                 </script>
+            </div>
+            <div class="col-md-4">
+                <h2>Scoreboard</h2><br>
+                <ul>
+                    <h4>You</h4>
+                    <h6>23</h6>
+                    <h4>The other guy</h4>
+                    <h6>25</h6>
+                </ul>
             </div>
         </div>
      </div>

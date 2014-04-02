@@ -16,9 +16,7 @@ import scala.collection.mutable
 object GameApp {
 
   // Map of title to Game
-  // I'm using a var instead of a mutable.Map so that if
-  // I pass this thing around, I can (maybe?) prevent other
-  // users from modifying it
+  // private means it has no public getter
   private var games = Map[String, ActorRef]()
 
   def createGame(user: String, name: String): Option[ActorRef] = {
@@ -34,6 +32,7 @@ object GameApp {
   }
 
   def getGame(name: String): Option[ActorRef] = games.get(name)
+  def gameSet: Set[String] = games.keySet
 }
 
 /**

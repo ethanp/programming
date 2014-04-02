@@ -4,7 +4,10 @@ Click the Square
 TODO Queue
 ----------
 
-1. Act naturally
+1. A "leave game" button
+2. Scoreboard
+3. Game Over scenario
+4. Clicking a square
 
 Outline
 -------
