@@ -2,11 +2,12 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.{Await, Future, ExecutionContext}
 import ExecutionContext.Implicits.global
 import play.api.libs.json.{Json, JsString, JsObject, JsValue}
 import play.api.libs.iteratee.{Iteratee, Enumerator}
-import models.GameApp
+import scala.concurrent.duration._
+import models.{Scores, GameApp}
 
 object Application extends Controller {
 
@@ -35,31 +36,63 @@ object Application extends Controller {
   /**
    * the page for a particular game
    */
-  def game(user: Option[String], name: Option[String]) = Action { implicit r =>
-    Ok(views.html.game(user, name))
+  def game(user: Option[String], name: Option[String]) = {
+    if (name.isDefined) {
+      // I don't think this is how you're supposed to do it
+      val scoresFuture = GameApp.scoresForGame(name.get)
+      Await.result(scoresFuture, 5 seconds)
+      scoresFuture onSuccess { case scores: Map[String, Int] =>
+        Action { implicit r =>
+          Ok(views.html.game(user, name, scores))
+        }
+      }
+      scoresFuture onFailure {
+        case e : Exception => println("Exception in Application.game")
+      }
+    }
+    else
+      Redirect(routes.Application.index(user))
   }
 
   /**
    * User asked to create a new game instance
    */
-  def create(user: Option[String], name: Option[String]) = Action { implicit r =>
-    (user, name) match {
-      case (Some(u), Some(n)) =>
-        GameApp.createGame(u, n) map { _ =>
-            Ok(views.html.game(user, name))
-        } getOrElse {
-          // TODO flash a little "Game already exists" or something
-           Redirect(routes.Application.index(user))
-        }
-      case _ => Redirect(routes.Application.index(user))
+  def create(user: Option[String], name: Option[String]) = {
+    if (name.isDefined) {
+      // TODO this should be calling GameApp.createGame(name.get) not scoresForGame...
+      val scoresFuture = GameApp.scoresForGame(name.get)
+      Await.result(scoresFuture, 5 seconds)
+      scoresFuture onSuccess {
+        case scores: Map[String, Int] =>
+          Action {
+            implicit r =>
+              (user, name) match {
+                case (Some(u), Some(n)) =>
+                  GameApp.createGame(u, n) map {
+                    _ =>
+                      Ok(views.html.game(user, name, scores))
+                  } getOrElse {
+                    // TODO flash a little "Game already exists" or something
+                    Redirect(routes.Application.index(user))
+                  }
+                case _ => Redirect(routes.Application.index(user))
+              }
+          }
+      }
     }
+    else
+      Redirect(routes.Application.index(user))
   }
 
   /**
    * User requested to join an existing game
    */
-  def join(user: Option[String], name: Option[String]) = Action { implicit r =>
-    Ok(views.html.game(user, name))
+  def join(user: Option[String], name: Option[String]) = {
+    // TODO method needs to ask the appropriate Game actor to add this user before it can render the game
+    Action {
+      implicit r =>
+        Ok(views.html.game(user, name))
+    }
   }
 
   /**
