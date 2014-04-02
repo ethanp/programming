@@ -44,7 +44,7 @@ def pathfinder(cd_able, path):
     e.g. `file_paths = pathfinder('/Users/ethan/Desktop/New Freqs', ['*', '*', '^Other_', '^Transform='])`
     """
     if len(path) == 0 or not os.path.isdir(cd_able):
-        l = [os.path.abspath(cd_able)]
+        l = [os.path.abspath(cd_able)]  # can't be inlined because abspath relies (stupidly...) on the CWD
         if os.path.isdir(cd_able):
             os.chdir(cd_able)
         if len(path) == 0:
@@ -59,7 +59,8 @@ def pathfinder(cd_able, path):
         l = []
         for f in os.listdir('.'):
             if '.DS_Store' not in f:
-                l += pathfinder(f, tail)
+                pft = pathfinder(f, tail)
+                l += pft
                 os.chdir('..')
         return flatten(l)
 
@@ -86,8 +87,21 @@ def pathfinder(cd_able, path):
                     and p.endswith(ends_with)
                     and os.path.isdir(p) != is_file])
     return l
+    # l = []
+    # for p in os.listdir('.'):
+    #     if head in p and '.DS_Store' not in p and p.startswith(starts_with) and p.endswith(ends_with) and os.path.isdir(p) != is_file:
+    #         pft = pathfinder(p, tail)
+    #         l += pft
+    # os.chdir('..')
+    # return flatten(l)
 
+##################################################################################
+# TODO bug: when it looks for ^Trans, but there are 3 of them,                   #
+# TODO it finds the first, cd ..'s out of the right dir, finds the next,         #
+# TODO and now the path is wrong, and now it goes on a dwnwd spiral of `cd ..`'s #
+##################################################################################
 
 if __name__ == '__main__':
-    files = pathfinder('/Users/ethan/Desktop', ['036 Vibe Data', '^KGB', '*', '*', '^Other'])
+
+    files = pathfinder('/Users/ethan/Desktop', ['036 Vibe Data', '^KGB', '*', '*', '^Other', '^Trans='])
     for f in files: print f
