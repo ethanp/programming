@@ -4,8 +4,9 @@ Click the Square
 TODO Queue
 ----------
 
-1. A "leave game" button
-2. Scoreboard
+1. Follow the TODO's in the files, homie
+    * They're mainly for the **scoreboard**
+2. A "leave game" button
 3. Game Over scenario
 4. Clicking a square
 

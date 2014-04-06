@@ -1,5 +1,43 @@
+### Operators
+
+##### 4/6/14
+
+#### Comma Operator
+
+[Wikipedia: Comma Operator](http://en.wikipedia.org/wiki/Comma_operator)
+
+* Evaluates its first operand and discards the result
+* Then evaluates the second operand and returns this value (and type).
+
+**Precedence:** *follows* assignment
+
+    i = (a, b);  // stores b into i 
+    i = a, b;    // stores a into i. Equivalent to (i = a), b;
+                    
+### Escape Sequences
+
+##### 4/6/14
+
+I'm having a hard time finding good documentation of these things.
+By experiment here is what I know:
+
+* What does `puts("\e[2J\e[H");` do?
+   * **puts**: print string followed by newline (see <a href=#puts>link to `puts`</a>)
+   * \e[2J: clears the screen by inserting enough newlines that the old content is off the screen
+   * \e[H:  in this case, it changes the clearing of the screen by `e[2J` so that it only involves
+            writing one newline and scrolling the screen itself so the old content is no longer
+            visible
 
 ### stdio.h
+
+##### 4/6/14
+
+#### puts
+
+    int puts(const char *str)
+
+* **does:** prints the given `string`, followed by a `newline`
+* **returns:** nonnegative value if successful, `EOF` on error
 
 ##### 3/19/14
 
