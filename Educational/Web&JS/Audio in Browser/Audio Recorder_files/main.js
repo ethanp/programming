@@ -17,20 +17,29 @@
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
+// https://developer.mozilla.org/en-US/docs/Web/API/AudioContext
+// "This is an experimental technology"
+// "This technology's specification has not stabilized"
+//
+// http://www.w3.org/TR/webaudio/
+// "This specification describes a high-level JavaScript API for processing
+// and synthesizing audio in web applications. The primary paradigm is of an
+// audio routing graph, where a number of AudioNode objects are connected
+// together to define the overall audio rendering. The actual processing will
+// primarily take place in the underlying implementation (typically optimized
+// Assembly / C / C++ code), but direct JavaScript processing and synthesis is
+// also supported."
+//
+// See more notes in my "Web Programming Notes.md"
 var audioContext = new AudioContext();
 var audioInput = null,
-realAudioInput = null,
-inputPoint = null,
-audioRecorder = null;
+    realAudioInput = null,
+    inputPoint = null,
+    audioRecorder = null;
 var rafID = null;
 var analyserContext = null;
 var canvasWidth, canvasHeight;
 var recIndex = 0;
-
-/* TODO:
-  - offer mono option
-  - "Monitor input" switch
-*/
 
 function saveAudio() {
     audioRecorder.exportWAV( doneEncoding );
@@ -39,6 +48,8 @@ function saveAudio() {
 }
 
 function gotBuffers( buffers ) {
+
+    // this is the lower canvas box, displaying the recorded wave-form
     var canvas = document.getElementById( "wavedisplay" );
 
     drawBuffer( canvas.width, canvas.height, canvas.getContext('2d'), buffers[0] );
@@ -84,42 +95,77 @@ function cancelAnalyserUpdates() {
     rafID = null;
 }
 
+// Called after gotStream() below,
+// which creates a silenced AudioContext graph
+// Also called (recursively) as callback from window.requestAnimationFrame()
+// at the bottom of this very method.
 function updateAnalysers(time) {
     if (!analyserContext) {
         var canvas = document.getElementById("analyser");
         canvasWidth = canvas.width;
         canvasHeight = canvas.height;
+
+        // Returns an object that provides methods and properties for drawing
+        // on the canvas.
         analyserContext = canvas.getContext('2d');
     }
 
+    /** QUESTION:
+     *    Why is this block of code surrounded by its own braces?
+     */
+
     // analyzer draw code here
     {
-        var SPACING = 3;
-        var BAR_WIDTH = 1;
+        // Configure some FFT display layout
+        var SPACING = 3;        // each FFT bar starts 3 pixels apart
+        var BAR_WIDTH = 1;      // each FFT bar is 1 pixel wide (so there's 2 px btn them)
         var numBars = Math.round(canvasWidth / SPACING);
-        var freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
 
+        // Acquire the data from the AudioContext's Analyser FFT node
+        var freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
         analyserNode.getByteFrequencyData(freqByteData);
 
+        // Clear the whole thing
         analyserContext.clearRect(0, 0, canvasWidth, canvasHeight);
+
+        // Fill it with an orangey color
         analyserContext.fillStyle = '#F6D565';
+
+        // When drawing a line, its ends shall be round
         analyserContext.lineCap = 'round';
+
+        // Fugure the number of FFT bins per bar-chart bar
         var multiplier = analyserNode.frequencyBinCount / numBars;
 
         // Draw rectangle for each frequency bin.
         for (var i = 0; i < numBars; ++i) {
+
             var magnitude = 0;
             var offset = Math.floor( i * multiplier );
-            // gotta sum/average the block, or we miss narrow-bandwidth spikes
-            for (var j = 0; j< multiplier; j++)
+
+            // Average the bar over its constituent bins
+            for (var j = 0; j < multiplier; j++)
                 magnitude += freqByteData[offset + j];
             magnitude = magnitude / multiplier;
+
+            // This is just a reference to lowest bin in the bar,
+            // not sure why this would be useful
             var magnitude2 = freqByteData[i * multiplier];
+
+            // Set color based on sliding around the hue value by using
+            // Hue-Saturation-Lightness based coloring
             analyserContext.fillStyle = "hsl( " + Math.round((i*360)/numBars) + ", 100%, 50%)";
+
+            // Draw a filled rectangle with (x,y, xOff, yOff) coordinates
             analyserContext.fillRect(i * SPACING, canvasHeight, BAR_WIDTH, -magnitude);
         }
     }
 
+    // Request that browser update an animation before it next repaints the screen.
+    // Pass this method (recursively) as a callback.
+    // Perhaps because we want a new animation on *every* browser repaint?
+    // We also save the ID of this request so that we can reference/modify/cancel
+    // it at will.
     rafID = window.requestAnimationFrame( updateAnalysers );
 }
 
@@ -139,38 +185,64 @@ function toggleMono() {
 
 // successCallback from requesting audio in initAudio->getUserMedia()
 function gotStream(stream) {
+
+    // Creates a GainNode in the AudioContext graph
+    // See notes in "Web Programming Notes.md"
     inputPoint = audioContext.createGain();
 
-    // Create an AudioNode from the stream.
+    // "Create a MediaStreamAudioSourceNode associated with a WebRTC
+    // MediaStream representing an audio stream, that may come from the local
+    // computer microphone or other sources."
     realAudioInput = audioContext.createMediaStreamSource(stream);
     audioInput = realAudioInput;
+
+    // Connect the microphone's MediaStreamAudioSourceNode stream
+    // to the GainNode's stream
     audioInput.connect(inputPoint);
 
     //    audioInput = convertToMono( input );
 
+    // Create an AnalyserNode
+    // a node able to provide real-time frequency and time-domain
+    // analysis information
     analyserNode = audioContext.createAnalyser();
+
+    // Represents the size of the Fast Fourier Transform to be used to
+    // determine the frequency domain. 2048 is both the default and the
+    // biggest allowed value
     analyserNode.fftSize = 2048;
+
+    // Connect the GainNode into the FFT node
     inputPoint.connect( analyserNode );
 
+    // Use Matt Diamond's "recorder.js" (also in this dir)
+    // https://github.com/mattdiamond/Recorderjs
+    // to create a recorder object that will buffer the raw audio
     audioRecorder = new Recorder( inputPoint );
 
+    // Create another GainNode to silence the graph's output
     zeroGain = audioContext.createGain();
     zeroGain.gain.value = 0.0;
     inputPoint.connect( zeroGain );
-    zeroGain.connect( audioContext.destination );
+    zeroGain.connect( audioContext.destination );   // plug it into the final
+                                                    // destination of all audio
+                                                    // in the context
     updateAnalysers();
 }
 
+// on page load, request access to the user's audio-stream,
+// in a browser-generic manner
 function initAudio() {
-    if (!navigator.getUserMedia)
-        navigator.getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
-    if (!navigator.cancelAnimationFrame)
-        navigator.cancelAnimationFrame = navigator.webkitCancelAnimationFrame || navigator.mozCancelAnimationFrame;
-    if (!navigator.requestAnimationFrame)
-        navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
+    var n = navigator;  // with luck, adding this didn't break everything
+    if (!n.getUserMedia)
+        n.getUserMedia = n.webkitGetUserMedia || n.mozGetUserMedia;
+    if (!n.cancelAnimationFrame)
+        n.cancelAnimationFrame = n.webkitCancelAnimationFrame || n.mozCancelAnimationFrame;
+    if (!n.requestAnimationFrame)
+        n.requestAnimationFrame = n.webkitRequestAnimationFrame || n.mozRequestAnimationFrame;
 
-    // Function Header: navigator.getUserMedia ( constraints, successCallback, errorCallback );
-    navigator.getUserMedia({audio:true}, gotStream, function(e) {
+    // Function Header: n.getUserMedia ( constraints, successCallback, errorCallback );
+    n.getUserMedia({audio:true}, gotStream, function(e) {
         alert('Error getting audio');
         console.log(e);
     });

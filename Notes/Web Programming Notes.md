@@ -1,3 +1,68 @@
+WebRTC
+------
+
+### Introduction
+#### 4/6/14
+[From MDN: WebRTC](https://developer.mozilla.org/en-US/docs/WebRTC)
+
+* The RTC in WebRTC stands for Real-Time Communications
+* Enables audio/video streaming and data sharing between browser clients (peers).
+* Provides any browser with the ability to share application data
+  and perform teleconferencing peer to peer, without the need to install
+  plug-ins or third-party software.
+* WebRTC components are accessed with JavaScript APIs
+* Currently in development
+    * Network Stream API -- an audio or video data stream
+    * PeerConnection API -- allows two or more users to communicate browser-to-browser
+    * DataChannel API -- enables communication of other types of data for
+        * real-time gaming
+        * text chat
+        * file transfer
+        * and so forth
+
+
+Audio for the Web
+-----------------
+
+### AudioContext
+#### 4/6/14
+Based on [MDF Ref](https://developer.mozilla.org/en-US/docs/Web/API/AudioContext)
+
+* The AudioContext interface represents an audio-processing graph built from audio modules
+  linked together, each represented by an AudioNode.
+* You may want to use it to create the nodes you need
+    * E.g. `AudioContext.createGain()` creates a `GainNode` (see below about `GainNodes`)
+
+### AudioNode
+#### 4/6/14
+Quotes from [MDF Ref](https://developer.mozilla.org/en-US/docs/Web/API/AudioNode),
+an excellent-looking documentation for this thing.
+
+* "This is an experimental technology because this technology's specification has not stabilized."
+* The `AudioNode` interface represents an audio-processing module, like an audio source (e.g. an HTML
+  `<audio>` or `<video>` element), an audio destination, or an intermediate processing module (e.g. a
+  filter like `BiquadFilterNode`, or a volume control like **`GainNode`**).
+* An `AudioNode` has inputs and outputs. Each of them have a given amount of channels.
+  An AudioNode with zero input and exactly one output is called a source node.
+* The processing varies from one `AudioNode` to another but, in general, a node reads its inputs,
+  does some audio-related processing, and generates new values on its output.
+* Different nodes can be linked together to build a processing graph. Such a graph is contained
+  in an `AudioContext`. Each `AudioNode` participates in exactly one such context.
+* An `AudioNode` can be target of events, therefore it implements the `EventTarget` interface.
+
+##### Note these aspects
+* `AudioNode.context` *(read only attribute)* -- links to the associated `AudioContext` (see above),
+that is the object representing the processing graph the node is participating in.
+* `AudioNode.connect(AudioNode)` *(method)* -- connect one output of this node to one input of another node.
+
+### GainNode
+#### 4/6/14
+From [MDF Ref](https://developer.mozilla.org/en-US/docs/Web/API/GainNode)
+
+The GainNode interface represents a change in volume. It is an AudioNode, that is an audio-processing module, that causes a given gain to be applied to the input data before its propagation to the output. A GainNode always has exactly one input and one output, both with the same amount of channels.
+
+The gain is a unitless value, eventually changing with time, that is multiplied to each corresponding sample of all inputs channels. If modified, the new gain is applied using a de-zippering algorithm in order to prevent unaesthetic 'clicks' from appearing in the resulting audio.
+
 WebSockets
 ----------
 #### 3/21/14
