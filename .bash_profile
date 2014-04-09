@@ -37,6 +37,8 @@ set -o vi
 # turn on extra metacharacters: (?|*|+|@|!)(pattern)
 shopt -s extglob
 
+# render manpage as postscript in Preview
+function pman { man -t $1 | open -fa /Applications/Preview.app ; }
 
 function minco { python $PROGRAMMINGGIT/StuffIWrote/Python/rbm/rbm.py $@ ; }
 

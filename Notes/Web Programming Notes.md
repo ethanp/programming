@@ -1,3 +1,96 @@
+Web Storage API
+---------------
+
+#### 4/9/14
+
+This is the simplest form of offline storage and supports name/value pairs
+where the name and value must both be strings. Although this is a relatively
+simple storage mechanism, and does come with a number of limitations, all major
+web browsers support it.
+
+#### Basics
+* Provides 15 MB per origin, compared to 4 kB available to cookies.
+* Unlike cookies, data is not transmitted to server in every HTTP request, and
+  the server can't write directly to it
+* A hash-map data model, where keys and values are both strings
+* If you pass in a non-string, `toString` is called on it, so if you want to
+  turn it to/from JSON, use `JSON.stringify(obj)` and `JSON.parse(str)`
+
+#### Local vs. Session Storage
+* **localStorage** -- persists indefinitely, data is available to all pages
+  from the same origin as the page they are saved from
+* **sessionStorage** -- lasts for the duration of the session
+    * intended to allow separate instances of the same web application to run
+      in different windows without interfering with each other
+
+#### API
+
+    sessionStorage.setItem('key', 'value');
+    sessionStorage.getItem('key');
+
+    sessionStorage.key2 = 'abcd' // shorthand for setItem
+    sessionStorage.key2          // shorthand for getItem
+
+    localStorage.setItem('key', JSON.stringify({name: 'value'}));
+    JSON.parse(localStorage.getItem('key')).name;
+    localStorage.removeItem('key');
+
+    // clear all data stored by this origin
+    localStorage.clear()
+
+
+### API
+
+
+CRUD
+----
+
+### TODO
+
+* Create
+* Read
+* Update
+* Delete
+
+Cookies
+-------
+#### 4/9/14
+
+Cameron, Dane (2013-10-30). A Software Engineer Learns HTML5, JavaScript and
+jQuery: A guide to standards-based web applications (p. 145). Cisdal
+Publishing. Kindle Edition:
+
+* Traditionally the only mechanism for storing data on the client in a way that
+  survives page refreshes was cookies.
+* A cookie is a simple text based name/value pair that is stored on the client.
+* The server can set a cookie on the client by including it in an HTTP response.
+* Every-time the browser sends an HTTP request to a page on the domain from
+  this point forward, the cookie (both its name and value) will be included
+  in the request.
+* Cookies can also be created and interacted with (with some restrictions) using JavaScript.
+
+Cookies have significant limitations that make them inappropriate for storing
+large amounts of data:
+
+1. They are included on each request to the server, so unless you want the
+entire task list to be included on each request, cookies are not a good
+solution.
+2. The maximum size of each cookie is approximately 5 kilobytes.
+3. The maximum number of cookies that a single domain can store is 20 (this can
+be browser dependent). This means that the total amount of cookie storage
+available to a domain is less than 100 kilobytes.
+
+It has therefore been evident for some time that HTML needs some form of
+offline data storage if it is to allow for rich and dynamic web applications
+that can exist independent of a web server. Even applications that are
+continually connected to a web server can significantly improve user
+experiences if they could cache larger quantities of data on the browser.
+
+**Web storage API** (see above): this is the simplest form of offline storage and supports name/value
+pairs where the name and value must both be strings. Although this is a
+relatively simple storage mechanism, and does come with a number of
+limitations, all major web browsers support it.
+
 W3C
 ---
 #### 4/7/14
@@ -247,3 +340,7 @@ RabbitMQ
 
 Scalable, asynchronous messenging
 
+Vocab
+=====
+
+* **Origin** -- combination of *protocol*, *hostname*, and *port number*
