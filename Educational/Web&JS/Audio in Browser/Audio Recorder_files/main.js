@@ -12,7 +12,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 
-   Modified 4/6/2014 Ethan Petuchowski
+   Modified and annotated 4/6/2014 by Ethan Petuchowski
 */
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -49,9 +49,10 @@ function saveAudio() {
 
 function gotBuffers( buffers ) {
 
-    // this is the lower canvas box, displaying the recorded wave-form
+    // The lower canvas box, displaying the recorded wave-form
     var canvas = document.getElementById( "wavedisplay" );
 
+    // drawBuffer is the one function in "audiodisplay.js" in this dir
     drawBuffer( canvas.width, canvas.height, canvas.getContext('2d'), buffers[0] );
 
     // the ONLY time gotBuffers is called is right after a new recording is completed -
@@ -64,10 +65,12 @@ function doneEncoding( blob ) {
     recIndex++;
 }
 
+// Called onClick of the Record button
+// "e" is the "img HTML elemement" that you click on
 function toggleRecording( e ) {
     console.log(e);
     if (e.classList.contains("recording")) {
-    // stop recording
+        // stop recording
         audioRecorder.stop();
         e.classList.remove("recording");
         audioRecorder.getBuffers( gotBuffers );
@@ -75,6 +78,9 @@ function toggleRecording( e ) {
         // start recording
         if (!audioRecorder) return;
         e.classList.add("recording");
+
+        // this is the Recorder() from "recorder.js"
+        //
         audioRecorder.clear();
         audioRecorder.record();
     }
@@ -96,9 +102,9 @@ function cancelAnalyserUpdates() {
 }
 
 // Called after gotStream() below,
-// which creates a silenced AudioContext graph
-// Also called (recursively) as callback from window.requestAnimationFrame()
-// at the bottom of this very method.
+// which creates a silenced AudioContext graph.
+// Also calls itself in callback from window.requestAnimationFrame() at the
+// bottom of this method.
 function updateAnalysers(time) {
     if (!analyserContext) {
         var canvas = document.getElementById("analyser");
@@ -148,10 +154,6 @@ function updateAnalysers(time) {
                 magnitude += freqByteData[offset + j];
             magnitude = magnitude / multiplier;
 
-            // This is just a reference to lowest bin in the bar,
-            // not sure why this would be useful
-            var magnitude2 = freqByteData[i * multiplier];
-
             // Set color based on sliding around the hue value by using
             // Hue-Saturation-Lightness based coloring
             analyserContext.fillStyle = "hsl( " + Math.round((i*360)/numBars) + ", 100%, 50%)";
@@ -162,7 +164,7 @@ function updateAnalysers(time) {
     }
 
     // Request that browser update an animation before it next repaints the screen.
-    // Pass this method (recursively) as a callback.
+    // Pass this method [itself] as a callback.
     // Perhaps because we want a new animation on *every* browser repaint?
     // We also save the ID of this request so that we can reference/modify/cancel
     // it at will.

@@ -23,17 +23,34 @@
 
     var WORKER_PATH = 'js/recorderjs/recorderWorker.js';
 
+    // "source" is the "inputPoint", i.e. the GainNode
+    // We're not passing in a "cfg"
     var Recorder = function(source, cfg){
         var config = cfg || {};
         var bufferLen = config.bufferLen || 4096;
+
+        // Retrieve the AudioContext graph object
         this.context = source.context;
-        if(!this.context.createScriptProcessor){
+
+        // Check if the AudioContext has the method "createScriptProcessor".
+        // It renamed the old "createJavaScriptNode" method, but we must make
+        // sure the new version it exists first.
+        if (!this.context.createScriptProcessor) {
             this.node = this.context.createJavaScriptNode(bufferLen, 2, 2);
         } else {
+
+            // Receives (buffersize, # input channels, # output channels).
+            // Creates a "ScriptProcessorNode", an audio-processing module
+            // whose "onaudioprocess" function gets called whenever the
+            // "buffersize" frames have been filled (~20 times per second).
             this.node = this.context.createScriptProcessor(bufferLen, 2, 2);
         }
 
+        // I'm not sure where this is coming from. The WORKER_PATH doesn't exist
+        // in this directory, and the config is an empty object in this case.
         var worker = new Worker(config.workerPath || WORKER_PATH);
+
+        // Initialize the worker by setting its sampleRate attribute
         worker.postMessage({
             command: 'init',
             config: {
@@ -43,11 +60,17 @@
         var recording = false,
         currCallback;
 
+        // Called whenever the audio data buffer fills up
         this.node.onaudioprocess = function(e){
             if (!recording) return;
+
+            // The Worker has L & R arrays building up the entire audio file
+            // We're just passing new buffers to be appended to them
             worker.postMessage({
                 command: 'record',
                 buffer: [
+
+                    // Retrieve Float32Array of audio data for channels 0 and 1 (stereo)
                     e.inputBuffer.getChannelData(0),
                     e.inputBuffer.getChannelData(1)
                 ]

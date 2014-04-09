@@ -4,6 +4,7 @@
  * Modified 4/6/2014 Ethan Petuchowski
  */
 
+// Context is a <canvas> context
 function drawBuffer( width, height, context, data ) {
     var step = Math.ceil( data.length / width );
     var amp = height / 2;

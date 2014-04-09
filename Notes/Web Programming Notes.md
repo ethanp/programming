@@ -1,3 +1,20 @@
+W3C
+---
+#### 4/7/14
+[Wikipedia Page](http://en.wikipedia.org/wiki/W3c)
+
+* **World Wide Web Consortium**
+* Main international **standards organization** for the World Wide Web
+* Founded (in 1994) and currently **led by Tim Berners-Lee**
+* HQ at MIT CSAIL
+* Made up of 379 member organizations which maintain full-time staff developing WWW standards
+    * This includes Apple, Facebook, Boeing, etc.
+    * Their main criticism is that they're made up of multinational companies
+* Also engages in education and outreach, develops software and serves as an open
+  forum for discussion about the Web
+* Tries to get all browser vendors to implement the consortium's chosen set of core components
+
+
 WebRTC
 ------
 
