@@ -1,5 +1,80 @@
+File Reader API
+--------------------------------
+
+**Lets web applications asynchronously read the contents of files (or
+raw data buffers) stored on the user's computer.**
+
+Apparently this is pretty new and didn't used to be possible for
+security reasons.
+
+#### [Docs on MDN](https://developer.mozilla.org/en-US/docs/Web/API/FileReader)
+
+#### 4/12/14
+
+Example based on *A Software Engineer Learns HTML5, JavaScript and jQuery*
+
+First the **HTML**
+
+    <section id =" csvImport">
+        <div>
+            <label for="task">Import tasks from a CSV file</label>
+            <input type="file" id="importFile" name="importFile"/>       
+        </div>
+    </section>
+
+Now the **JavaScript** which is notified when the `<input>` `"file"` in the HTML is filled.
+
+    function useFile(event) {
+      var reader = new FileReader() // this is the key
+      reader.onload = function(evt) {
+        // stuff to do on load
+      }
+      reader.onerror = function(evt) { /* etc. */ }
+      reader.readAsText(event.target.files[0]) // 1st file they selected
+      // this is from the API in the docs above
+      // or readAsArrayBuffer, readAsBinaryString, readAsDataUrl, etc.
+    }
+
+Application Cache
+-----------------
+
+**Basically makes your web app available offline.**
+
+#### 4/12/14
+
+You create a manifest file with the following outline
+
+    # files to download and save for future use
+    CACHE MANIFEST
+    file.html
+    scripts/jquery-v.r.s.n.js
+    scripts/myapp.js
+    
+    # files to use when offline
+    FALLBACK:
+    file.html backupPlan.html
+    etc. etc2.
+    
+    # network addresses the browser is allowed to access
+    # to retrieve the files you specified
+    NETWORK:
+    /     # only the origin server
+    *     # *any* server
+    
+The files are only reloaded from your server when *something (anything [e.g. comment])*
+changes in your manifest file.
+
+To tell the `tasks.html` file to download the manifest when it is loaded,
+add an attribute to its `html` tag:
+
+    <html lang="en" manifest="tasks.appcache">
+    
+ 
+
 Web Storage API
 ---------------
+
+**Offline DB for your app provided by the browser.**
 
 #### 4/9/14
 
