@@ -1,5 +1,20 @@
+\<div> vs \<p>
+------------
+
+#### 4/13/14
+
+These are both elements you can put text into
+
+    <div> text here </div>
+    <p> here too </p>
+
+By default
+
+* `<p>` tags have `margin: 17px` but no padding or border
+* `<div>` tags have *no* margin, padding, or border.
+
 File Reader API
---------------------------------
+---------------
 
 **Lets web applications asynchronously read the contents of files (or
 raw data buffers) stored on the user's computer.**
