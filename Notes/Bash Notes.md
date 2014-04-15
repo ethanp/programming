@@ -1,6 +1,15 @@
-File Descriptors
+Unsolved Riddles
 ----------------
 
+What is the difference between `$(c)`, `<backtick>c</backtick>`, and `eval c`?
+
+* My guess is that `$(c)` captures the *output*
+  and `<backtick>c</backtick>` captures the *return value*,
+  and `eval c` runs the command and doesn't capture nada.
+  Surely this is wrong though.
+
+File Descriptors
+----------------
 #### 3/24/14
 
 * **0** -- `stdin`
@@ -17,8 +26,48 @@ And then of course `| tee file` means "and also print it to the log-file"
 
 Commands to Command
 -------------------
+## 4/11/14
 
-#### 3/20/14
+### eval
+
+(I think..., I'm on a boat) Interprets the text you give it as a bash command.
+
+### ps -- Process Status
+
+##### Example:
+
+    ┌──[~]--[10:56 PM ]
+    └──╼ ps
+    PID TTY           TIME CMD
+    370 ttys000    0:00.11 -bash
+    2802 ttys001    0:00.01 -bash
+    3199 ttys002    0:00.02 -bash
+    3244 ttys002    0:00.01 man ps
+    3245 ttys002    0:00.00 sh -c (cd '/usr/share/man' && (echo ".ll 9.0i"; echo ".
+
+##### Description:
+
+Prints information about running processes (and threads with option).
+
+You can do things like
+
+* List processes by memory usage
+* List them by CPU usage
+* List processes by other users
+* List them by user
+
+### Sort
+
+con`cat`enate the contents of the given files, and sort that list of lines.
+
+##### Useful-looking Options
+
+* `-o FILE, --output=FILE` -- write to file
+* `-r, --reverse` -- reverse the output
+* `-f, --ignore-case` -- ignore case
+
+
+## 3/20/14
 
 ### Iterate through files
 
@@ -26,7 +75,7 @@ Commands to Command
         echo "$line"
     done
 
-#### 3/12/14
+## 3/12/14
 
 ### dirname
 
@@ -76,6 +125,11 @@ This is the **opposite of [`dirname`](#dirname)**
     > ./a/anotherFile.txt
     > ./a space b
     > ./a space b/file.txt
+
+#### Useful-looking options
+
+* `-(max|min)depth n`
+* `-newer FILE` -- only files newer than `FILE`
 
 ### read
 
