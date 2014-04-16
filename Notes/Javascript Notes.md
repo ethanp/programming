@@ -1,3 +1,29 @@
+delete keyword
+--------------
+**Removes a property from an object**
+#### 4/15/14
+
+[MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/delete)
+
+Does not directly free memory
+
+* There is a mark-and-sweep **garbage collector**, one of whose advantages over
+  ARC is that cycles are still collectable because they are unreachable from
+  roots in the stack.
+
+Examples:
+
+    delete object.property
+    delete object['property']
+
+    var y = 23;
+    delete y; // returns false because we can't delete variable names
+
+    var x = 24;
+    delete x; // returns true because we can delete properties of the global object
+
+Deleting inherited properties has no effect, though returns `true`
+
 this keyword
 ------------
 #### 4/14/14

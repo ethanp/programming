@@ -1,6 +1,27 @@
 Notes on Python
 ===============
 
+Filter and Map
+--------------
+
+**Stuff the iterable in the second parameter
+through the function in the first parameter.**
+
+#### 4/15/14
+
+    >>> a = [1,2,3,4,5,6]
+
+    # don't try to pretend this is Scala
+    >>> a.map(lambda x: x > 3)
+    Error: 'list' object has no attribute 'map'
+
+    # it does still work if you do it right
+    >>> filter(lambda x: x > 3, a)
+    [4, 5, 6]
+    >>> map(lambda x: x > 3, a)
+    [False, False, False, True, True, True]
+
+
 Sorting in-place & out-of-body
 ------------------------------
 

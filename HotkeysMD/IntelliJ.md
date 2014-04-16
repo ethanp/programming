@@ -1,8 +1,27 @@
 # Intellij
 
+Navigation
+----------
+
+To do this Action           | You must take these Steps
+----------------------------|--------------------------
+Symbol QuickSearch          | `Opt` + `Cmd` + `o`
+Back/Forward                | `Cmd` + `[`/`]`
+Surround-With Dialogue      | `Opt` + `Cmd` + `t`
+Find Usages                 | `Ctl` + `Cmd` + `f`
+
+Other
+-----
+
+To do this Action           | You must take these Steps
+----------------------------|--------------------------
+Show *Templates* (snippets) | `Cmd` + `J`
+
+Java
+----
+
 To do this Action                    | You must take these Steps
 -------------------------------------|--------------------------
-Open *Templates* (like snippets)     | Cmd + J
 `println`                            | `sout`
 `printf`                             | `souf`
 print `param` names & values (nice)  | `soutp`
