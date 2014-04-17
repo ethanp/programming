@@ -1,6 +1,52 @@
 Notes on Python
 ===============
 
+next(`iterator`)
+--------------
+
+#### 4/16/14
+
+* **return** the next element of the iterator
+* If there are no more elements, raises a `StopIteration`
+
+**Note:** a **`list`** is **not** an **`iterator`**
+
+    # Can't use a list!
+    >>> r = range(2)
+    >>> next(r)
+    TypeError: list object is not an iterator
+
+    # Can cast list to iterator
+    >>> r = iter(range(2))
+    >>> next(r)
+    0
+    >>> next(r)
+    1
+    >>> next(r)
+    StopIteration
+
+    # I told you once before, you can't use a list!
+    >>> next([i for i in range(2)])
+    TypeError: list object is not an iterator
+
+    # Can use a generator
+    >>> next(i for i in range(2))
+    0
+
+    # Doesn't reuse the old generator (it'd be real weird if it didn't!)
+    >>> next(i for i in range(2))
+    0
+
+    # Create a generator
+    >>> a = (i for i in range(2))
+    >>> next(a)
+    0
+    # Stored generator does get iterated through (as expected)
+    >>> next(a)
+    1
+    >>> next(a)
+    StopIteration
+
 Filter and Map
 --------------
 
