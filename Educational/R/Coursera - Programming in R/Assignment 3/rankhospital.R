@@ -8,9 +8,7 @@ rankhospital <- function (state, outcome, num = "best") {
     # Check that the state is valid
     if (!state %in% outcomes$State) 
         stop("invalid state")
-    
-    
-    
+
     # figure out which column contains the data we want
     col_we_want <- 
         
