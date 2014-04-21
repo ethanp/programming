@@ -16,6 +16,19 @@ This document requires MathJax (and possibly MultiMarkdown) to be viewed properl
 
 # Digital Signal Processing
 
+## Total Harmonic Distortion ##
+
+#### 4/17/14
+
+[Wikipedia](http://en.wikipedia.org/wiki/Total_harmonic_distortion)
+
+The total harmonic distortion, or THD, of a signal is a measurement of the
+harmonic distortion present and is defined as **the ratio of the sum of the
+powers of all harmonic components to the power of the fundamental frequency**.
+In audio systems, lower THD means the components in a loudspeaker, amplifier or
+microphone or other equipment produce a more accurate reproduction by reducing
+harmonics added by electronics and audio media.
+
 ## Fourier Transform ##
 
 Notes from Brian Douglas's Khan Academy-style  YouTube Videos:
