@@ -1,0 +1,12 @@
+table, th, td {
+    border-collapse: collapse;
+    border: 6px solid black;
+}
+td, .game-cell {
+    height: 125px;
+    width:  125px;
+    text-align: center;
+}
+.redone {
+    background-color: red
+}

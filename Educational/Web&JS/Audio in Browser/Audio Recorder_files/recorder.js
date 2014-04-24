@@ -144,7 +144,7 @@
      * the @blob of data with default @filename. This @blob happens
      * to be the audio file.
      */
-    // TODO something analogous (i.e. another <a> tag) that POSTs the blob to the server with AJAX
+    // TODO something analogous (i.e. another <a> tag) that calls myBlobPoster below
     Recorder.setupDownload = function (blob, filename) {
 
         // create a resource locator for the data
@@ -179,9 +179,11 @@
             data: fd,
             processData: false,
             contentType: false
-        }).done(function(data) {
-            console.log(data);
-        });
+        })
+            // this just logs any data the server chose to send back
+            .done(function(data) {
+                console.log(data);
+            });
     };
 
     window.Recorder = Recorder;

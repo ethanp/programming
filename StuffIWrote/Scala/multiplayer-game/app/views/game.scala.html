@@ -5,7 +5,6 @@
         <div class="row">
             <div class="col-md-4">
                 <style>
-                    @*TODO move to stylesheets?*@
                     table, th, td {
                         border-collapse: collapse;
                         border: 3px solid black;
@@ -29,8 +28,6 @@
                 </table>
 
                 <script type="text/javascript" charset="utf-8">
-                    @*TODO move to a game.scala.js file referenced from the correct 'route'*@
-
                     // make the gameboard
                     var $gameboard = $('#gameboard');
                     var gameSize = 4;  // could be set by user or randomly
@@ -54,7 +51,7 @@
 
                     websocket.onmessage = function (evt) {
 
-                        // someone scored, update location of red square
+                        // someone scored, update boardDiv of red square
                         if ('newRed' in evt.data) {
                             $('.redone').removeClass('redone');
                             $('#row-'+evt.data['row']+'-col-'+evt.data['col']).addClass('redone');
