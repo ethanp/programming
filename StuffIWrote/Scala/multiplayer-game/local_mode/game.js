@@ -49,9 +49,7 @@ Game.prototype.addPlayer = function (name) {
 
 Game.prototype.makeRed = function (element) {
     element.className += ' redone';
-
-    // TODO use bind() so `this` in the event listener is the Game rather than the <td> table-cell
-    element.addEventListener('click', this.redEventListener);
+    element.addEventListener('click', this.redEventListener.bind(this));
 };
 
 Game.prototype.makeRedNotRed = function () {
