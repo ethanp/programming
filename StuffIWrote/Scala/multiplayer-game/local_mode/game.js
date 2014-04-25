@@ -92,23 +92,32 @@ Scoreboard.prototype.addPlayer = function (name) {
         alert('A player with name '+name+' already exists.');
         return false;
     }
-    this.draw(name, id);
+    this.render();
 //    this.scoreList.appendChild(li);
 };
 
-Scoreboard.prototype.draw = function (name, id) {
+Scoreboard.prototype.render = function () {
     var scores = this.game.scores;
+    var $scoreboard = $('#scoreboard');
+    $scoreboard.empty();
     for (var player in scores) {
-        var li = document.createElement('li');
-        li.textContent = name+': 0';
-        li.id = id;
-        li.className = 'play-score '+name;
+        $scoreboard.append(
+            $('<div>')
+                .addClass('panel panel-default')
+                .append(
+                    $('<h3>')
+                        .addClass('panel-heading panel-title')
+                        .text(player))
+                .append(
+                    $('<h4>')
+                        .addClass('panel-body')
+                        .text(scores[player])));
     }
 };
 
 var computerScore = 0;
 
-var computerPlayer = setInterval(function(){
+var computerPlayer = setInterval(function () {
     myTimer();
 });
 

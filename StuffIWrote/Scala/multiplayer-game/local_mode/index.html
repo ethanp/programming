@@ -4,6 +4,7 @@
 <head>
     <title>multiplayer-game</title>
     <link rel="stylesheet" href="/Users/Ethan/code/bootstrap-3.1.1-dist/css/bootstrap.min.css">
+    <script src="/Users/Ethan/code/jquery-2.1.0.min.js"></script>
     <link href="main.css" rel="stylesheet" type="text/css">
     <meta charset="UTF-8">
 </head>
@@ -49,29 +50,8 @@
             <br/>
         </div>
         <div class="col-md-4">
-            <h2>Scoreboard</h2><br>
-            <div class="col-md-8">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        You
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    13
-                </div>
-            </div>
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">
-                        Computer
-                    </h3>
-                </div>
-                <div class="panel-body">
-                    16
-                </div>
-            </div>
-                </div>
+            <h2> Scoreboard </h2><br>
+            <div class="col-md-8" id="scoreboard"></div>
             <button id="add-player" type="button" class="btn btn-success btn-lg">
                 <span class="glyphicon glyphicon-plus"></span>
                 Add Player
