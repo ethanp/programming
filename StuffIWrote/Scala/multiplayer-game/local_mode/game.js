@@ -1,15 +1,67 @@
 /**
- * Created by Ethan Petuchowski on 4/24/14.
+ * 4/24/14
+ * Ethan Petuchowski
  * Make it work here, then put it in the web app.
  */
 
-
 function Game(size) {
     this.size = size;
-    this.init(size);
+    this.init();
 }
 
-Game.prototype.init = function (size) {
+Game.prototype.init = function () {
+    this.scores = {};
+    this.board = new Board(this);
+    this.scoreboard = new Scoreboard(this);
+    this.board.init(this.size);
+    this.makeRandomCellRed();
+    this.addPlayer('Computer');
+    this.addPlayer('User');
+};
+
+Game.prototype.addPlayer = function (name) {
+    this.scores[name] = 0;
+    this.scoreboard.addPlayer(name);
+};
+
+Game.prototype.makeRed = function (element) {
+    element.className += ' redone';
+    element.addEventListener('click', this.redEventListener.bind(this));
+};
+
+Game.prototype.clearRed = function () {
+    var redSquare = this.getRedSquare();
+    redSquare.removeEventListener('click', this.redEventListener);
+    redSquare.className = redSquare.className.replace(/\ ?redone/, '');
+};
+
+Game.prototype.makeRandomCellRed = function () {
+    this.makeRed(this.chooseRandomCell());
+};
+
+Game.prototype.redEventListener = function () {
+    alert('NICE!');
+
+    // choose new red square
+    this.clearRed();
+    this.makeRandomCellRed();
+};
+
+Game.prototype.getRedSquare = function () {
+    return document.querySelectorAll('.redone')[0];
+};
+
+Game.prototype.chooseRandomCell = function () {
+    var i = Math.floor(Math.random()*this.size);
+    var j = Math.floor(Math.random()*this.size);
+    return document.getElementById('table-cell-'+i+'-'+j);
+};
+
+function Board(game) {
+    this.game = game;
+}
+
+Board.prototype.init = function (size) {
     var boardDiv = document.getElementById('gameboard');
     var table = document.createElement('table');
     this.scores = {};
@@ -27,59 +79,31 @@ Game.prototype.init = function (size) {
         table.appendChild(tableRow);
     }
     boardDiv.appendChild(table);
-    var scoreList = document.getElementById('scorelist');
-    this.makeRandomCellRed();
-    this.addPlayer('Computer');
-    this.addPlayer('User');
 };
 
-Game.prototype.addPlayer = function (name) {
+function Scoreboard(game) {
+    this.game = game;
+    this.scoreList = document.getElementById('scorelist');
+}
+
+Scoreboard.prototype.addPlayer = function (name) {
+    var id = 'player-score-' + name;
     if (document.getElementById(id)) {
         alert('A player with name '+name+' already exists.');
         return false;
     }
-    var id = 'player-score-' + name;
-    this.scores[name] = 0;
-    var li = document.createElement('li');
-    li.textContent = name+': 0';
-    li.id = id;
-    li.className = 'play-score '+name;
+    this.draw(name, id);
 //    this.scoreList.appendChild(li);
 };
 
-Game.prototype.makeRed = function (element) {
-    element.className += ' redone';
-    element.addEventListener('click', this.redEventListener.bind(this));
-};
-
-Game.prototype.makeRedNotRed = function () {
-    var redSquare = this.getRedSquare();
-    redSquare.removeEventListener('click', this.redEventListener);
-    redSquare.className = redSquare.className.replace(/\ ?redone/, '');
-};
-
-Game.prototype.makeRandomCellRed = function () {
-    this.makeRed(this.chooseRandomCell());
-};
-
-Game.prototype.redEventListener = function () {
-    alert('NICE!');
-    this.makeRedNotRed();
-    this.makeRandomCellRed();
-};
-
-Game.prototype.getRedSquare = function () {
-    return document.querySelectorAll('.redone')[0];
-};
-
-Game.prototype.chooseRandomCell = function () {
-    var i = Math.floor(Math.random()*this.size);
-    var j = Math.floor(Math.random()*this.size);
-    return document.getElementById('table-cell-'+i+'-'+j);
-};
-
-Game.prototype.redrawScoreboard = function () {
-
+Scoreboard.prototype.draw = function (name, id) {
+    var scores = this.game.scores;
+    for (var player in scores) {
+        var li = document.createElement('li');
+        li.textContent = name+': 0';
+        li.id = id;
+        li.className = 'play-score '+name;
+    }
 };
 
 var computerScore = 0;

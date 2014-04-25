@@ -1,76 +1,101 @@
 <!DOCTYPE html>
 
 <html>
-    <head>
-        <title>multiplayer-game</title>
-        <link rel="stylesheet" href="/Users/Ethan/code/bootstrap-3.1.1-dist/css/bootstrap.min.css">
-        <link href="main.css" rel="stylesheet" type="text/css">
-    </head>
-    <body>
-        <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="navbar-inner">
-                <div class="fill">
-                    <div class="container">
-                        <div class="navbar-header">
-                            <!-- This creates a dropdown menu button for mobile devices, but it doesn't do anything right now -->
-                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                                <span class="sr-only"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                                <span class="icon-bar"></span>
-                            </button>
-                            <a class="navbar-brand" href="">multiplayer-game</a>
-                        </div>
-                        <div class="navbar-collapse collapse">
-                            <form class="navbar-form navbar-right" role="form" action="">
-                                <div class="form-group">
-                                    <input type="text" name="user" placeholder="Username" class="form-control">
-                                </div>
-                                <button type="submit" class="btn btn-success">
-                                    Sign in
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="jumbotron">
+<head>
+    <title>multiplayer-game</title>
+    <link rel="stylesheet" href="/Users/Ethan/code/bootstrap-3.1.1-dist/css/bootstrap.min.css">
+    <link href="main.css" rel="stylesheet" type="text/css">
+    <meta charset="UTF-8">
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="navbar-inner">
+        <div class="fill">
             <div class="container">
-                <h1>Hello!</h1>
-                <p>This is a shell of a multiplayer online game.</p>
-            </div>
-        </div>
-        <div class="container">
-        <div class="row">
-            <div class="col-md-6" id="gameboard">
-                <h4>Mysteriosity</h4>
-                <br/>
-            </div>
-            <div class="col-md-4">
-                <h2>Scoreboard</h2><br>
-                <ul id="scoreboard">
-                    <h4>You</h4>
-                    <h6>23</h6>
-                    <h4>The other guy</h4>
-                    <h6>25</h6>
-                </ul>
-            </div>
-        </div>
-     </div>
-        <div class="container">
-            <div class="row">
-                <div class="col-md-6">
-                    <hr>
-                    <footer>
-                        <p>
-                            <b>Copyright © Ethan Petuchowski 2014.</b>
-                            <i>One or two writes reserved.</i>
-                        </p>
-                    </footer>
+                <div class="navbar-header">
+                    <!-- This creates a dropdown menu button for mobile devices, but it doesn't do anything right now -->
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                        <span class="sr-only"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="">multiplayer-game</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    <form class="navbar-form navbar-right" role="form" action="">
+                        <div class="form-group">
+                            <input type="text" name="user" placeholder="Username" class="form-control">
+                        </div>
+                        <button type="submit" class="btn btn-success">
+                            Sign in
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
-        <script src="game.js"></script>
-    </body>
+    </div>
+</div>
+<div class="jumbotron">
+    <div class="container">
+        <h1>Hello!</h1>
+        <p>This is a shell of a multiplayer online game.</p>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-6" id="gameboard">
+            <h4>Mysteriosity</h4>
+            <br/>
+        </div>
+        <div class="col-md-4">
+            <h2>Scoreboard</h2><br>
+            <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        You
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    13
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                        Computer
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    16
+                </div>
+            </div>
+                </div>
+            <button id="add-player" type="button" class="btn btn-success btn-lg">
+                <span class="glyphicon glyphicon-plus"></span>
+                Add Player
+            </button>
+            <button id="remove-player" type="button" class="btn btn-danger btn-lg">
+                <span class="glyphicon glyphicon-minus"></span>
+                Subtract Player
+            </button>
+            <br/> <br/> This should all be centered
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <hr>
+                <footer>
+                    <p>
+                        <b>Copyright © Ethan Petuchowski 2014.</b>
+                        <i>One or two writes reserved.</i>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </div>
+    <script src="game.js"></script>
+</body>
 </html>
