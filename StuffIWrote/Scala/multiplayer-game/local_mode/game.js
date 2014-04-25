@@ -24,15 +24,15 @@ Game.prototype.addPlayer = function (name) {
     this.scoreboard.addPlayer(name);
 };
 
-Game.prototype.makeRed = function (element) {
-    element.className += ' redone';
-    element.addEventListener('click', this.redEventListener.bind(this));
+Game.prototype.makeRed = function ($element) {
+    $element
+        .addClass('redone')
+        .click(this.redEventListener.bind(this));
 };
 
 Game.prototype.clearRed = function () {
-    var redSquare = this.getRedSquare();
-    redSquare.removeEventListener('click', this.redEventListener);
-    redSquare.className = redSquare.className.replace(/\ ?redone/, '');
+    var $redone = $('.redone').removeClass('redone');
+    $('body').off('click', $redone, this.redEventListener);
 };
 
 Game.prototype.makeRandomCellRed = function () {
@@ -41,20 +41,17 @@ Game.prototype.makeRandomCellRed = function () {
 
 Game.prototype.redEventListener = function () {
     alert('NICE!');
-
+    this.scores['User']++;
+    this.scoreboard.render();
     // choose new red square
     this.clearRed();
     this.makeRandomCellRed();
 };
 
-Game.prototype.getRedSquare = function () {
-    return document.querySelectorAll('.redone')[0];
-};
-
 Game.prototype.chooseRandomCell = function () {
     var i = Math.floor(Math.random()*this.size);
     var j = Math.floor(Math.random()*this.size);
-    return document.getElementById('table-cell-'+i+'-'+j);
+    return $('#table-cell-'+i+'-'+j);
 };
 
 function Board(game) {
@@ -62,23 +59,21 @@ function Board(game) {
 }
 
 Board.prototype.init = function (size) {
-    var boardDiv = document.getElementById('gameboard');
-    var table = document.createElement('table');
-    this.scores = {};
+    var $table = $('<table>');
     for (var i = 0; i < size; i++) {
-        var tableRow = document.createElement('tr');
-        tableRow.id = 'table-row-' + i;
-        tableRow.className = 'table-row table-row-' + i;
+        var $tableRow = $('<tr>')
+            .attr('id', 'table-row-'+i)
+            .addClass('table-row table-row-'+i);
         for (var j = 0; j < size; j++) {
-            var tableCell = document.createElement('td');
-            tableCell.textContent = "mayhem";
-            tableRow.appendChild(tableCell);
-            tableCell.id = 'table-cell-' + i + '-' + j;
-            tableCell.className = 'table-cell table-cell-row-' + i;
+            $tableRow.append(
+                $('<td>')
+                    .attr('id', 'table-cell-'+i+'-'+j)
+                    .addClass('table-cell table-cell-row-'+i)
+                    .text('mayhem'));
         }
-        table.appendChild(tableRow);
+        $table.append($tableRow);
     }
-    boardDiv.appendChild(table);
+    $('#gameboard').append($table);
 };
 
 function Scoreboard(game) {
