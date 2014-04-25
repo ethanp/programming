@@ -121,10 +121,9 @@ function Scoreboard(game) {
 }
 
 Scoreboard.prototype.render = function () {
-    var scores = this.game.scores;
     var $scoreboard = $('#scoreboard');
     $scoreboard.empty();
-    $.each(scores, function (player, score) {
+    $.each(this.game.scores, function (player, score) {
         $scoreboard.append(
             $('<div>')
                 .addClass('panel panel-default')

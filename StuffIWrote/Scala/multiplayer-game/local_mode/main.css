@@ -5,8 +5,15 @@ table, th, td {
 td, .game-cell {
     height: 125px;
     width:  125px;
-    text-align: center;
 }
 .redone {
     background-color: red
+}
+
+#scoreboard-region, h2, h3, h4, td {
+    text-align: center;
+}
+#scoreboard {
+    float: none;
+    display: inline-block;
 }
