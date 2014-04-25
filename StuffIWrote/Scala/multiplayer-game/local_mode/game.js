@@ -100,19 +100,19 @@ Scoreboard.prototype.render = function () {
     var scores = this.game.scores;
     var $scoreboard = $('#scoreboard');
     $scoreboard.empty();
-    for (var player in scores) {
+    $.each(scores, function (player, score) {
         $scoreboard.append(
             $('<div>')
                 .addClass('panel panel-default')
                 .append(
-                    $('<h3>')
-                        .addClass('panel-heading panel-title')
-                        .text(player))
+                $('<h3>')
+                    .addClass('panel-heading panel-title')
+                    .text(player))
                 .append(
-                    $('<h4>')
-                        .addClass('panel-body')
-                        .text(scores[player])));
-    }
+                $('<h4>')
+                    .addClass('panel-body')
+                    .text(score)));
+    });
 };
 
 var game = new Game(4);
