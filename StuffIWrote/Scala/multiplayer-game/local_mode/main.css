@@ -2,10 +2,31 @@ table, th, td {
     border-collapse: collapse;
     border: 6px solid black;
 }
+
+body {
+    background-color: linen;
+}
+
 td, .game-cell {
     height: 125px;
     width:  125px;
+    background-color: lightgoldenrodyellow;
+    font-weight: bold;
 }
+
+.panel > .panel-title {
+    background-color: coral;
+}
+
+.panel {
+    background-color: blanchedalmond;
+    box-shadow: 1px 2px 6px #888888;
+}
+
+table {
+    box-shadow: 3px 4px 6px #888888;
+}
+
 .redone {
     background-color: red
 }
@@ -13,6 +34,7 @@ td, .game-cell {
 #scoreboard-region, h2, h3, h4, td {
     text-align: center;
 }
+
 #scoreboard {
     float: none;
     display: inline-block;
