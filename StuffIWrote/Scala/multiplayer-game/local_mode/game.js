@@ -10,6 +10,7 @@ function Game(size) {
 }
 
 Game.prototype.init = function () {
+    var self = this;
     this.scores = {};
     this.board = new Board(this);
     this.scoreboard = new Scoreboard(this);
@@ -17,6 +18,9 @@ Game.prototype.init = function () {
     this.makeRandomCellRed();
     this.addPlayer('Computer');
     this.addPlayer('User');
+    setInterval(function () {
+        self.updateScore('Computer', 1)
+    }, 2000);
 };
 
 Game.prototype.addPlayer = function (name) {
@@ -31,8 +35,7 @@ Game.prototype.makeRed = function ($element) {
 };
 
 Game.prototype.clearRed = function () {
-    var $redone = $('.redone').removeClass('redone');
-    $('body').off('click', $redone, this.redEventListener);
+    $('.redone').removeClass('redone').unbind('click');
 };
 
 Game.prototype.makeRandomCellRed = function () {
@@ -41,11 +44,15 @@ Game.prototype.makeRandomCellRed = function () {
 
 Game.prototype.redEventListener = function () {
     alert('NICE!');
-    this.scores['User']++;
-    this.scoreboard.render();
+    this.updateScore('User', 1);
     // choose new red square
     this.clearRed();
     this.makeRandomCellRed();
+};
+
+Game.prototype.updateScore = function (name, diff) {
+    this.scores[name] += diff;
+    this.scoreboard.render();
 };
 
 Game.prototype.chooseRandomCell = function () {
@@ -78,7 +85,6 @@ Board.prototype.init = function (size) {
 
 function Scoreboard(game) {
     this.game = game;
-    this.scoreList = document.getElementById('scorelist');
 }
 
 Scoreboard.prototype.addPlayer = function (name) {
@@ -88,7 +94,6 @@ Scoreboard.prototype.addPlayer = function (name) {
         return false;
     }
     this.render();
-//    this.scoreList.appendChild(li);
 };
 
 Scoreboard.prototype.render = function () {
@@ -110,13 +115,4 @@ Scoreboard.prototype.render = function () {
     }
 };
 
-var computerScore = 0;
-
-var computerPlayer = setInterval(function () {
-    myTimer();
-});
-
-function myTimer() {
-
-}
 var game = new Game(4);
