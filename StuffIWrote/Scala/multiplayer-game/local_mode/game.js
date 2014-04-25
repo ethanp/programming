@@ -6,6 +6,7 @@
 
 function Game(size) {
     this.size = size;
+    this.currentPlayer = 'User';
     this.init();
 }
 
@@ -16,6 +17,8 @@ Game.prototype.init = function () {
     this.scoreboard = new Scoreboard(this);
     this.board.init(this.size);
     this.makeRandomCellRed();
+    $('#add-player').click(this.addPlayerButton.bind(this));
+    $('#remove-player').click(this.removePlayerButton.bind(this));
     this.addPlayer('Computer');
     this.addPlayer('User');
     setInterval(function () {
@@ -24,8 +27,29 @@ Game.prototype.init = function () {
 };
 
 Game.prototype.addPlayer = function (name) {
+    var id = 'player-score-' + name;
+    if (document.getElementById(id)) {
+        alert('A player with name '+name+' already exists.');
+        return false;
+    }
+    this.currentPlayer = name;
     this.scores[name] = 0;
-    this.scoreboard.addPlayer(name);
+    this.scoreboard.render();
+};
+
+Game.prototype.removePlayer = function () {
+    if (this.currentPlayer === 'Computer') {
+        alert('Cannot remove Computer player');
+        return;
+    }
+
+    delete this.scores[this.currentPlayer];
+
+    // set current player to first player in array
+    var a; for (a in this.scores) if (a !== 'Computer') break;
+    this.currentPlayer = a;
+
+    this.scoreboard.render();
 };
 
 Game.prototype.makeRed = function ($element) {
@@ -44,7 +68,7 @@ Game.prototype.makeRandomCellRed = function () {
 
 Game.prototype.redEventListener = function () {
     alert('NICE!');
-    this.updateScore('User', 1);
+    this.updateScore(this.currentPlayer, 1);
     // choose new red square
     this.clearRed();
     this.makeRandomCellRed();
@@ -59,6 +83,15 @@ Game.prototype.chooseRandomCell = function () {
     var i = Math.floor(Math.random()*this.size);
     var j = Math.floor(Math.random()*this.size);
     return $('#table-cell-'+i+'-'+j);
+};
+
+Game.prototype.addPlayerButton = function () {
+    var name = prompt('Enter your name','Name');
+    this.addPlayer(name);
+};
+
+Game.prototype.removePlayerButton = function () {
+    this.removePlayer();
 };
 
 function Board(game) {
@@ -86,15 +119,6 @@ Board.prototype.init = function (size) {
 function Scoreboard(game) {
     this.game = game;
 }
-
-Scoreboard.prototype.addPlayer = function (name) {
-    var id = 'player-score-' + name;
-    if (document.getElementById(id)) {
-        alert('A player with name '+name+' already exists.');
-        return false;
-    }
-    this.render();
-};
 
 Scoreboard.prototype.render = function () {
     var scores = this.game.scores;
