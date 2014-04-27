@@ -24,7 +24,7 @@
                 <div class="col-md-2"></div>
                 <div class="col-md-4">
                         <h3>Create a game</h3><br/>
-                        <form role="form" action="@routes.Application.create(None, None)">
+                        <form method="post" role="form" action="@routes.Application.create">
                             <div class="input-group input-group-lg">
                                 <span class="input-group-addon glyphicon glyphicon-plus"></span>
                                 <input type="text" name="name" class="form-control" placeholder="Type text into this thang">

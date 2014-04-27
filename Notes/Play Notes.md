@@ -1,6 +1,29 @@
 Notes on Playframework 2
 ========================
 
+Forms 
+-----
+###### (using method="post")
+
+**4/27/14**
+
+* [Play docs: Forms](https://www.playframework.com/documentation/2.2.x/ScalaForms)
+* [Play docs: Using the form template helpers](http://www.playframework.com/documentation/2.0/ScalaFormHelpers)
+* [Play docs: Protecting against Cross Site Request Forgery (CSRF)](https://www.playframework.com/documentation/2.2.x/ScalaCsrf)
+
+When data comes in from a `POST` request, Play will look for formatted
+values and bind them to a `Form` object. From there, Play can use the
+bound form to value a case class with data, call custom validations,
+and so on. `Form` definitions do not have to match up exactly with case
+classes or models.
+
+To use forms, import the following packages into your class:
+    
+    import play.api.data._
+    import play.api.data.Forms._
+    
+
+
 Asynchronous Results
 --------------------
 

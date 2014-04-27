@@ -16,7 +16,7 @@ GET     /game                   controllers.Application.game(user: Option[String
 
 # User pressed button to create a new game instance
 # It was going to be a PUT, but forms can only send GET and POST
-POST     /create                 controllers.Application.create(user: Option[String], name: Option[String])
+POST     /create                 controllers.Application.create()
 
 # User requested to join an existing game
 GET     /join                   controllers.Application.join(user: Option[String], name: Option[String])

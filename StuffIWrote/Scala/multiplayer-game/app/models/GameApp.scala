@@ -19,7 +19,7 @@ import ExecutionContext.Implicits.global
  * The server's Holder of the Games
  */
 object GameApp {
-  implicit val timeout = Timeout(5 seconds)
+  implicit val timeout = Timeout(5.seconds)
 
   // Map of title to Game
   // private means it has no public getter
@@ -38,8 +38,14 @@ object GameApp {
   }
 
   def getGame(name: String): Option[ActorRef] = games.get(name)
+
   def gameSet: Set[String] = games.keySet
-  def scoresForGame(name: String): Future[Any] = games.get(name).get ? Scores
+
+  def scoresForGame(name: String): Future[Any] =
+    games.get(name) map {
+      case gameRef: ActorRef => gameRef ? Scores
+    } getOrElse Future(None)
+
   def joinGame(user: String, name: String): Future[Any] = {
     val a = games.get(name) map {
       case gameRef: ActorRef => gameRef ? Join(user) map {

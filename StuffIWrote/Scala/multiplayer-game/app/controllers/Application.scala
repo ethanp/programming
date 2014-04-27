@@ -11,6 +11,10 @@ import models.{UsernameAlreadyTaken, GameDoesntExist, GameApp}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import scala.None
 
+// for Forms
+import play.api.data._
+import play.api.data.Forms._
+
 object Application extends Controller {
 
   /**
@@ -27,6 +31,7 @@ object Application extends Controller {
    * TODO the entire password implementation
    */
   def login(user: Option[String], password: Option[String]) = Action { implicit r =>
+    implicit val us = user
     // Map to None if "user" is an empty string, now render index only if user.isDefined.
     // map{...}getOrElse{...} is a "standard" Scala way to do this
     //    (src for Play's Redirect works the same way)
@@ -35,7 +40,7 @@ object Application extends Controller {
     } getOrElse {
       // `user` didn't work out, so save an error message to the "Flash scope",
       // Flash scope should not be used in Ajax calls because it is subject to race conditions.
-      ErrorMsg.invalidUsername(user)
+      ErrorMsg.invalidUsername
     }
   }
 
@@ -44,39 +49,44 @@ object Application extends Controller {
    * Asynchronous because the GameApp "asks" a Game-Aktor for info
    */
   def game(user: Option[String], name: Option[String]): Action[AnyContent] = Action.async { implicit r =>
+    implicit val us = user
     if (user.isDefined && name.isDefined) {
-      val oneSecTimeout = Promise.timeout("Oops", 1 second)
+      val oneSecTimeout = Promise.timeout("Oops", 1.second)
       val scoresFuture = GameApp.scoresForGame(name.get)
       Future.firstCompletedOf(Seq(scoresFuture, oneSecTimeout)) map {
         case scores: Map[String, Int] => Ok(views.html.game(user, name, scores))
         case t: String => InternalServerError(t)
-        case _ => ErrorMsg.gameDoesntExist(user)
+        case _ => ErrorMsg.gameDoesntExist
       }
     } else {
-      Future(ErrorMsg.invalidRequest(user))
+      Future(ErrorMsg.invalidRequest)
     }
   }
+
+  case class CreateGameForm(user: String, name: String)
+  val gameForm = Form(mapping("user" -> text,"name" -> text)(CreateGameForm.apply)(CreateGameForm.unapply))
 
   /**
    * User asked to create a new game instance
    * Asynchronous because the GameApp "asks" a Game-Aktor for a new instance
    */
-  def create(user: Option[String], name: Option[String]) = Action.async { implicit r =>
-    if (user.isDefined && name.isDefined) {
-      val oneSecTimeout = Promise.timeout("Oops", 1 second)
-      val scoresFuture = GameApp.scoresForGame(name.get)
+  def create() = Action.async { implicit r =>
+    val form = gameForm.bindFromRequest.get
+    if (form.user.length > 0 && form.name.length > 0) {
+      val oneSecTimeout = Promise.timeout("Oops", 1.second)
+      val scoresFuture = GameApp.scoresForGame(form.name)
       Future.firstCompletedOf(Seq(scoresFuture, oneSecTimeout)) map {
 
-        case scores: Map[String, Int] => ErrorMsg.nameAlreadyExists(user)
+        case scores: Map[String, Int] => ErrorMsg.nameAlreadyExists(Some(form.user))
         case t: String => InternalServerError(t)
 
         // game doesn't exist, so create it
         case None =>
-          GameApp.createGame(user.get, name.get)
-          Ok(views.html.game(user, name, Map[String, Int]()))
+          GameApp.createGame(form.user, form.name)
+          Ok(views.html.game(Some(form.user), Some(form.name), Map[String, Int]()))
       }
     } else {
-      Future(ErrorMsg.invalidRequest(user))
+      Future(ErrorMsg.invalidRequest(Some(form.user)))
     }
   }
 
@@ -84,14 +94,15 @@ object Application extends Controller {
    * User requested to join an existing game
    */
   def join(user: Option[String], name: Option[String]) = Action.async { implicit r =>
+    implicit val us = user
     if (user.isDefined && name.isDefined) {
       GameApp.joinGame(user.get, name.get) map {
         case scores : Map[String, Int] => Ok(views.html.game(user, name, scores))
-        case GameDoesntExist => ErrorMsg.gameDoesntExist(user)
-        case UsernameAlreadyTaken => ErrorMsg.usernameTaken(user)
+        case GameDoesntExist => ErrorMsg.gameDoesntExist
+        case UsernameAlreadyTaken => ErrorMsg.usernameTaken
       }
     } else {
-      Future(ErrorMsg.invalidRequest(user))
+      Future(ErrorMsg.invalidRequest)
     }
   }
 
@@ -99,7 +110,6 @@ object Application extends Controller {
    * TODO management of the WebSocket
    */                 // TODO use async and *ask* an actor for the info
   def gameSocket(user: String) = WebSocket.using[JsValue] { implicit r =>
-
     println(s"\n$user sent the following message through the chatSocket:")
 
     // temporarily: send one item through websocket and leave it open
@@ -118,11 +128,14 @@ object Application extends Controller {
   }
 
   object ErrorMsg {
-    def error(user: Option[String], s: String) = Redirect(routes.Application.index(user)).flashing("error" -> s)
-    def invalidRequest(user: Option[String]) = error(user, "invalid request")
-    def usernameTaken(user: Option[String]) = error(user, "username already taken")
-    def invalidUsername(user: Option[String]) = error(user, "please choose a valid username")
-    def gameDoesntExist(user: Option[String]) = error(user, "game doesn't exist")
-    def nameAlreadyExists(user: Option[String]) = error(user, "game name already exists")
+    def error(user: Option[String], s: String) = {
+      println(s"Error $s, for user $user")
+      Redirect(routes.Application.index(user)).flashing("error" -> s)
+    }
+    def invalidRequest(implicit user: Option[String]) = error(user, "invalid request")
+    def usernameTaken(implicit user: Option[String]) = error(user, "username already taken")
+    def invalidUsername(implicit user: Option[String]) = error(user, "please choose a valid username")
+    def gameDoesntExist(implicit user: Option[String]) = error(user, "game doesn't exist")
+    def nameAlreadyExists(implicit user: Option[String]) = error(user, "game name already exists")
   }
 }
