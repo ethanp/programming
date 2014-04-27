@@ -11,7 +11,7 @@ import akka.pattern.ask
 import play.api.Play.current
 import scala.collection.mutable
 import scala.concurrent.duration._
-import scala.concurrent.Future
+import scala.concurrent.{Await, Future}
 import akka.util.Timeout
 
 /**
@@ -26,12 +26,11 @@ object GameApp {
 
   def createGame(user: String, name: String): Option[ActorRef] = {
     games.get(name) map { _ =>
-      println(s"The name $name is already taken.")
+      println(s"createGame: The name $name is already taken.")
       None
     } getOrElse {
       val newGame = Akka.system.actorOf(Props(new Game(name)))
-      val gameFuture = newGame ? Join(user)  // will it properly ignore the response from the Game?
-      // TODO use the gameFuture to tell the controller to render the new game for the user
+      newGame ! Join(user) // we don't care about the response here
       games += name -> newGame
       Some(newGame)
     }
@@ -40,6 +39,15 @@ object GameApp {
   def getGame(name: String): Option[ActorRef] = games.get(name)
   def gameSet: Set[String] = games.keySet
   def scoresForGame(name: String): Future[Any] = games.get(name).get ? Scores
+  def joinGame(user: String, name: String): Future[Any] = {
+    games.get(name) map {
+      case gameRef : ActorRef => gameRef ? Join(user) map {
+        case Success => for (g <- gameRef ? Scores) yield g
+        case a@UsernameAlreadyTaken => a
+      }
+      case _ => GameDoesntExist
+    }
+  }
 }
 
 /**
@@ -75,6 +83,7 @@ case class Point(username: String, addIt: Boolean)
 case class Join(username: String)
 case object Success
 case object UsernameAlreadyTaken
+case object GameDoesntExist
 case class NewScore(scoreboard: Map[String, Int])
 case object Scores
 
