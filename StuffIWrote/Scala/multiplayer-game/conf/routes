@@ -7,6 +7,10 @@
 # and a button to create a new game
 GET     /                       controllers.Application.index(user: Option[String])
 
+# Called by the login form in the navbar
+# TODO Should really be replaced with use of the WebSocket
+GET     /login                  controllers.Application.login(user: Option[String], password: Option[String])
+
 # The page for a particular game, as seen by a particular user
 GET     /game                   controllers.Application.game(user: Option[String], name: Option[String])
 
@@ -16,10 +20,6 @@ GET     /create                 controllers.Application.create(user: Option[Stri
 
 # User requested to join an existing game
 GET     /join                   controllers.Application.join(user: Option[String], name: Option[String])
-
-# Called by the login form in the navbar
-# Should really be replaced with use of the WebSocket
-GET     /login                  controllers.Application.login(user: Option[String], password: Option[String])
 
 # URL of the WebSocket
 # through which the squares-to-turn and moves-played are funnelled back and forth

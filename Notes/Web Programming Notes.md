@@ -1,3 +1,36 @@
+Post/Redirect/Get (PRG)
+-----------------------
+
+#### 4/26/14
+
+Quoted from [Wikipedia](http://en.wikipedia.org/wiki/Post/Redirect/Get)
+
+**Implements bookmarks and the refresh button in a predictable way that
+prevents creating duplicate form submissions.**
+
+When a web form is submitted to a server through an HTTP `POST` request,
+a web user that attempts to refresh the server response in certain user
+agents can cause the contents of the original HTTP `POST` request to be
+resubmitted, possibly causing undesired results, such as a duplicate
+web purchase.
+
+To avoid this problem, many web developers use the PRG pattern — instead
+of returning a web page directly, the `POST` operation returns a
+redirection command. The `HTTP 1.1` specification introduced the
+`HTTP 303 ("See other")` response code to ensure that in this situation,
+the web user's browser can safely refresh the server response without
+causing the initial HTTP `POST` request to be resubmitted.
+
+A commonly used alternative to the PRG pattern is the use of a `nonce`
+to prevent duplicate form submissions.
+
+User agents (such as browsers) store only the URI of an HTTP request
+as a bookmark. Because of this, an HTTP `POST` request that results
+in a response based on the body of the HTTP `POST` request cannot be
+bookmarked. By using the PRG pattern, the URI of the HTTP `GET` request
+can safely be bookmarked by a web user.
+
+
 \<div> vs \<p>
 ------------
 
