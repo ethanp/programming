@@ -11,8 +11,9 @@ import akka.pattern.ask
 import play.api.Play.current
 import scala.collection.mutable
 import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ExecutionContext, Await, Future}
 import akka.util.Timeout
+import ExecutionContext.Implicits.global
 
 /**
  * The server's Holder of the Games
@@ -40,13 +41,14 @@ object GameApp {
   def gameSet: Set[String] = games.keySet
   def scoresForGame(name: String): Future[Any] = games.get(name).get ? Scores
   def joinGame(user: String, name: String): Future[Any] = {
-    games.get(name) map {
-      case gameRef : ActorRef => gameRef ? Join(user) map {
+    val a = games.get(name) map {
+      case gameRef: ActorRef => gameRef ? Join(user) map {
         case Success => for (g <- gameRef ? Scores) yield g
         case a@UsernameAlreadyTaken => a
       }
-      case _ => GameDoesntExist
+      case _ => Future(GameDoesntExist)
     }
+    a.get
   }
 }
 

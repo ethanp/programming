@@ -23,7 +23,7 @@ object Application extends Controller {
   /**
    * Called by the login form in the navbar.
    * Verify credentials, and send user signed-in version of the homepage
-   * TODO should check whether the username is already taken
+   * We allow the same User to Login on multiple computers, but they can't both Join the same Game
    * TODO the entire password implementation
    */
   def login(user: Option[String], password: Option[String]) = Action { implicit r =>
@@ -71,7 +71,7 @@ object Application extends Controller {
         case t: String => InternalServerError(t)
 
         // game doesn't exist, so create it
-        case None => // Not sure this will work at all
+        case None =>
           GameApp.createGame(user.get, name.get)
           Ok(views.html.game(user, name, Map[String, Int]()))
       }
@@ -86,12 +86,10 @@ object Application extends Controller {
   def join(user: Option[String], name: Option[String]) = Action.async { implicit r =>
     if (user.isDefined && name.isDefined) {
       GameApp.joinGame(user.get, name.get) map {
-        case a : Map[String, Int] => a
+        case scores : Map[String, Int] => Ok(views.html.game(user, name, scores))
         case GameDoesntExist => ErrorMsg.gameDoesntExist(user)
         case UsernameAlreadyTaken => ErrorMsg.usernameTaken(user)
       }
-      // TODO get the real (scores: Map) to pass to the game view
-      Future(Ok(views.html.game(user, name, scores = Map.empty)))
     } else {
       Future(ErrorMsg.invalidRequest(user))
     }
@@ -114,29 +112,17 @@ object Application extends Controller {
   }
 
   /** TODO serve game.js Asset (or something like that; whatever you're supposed to do) */
+  // http://www.playframework.com/documentation/2.2.x/Assets
   def squareGameJs = Action { implicit r =>
     Redirect(routes.Application.index(None))
   }
 
   object ErrorMsg {
-    def invalidRequest(user: Option[String]) =
-      Redirect(routes.Application.index(user))
-        .flashing("error" -> "invalid request")
-
-    def usernameTaken(user: Option[String]) =
-      Redirect(routes.Application.index(user))
-        .flashing("error" -> "username already taken")
-
-    def invalidUsername(user: Option[String]) =
-      Redirect(routes.Application.index(user))
-        .flashing("error" -> "please choose a valid username")
-
-    def gameDoesntExist(user: Option[String]) =
-      Redirect(routes.Application.index(user))
-        .flashing("error" -> "game doesn't exist")
-
-    def nameAlreadyExists(user: Option[String]) =
-      Redirect(routes.Application.index(user))
-        .flashing("error" -> "game name already exists")
+    def error(user: Option[String], s: String) = Redirect(routes.Application.index(user)).flashing("error" -> s)
+    def invalidRequest(user: Option[String]) = error(user, "invalid request")
+    def usernameTaken(user: Option[String]) = error(user, "username already taken")
+    def invalidUsername(user: Option[String]) = error(user, "please choose a valid username")
+    def gameDoesntExist(user: Option[String]) = error(user, "game doesn't exist")
+    def nameAlreadyExists(user: Option[String]) = error(user, "game name already exists")
   }
 }
