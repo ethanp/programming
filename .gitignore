@@ -53,3 +53,5 @@ Educational/Scala/GDataWithAkka/target
 *.rkt#1#
 *.rkt#2#
 .name
+Educational/Scala/AkkaTrials/project
+Educational/Scala/AkkaTrials/target

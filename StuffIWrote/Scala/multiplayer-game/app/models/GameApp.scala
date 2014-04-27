@@ -25,13 +25,13 @@ object GameApp {
   // private means it has no public getter
   private var games = Map[String, ActorRef]()
 
-  def createGame(user: String, name: String): Option[ActorRef] = {
+  /** create, but don't join, Game aktor */
+  def createGame(name: String): Option[ActorRef] = {
     games.get(name) map { _ =>
       println(s"createGame: The name $name is already taken.")
       None
     } getOrElse {
-      val newGame = Akka.system.actorOf(Props(new Game(name)))
-      newGame ! Join(user) // we don't care about the response here
+      val newGame = Akka.system.actorOf(Props(classOf[Game], name))
       games += name -> newGame
       Some(newGame)
     }
@@ -41,20 +41,22 @@ object GameApp {
 
   def gameSet: Set[String] = games.keySet
 
-  def scoresForGame(name: String): Future[Any] =
-    games.get(name) map {
-      case gameRef: ActorRef => gameRef ? Scores
-    } getOrElse Future(None)
+  def scoresForGame(name: String): Option[Map[String, Int]] = {
+    val yada = games.get(name) map {
+      case gameRef: ActorRef => Some(gameRef ? Scores)
+    } getOrElse { None }
+    yada map { y: Future[Any] =>
+      Await.result(y, 1.second).asInstanceOf[Map[String, Int]]
+    }
+  }
 
   def joinGame(user: String, name: String): Future[Any] = {
-    val a = games.get(name) map {
-      case gameRef: ActorRef => gameRef ? Join(user) map {
+    games.get(name) map {
+      case gameRef: ActorRef => (gameRef ? Join(user)) map {
         case Success => for (g <- gameRef ? Scores) yield g
         case a@UsernameAlreadyTaken => a
       }
-      case _ => Future(GameDoesntExist)
-    }
-    a.get
+    } getOrElse Future(GameDoesntExist)
   }
 }
 

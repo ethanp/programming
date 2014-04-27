@@ -56,7 +56,7 @@ object Application extends Controller {
       Future.firstCompletedOf(Seq(scoresFuture, oneSecTimeout)) map {
         case scores: Map[String, Int] => Ok(views.html.game(user, name, scores))
         case t: String => InternalServerError(t)
-        case _ => ErrorMsg.gameDoesntExist
+        case _ => ErrorMsg.gameDoesntExist(user, name)
       }
     } else {
       Future(ErrorMsg.invalidRequest)
@@ -82,8 +82,8 @@ object Application extends Controller {
 
         // game doesn't exist, so create it
         case None =>
-          GameApp.createGame(form.user, form.name)
-          Ok(views.html.game(Some(form.user), Some(form.name), Map[String, Int]()))
+          GameApp.createGame(form.name)
+          Redirect(routes.Application.game(Some(form.user), Some(form.name)))
       }
     } else {
       Future(ErrorMsg.invalidRequest(Some(form.user)))
@@ -98,7 +98,7 @@ object Application extends Controller {
     if (user.isDefined && name.isDefined) {
       GameApp.joinGame(user.get, name.get) map {
         case scores : Map[String, Int] => Ok(views.html.game(user, name, scores))
-        case GameDoesntExist => ErrorMsg.gameDoesntExist
+        case GameDoesntExist => ErrorMsg.gameDoesntExist(user, name)
         case UsernameAlreadyTaken => ErrorMsg.usernameTaken
       }
     } else {
@@ -123,9 +123,7 @@ object Application extends Controller {
 
   /** TODO serve game.js Asset (or something like that; whatever you're supposed to do) */
   // http://www.playframework.com/documentation/2.2.x/Assets
-  def squareGameJs = Action { implicit r =>
-    Redirect(routes.Application.index(None))
-  }
+  def squareGameJs = Action { implicit r => ??? }
 
   object ErrorMsg {
     def error(user: Option[String], s: String) = {
@@ -135,7 +133,7 @@ object Application extends Controller {
     def invalidRequest(implicit user: Option[String]) = error(user, "invalid request")
     def usernameTaken(implicit user: Option[String]) = error(user, "username already taken")
     def invalidUsername(implicit user: Option[String]) = error(user, "please choose a valid username")
-    def gameDoesntExist(implicit user: Option[String]) = error(user, "game doesn't exist")
+    def gameDoesntExist(user: Option[String], game: Option[String]) = error(user, s"game $game doesn't exist")
     def nameAlreadyExists(implicit user: Option[String]) = error(user, "game name already exists")
   }
 }
