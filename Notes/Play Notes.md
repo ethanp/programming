@@ -1,5 +1,41 @@
 Notes on Playframework 2
 ========================
+
+Asynchronous Results
+--------------------
+
+**4/26/14**
+
+[Play Docs: Handling asynchronous results](http://www.playframework.com/documentation/2.2.x/ScalaAsync)
+
+### Why?
+
+**The web client will be blocked while waiting for the response, but nothing will be blocked on the server, and server resources can be used to serve other clients.**
+
+### How?
+
+    import play.api.libs.concurrent.Execution.Implicits.defaultContext
+    
+    def index = Action.async {
+      val futureInt = scala.concurrent.Future { intensiveComputation() }
+      futureInt.map(i => Ok("Got result: " + i))
+    }
+
+
+#### Now with timeouts
+
+    import play.api.libs.concurrent.Execution.Implicits.defaultContext
+    import scala.concurrent.duration._
+    
+    def index = Action.async {
+      val futureInt = scala.concurrent.Future { intensiveComputation() }
+      val timeoutFuture = play.api.libs.concurrent.Promise.timeout("Oops", 1.second)
+      Future.firstCompletedOf(Seq(futureInt, timeoutFuture)).map {
+        case i: Int => Ok("Got result: " + i)
+        case t: String => InternalServerError(t)
+      }
+    }
+
 Iteratees
 ---------
 

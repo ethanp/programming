@@ -2,12 +2,13 @@ package controllers
 
 import play.api._
 import play.api.mvc._
-import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.{Await, Future, ExecutionContext}
 import ExecutionContext.Implicits.global
 import play.api.libs.json.{Json, JsString, JsObject, JsValue}
 import play.api.libs.iteratee.{Iteratee, Enumerator}
 import scala.concurrent.duration._
 import models.{Scores, GameApp}
+import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 object Application extends Controller {
 
@@ -20,16 +21,16 @@ object Application extends Controller {
 
   /**
    * Called by the login form in the navbar
-   * TODO should really be replaced with use of the WebSocket
-   * TODO should also check whether the username is already taken
+   * TODO should check whether the username is already taken
+   * TODO the entire password implementation
    */
   def login(user: Option[String], password: Option[String]) = Action { implicit r =>
     // Map to None if "user" is an empty string, now render index only if user.isDefined.
     // map{...}getOrElse{...} is a "standard" Scala way to do this
     //    (src for Play's Redirect works the same way)
-    user.filterNot(_.isEmpty).map { user =>
-      Ok(views.html.index(Some(user), GameApp.gameSet))
-    }.getOrElse {
+    user.filterNot { _.isEmpty } map { _ =>
+        Ok(views.html.index(user, GameApp.gameSet))
+    } getOrElse {
       // `user` didn't work out, so save an error message to the "Flash scope",
       // which is data that shall only be sent back to the Client in _this_ Response using Cookies.
       // The Cookie's key & value _must_ be Strings.
@@ -41,27 +42,25 @@ object Application extends Controller {
   }
 
   /**
-   * the page for a particular game
+   * Render page for a particular game
+   * Asynchronous because the GameApp "asks" a Game-Aktor for info
    */
-  def game(user: Option[String], name: Option[String]) = {
+  def game(user: Option[String], name: Option[String]): Action[AnyContent] = Action.async {
+    val timeoutFuture = play.api.libs.concurrent.Promise.timeout("Oops", 1 second)
     name map { n =>
-      // I don't think this is how you're supposed to do it
-      val scoresFuture = GameApp.scoresForGame(n)
-      Await.result(scoresFuture, 5 seconds)
-      scoresFuture onSuccess { case scores: Map[String, Int] =>
-        Action { implicit r =>
-          Ok(views.html.game(user, name, scores))
-        }
+      // based on playframework.com/documentation/2.2.x/ScalaAsync
+      Future.firstCompletedOf(Seq(GameApp.scoresForGame(n), timeoutFuture)) map {
+        case scores: Map[String, Int] => Ok(views.html.game(user, name, scores))
+        case t: String => InternalServerError(t)
       }
-      scoresFuture onFailure {
-        case e : Exception => println("Exception in Application.game")
-      }
-    } getOrElse
-        Redirect(routes.Application.index(user))
+    } getOrElse {
+      Future(Redirect(routes.Application.index(user)))
+    }
   }
 
   /**
    * User asked to create a new game instance
+   * Asynchronous because the GameApp "asks" a Game-Aktor for info
    * TODO use AsyncResult { ... } instead of Future.onSuccess { Action { ... } } ?
    */
   def create(user: Option[String], name: Option[String]) = {
