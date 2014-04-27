@@ -6,9 +6,13 @@ import scala.concurrent.{Await, Future, ExecutionContext}
 import ExecutionContext.Implicits.global
 import play.api.libs.json.{Json, JsString, JsObject, JsValue}
 import play.api.libs.iteratee.{Iteratee, Enumerator}
+import play.api.libs.concurrent.Promise
 import scala.concurrent.duration._
 import models.{Scores, GameApp}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import scala.collection.mutable
+import play.libs.F.None
+import scala.None
 
 object Application extends Controller {
 
@@ -20,7 +24,8 @@ object Application extends Controller {
   }
 
   /**
-   * Called by the login form in the navbar
+   * Called by the login form in the navbar.
+   * Verify credentials, and send user signed-in version of the homepage
    * TODO should check whether the username is already taken
    * TODO the entire password implementation
    */
@@ -32,12 +37,8 @@ object Application extends Controller {
         Ok(views.html.index(user, GameApp.gameSet))
     } getOrElse {
       // `user` didn't work out, so save an error message to the "Flash scope",
-      // which is data that shall only be sent back to the Client in _this_ Response using Cookies.
-      // The Cookie's key & value _must_ be Strings.
       // Flash scope should not be used in Ajax calls because it is subject to race conditions.
-      Redirect(routes.Application.index(None)).flashing(
-        "error" -> "Please choose a valid username."
-      )
+      Redirect(routes.Application.index(None)).flashing("error" -> "Please choose a valid username.")
     }
   }
 
@@ -46,14 +47,14 @@ object Application extends Controller {
    * Asynchronous because the GameApp "asks" a Game-Aktor for info
    */
   def game(user: Option[String], name: Option[String]): Action[AnyContent] = Action.async {
-    val timeoutFuture = play.api.libs.concurrent.Promise.timeout("Oops", 1 second)
-    name map { n =>
-      // based on playframework.com/documentation/2.2.x/ScalaAsync
-      Future.firstCompletedOf(Seq(GameApp.scoresForGame(n), timeoutFuture)) map {
+    if (user.isDefined && name.isDefined) {
+      val oneSecTimeout = Promise.timeout("Oops", 1 second)
+      val scoresFuture: Future[Any] = GameApp.scoresForGame(name)
+      Future.firstCompletedOf(Seq(scoresFuture, oneSecTimeout)) map {
         case scores: Map[String, Int] => Ok(views.html.game(user, name, scores))
         case t: String => InternalServerError(t)
       }
-    } getOrElse {
+    } else {
       Future(Redirect(routes.Application.index(user)))
     }
   }
@@ -61,29 +62,29 @@ object Application extends Controller {
   /**
    * User asked to create a new game instance
    * Asynchronous because the GameApp "asks" a Game-Aktor for info
-   * TODO use AsyncResult { ... } instead of Future.onSuccess { Action { ... } } ?
+   * TODO this isn't the correct functionality. It should:
+   *  1. Check that the game doesn't already exist
+   *  2. Create it
+   *  3. More realistically, ask the GameApp to perform the above 2 and return some sort of result
    */
-  def create(user: Option[String], name: Option[String]) = {
-    name map { strname : String =>
-      // TODO this should be calling GameApp.createGame(name.get) not scoresForGame...
-      val scoresFuture = GameApp.scoresForGame(strname)
-      Await.result(scoresFuture, 5 seconds)
-      scoresFuture onSuccess {
+  def create(user: Option[String], name: Option[String]) = Action.async { implicit r =>
+    if (user.isDefined && name.isDefined) {
+      val oneSecTimeout = Promise.timeout("Oops", 1 second)
+      val scoresFuture: Future[Any] = GameApp.scoresForGame(name)
+      Future.firstCompletedOf(Seq(scoresFuture, oneSecTimeout)) map {
         case scores: Map[String, Int] =>
-          Action { implicit r =>
-            (user, name) match {
-              case (Some(u), Some(n)) =>
-                GameApp.createGame(u, n) map { _ =>
-                  Ok(views.html.game(user, name, scores))
-                } getOrElse { // TODO hook this Flashing thing into the form (not sure how to do that)
-                  Redirect(routes.Application.index(user)).flashing("error" -> "Game already exists")
-                }
-              case _ => Redirect(routes.Application.index(user))
-            }
-          }
+          Redirect(routes.Application.index(user))
+            .flashing("error" -> "game name already exists")
+        case n : None => // Not sure this will work at all
+          GameApp.createGame(user.get, name.get)
+          Ok(views.html.game(user, name, Map.empty[String, Int]))
+        case t: String => InternalServerError(t)
       }
-    } getOrElse {
-      Redirect(routes.Application.index(user))
+    } else {
+      Future {
+        Redirect(routes.Application.index(user))
+          .flashing("error" -> "invalid request")
+      }
     }
   }
 
