@@ -1,3 +1,37 @@
+Indexed DB
+----------
+
+#### 4/28/14
+
+**A document store that can be thought of as the NoSQL answer to Web SQL**
+
+* [Reference blog post](http://nolanlawson.com/2014/04/26/web-sql-database-in-memoriam/)
+
+
+> The gist of the story is this: in 2009 or so, native iOS and Android
+> apps were starting to give the web a run for its money, and one area
+> where the W3C recognized some room for improvement was in client-side
+> storage. So Apple and Google hacked up the Web SQL Database API, which
+> basically acknowledged that SQLite was great, mobile devs on iOS and
+> Android loved it, and so both companies were happy to ship it in their
+> browsers.
+
+> However, Microsoft and (especially) Mozilla balked, countering that
+> the SQL language is not really a standard, and having one implementation
+> in WebKit didn’t meet the “independent implementations” requirement
+> necessary to be considered a serious spec.
+
+> So by 2010, Web SQL was abandoned in favor of IndexedDB, which is a
+> document store that can be thought of as the NoSQL answer to Web SQL.
+> It was designed by Nikunj Mehta at Oracle (of all places), and by
+> 2014 every major browser, including IE 10 and Android 4.4, has shipped
+> a version of IndexedDB, with Safari expected to join later this year.
+
+> Now what we have instead [of Web SQL] is IndexedDB, which basically lets you store
+> key/value pairs, where the values are JavaScript object literals and
+> the keys can be one or more fields from within that object. It
+> supports gets, puts, deletes, and iteration.
+
 Post/Redirect/Get (PRG)
 -----------------------
 
@@ -30,6 +64,20 @@ in a response based on the body of the HTTP `POST` request cannot be
 bookmarked. By using the PRG pattern, the URI of the HTTP `GET` request
 can safely be bookmarked by a web user.
 
+Padding vs. Margin
+------------------
+
+* **`padding` is the *inner* space of an element**
+* **`margin` is the *outer* space of an element.**
+
+#### 4/28/14
+
+[Nice Tutorial](http://www.smashingmagazine.com/2009/10/05/mastering-css-coding-getting-started/#CSS-Basics1)
+
+![illustration](http://www.smashingmagazine.com/wp-content/uploads/2009/09/1_b.gif)
+
+* Use margin to separate the block from things outside it 
+* Use padding to move the contents away from the edges of the block.
 
 \<div> vs \<p>
 ------------
