@@ -51,6 +51,7 @@ object GameApp {
   }
 
   def joinGame(user: String, name: String): Future[Any] = {
+
     games.get(name) map {
       case gameRef: ActorRef => (gameRef ? Join(user)) map {
         case Success => for (g <- gameRef ? Scores) yield g
