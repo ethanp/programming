@@ -18,18 +18,25 @@ import java.util.List;
 public class UserActor extends UntypedActor {
 
     private final WebSocket.Out<JsonNode> out;
-    
+
     public UserActor(WebSocket.Out<JsonNode> out) {
         this.out = out;
-        
+
         // watch the default stocks
+        // EP: these have been saved in the "conf/application.conf" file like "default.stocks=["AAPL", "GOOG", "ORCL"]"
         List<String> defaultStocks = Play.application().configuration().getStringList("default.stocks");
 
         for (String stockSymbol : defaultStocks) {
+
+            // EP: we invoke `stocksActor()` on the StocksActor's "companion object".
+            // --- This is the getter for a lazy val containing a single instance of the
+            // --- StocksActor class.
+            // EP: `WatchStock(stockSymbol)` is one of those typical case-classes you
+            // --- send to actors.
             StocksActor.stocksActor().tell(new WatchStock(stockSymbol), getSelf());
         }
     }
-    
+
     public void onReceive(Object message) {
         if (message instanceof StockUpdate) {
             // push the stock to the client
@@ -52,7 +59,7 @@ public class UserActor extends UntypedActor {
             for (Object price : stockHistory.history()) {
                 historyJson.add(((Number)price).doubleValue());
             }
-            
+
             out.write(stockUpdateMessage);
         }
     }

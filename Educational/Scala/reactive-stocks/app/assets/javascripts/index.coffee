@@ -1,3 +1,4 @@
+# EP: I guess this is some sort of WhenReady function for the whole script
 $ ->
   ws = new WebSocket $("body").data("ws-url")
   ws.onmessage = (event) ->
