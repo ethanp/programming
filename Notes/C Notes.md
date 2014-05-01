@@ -50,15 +50,30 @@ By experiment here is what I know:
 
 ### MACROS
 
-##### 3/15/14
+#### Newline in macro
+
+##### 4/29/14
+
+Use the `\` character, but you need a space before it unless you want there to
+be no space between the letters
+
+	a\
+	b  // => ab
+	
+	a \
+	b 	// => a b
 
 #### Macro that does nothing
+
+##### 3/15/14
 
 To define a macro that does nothing:
 
     #define TAKES_A_PARAMETER_AND_THEN_TURNS_TO_THIN_AIR(X)
 
 #### Using do {} while(0) for great scott
+
+##### 3/15/14
 
 [Reference: SO](http://stackoverflow.com/questions/1067226/c-multi-line-macro-do-while0-vs-scope-block)
 
