@@ -1,6 +1,11 @@
 # EP: I guess this is some sort of WhenReady function for the whole script
 $ ->
+  # EP: the constructor makes the handshake with the server
+  # EP: the "ws-url" is filled in at template-render time when the "webSocketUrl()" method
+  # --- is called on the reverse routed url, whose method returns a `new WebSocket<JsonNode>()`.
+  # --- There's a bit of browser & framework magic that happens next that I don't understand.
   ws = new WebSocket $("body").data("ws-url")
+
   ws.onmessage = (event) ->
     message = JSON.parse event.data
     switch message.type
@@ -21,6 +26,7 @@ $ ->
 getPricesFromArray = (data) ->
   (v[1] for v in data)
 
+# EP: looks like python
 getChartArray = (data) ->
   ([i, v] for v, i in data)
 
@@ -60,7 +66,7 @@ updateStockChart = (message) ->
     # update the yaxes if either the min or max is now out of the acceptable range
     yaxes = plot.getOptions().yaxes[0]
     if ((getAxisMin(data) < yaxes.min) || (getAxisMax(data) > yaxes.max))
-      # reseting yaxes
+      # resetting yaxes
       yaxes.min = getAxisMin(data)
       yaxes.max = getAxisMax(data)
       plot.setupGrid()
@@ -97,5 +103,5 @@ handleFlip = (container) ->
         detailsHolder.append($("<h2>").text("Error: " + JSON.parse(jqXHR.responseText).error))
     # display loading info
     detailsHolder = container.find(".details-holder")
-    detailsHolder.append($("<h4>").text("Determing whether you should buy or sell based on the sentiment of recent tweets..."))
+    detailsHolder.append($("<h4>").text("Determining whether you should buy or sell based on the sentiment of recent tweets..."))
     detailsHolder.append($("<div>").addClass("progress progress-striped active").append($("<div>").addClass("bar").css("width", "100%")))

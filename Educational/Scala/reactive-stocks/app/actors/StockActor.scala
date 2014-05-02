@@ -38,8 +38,14 @@ class StockActor(symbol: String) extends Actor {
       watchers.foreach(_ ! StockUpdate(symbol, newPrice))
     case WatchStock(_) =>
       // send the stock history to the user
+      // EP: We have access to the user here because the Controller sent a reference to the user instead
+      // --- of a reference to itself as the "sender" on the `tell(msg, sender)` call.
       sender ! StockHistory(symbol, stockHistory.asJava)
       // add the watcher to the list
+      // EP: He went with `watchers` being a "var immutable.HashSet[ActorRef]" so he's keeping
+      // --- an O(1) no-duplicates list of who wants to receive updates to this stock, where
+      // --- one can be assured that any particular instance of the list has not been altered since
+      // --- it was created.
       watchers = watchers + sender
     case UnwatchStock(_) =>
       watchers = watchers - sender

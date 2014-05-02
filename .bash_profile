@@ -22,6 +22,7 @@ alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n 
 alias ut='ssh -o ServerAliveInterval=30 ethanp@almond-joy.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
 alias tracker='cs /Users/Ethan/Dropbox/School\ Help\ Files/Tracker'
+alias play_activator='~/Applications/activator-1.0.10/activator ui'
 if [[ -d ~/Dropbox/CSyStuff/ProgrammingGit ]]; then
     PROGRAMMINGGIT=~/Dropbox/CSyStuff/ProgrammingGit
 else
