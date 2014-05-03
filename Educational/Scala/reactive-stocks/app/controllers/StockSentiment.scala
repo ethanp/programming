@@ -16,8 +16,15 @@ object StockSentiment extends Controller {
 
   implicit val tweetReads = Json.reads[Tweet]
 
-  def getTextSentiment(text: String): Future[Response] =
-    WS.url(Play.current.configuration.getString("sentiment.url").get) post Map("text" -> Seq(text))
+  def getTextSentiment(text: String): Future[Response] = {
+
+    val sentimentApiUrl: String = Play.current.configuration.getString("sentiment.url").get
+
+    // EP: WS stands for "Web Services" *not* "Web Sockets"
+    // EP: They pass a Seq(text) even though there's only one thing because that's what the API expects.
+    // --- www.playframework.com/documentation/2.2.x/ScalaWS
+    WS.url(sentimentApiUrl) post Map("text" -> Seq(text))
+  }
 
   def getAverageSentiment(responses: Seq[Response], label: String): Double = responses.map { response =>
     (response.json \\ label).head.as[Double]
@@ -59,14 +66,69 @@ object StockSentiment extends Controller {
     response + ("label" -> JsString(classification))
   }
 
-  // EP: TODO this is totally the sort of thing I've been trying and failing to implement
-  // --- TODO wait no, this *IS* **EXACTLY** what I've been trying to implement. Dey Jacked my Steez!
-  // EP: we want to send a response to an external-API-involving client-request obtained through
-  // --- a Web Socket, but we don't want to block at all while we wait to process the result, and
-  // --- we don't want the user to block at all either. So both interact completely non-blockingly
-  // --- by combining the Web Socket with Futures.
-  // EP: `@param symbol` must be the stock symbol they pass into the request box
-  def get(symbol: String): Action[AnyContent] = Action.async {
+  /** EP:
+    * TODO this is totally the thing I've been trying and failing to implement
+
+    * We want to send a response to an external-API-involving client Request obtained through
+      a Web Socket, but we don't want to block at all while we wait to process the result, and
+      we don't want the user to block at all either. So both interact completely non-blockingly
+      by combining the Web Socket with Futures.
+
+    * `@param symbol` must is the stock symbol they pass into the request box
+
+
+  ===============
+  | THE JOURNEY |
+  ===============
+
+    1. We got here in the execution starting in the index.coffeescript:
+
+      """
+      handleFlip = (container) ->
+        ...
+        # fetch stock details and tweet
+        $.ajax
+          url: "/sentiment/" + container.children(".flipper").attr("data-content")
+          dataType: "json"
+          context: container
+          success: (data) ->
+            ...
+          error: (jqXHR, textStatus, error) ->
+            ...
+      """
+
+    2. Then we go to the Routes file
+
+      """
+        GET     /sentiment/:symbol          controllers.StockSentiment.get(symbol)
+      """
+
+    3. This brings us to the StockSentiment Controller [this file] (note not the Application Controller)
+
+      def get(symbol: String): Action[AnyContent] = Action.async { ... }
+
+        which returns a JSON object containing
+
+        {
+          probability : {
+            neg     : .23,
+            neutral : ...,
+            pos     : ...,
+          },
+          label : "neutral"   // or whatever
+        }
+
+    4. The index.coffeescript will then display the appropriate msg depending on the data.label
+
+      e.g:
+
+        detailsHolder.append($("<h4>").text("The tweets say HOLD!"))
+        detailsHolder.append($("<img>").attr("src", "/assets/images/hold.png"))
+
+
+    */
+
+  def get(symbol: String) = Action.async {
 
     // EP: We're saying that once we get
     val futureStockSentiments: Future[SimpleResult] = for {
