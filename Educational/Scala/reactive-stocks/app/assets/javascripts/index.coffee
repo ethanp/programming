@@ -19,6 +19,13 @@ $ ->
   $("#addsymbolform").submit (event) ->
     event.preventDefault()
     # send the message to watch the stock
+    # EP: this will call
+    # in.onMessage(new F.Callback<JsonNode>() {
+    #   @Override
+    #   public void invoke(JsonNode jsonNode) throws Throwable {
+    #     ## server code here ... ##
+    #   }
+    # }
     ws.send(JSON.stringify({symbol: $("#addsymboltext").val()}))
     # reset the form
     $("#addsymboltext").val("")

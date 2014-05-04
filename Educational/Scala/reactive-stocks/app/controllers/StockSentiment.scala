@@ -14,7 +14,7 @@ object StockSentiment extends Controller {
   // EP: this is superfluous, I guess it's just an example of what one can do
   case class Tweet(text: String)
 
-  /** EP: according to the ScalaDoc, this is strictly equivalent to:
+  /** EP: according to playframework.com/documentation/2.2.x/ScalaJsonInception
     *
     *   implicit val tweetReads = (
     *      (_._ \ 'text).read[String]   // NOTE: _._ shouldn't have the period in the middle

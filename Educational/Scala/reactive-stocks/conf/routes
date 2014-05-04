@@ -3,7 +3,12 @@
 # ~~~~
 
 GET     /                           controllers.Application.index
+
+# EP: This one gets called by the WebSocket( @reverse_route_to_here.webSocketURL(request) )
+# --- it gets planted in the index.scala.html and called in the index.coffeescript
 GET     /ws                         controllers.Application.ws
+
+# EP: This one comes from the coffeescript through an AJAX call
 GET     /sentiment/:symbol          controllers.StockSentiment.get(symbol)
 
 # Map static resources from the /public folder to the /assets URL path
