@@ -38,7 +38,7 @@ public class Application extends Controller {
                 // create a new UserActor and give it the default stocks to watch
                 final ActorRef userActor = Akka.system().actorOf(Props.create(UserActor.class, out));
 
-                //// EP: I guess here we "install" handlers on our new connection ////
+                //// EP: install handlers on our new WebSocket connection ////
 
                 // send all WebSocket message to the UserActor
                 /** EP:
@@ -62,7 +62,7 @@ public class Application extends Controller {
                 });
 
                 /** EP on onClose:
-                 * the existence of this method indicates to me that this server process is meant
+                 * The existence of this method indicates to me that this server process is meant
                  * to service multiple clients at the same time by maintaining a representation
                  * of who is looking for responses, and what stocks in particular they are
                  * interested in.

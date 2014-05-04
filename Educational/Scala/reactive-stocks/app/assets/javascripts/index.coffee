@@ -90,7 +90,7 @@ handleFlip = (container) ->
     $.ajax
       url: "/sentiment/" + container.children(".flipper").attr("data-content")
       dataType: "json"
-      context: container
+      context: container  # EP: seems to set the `this` value within the callback functions to container
       success: (data) ->
         detailsHolder = $(this).find(".details-holder")
         detailsHolder.empty()
