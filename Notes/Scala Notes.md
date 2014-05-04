@@ -1,6 +1,46 @@
 Notes on Scala
 ==============
 
+Span on Collections
+-------------------
+
+**5/4/14**
+
+It's like `partition`, only it stops looking as soon as it finds
+the first value in the collection for whom the predicate is `false`.
+
+    scala> val a = List(1, 2, 3, 45, 56, 1, 2, 3)
+    
+    scala> val (b,c) = a.span(_ < 5)
+    b: List[Int] = List(1, 2, 3)
+    c: List[Int] = List(45, 56, 1, 2, 3)
+    
+    scala> val (d,e) = a.partition(_ < 5)
+    d: List[Int] = List(1, 2, 3, 1, 2, 3)
+    e: List[Int] = List(45, 56)
+    
+Example from **P09** in [Ninety-Nine Scala Problems](http://aperiodic.net/phil/scala/s-99/p09.scala)
+
+    // P09 (**) Pack consecutive duplicates of list elements into sublists.
+    //     If a list contains repeated elements they should be placed in separate
+    //     sublists.
+    //
+    //     Example:
+    //     scala> pack(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
+    //     res0: List[List[Symbol]] = List(List('a, 'a, 'a, 'a), List('b), List('c, 'c), List('a, 'a), List('d), List('e, 'e, 'e, 'e))
+    
+    object P09 {
+      def pack[A](ls: List[A]): List[List[A]] = {
+        if (ls.isEmpty) List(List())
+        else {
+          val (packed, next) = ls span { _ == ls.head }
+          if (next == Nil) List(packed)
+          else packed :: pack(next)
+        }
+      }
+    }
+
+
 Private instance variables
 --------------------------
 

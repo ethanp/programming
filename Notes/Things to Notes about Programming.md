@@ -1,3 +1,63 @@
+Bloom Filters
+-------------
+
+#### 5/4/15
+
+[i-programmer](http://www.i-programmer.info/programming/theory/2404-the-bloom-filter.html)
+
+### The Point
+
+* **Bloom filters *attempt* to tell you if you have seen a particular data item before**
+* **False-positives** are ***possible***, **false-negatives** are ***not***
+
+#### Approximate answers are faster
+
+* You can usually trade space for time; the more storage you can throw at a problem the faster you can make it run.
+* In general you can also trade certainty for time.
+
+### Applications
+
+* *Google's BigTable database* uses one to reduce lookups for data rows that haven't been stored.
+* The *Squid proxy server* uses one to avoid looking up things that aren't in the cache and so on
+
+### History
+
+* Invented in 1970 by Burton *Bloom*
+
+### How it works
+
+* Uses multiple different hash functions in-concert
+
+#### Initialization
+
+* A Bloom filter starts off with a **bit array** `Bloom[i]` initialized to zero.
+
+#### Insertion
+
+* To record each data value you simply compute *k* different hash functions
+* Treat the resulting *k* values as indices into the array and set each of the *k* array elements to `1`.
+
+#### Lookup
+
+* Given an item to look up, apply the *k* hash functions and look up the indicated array elements.
+* If any of them are zero you can be 100% sure that you have never encountered the item before.
+* *However* even if all of them are one then you can't conclude that you have seen the data item before.
+    * All you can conclude is that it is *likely* that you have encountered the data item before.
+    
+#### Removal
+
+* **It is impossible to remove an item from a Bloom filter.**
+
+
+### Characteristics
+
+* As the bit array fills up the probability of a false positive increases
+* There is a formula for calculating the optimal number of hash functions to use for a given size of the bit array and the number of items you plan to store in there
+    * k_opt = 0.7(m/n)
+* There is another formula for calculating the size to use for a given desired probability of error and fixed number of items using the optimal number of hash functions from above
+    * m = -2n * ln(p)
+
+
 Redis
 -----
 
