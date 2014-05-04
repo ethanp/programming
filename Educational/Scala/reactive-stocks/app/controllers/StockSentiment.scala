@@ -14,6 +14,17 @@ object StockSentiment extends Controller {
   // EP: this is superfluous, I guess it's just an example of what one can do
   case class Tweet(text: String)
 
+  /** EP: according to the ScalaDoc, this is strictly equivalent to:
+    *
+    *   implicit val tweetReads = (
+    *      (_._ \ 'text).read[String]   // NOTE: _._ shouldn't have the period in the middle
+    *   )(Tweet)                        // but that won't compile even though we're in a doc...
+    *
+    * What it actually does is define a Json -> Tweet parser so that later on we can do
+    *
+    *   (json \ "statuses").as[Seq[Tweet]]
+    *
+    */
   implicit val tweetReads = Json.reads[Tweet]
 
   def getTextSentiment(text: String): Future[Response] = {
@@ -67,7 +78,7 @@ object StockSentiment extends Controller {
   }
 
   /** EP:
-    * TODO this is totally the thing I've been trying and failing to implement
+    * this is totally the thing I've been trying and failing to implement
 
     * We want to send a response to an external-API-involving client Request obtained through
       a Web Socket, but we don't want to block at all while we wait to process the result, and
