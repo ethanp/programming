@@ -35,25 +35,21 @@ Educational/Java/CodingPractice/.idea
 a.out
 Educational/Django/tutorial/env
 database.sql
-StuffIWrote/Python/MincoCommandLine/.idea
 *.sublime-workspace
 *.sublime-project
 *.xcbkptlist
 StuffIWrote/Python/GrammarBrain/GrammarBrain/pickles
-*.p
 StuffIWrote/Python/GrammarBrain/GrammarBrain/wiki_data/wiki_pickles
 StuffIWrote/Python/GrammarBrain/GrammarBrain/brown_data/experiment_results/First Real Experiment
-StuffIWrote/Python/rbm/.idea
 application.conf
-Educational/Scala/GDataWithAkka/project/project/target
-Educational/Scala/GDataWithAkka/project/target
-Educational/Scala/GDataWithAkka/target/resolution-cache
-Educational/Scala/GDataWithAkka/target
-#SICP.rkt#1#
 *.rkt#1#
 *.rkt#2#
 .name
-Educational/Scala/AkkaTrials/project
-Educational/Scala/AkkaTrials/target
-Educational/Scala/reactive-stocks/project
-Educational/Scala/reactive-stocks/target
+.classpath
+.idea
+
+# These ones could potentially be problematic
+# 5/3/14
+*.p
+target
+project

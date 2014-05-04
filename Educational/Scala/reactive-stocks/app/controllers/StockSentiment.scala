@@ -130,19 +130,29 @@ object StockSentiment extends Controller {
 
   def get(symbol: String) = Action.async {
 
-    // EP: We're saying that once we get
+    // EP: We're saying that once we get response from the Sentiment Analysis API,
+    // --- we'll send the appropriate response (JSON data or error msg) to the client
     val futureStockSentiments: Future[SimpleResult] = for {
 
-      // EP: `getTweets` gave us a Response from some fake Twitter fire-hose API, which gives
-      // --- is a JSON response in the body, which we can retrieve with `tweets.json`
+      // EP: `getTweets` gave us a Response from some fake Twitter fire-hose API containing
+      // --- a JSON response in the Body, which we can retrieve with `tweets.json` later
       tweets <- getTweets(symbol) // get tweets that contain the stock symbol
 
-
+      /**EP: here we
+          1. retrieve the text from the Tweets
+          2. Post the text to the Sentiment Analysis API
+          3. store the Seq[Future[Response]] in a variable
+       */
       futureSentiments = loadSentimentFromTweets(tweets.json) // queue web requests each tweets' sentiments
 
-      // EP: this seems to say, "Block until the contents of every Future contained within have arrived."
-      sentiments <- Future.sequence(futureSentiments) // [EP: block, then] when the sentiment responses arrive, set them
-    } yield Ok(sentimentJson(sentiments)) // EP: I think the `yield` means it gets automatically wrapped back into a Future
+      // EP: this turns Seq[Future[Response]] into Future[Sequence[Response]]
+      sentiments <- Future.sequence(futureSentiments)
+
+    // EP: "for -> yield" is similar to "map" in that it means the result
+    // --- inside the block gets automatically wrapped back into a Future
+    } yield
+      // EP: wrap the results in a JSON obj in the format expected by the CoffeeScripted client
+      Ok(sentimentJson(sentiments))
 
     // EP: `recover` adds an exception handler for the event that the Future fails.
     // --- This is way cleaner than the way I've been doing it.
