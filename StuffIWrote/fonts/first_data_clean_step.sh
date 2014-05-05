@@ -4,10 +4,10 @@
 # afm -> values
 
 inDir=~/Downloads/afm\ 2
-cd "$inDir"
-
 outDir=~/Downloads/afm_k
+
 mkdir -p $outDir
+cd "$inDir"
 
 ls | while read f; do
     newFile=$outDir/"$f"
