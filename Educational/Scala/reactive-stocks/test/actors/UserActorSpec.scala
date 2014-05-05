@@ -12,7 +12,10 @@ import scala.collection.JavaConverters._
 import play.api.test.WithApplication
 import org.specs2.matcher.JsonMatchers
 
-class UserActorSpec extends TestkitExample with SpecificationLike with JsonMatchers with NoTimeConversions {
+class UserActorSpec extends TestkitExample
+                       with SpecificationLike
+                       with JsonMatchers
+                       with NoTimeConversions {
 
   /*
    * Running tests in parallel (which would ordinarily be the default) will work only if no
@@ -22,7 +25,8 @@ class UserActorSpec extends TestkitExample with SpecificationLike with JsonMatch
    * It's usually safer to run the tests sequentially.
    */
 
-  sequential
+  sequential  // EP: just calls "args(sequential = true)",
+              // I like having an method for that though
 
   "UserActor" should {
 
@@ -30,7 +34,11 @@ class UserActorSpec extends TestkitExample with SpecificationLike with JsonMatch
     val price = 123
     val history = List[java.lang.Double](0.1, 1.0).asJava
 
+    // EP: WithApplication "used to run specs within the context of a running application"
     "send a stock when receiving a StockUpdate message" in new WithApplication {
+
+      // EP: A fake WebSocket.Out that we can get the Actor to write to and compare what we
+      // see with what we want.
       val out = new StubOut()
 
       val userActorRef = TestActorRef[UserActor](Props(new UserActor(out)))
@@ -56,6 +64,7 @@ class UserActorSpec extends TestkitExample with SpecificationLike with JsonMatch
       userActor.receive(StockHistory(symbol, history))
 
       // ...and expect it to be a JSON node.
+      // EP: probably could have used '... mustEqual "hist" '
       out.actual.get("type").asText must beEqualTo("stockhistory")
       out.actual.get("symbol").asText must beEqualTo(symbol)
       out.actual.get("history").get(0).asDouble must beEqualTo(history.get(0))

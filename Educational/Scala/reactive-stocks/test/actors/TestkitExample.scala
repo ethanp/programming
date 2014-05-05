@@ -11,8 +11,8 @@ import org.specs2.specification.AfterExample
  * that is used for all of the tests.
  */
 abstract class TestkitExample extends TestKit(ActorSystem())
-with AfterExample
-with ImplicitSender {
+                                 with AfterExample
+                                 with ImplicitSender {
 
   /**
    * Runs after the example completes.
