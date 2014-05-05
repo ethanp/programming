@@ -44,15 +44,22 @@ Example from **P09** in [Ninety-Nine Scala Problems](http://aperiodic.net/phil/s
 Private instance variables
 --------------------------
 
+[SO](http://stackoverflow.com/questions/9698677/privatethis-vs-private)
+
 Make the variable unavailable to other classes,
 but available to other instances of the same class
 
     private var compareIt = List[Int]()
     
 Make the variable unavailable to *anyone* including other instances of this class.
-Now it will be *only* available to *this specific instance*.
+Now it will be *only* available to *this specific instance* (and won't work in
+subclass instances).
 
     private[this] var meOnly = List[Int]()
+
+Make the variable *visible to only this specific instance, and subclass instances*.
+
+    protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
 
 My Guide to a crazy function
 ----------------------------

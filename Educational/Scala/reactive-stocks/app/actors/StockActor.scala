@@ -16,17 +16,25 @@ import play.libs.Akka
 
 class StockActor(symbol: String) extends Actor {
 
+  // EP: a random stock quote generator, where "new = last ± 5%" .
   lazy val stockQuote: StockQuote = new FakeStockQuote
 
+  // EP: these'll be the UserActors who subscribe to this StockActor
   protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
 
   // A random data set which uses stockQuote.newPrice to get each data point
   var stockHistory: Queue[java.lang.Double] = {
+
+    // EP: create initial random Double, turn it into a Stream, create a "generator" (not sure Scala's term) based on it.
+    // --- Never seen this before, but I understand it will appear in the scala class so I won't
+    // --- look into it now. I guess this is like a function with a "yield" in Python.
     lazy val initialPrices: Stream[java.lang.Double] = (new Random().nextDouble * 800) #:: initialPrices.map(previous => stockQuote.newPrice(previous))
+    // EP: force-generate 50, collect them into a scala.coll.imm.Queue.
     initialPrices.take(50).to[Queue]
   }
 
   // Fetch the latest stock value every 75ms
+  // EP: note we never need to explicitly reference this thing again until we want to cancel it.
   val stockTick = context.system.scheduler.schedule(Duration.Zero, 75.millis, self, FetchLatest)
 
   def receive = {
@@ -81,15 +89,10 @@ class StocksActor extends Actor {
       // get or create the StockActor for the symbol and forward this message
 
       /** EP:
+       * `context` is an implicit val ActorSystem we inherit from Actor that enables us to
+         reference whatever Actor we want by "name" given from "Akka.system.actorOf(class, name)"
 
-       * `context` is an implicit val we inherit from Actor that enables us to reference
-         whatever Actor we want.
-
-       * TODO this is instead of maintaining a list of ActorRefs in an instance-var, which is
-         what I was doing, which is dead WRONG for some reason that I don't understand yet
-
-       * It seems like context.child allows us to index some mapping of a bunch of ActorRefs by symbol.
-          =-> **OOHH**, when we do context.actorOf(Type, NAME), that NAME is how we can access the Actor later
+       * Maybe this works better than keeping an instance variable Collection[ActorRef].
 
           TODO set a debug-point in order to see where the runtime's `child` function lives (Intellij: "no implementations found").
        */
@@ -99,22 +102,22 @@ class StocksActor extends Actor {
         // pass the message along, but retain the original sender as the sender
       } forward watchStock
 
-    // EP: StockActors don't care what the 'symbol' in the UnwatchStock msg is bc they only refer
-    // --- to a single stock anyway. They will stop sending updates to whomever asks to Unwatch
+    /** EP: StockActors don't care what the 'symbol' in the UnwatchStock msg is bc they only refer
+            to a single stock anyway. They will stop sending updates to whomever asks to Unwatch    */
 
+    // EP: remove this user from the specified stock
     case unwatchStock @ UnwatchStock(Some(symbol)) =>
       // if there is a StockActor for the symbol forward this message
       context.child(symbol).foreach(_.forward(unwatchStock))
 
+    // EP: remove this user from every stock
     case unwatchStock @ UnwatchStock(None) =>
       // if no symbol is specified, forward to everyone
-      // EP: in other words, remove this user from every stock
       context.children.foreach(_.forward(unwatchStock))
   }
 }
 
-// EP: global singleton reference to the StocksActor actor, who passes the messages to their
-// --- respective StockActor actors.
+// EP: global singleton StocksActor actor; passes the messages to their respective StockActor actors.
 // EP: TODO this is probably how I should be holding the reference to this actor in my multiplayer-game
 object StocksActor {
   lazy val stocksActor: ActorRef = Akka.system.actorOf(Props(classOf[StocksActor]))

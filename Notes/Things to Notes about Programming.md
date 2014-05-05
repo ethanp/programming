@@ -1,7 +1,21 @@
+Heap
+----
+
+#### 5/4/14
+
+[Wikipedia](http://en.wikipedia.org/wiki/Heap_(data_structure))
+
+* a binary heap is a **complete** binary tree which satisfies the heap ordering property. The ordering can be one of two types:
+    1. the **min-heap** property: the value of each node is *greater than or equal* to the value of its parent, with the minimum-value element at the root.
+    2. the **max-heap** property: same but flipped
+* A heap is not a sorted structure but can be regarded as **partially ordered**.
+    * There is no particular relationship among nodes on any given level, even among the siblings
+* The heap is one maximally efficient implementation of a **priority queue**
+
 Bloom Filters
 -------------
 
-#### 5/4/15
+#### 5/4/14
 
 [i-programmer](http://www.i-programmer.info/programming/theory/2404-the-bloom-filter.html)
 

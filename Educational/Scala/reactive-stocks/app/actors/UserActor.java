@@ -15,6 +15,13 @@ import java.util.List;
  * JSON data to the client.
  */
 
+/** EP:
+ * The UserActor is not involved in directly asking for anything.  The Application Controller
+ * tells the StocksActor to register the User for updates from the desired StockActors.  Then
+ * the StockActors remember to send first the current state of the stock History on connect,
+ * then an Update whenever one is received (every 75 ms).
+ */
+
 public class UserActor extends UntypedActor {
 
     private final WebSocket.Out<JsonNode> out;
@@ -23,21 +30,45 @@ public class UserActor extends UntypedActor {
         this.out = out;
 
         // watch the default stocks
-        // EP: these have been saved in the "conf/application.conf" file like "default.stocks=["AAPL", "GOOG", "ORCL"]"
+        // EP: these have been saved in the "conf/application.conf" file as "default.stocks=["AAPL", "GOOG", "ORCL"]"
         List<String> defaultStocks = Play.application().configuration().getStringList("default.stocks");
 
         for (String stockSymbol : defaultStocks) {
+            /** EP: scala version
 
-            // EP: we invoke `stocksActor()` on the StocksActor's "companion object".
-            // --- This is the getter for a lazy val containing a single instance of the
-            // --- StocksActor class.
-            // EP: `WatchStock(stockSymbol)` is one of those typical case-classes you
-            // --- send to actors.
+            stocksActor ! WatchStock(stockSymbol)       */
+
             StocksActor.stocksActor().tell(new WatchStock(stockSymbol), getSelf());
         }
     }
 
+    // EP: Json -> Client. Update: send new price for symbol; History: send list of prices for symbol
+    // EP: A glimpse of the Java version of Actors.
+    // --- We use "onReceive(Obj msg)" for "receive", and "instanceof" for "case".
     public void onReceive(Object message) {
+
+        /** EP: scala version
+            doesn't use Enumerators like it probably would in real life, but still nice idnit
+
+        case StockUpdate(symbol, price) =>
+          out.write(
+            Json.obj(
+              "type"   -> "stockupdate",
+              "symbol" ->  symbol,
+              "price"  ->  price.doubleValue
+            )
+          )
+
+        case StockHistory(symbol, history) =>
+          out.write(
+            Json.obj(
+              "type"    -> "stockhistory",
+              "symbol"  ->  symbol,
+              "history" ->  Json.arr(history)
+            )
+          )
+
+         */
         if (message instanceof StockUpdate) {
             // push the stock to the client
             StockUpdate stockUpdate = (StockUpdate)message;

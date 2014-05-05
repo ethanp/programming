@@ -25,13 +25,9 @@ public class Application extends Controller {
         return new WebSocket<JsonNode>() {
 
             /** EP:
-
              * This probably gets called when the "protocol upgrade" (to a WebSocket) succeeds
-
              * It's probably a bit different to do this in Scala; for that, see the web-chat
-               example in the playframework source code...but that'll take forever to load in
-               Intellij, so maybe find someone else's re-implementation of it
-
+               example for an idea of how that's done.
              */
 
             public void onReady(final WebSocket.In<JsonNode> in, final WebSocket.Out<JsonNode> out) {
@@ -50,6 +46,8 @@ public class Application extends Controller {
                  * follow to the "Acting Manager of Stocks we're Following", who will (if none exist)
                  * create a new "Acting Watcher of One Stock" who will create a string of random
                  * doubles and send it back [here (??)]
+                 *
+                 * note, we could probably pass the WebSocket.In to another object if we wanted.
                  */
                 in.onMessage(new F.Callback<JsonNode>() {
                     @Override
