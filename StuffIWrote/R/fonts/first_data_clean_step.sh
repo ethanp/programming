@@ -10,5 +10,9 @@ outDir=~/Downloads/afm_k
 mkdir -p $outDir
 
 ls | while read f; do
-    grep "^KPX" "$f" > $outDir/"$f"
+    newFile=$outDir/"$f"
+    grep "^KPX" "$f" > "$newFile"
+    if [ $(wc -l < "$newFile") -eq "0" ]; then
+        rm -f "$newFile"
+    fi
 done

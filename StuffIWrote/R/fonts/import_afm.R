@@ -1,22 +1,12 @@
 # 5/4/14
 
-setwd("/Users/Ethan/Downloads/afm/")
-files <- list.files('.')
-
+files <- list.files("/Users/Ethan/Downloads/afm_k/")
 frames <- list()
 
 for (file in files) {
-    
-    # TODO read the columns as (text,text,text,number)
-    a <- read.delim(file, header = FALSE, sep = " ")
-    b <- a[a$V1 == 'KPX',]
-    c <- b[,c(1,2,3,4)]
-    
-    # turn factors (by default) into numerics
-    c$V4 <- as.numeric(as.character(c$V4))
-    
-    # not sure this is necessary
-    d <- as.data.frame(c)
+    a <- read.delim(file, header = FALSE, sep = " ", 
+                    colClasses = c("character","character", 
+                                   "character", "numeric"))
 
     # TODO I think this combines the data.frames into one
     # list of columns, but I want to keep them separate
