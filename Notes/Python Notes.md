@@ -1,6 +1,28 @@
 Notes on Python
 ===============
 
+Global variables
+----------------
+
+#### 5/5/14
+
+* [SO source](http://stackoverflow.com/questions/423379)
+
+If you are just ***referencing*** a global variable, *you don't need to do
+anything special* to access it.
+
+	globvar = 0
+	def print_globvar():
+	    print globvar  # this is OK
+
+However, to ***assign to*** a global variable, you **must declare it
+as `global` first**
+
+	globvar = 0	
+	def set_globvar_to_one():
+	    global globvar # Needed to modify global copy of globvar
+	    globvar = 1
+
 next(`iterator`)
 --------------
 

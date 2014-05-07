@@ -49,6 +49,14 @@
 ##### Get vector of column names
 
 	names(df)
+	
+##### Apply a summary function to each column of data frame
+
+E.g. apply the `min()` function, to collapse each column into its minimum value
+
+	minima <- sapply(am, min, na.rm=TRUE)
+	
+**Returns** e.g. Length 7 vector if there were 7 columns
 
 
 ### Vectors
@@ -163,6 +171,23 @@ Move legend
 
 #### Histograms
 
+##### Plot individual histograms for each column of data_frame
+
+[SO source](http://stackoverflow.com/questions/13035834)
+
+Given that you've already removed all columns you don't want to plot with `df[,c(...)]`
+
+    plot_histogram_of_data_frame <- function (in_data_frame) {
+        library(reshape)
+        library(ggplot2)
+    	  d <- melt(in_data_frame)
+    	  ggplot(d,aes(x = value)) + 
+             facet_wrap(~variable,scales = "free_x") + 
+             geom_histogram()
+    }
+
+
+
 ##### Plot histogram of factor variable's count-table
 
 Given that you have `dataframe$factor.var`, you can say
@@ -261,6 +286,10 @@ For instance, you can give it  a slope.
 ##### Read TSV
 
 	tsv <- read.csv('name.tsv', sep = '\t')
+
+#### Retrieve standard output of UNIX command
+
+	datafiles <- system('find . | grep FileSuffix.txt', intern=TRUE)
 	
 #### Database-like operations
 
@@ -303,3 +332,11 @@ For instance, you can give it  a slope.
 	3 Very Good  60.9   62.1  62.9
 	4   Premium  60.5   61.4  62.2
 	5     Ideal  61.3   61.8  62.2
+
+### Strings
+
+##### String substitution
+
+**Note:** You must double-escape
+
+	serial <- sub("\\./(\\w+)(.*)","\\1", f)
