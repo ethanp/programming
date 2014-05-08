@@ -97,25 +97,36 @@ object CleanData extends App {
     files.zipWithIndex map { case (file, i) =>
       Source.fromFile(file).getLines()
         .filter(_ startsWith "KPX")
-        .map(i + _.replaceFirst("KPX", "").replaceAll(" ", ",") + "\n")
+        .map(i + _.replaceFirst("KPX", "").replaceAll(" ", ","))
         .toList
     } flatten
 
+
+  // PairInfo : gives a unique id and a seen-count to each letter pair
+  case class PairInfo(id: Int, var count: Int) { // yes, it has to be a case class
+    def asStringArray = Array(id.toString, count.toString)
+  }
+
+
   /** outCSV : a csv file-string ready for ingestion by Mahout's FileDataModel constructor
-    PairInfo : gives a unique id and a seen-count to each letter pair
 
     This algorithm is optimized for a single processor, but could use two mapreduce
     steps to accomplish the same thing with parallel mappers and reducers.
    */
-  case class PairInfo(id: Int, var count: Int)
   val letterMap = mutable.Map.empty[String, PairInfo]
   val outCSV: String = inCSV.map { line =>
+
+    // get the letter pair
     val lineArray = line split ","
     val pair = lineArray.slice(1, 3).mkString(",")
+
+    // make sure there's an ID for this letter pair
     if (letterMap contains pair) letterMap(pair).count += 1
     else letterMap(pair) = PairInfo(letterMap.size, 1)
+
+    // output as triplet (user, item, value) for mahout
     List(lineArray(0), letterMap(pair).id, lineArray(3)).mkString(",")
-  } mkString
+  } mkString "\n"
 
   val modelDataWriter = new PrintWriter("OutFileData.csv")
   modelDataWriter write outCSV
@@ -128,16 +139,16 @@ object CleanData extends App {
       nextHighest,pair,count,id
       ... "
     */
-  val histogram: String = letterMap.map { case (pair, info) =>
-    (pair split ",") ++ Array(info.count.toString, info.id.toString)
-  }.toList                                  // get rid of the pair_id
-    .sortWith( _(2).toInt > _(2).toInt )    // sort by count, descending
-    .map(_ mkString ",") mkString "\n"      // turn to CSV string
+  val histogramCSV: String = letterMap.map { case (pair, info) =>
+    (pair split ",") ++ info.asStringArray        // put in [letter,letter,count,id] format
+  }.toList
+    .sortWith( _(2).toInt > _(2).toInt )          // sort by count, descending
+    .map(_ mkString ",") mkString "\n"            // turn to CSV string
 
-  println(histogram)                        // print to console
+  println(histogramCSV)                           // print to console
 
   val header = "FirstLetter,SecondLetter,Count,ID\n"
   val histogramWriter = new PrintWriter("KerningHistogram.csv")
-  histogramWriter write header+histogram           // write to file
+  histogramWriter write header + histogramCSV     // write to file
   histogramWriter.close()
 }
