@@ -10,8 +10,9 @@ import org.apache.mahout.cf.taste.impl.similarity.{EuclideanDistanceSimilarity, 
 import org.apache.mahout.cf.taste.model.DataModel
 import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood
 import org.apache.mahout.cf.taste.recommender.{Recommender, RecommendedItem}
-import org.apache.mahout.cf.taste.similarity.UserSimilarity
+import org.apache.mahout.cf.taste.similarity.{ItemSimilarity, UserSimilarity}
 import org.apache.mahout.common.RandomUtils
+import scala.collection.mutable
 import scala.io.Source
 
 
@@ -44,6 +45,7 @@ object A extends App {
     @Override
     def buildRecommender(model: DataModel): Recommender = {
       val similarity: UserSimilarity = new PearsonCorrelationSimilarity(model)
+      val itemSimilarity: ItemSimilarity = new PearsonCorrelationSimilarity(model)
 
       // TODO try this one out too
       val euclideanSimilarity: UserSimilarity = new EuclideanDistanceSimilarity(model)
@@ -51,8 +53,7 @@ object A extends App {
       // the first parameter is the number of neighbors
       val neighborhood: UserNeighborhood = new NearestNUserNeighborhood(2, similarity, model)
 
-      // TODO y u no resolve constructor?
-//      val a = new GenericItemBasedRecommender(model, euclideanSimilarity)
+      val itemRecommender: Recommender = new GenericItemBasedRecommender(model, itemSimilarity)
 
       new GenericUserBasedRecommender(model, neighborhood, similarity)
     }
@@ -76,7 +77,7 @@ object A extends App {
        |F1: ${irStats.getF1Measure}""".stripMargin
   )
 
-  import scala.collection.JavaConversions._
+//  import scala.collection.JavaConversions._
 //  val recommendations: util.List[RecommendedItem] = recommender.recommend(1, 2)
 //  recommendations foreach println
 }
@@ -89,23 +90,50 @@ object A extends App {
 object CleanData extends App {
   val dirName = "/Users/Ethan/Downloads/afm 2"
   val files = new java.io.File(dirName).listFiles.filter(_.getName.endsWith(".afm"))
-  val writer = new PrintWriter("OutFileData.csv")
-  files.map(Source.fromFile(_).getLines())
-  val files_data = files.zipWithIndex map { case (file, i) =>
-    val lines = Source.fromFile(file).getLines()
-    val correctLines = lines.filter(_ startsWith "KPX")
-    correctLines.map(i + _.replaceFirst("KPX", "").replaceAll(" ", ",") + "\n").toList
-  }
-  val data = files_data.flatten
-  val keys = data.map(s => {
-    val p = s.split(",")
-    s"${p(1)},${p(2)}"
-  })
-  val map = keys.groupBy {
-    case i => i
-  }
-  println(map.toString())
 
-//    formattedLines foreach writer.write
-//  writer.close()
+  mutable.TreeSet
+  // ["font_id,letter,letter,value",...]
+  val inCSV: Array[String] =
+    files.zipWithIndex map { case (file, i) =>
+      Source.fromFile(file).getLines()
+        .filter(_ startsWith "KPX")
+        .map(i + _.replaceFirst("KPX", "").replaceAll(" ", ",") + "\n")
+        .toList
+    } flatten
+
+  /** outCSV : a csv file-string ready for ingestion by Mahout's FileDataModel constructor
+    PairInfo : gives a unique id and a seen-count to each letter pair
+   */
+  case class PairInfo(id: Int, var count: Int)
+  val letterMap = mutable.Map.empty[String, PairInfo]
+  val outCSV: String = inCSV.map { line =>
+    val lineArray = line split ","
+    val pair = lineArray.slice(1, 3).mkString(",")
+    if (letterMap contains pair) letterMap(pair).count += 1
+    else letterMap(pair) = PairInfo(letterMap.size, 1)
+    List(lineArray(0), letterMap(pair).id, lineArray(3)).mkString(",")
+  } mkString
+
+  val modelDataWriter = new PrintWriter("OutFileData.csv")
+  modelDataWriter write outCSV
+  modelDataWriter.close()
+
+
+  /** histogram : sorted csv histogram of letter pairs
+
+     "highest,pair,value
+      nextHighest,pair,value
+      ... "
+    */
+  val histogram: String = letterMap.map { case (pair, info) =>
+    (pair split ",") :+ info.count.toString
+  }.toList                                  // get rid of the pair_id
+    .sortWith( _(2).toInt > _(2).toInt )    // sort by count, descending
+    .map(_.mkString(",")) mkString "\n"     // turn to CSV string
+
+  println(histogram)                        // print to console
+
+  val histogramWriter = new PrintWriter("KerningHistogram.csv")
+  histogramWriter write histogram           // write to file
+  histogramWriter.close()
 }
