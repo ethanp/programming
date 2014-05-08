@@ -10,6 +10,15 @@
 #    from 1999 to 2008?
 #
 #    Using the base plotting system, make a plot showing the total
-#    PM2.5 emission from all sources for each of the years 1999,
+#    PM_2.5 emission from all sources for each of the years 1999,
 #    2002, 2005, and 2008.
 
+# scatterplot of summed output for each year for which we have data
+plot1 <- function() {
+    # the year is a factor variable, so it should be just a line
+    # or two to sum it up
+    
+    # then I can just feed that into the base plotter
+    
+    # note: I must stick to the BASE plotting system    
+}

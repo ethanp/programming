@@ -11,3 +11,9 @@
 #
 #    Use the base plotting system to make a plot answering this question.
 
+plot2 <- function() {
+    # filter data to only Baltimore City, Maryland, then do something
+    # similar to plot1
+    
+    # note: must stick to the BASE plotting system
+}

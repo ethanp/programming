@@ -12,3 +12,8 @@
 #
 #    Which city has seen greater changes over time in motor vehicle emissions?
 
+plot6 <- function() {
+    # do the same as plot2 for LA County
+    # plot them both on the same plot
+    # add a label showing the different differences over time between the cities
+}

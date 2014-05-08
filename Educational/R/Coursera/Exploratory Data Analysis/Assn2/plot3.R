@@ -14,3 +14,10 @@
 #
 #    Use the ggplot2 plotting system to make a plot answer this question.
 
+plot3 <- function() {
+    # use the filtered data from plot2
+    # separate it by source (factor variable)
+    # plot that with ggplot2
+    
+    # note: use GGPLOT2 to make the plot
+}
