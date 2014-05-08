@@ -83,9 +83,9 @@ object A extends App {
 }
 
 /**
- * process the raw files into something suitable for mahout
- * basically need to map to generate the data
- * and reduce if I want to plot it with R
+ * Process the raw files into something suitable for mahout
+ *
+ * Also output a CSV of [Letter1, Letter2, Count, PairID] data, sorted by Count descending
  */
 object CleanData extends App {
   val dirName = "/Users/Ethan/Downloads/afm 2"
@@ -103,6 +103,9 @@ object CleanData extends App {
 
   /** outCSV : a csv file-string ready for ingestion by Mahout's FileDataModel constructor
     PairInfo : gives a unique id and a seen-count to each letter pair
+
+    This algorithm is optimized for a single processor, but could use two mapreduce
+    steps to accomplish the same thing with parallel mappers and reducers.
    */
   case class PairInfo(id: Int, var count: Int)
   val letterMap = mutable.Map.empty[String, PairInfo]
@@ -121,19 +124,20 @@ object CleanData extends App {
 
   /** histogram : sorted csv histogram of letter pairs
 
-     "highest,pair,value
-      nextHighest,pair,value
+     "highest,pair,count,id
+      nextHighest,pair,count,id
       ... "
     */
   val histogram: String = letterMap.map { case (pair, info) =>
-    (pair split ",") :+ info.count.toString
+    (pair split ",") ++ Array(info.count.toString, info.id.toString)
   }.toList                                  // get rid of the pair_id
     .sortWith( _(2).toInt > _(2).toInt )    // sort by count, descending
-    .map(_.mkString(",")) mkString "\n"     // turn to CSV string
+    .map(_ mkString ",") mkString "\n"      // turn to CSV string
 
   println(histogram)                        // print to console
 
+  val header = "FirstLetter,SecondLetter,Count,ID\n"
   val histogramWriter = new PrintWriter("KerningHistogram.csv")
-  histogramWriter write histogram           // write to file
+  histogramWriter write header+histogram           // write to file
   histogramWriter.close()
 }
