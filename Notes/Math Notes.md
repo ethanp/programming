@@ -14,6 +14,55 @@ latex footer:		mmd-memoir-footer
 
 This document requires MathJax (and possibly MultiMarkdown) to be viewed properly.
 
+# Statistics #
+
+## Similarity Measures ##
+
+#### 5/8/14
+
+Sources:
+
+* [Random blog on Collaborative Filtering with Mahout](http://blog.comsysto.com/2013/04/03/background-of-collaborative-filtering-with-mahout/)
+
+### Real Valued Attributes
+
+#### Pearson Similarity ####
+
+* [Wikipedia](http://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient)
+
+\\[\rho_{X,Y}=\frac{\mathrm{cov}(X,Y)}{\sigma_X \sigma_Y}=\frac{E[(X-\mu_X)(Y-\mu_Y)]}{\sigma_X \sigma_Y}\\]
+
+#### Euclidean Distance ####
+
+* [Wikipedia: Norm](http://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm)
+
+\\[ ||\textbf{x}|| := \sqrt{x^2_1 + \cdots + x^2_n} \\]
+
+Or more generally, the *p*-norm is
+
+\\[ ||\textbf{x}|| := (\sum_{i=1}^{n}|x_i|^p)^{1/p} \\]
+
+Which means the Euclidean norm \\(\equiv\\) the \\(l_2\\) norm.
+
+### Binary Attributes ###
+
+* [Wikipedia](http://en.wikipedia.org/wiki/Tanimoto_coefficient#Tanimoto_coefficient_.28extended_Jaccard_coefficient.29)
+
+#### Jaccard index/similarity coefficient ####
+
+\\[J(A,B)=\frac{|A\cap{B}|}{|A\cup{B}|}\\]
+
+
+Now, letting \\(M_{AB}\\) be the number of data points where binary attribute a=A and b=B, we
+compute the **Jaccard similarity coefficient** as
+
+\\[J=\frac{M_{11}}{M_{01}+M_{10}+M_{11}}\\]
+
+And the **Jaccard distance** as
+
+\\[d_J=\frac{M_{01}+M_{10}}{M_{01}+M_{10}+M_{11}}\\]
+
+
 # Digital Signal Processing
 
 ## Total Harmonic Distortion ##

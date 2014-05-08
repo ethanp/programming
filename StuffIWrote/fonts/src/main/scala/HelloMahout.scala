@@ -12,16 +12,19 @@ import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood
 import org.apache.mahout.cf.taste.recommender.{Recommender, RecommendedItem}
 import org.apache.mahout.cf.taste.similarity.{ItemSimilarity, UserSimilarity}
 import org.apache.mahout.common.RandomUtils
+import org.apache.mahout.cf.taste.impl.recommender.slopeone.MemoryDiffStorage
+import org.apache.mahout.cf.taste.impl.recommender.slopeone.SlopeOneRecommender
+import org.apache.mahout.cf.taste.recommender.slopeone.DiffStorage
+import org.apache.mahout.cf.taste.common.Weighting
 import scala.collection.mutable
 import scala.io.Source
 
 
 /**
- * Base Source:
- * slideshare.net/Cataldo/apache-mahout-tutorial-recommendation-20132014
+ * Based on: every Mahout tutorial out there
  */
 
-object A extends App {
+object HelloMahout extends App {
 
   // ensures consistency between different evaluation runs
   RandomUtils.useTestSeed()
@@ -55,7 +58,16 @@ object A extends App {
 
       val itemRecommender: Recommender = new GenericItemBasedRecommender(model, itemSimilarity)
 
-      new GenericUserBasedRecommender(model, neighborhood, similarity)
+      val userRecommender: Recommender = new GenericUserBasedRecommender(model, neighborhood, similarity)
+
+      // src1: http://books.dzone.com/articles/slope-one-recommender
+      // src2: https://gist.github.com/tuxdna/5903814
+      // not sure this'll just work out-of-the-box like this
+      // TODO try using Weighting.WEIGHTED too
+      val diffStorage: DiffStorage = new MemoryDiffStorage(model, Weighting.UNWEIGHTED, Long.MAX_VALUE)
+      val slope1Recommender: Recommender = new SlopeOneRecommender(model, Weighting.UNWEIGHTED, Weighting.UNWEIGHTED, diffStorage)
+
+      new CaachingRecommender(recommender)
     }
   }
 
@@ -65,6 +77,7 @@ object A extends App {
 
 //  val rmseScore: Double = rmse.evaluate(recommenderBuilder, null, model, 0.7, 1.0)
 
+  // Note: this is more for a "boolean" data model situation, where there are no notions of preference value
   val irStats: IRStatistics = irEvaluator.evaluate(
     recommenderBuilder, null, model, null, 5,
     GenericRecommenderIRStatsEvaluator.CHOOSE_THRESHOLD, 1.0
@@ -91,19 +104,17 @@ object CleanData extends App {
   val dirName = "/Users/Ethan/Downloads/afm 2"
   val files = new java.io.File(dirName).listFiles.filter(_.getName.endsWith(".afm"))
 
-  mutable.TreeSet
   // ["font_id,letter,letter,value",...]
   val inCSV: Array[String] =
-    files.zipWithIndex map { case (file, i) =>
+    files.zipWithIndex map { case (file, i) =>   // TODO should be a flatmap
       Source.fromFile(file).getLines()
         .filter(_ startsWith "KPX")
         .map(i + _.replaceFirst("KPX", "").replaceAll(" ", ","))
         .toList
     } flatten
 
-
   // PairInfo : gives a unique id and a seen-count to each letter pair
-  case class PairInfo(id: Int, var count: Int) { // yes, it has to be a case class
+  case class PairInfo(id: Int, var count: Int) { // case classiness allows for nice syntax later
     def asStringArray = Array(id.toString, count.toString)
   }
 

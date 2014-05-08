@@ -1,3 +1,86 @@
+latex input:		mmd-article-header
+Title:		Notes on Web Programming
+Author:		Ethan C. Petuchowski
+Base Header Level:		1
+latex mode:		memoir
+Keywords:		Math, DSP, Digital Signal Processing, Fourier Transform
+CSS:		http://fletcherpenney.net/css/document.css
+xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+copyright:			2014 Ethan C. Petuchowski
+latex input:		mmd-natbib-plain
+latex input:		mmd-article-begin-doc
+latex footer:		mmd-memoir-footer
+
+
+Web Cache
+---------
+
+#### 5/8/14
+
+[Caching Tutorial](https://www.mnot.net/cache_docs/?utm_medium=App.net&utm_source=PourOver)
+
+### Introduction
+
+* **Sits between Web servers and clients, and watches requests come in, and *saves responses being returned***
+	* **If it sees the same request come after, it *returns the saveed response***
+* This **reduces latency** because it may be *physically closer* to the client then the server(s)
+* It also **reduces network traffic** because *less wires are used* to relay the interaction
+* The **browser cache** is the browser's own cache, which lives on your hard drive
+	* It checks once a session for each resource
+	* Makes the `back` button much faster
+	* Makes loading pictures that are used on multiple pages throughout the site much faster
+* A **proxy cache** is set up for your corporate network or by your ISP (possibly on the firewall)
+   * Your requests, and those of 1,000s of people around you, are routed there unbenknownst
+     to you, and y'all are sharing saved content amongst yourselves
+* A **gateway cache** is set up by a Webmaster to increase performance of her site
+	* Requests are routed to it by a load balancer, often by a Content Delivery Network (CDN) like *Akamai*
+
+### Downsides
+
+* They can make it hard to see who's actually using the site
+* They can serve **stale** content
+
+### Rules caches follow
+
+* There is a response header that instructs the browser not to cache a resource, and they'll follow it
+* Authenticated requests (e.g. `HTTPS`) are not cached
+* Cached resources must have an experiation date
+	* If it has expired, the origin server will *validate* whether the copy is still good
+		* If it is *valid*, the server only has to say "use cache" instead of resending the whole resource
+	* Unless the Net connection is down, in which case the expired resource will simple be served
+
+### Controlling caches
+
+* Few browsers honor `<meta>` tags indicating expiration dates
+
+#### You really have to use *HTTP headers*
+
+* `Expires: Fri, 30 Oct 1998 14:19:41 GMT`
+* `Cache-control: max-age=[seconds]`
+* `Cache-control: no-cache` -- ask the origin server for validation every time
+* etc.
+
+#### Using ETags
+
+* **ETags** are unique identifiers generate by the server and changed every time the resource does
+	* For static content, your server has an easy time generating and moderating these automatically
+
+### Make your site cache-friendly
+
+* The same content should always have the same URL
+* Give things that won't change a large `max-age` header
+* Note once more that SSL'd pages are not cacheable
+* Generally only `GET` responses are cached
+* Use the `Content-Length` response header
+* Images and other large files are the most important
+* "If you must know every time a page is accessed, select ONE small item on a page
+  (or the page itself), and make it uncacheable, by giving it a suitable headers."
+	* Don't actually do that though
+* It's possible to facilitate shared-caching of pages that are password protected
+  with `Cache-Control: public, no-cache`
+
+
 Indexed DB
 ----------
 
