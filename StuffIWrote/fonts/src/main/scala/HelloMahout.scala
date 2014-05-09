@@ -2,7 +2,7 @@ import java.io.{PrintWriter, File}
 import java.util
 import org.apache.mahout.cf.taste.common.TasteException
 import org.apache.mahout.cf.taste.eval.{IRStatistics, RecommenderIRStatsEvaluator, RecommenderBuilder, RecommenderEvaluator}
-import org.apache.mahout.cf.taste.impl.eval.{GenericRecommenderIRStatsEvaluator, AverageAbsoluteDifferenceRecommenderEvaluator}
+import org.apache.mahout.cf.taste.impl.eval.{RMSRecommenderEvaluator, GenericRecommenderIRStatsEvaluator, AverageAbsoluteDifferenceRecommenderEvaluator}
 import org.apache.mahout.cf.taste.impl.model.file.FileDataModel
 import org.apache.mahout.cf.taste.impl.neighborhood.NearestNUserNeighborhood
 import org.apache.mahout.cf.taste.impl.recommender.{GenericItemBasedRecommender, GenericUserBasedRecommender}
@@ -12,9 +12,6 @@ import org.apache.mahout.cf.taste.neighborhood.UserNeighborhood
 import org.apache.mahout.cf.taste.recommender.{Recommender, RecommendedItem}
 import org.apache.mahout.cf.taste.similarity.{ItemSimilarity, UserSimilarity}
 import org.apache.mahout.common.RandomUtils
-import org.apache.mahout.cf.taste.impl.recommender.slopeone.MemoryDiffStorage
-import org.apache.mahout.cf.taste.impl.recommender.slopeone.SlopeOneRecommender
-import org.apache.mahout.cf.taste.recommender.slopeone.DiffStorage
 import org.apache.mahout.cf.taste.common.Weighting
 import scala.collection.mutable
 import scala.io.Source
@@ -29,20 +26,24 @@ object HelloMahout extends App {
   // ensures consistency between different evaluation runs
   RandomUtils.useTestSeed()
 
-  val model: DataModel = new FileDataModel(new File(
-    "/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/fonts/src/main/scala/MoviesList.csv"
+  /**
+   * "OutFileData.csv" // everything
+   * average absolute difference 12.5
+   *
+   * "10AndUpData.csv"
+   * average absolute difference 13.8
+   *
+   * Summary:
+   */
 
-    // TODO: Doesn't work yet because it's expecting (usr,item,val) but I'm giving (usr,pt1,pt2,val)
-    // looks like that's literally all it's going to need though
-//    "/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/fonts/OutFileData.csv"
-  ))
+
+  val model: DataModel = new FileDataModel(new File("OutFileData.csv"))
 
   val evaluator: RecommenderEvaluator = new AverageAbsoluteDifferenceRecommenderEvaluator
   val irEvaluator: RecommenderIRStatsEvaluator = new GenericRecommenderIRStatsEvaluator
 
 
-    // TODO not sure why but this isn't working
-//  val rmse: RecommenderEvaluator = new RMSEEvaluator()
+  val rmse: RecommenderEvaluator = new RMSRecommenderEvaluator
 
   val recommenderBuilder: RecommenderBuilder = new RecommenderBuilder() {
     @Override
@@ -59,15 +60,16 @@ object HelloMahout extends App {
       val itemRecommender: Recommender = new GenericItemBasedRecommender(model, itemSimilarity)
 
       val userRecommender: Recommender = new GenericUserBasedRecommender(model, neighborhood, similarity)
+      userRecommender
 
       // src1: http://books.dzone.com/articles/slope-one-recommender
       // src2: https://gist.github.com/tuxdna/5903814
       // not sure this'll just work out-of-the-box like this
-      // TODO try using Weighting.WEIGHTED too
-      val diffStorage: DiffStorage = new MemoryDiffStorage(model, Weighting.UNWEIGHTED, Long.MAX_VALUE)
-      val slope1Recommender: Recommender = new SlopeOneRecommender(model, Weighting.UNWEIGHTED, Weighting.UNWEIGHTED, diffStorage)
-
-      new CaachingRecommender(recommender)
+      // try using Weighting.WEIGHTED too
+//      val diffStorage: DiffStorage = new MemoryDiffStorage(model, Weighting.UNWEIGHTED, Long.MAX_VALUE)
+//      val slope1Recommender: Recommender = new SlopeOneRecommender(model, Weighting.UNWEIGHTED, Weighting.UNWEIGHTED, diffStorage)
+//
+//      new CaachingRecommender(recommender)
     }
   }
 
@@ -75,7 +77,8 @@ object HelloMahout extends App {
   val score: Double = evaluator.evaluate(recommenderBuilder, null, model, 0.7, 1.0)
   println(s"Score: $score")
 
-//  val rmseScore: Double = rmse.evaluate(recommenderBuilder, null, model, 0.7, 1.0)
+  val rmseScore: Double = rmse.evaluate(recommenderBuilder, null, model, 0.7, 1.0)
+  println(s"RMSE Score: $rmseScore")
 
   // Note: this is more for a "boolean" data model situation, where there are no notions of preference value
   val irStats: IRStatistics = irEvaluator.evaluate(
@@ -95,29 +98,40 @@ object HelloMahout extends App {
 //  recommendations foreach println
 }
 
-/**
- * Process the raw files into something suitable for mahout
- *
- * Also output a CSV of [Letter1, Letter2, Count, PairID] data, sorted by Count descending
- */
-object CleanData extends App {
-  val dirName = "/Users/Ethan/Downloads/afm 2"
-  val files = new java.io.File(dirName).listFiles.filter(_.getName.endsWith(".afm"))
+object DataIO {
+  def readCSV: Array[String] = {
+    val dirName = "/Users/Ethan/Downloads/afm 2"
+    val files = new java.io.File(dirName).listFiles.filter(_.getName.endsWith(".afm"))
 
-  // ["font_id,letter,letter,value",...]
-  val inCSV: Array[String] =
+    // ["font_id,letter,letter,value",...]
     files.zipWithIndex map { case (file, i) =>   // TODO should be a flatmap
       Source.fromFile(file).getLines()
         .filter(_ startsWith "KPX")
         .map(i + _.replaceFirst("KPX", "").replaceAll(" ", ","))
         .toList
     } flatten
-
-  // PairInfo : gives a unique id and a seen-count to each letter pair
-  case class PairInfo(id: Int, var count: Int) { // case classiness allows for nice syntax later
-    def asStringArray = Array(id.toString, count.toString)
   }
 
+  def writeModel(filename: String, outCSV: String) {
+     val modelDataWriter = new PrintWriter(filename)
+    modelDataWriter write outCSV
+    modelDataWriter.close()
+  }
+}
+
+// PairInfo : gives a unique id and a seen-count to each letter pair
+case class PairInfo(id: Int, var count: Int) { // case classiness allows for nice syntax later
+    def asStringArray = Array(id.toString, count.toString)
+}
+
+/**
+ * Process the raw files into something suitable for mahout
+ *
+ * Also output a CSV of [Letter1, Letter2, Count, PairID] data, sorted by Count descending
+ */
+object CleanData extends App {
+
+  val inCSV = DataIO.readCSV
 
   /** outCSV : a csv file-string ready for ingestion by Mahout's FileDataModel constructor
 
@@ -139,9 +153,7 @@ object CleanData extends App {
     List(lineArray(0), letterMap(pair).id, lineArray(3)).mkString(",")
   } mkString "\n"
 
-  val modelDataWriter = new PrintWriter("OutFileData.csv")
-  modelDataWriter write outCSV
-  modelDataWriter.close()
+  DataIO.writeModel("OutFileData.csv", outCSV)
 
 
   /** histogram : sorted csv histogram of letter pairs
@@ -158,8 +170,45 @@ object CleanData extends App {
 
   println(histogramCSV)                           // print to console
 
-  val header = "FirstLetter,SecondLetter,Count,ID\n"
+  val header = "FirstLetter,SecondLetter,ID,Count\n"
   val histogramWriter = new PrintWriter("KerningHistogram.csv")
   histogramWriter write header + histogramCSV     // write to file
   histogramWriter.close()
+}
+
+/**
+ * Only use pairs that belong to at least 10 fonts, there are 158 such pairs
+ */
+object PopularityContest extends App {
+  // ["font_id,letter,letter,value",...]
+  val inCSV = DataIO.readCSV
+
+  case class FontLine(line: String) {
+    val split = line.split(",")
+    val fontId = split(0)
+    val letter1 = split(1)
+    val letter2 = split(2)
+    val kernValue = split(3)
+    def pairString = s"$letter1,$letter2"
+  }
+  inCSV.take(5).foreach(println)
+
+  // reduce to ("letter,letter" -> PairInfo)
+  val pairCounts =
+    inCSV.groupBy(i => FontLine(i).pairString)
+      .toList.zipWithIndex.map { case (k, v) =>
+        k._1 -> PairInfo(v, k._2.size)
+      } toMap
+
+  // CSV: (font, pair, kernValue)
+  val outCSV = inCSV.flatMap { line =>
+    val fontLine = FontLine(line)
+    val pair = fontLine.pairString
+    if (pairCounts(pair).count < 10) None
+    else Some {
+      List(fontLine.fontId, pairCounts(pair).id, fontLine.kernValue).mkString(",")
+    }
+  } mkString "\n"
+
+  DataIO.writeModel("10AndUpData.csv", outCSV)
 }
