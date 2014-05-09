@@ -13,7 +13,7 @@
 #    PM_2.5 emission from all sources for each of the years 1999,
 #    2002, 2005, and 2008.
 
-setwd('/Users/ethan/code/non_apple/programming/Educational/R/Coursera/Exploratory\ Data\ Analysis/Assn2')
+setwd('/Users/ethan/code/non_apple/programming/Educational/R/Coursera/Exploratory Data Analysis/Assn2')
 
 # scatterplot of summed output for each year for which we have data
 plot1 <- function() {

@@ -14,6 +14,8 @@
 #
 #    Use the ggplot2 plotting system to make a plot answer this question.
 
+setwd('/Users/ethan/code/non_apple/programming/Educational/R/Coursera/Exploratory Data Analysis/Assn2')
+
 plot3 <- function() {
     # use the filtered data from plot2
     # separate it by source (factor variable)

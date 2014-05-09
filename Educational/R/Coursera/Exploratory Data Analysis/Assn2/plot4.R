@@ -9,6 +9,8 @@
 # 4. Across the United States, how have emissions from coal
 #    combustion-related sources changed from 1999–2008?
 
+setwd('/Users/ethan/code/non_apple/programming/Educational/R/Coursera/Exploratory Data Analysis/Assn2')
+
 plot4 <- function() {
     # grep the SCC for the word coal in the short.name
     # use the associated SCCs to filter the NEI
