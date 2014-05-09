@@ -18,7 +18,7 @@
 
 Just raise a suitable Exception if the base class's implementation is called.
 
-	#define mustOverride() @throw [NSException exceptionWithName:NSInvalidArgumentException\
+	#define mustOverride() @throw [NSException exceptionWithName:NSInvalidArgumentException \
 	reason:[NSString stringWithFormat:@"%s must be overridden in a subclass/category", __PRETTY_FUNCTION__] userInfo:nil]
 	
 ### Execute block after delay
