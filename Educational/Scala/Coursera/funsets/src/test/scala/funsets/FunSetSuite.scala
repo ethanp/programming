@@ -47,30 +47,30 @@ class FunSetSuite extends FunSuite {
     assert(1 + 2 === 3)
   }
 
-  
+
   import FunSets._
 
   test("contains is implemented") {
     assert(contains(x => true, 100))
   }
-  
+
   /**
    * When writing tests, one would often like to re-use certain values for multiple
    * tests. For instance, we would like to create an Int-set and have multiple test
    * about it.
-   * 
+   *
    * Instead of copy-pasting the code for creating the set into every test, we can
    * store it in the test class using a val:
-   * 
+   *
    *   val s1 = singletonSet(1)
-   * 
+   *
    * However, what happens if the method "singletonSet" has a bug and crashes? Then
    * the test methods are not even executed, because creating an instance of the
    * test class fails!
-   * 
+   *
    * Therefore, we put the shared values into a separate trait (traits are like
    * abstract classes), and create an instance inside each test method.
-   * 
+   *
    */
 
   trait TestSets {
@@ -82,15 +82,15 @@ class FunSetSuite extends FunSuite {
   /**
    * This test is currently disabled (by using "ignore") because the method
    * "singletonSet" is not yet implemented and the test would fail.
-   * 
+   *
    * Once you finish your implementation of "singletonSet", exchange the
    * function "ignore" by "test".
    */
-  ignore("singletonSet(1) contains 1") {
-    
+  test("singletonSet(1) contains 1") {
+
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
-     * to the values "s1" to "s3". 
+     * to the values "s1" to "s3".
      */
     new TestSets {
       /**
@@ -101,12 +101,39 @@ class FunSetSuite extends FunSuite {
     }
   }
 
-  ignore("union contains all elements") {
+  test("union contains all elements") {
     new TestSets {
       val s = union(s1, s2)
       assert(contains(s, 1), "Union 1")
       assert(contains(s, 2), "Union 2")
       assert(!contains(s, 3), "Union 3")
+    }
+  }
+
+  val set1: Set = union(singletonSet(1), singletonSet(2))
+  val set2: Set = union(singletonSet(3), singletonSet(4))
+  val set1to4: Set = union(set1, set2)
+  test("forall elements less than 5 passes associated set rule") {
+    new TestSets {
+      assert(forall(set1to4, (s: Int) => s < 5) === true)
+    }
+  }
+
+  test("map {1,2,3,4} to {-3,-2,-1,0}") {
+    new TestSets {
+      printSet(set1to4)
+      assert(FunSets.toString(map(set1to4, (s: Int) => s-4)) === "{-3,-2,-1,0}")
+    }
+  }
+  test("there exists a in {1} s.t. a == 1") {
+    new TestSets {
+      assert(exists(s1, _ == 1))
+    }
+  }
+
+  test("there does not exist a in {1} s.t. a == 2") {
+    new TestSets {
+      assert(!exists(s1, _ == 2))
     }
   }
 }

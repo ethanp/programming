@@ -54,8 +54,9 @@ object FunSets {
    * Returns whether all bounded integers within `s` satisfy `p`.
    */
   def forall(s: Set, p: Int => Boolean): Boolean = {
+    val pSet = p.asInstanceOf[Set]
     def iter(a: Int): Boolean = {
-      if (!filter(s, p)(a)) false
+      if (diff(s, pSet)(a)) false
       else if (a >= bound) true
       else iter(a+1)
     }
@@ -66,12 +67,16 @@ object FunSets {
    * Returns whether there exists a bounded integer within `s`
    * that satisfies `p`.
    */
-  def exists(s: Set, p: Int => Boolean): Boolean = forall(s, (query: Int) => !p(query))
+  def exists(s: Set, p: Int => Boolean): Boolean = !forall(s, !p(_))
 
   /**
    * Returns a set transformed by applying `f` to each element of `s`.
    */
-  def map(s: Set, f: Int => Int): Set = (query: Int) => s(f(query))
+  def map(s: Set, f: Int => Int): Set = (query: Int) => exists(s, f(_) == query)
+
+  val a: Set = (q: Int) => q == 1
+  val b: Set = map(a, (q: Int) => q+1)
+  val c: Set = (q: Int) => q == 1+1
 
   /**
    * Displays the contents of a set
