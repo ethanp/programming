@@ -26,11 +26,7 @@ if (!exists("balt_by_year"))
 
 
 plot2 <- function() {
-    # filter data to only Baltimore City, Maryland, then do something
-    # similar to plot1
-    
-    if (!exists("balt_by_year"))
-        balt_by_year <- aggregate(NEI$Emissions, by=list(year=NEI$year), FUN=sum)
+    # filter data to Baltimore, then do something similar to plot1
     
     png('plot2.png') # open PNG device
     
