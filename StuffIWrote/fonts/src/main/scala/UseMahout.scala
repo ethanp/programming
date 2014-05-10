@@ -17,7 +17,7 @@ import org.apache.mahout.cf.taste.common.Weighting
  * Based on: every Mahout tutorial out there
  */
 
-object HelloMahout extends App {
+object UseMahout extends App {
 
   // ensures consistency between different evaluation runs
   RandomUtils.useTestSeed()

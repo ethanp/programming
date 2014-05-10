@@ -1,4 +1,4 @@
-import java.io.PrintWriter
+import java.io.{File, PrintWriter}
 import scala.io.Source
 
 /**
@@ -10,10 +10,13 @@ import scala.io.Source
 object DataIO {
   lazy val readCSV: Array[String] = {
     val dirName = "/Users/Ethan/Downloads/afm 2"
-    val files = new java.io.File(dirName).listFiles.filter(_.getName.endsWith(".afm"))
+    val afmFiles: Array[File] =
+      new java.io.File(dirName)
+        .listFiles
+        .filter(_.getName.endsWith(".afm"))
 
     // ["font_id,letter,letter,value",...]
-    files.zipWithIndex map { case (file, i) =>
+    afmFiles.zipWithIndex map { case (file, i) =>
       Source.fromFile(file).getLines()
         .filter(_ startsWith "KPX")
         .map(i + _.replaceFirst("KPX", "").replaceAll(" ", ","))
@@ -35,7 +38,7 @@ object DataIO {
       } toMap
 
   // CSV: (font, pair, kernValue)
-  def csvOfCountAbove(lowerThreshold: Int) =
+  def csvOfCountAbove(lowerThreshold: Int): String =
     readCSV.flatMap { line =>
       val fontLine = FontLine(line)
       val pair = fontLine.pairString
@@ -85,13 +88,10 @@ object DataHistogram extends App {
       nextHighest,pair,count,id
       ... "
     */
-  val histogramCSV: String = DataIO.pairCounts.map { case (pair, info) =>
-    (pair split ",") ++ info.asStringArray        // put in [letter,letter,count,id] format
-  }.toList
-    .sortWith( _(2).toInt > _(2).toInt )          // sort by count, descending
-    .map(_ mkString ",") mkString "\n"            // turn to CSV string
-
-  println(histogramCSV)                           // print to console
+  val histogramCSV: String = DataIO.pairCounts
+    .map { case (pair, info) => (pair split ",") ++ info.asStringArray }.toList
+    .sortWith( _(2).toInt > _(2).toInt )  // sort by count, descending
+    .map(_ mkString ",") mkString "\n"    // turn to CSV string
 
   val header = "FirstLetter,SecondLetter,ID,Count\n"
   val histogramWriter = new PrintWriter("KerningHistogram.csv")
