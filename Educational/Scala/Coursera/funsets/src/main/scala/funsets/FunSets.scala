@@ -71,8 +71,11 @@ object FunSets {
 
   /**
    * Returns a set transformed by applying `f` to each element of `s`.
+   *
+   * It's pretty darn cool, but it relies on the fact that the domain is enumerable
+   * Otw we'd need to receive the inverse of the function `f`
    */
-  def map(s: Set, f: Int => Int): Set = (query: Int) => exists(s, f(_) == query)
+  def map(s: Set, f: Int => Int): Set = (q: Int) => exists(s, f(_) == q)
 
   val a: Set = (q: Int) => q == 1
   val b: Set = map(a, (q: Int) => q+1)

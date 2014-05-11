@@ -26,7 +26,7 @@ class UserActorSpec extends TestkitExample
    */
 
   sequential  // EP: just calls "args(sequential = true)",
-              // I like having an method for that though
+              // I like how they have a method (or 'tag') for that though
 
   "UserActor" should {
 
@@ -34,19 +34,34 @@ class UserActorSpec extends TestkitExample
     val price = 123
     val history = List[java.lang.Double](0.1, 1.0).asJava
 
-    // EP: WithApplication "used to run specs within the context of a running application"
+    // EP: WithApplication "used to run 'specs' within the context of a running application"
     "send a stock when receiving a StockUpdate message" in new WithApplication {
 
-      // EP: A fake WebSocket.Out that we can get the Actor to write to and compare what we
-      // see with what we want.
+      /*
+       * EP: A fake WebSocket.Out that we can get the Actor to write to and compare what we
+         see with what we want.
+
+       * This is not a library method, the guy who wrote this wrote it.
+       */
       val out = new StubOut()
 
+      /* EP:
+       * TestActorRef comes with Akka, "acts just like a normal ActorRef," though
+         "you may retrieve a reference to the underlying actor to test internal logic."
+
+       * Which we shall do shortly...
+       */
       val userActorRef = TestActorRef[UserActor](Props(new UserActor(out)))
       val userActor = userActorRef.underlyingActor
 
       // send off the stock update...
       userActor.receive(StockUpdate(symbol, price))
 
+      /* EP:
+       * The userActor should have written the JSON to the WebSocket stub we set out.
+       *
+       * That's why we passed it into the UserActor constructor.
+       */
       // ...and expect it to be a JSON node.
       val node = out.actual.toString
       node must /("type" -> "stockupdate")

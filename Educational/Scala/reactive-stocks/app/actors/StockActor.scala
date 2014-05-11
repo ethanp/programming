@@ -25,9 +25,15 @@ class StockActor(symbol: String) extends Actor {
   // A random data set which uses stockQuote.newPrice to get each data point
   var stockHistory: Queue[java.lang.Double] = {
 
-    // EP: create initial random Double, turn it into a Stream, create a "generator" (not sure Scala's term) based on it.
-    // --- Never seen this before, but I understand it will appear in the scala class so I won't
-    // --- look into it now. I guess this is like a function with a "yield" in Python.
+    /* EP:
+
+     * create initial random Double, turn it into a Stream, create a "generator"
+      (not sure Scala's term) based on it.
+
+     * Never seen this before, but I understand it will appear in the scala class so I won't
+       look into it now. I guess this is like a function with a "yield" in Python.
+
+     */
     lazy val initialPrices: Stream[java.lang.Double] = (new Random().nextDouble * 800) #:: initialPrices.map(previous => stockQuote.newPrice(previous))
     // EP: force-generate 50, collect them into a scala.coll.imm.Queue.
     initialPrices.take(50).to[Queue]
