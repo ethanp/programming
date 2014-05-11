@@ -20,6 +20,8 @@ trait BootedCore extends Core {
 
   /**
    * Construct the ActorSystem we will use in our application
+   * Doing it lazily allows us to mix (CoreActors and BootedCore) into our MyApp extends App
+   * in any order.
    */
   implicit lazy val system = ActorSystem("akka-spray")
 
@@ -35,6 +37,11 @@ trait BootedCore extends Core {
  * ``BootedCore`` for running code or ``TestKit`` for unit and integration tests.
  */
 trait CoreActors {
+
+  /*
+    This trait's self-type annotation defines that instances that mix
+    in this trait must also mix in some subtype of the Core trait.
+   */
   this: Core =>
 
   val registration = system.actorOf(Props[RegistrationActor])

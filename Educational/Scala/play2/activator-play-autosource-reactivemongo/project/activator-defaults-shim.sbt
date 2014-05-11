@@ -25,4 +25,4 @@ fullResolvers <<= (fullResolvers, bootResolvers, appConfiguration) map {
 // for a person at a command line).
 // In future plans, we want plugins to have a built-in ability to be
 // remote-controlled by a UI and then we would drop the shims.
-addSbtPlugin("com.typesafe.sbtrc" % "sbt-rc-defaults-0-12" % "1.0-2c8e80f5d3e1dba2418210b43b0e372cf331a8cd")
+addSbtPlugin("com.typesafe.sbtrc" % "sbt-rc-defaults-0-12" % "1.0-136bf52c817cd9e09ff78cafa6dc495d3fca4f9a")
