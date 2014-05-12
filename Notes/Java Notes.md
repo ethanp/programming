@@ -1,9 +1,22 @@
+Collections
+===========
+
+HashMap vs. TreeMap vs. LinkedHashMap
+-------------------------------------
+
+**5/12/14**
+[SO](http://stackoverflow.com/questions/2889777/difference-between-hashmap-linkedhashmap-and-sortedmap-in-java)
+
+* `HashMap` -- **no guarantees** about iteration order
+* `TreeMap`-- iterates **according to `compareTo()`** (or supplied `Comparator`)
+* `LinkedHashMap` -- iterates **in order of insertion**
+
+
 Java I/O
 ========
 
 **5/12/14**
-
-Ref: [docs.oracle-tutorial](http://docs.oracle.com/javase/tutorial/essential/io/index.html)
+[docs.oracle-tutorial](http://docs.oracle.com/javase/tutorial/essential/io/index.html)
 
 I/O Streams
 -----------
@@ -91,8 +104,6 @@ Java concurrency
 ================
 
 **5/12/14**
-
-Ref:
 [Wikipedia](http://en.wikipedia.org/wiki/Java_concurrency)
 
 * The programmer must ensure read and write access to objects is properly coordinated
@@ -308,7 +319,6 @@ find this counterintuitive, personally.
 ### The question mark wildcard type
 
 **5/9/14**
-
 [SO](http://stackoverflow.com/questions/3009745/what-does-the-question-mark-in-java-generics-type-parameter-mean)
 
 E.g.
@@ -422,22 +432,22 @@ Simply declare it as in the "How to declare" section above.
 Make a method like this
 
 
-		public static Comparator<Fruit> FruitNameComparator 
-                          = new Comparator<Fruit>() {
- 
-		    public int compare(Fruit fruit1, Fruit fruit2) {
-		
-		      String fruitName1 = fruit1.getFruitName().toUpperCase();
-		      String fruitName2 = fruit2.getFruitName().toUpperCase();
-		
-		      //ascending order
-		      return fruitName1.compareTo(fruitName2);
-		
-		      //descending order
-		      //return fruitName2.compareTo(fruitName1);
-		    }
- 
-		};
+	public static Comparator<Fruit> FruitNameComparator 
+                         = new Comparator<Fruit>() {
+
+	    public int compare(Fruit fruit1, Fruit fruit2) {
+	
+	      String fruitName1 = fruit1.getFruitName().toUpperCase();
+	      String fruitName2 = fruit2.getFruitName().toUpperCase();
+	
+	      //ascending order
+	      return fruitName1.compareTo(fruitName2);
+	
+	      //descending order
+	      //return fruitName2.compareTo(fruitName1);
+	    }
+
+	};
 		
 And then do this
 	
