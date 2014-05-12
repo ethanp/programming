@@ -1,6 +1,185 @@
 Java Notes
 ==========
 
+Java concurrency
+----------------
+
+**5/12/14**
+
+Ref:
+[Wikipedia](http://en.wikipedia.org/wiki/Java_concurrency)
+
+* The programmer must ensure read and write access to objects is properly coordinated
+  (or "synchronized") between threads.
+* Thread synchronization ensures that objects are modified by only one thread at a time
+* And that threads are prevented from accessing partially updated objects during
+  modification by another thread.
+* The Java language has built-in constructs to support this coordination.
+* Multiple processes can only be realized with multiple JVMs, so we really just care
+  about *multi*-***threaded*** programming
+  
+#### Thread objects
+
+* **Threads share the process's resources, including memory** and open files.
+* This makes for efficient, but potentially problematic, communication.
+* Every application has at least one thread called the `main thread`.
+* The `main thread` has the ability to create additional threads from the
+  `Runnable` or `Callable` object
+* Each thread can be scheduled on a different CPU core
+* Every JVM implementation can map Java threads to native OS threads in a different way
+* Each thread is associated with an instance of the `class Thread`
+
+##### Two ways to start a thread
+
+###### Provide a Runnable object
+
+	public class HelloRunnable implements Runnable {
+	   public void run() {
+	       System.out.println("Hello from thread!");
+	   }
+	   public static void main(String[] args) {
+	       (new Thread(new HelloRunnable())).start();
+	   }
+	}
+
+###### Subclass Thread
+
+	public class HelloThread extends Thread {
+	   public void run() {
+	       System.out.println("Hello from thread!");
+	   }
+	   public static void main(String[] args) {
+	       (new HelloThread()).start();
+	   }
+	}
+
+#### Thread basics
+
+* Use `Thread.interrupt()` to tell a thread to stop what it is doing and do something else.
+* Wait for the completion of another thread with `Thread.join()`
+* To synchronize threads, Java uses **monitors**, a mechanism allowing only one thread
+  at a time to execute a region of code protected by the monitor
+  
+##### Cache coherence:
+
+* After we exit a synchronized block, we release the monitor
+* This flushes the cache to main memory, making writes made by this thread visible to other threads.
+* So now, before we can enter a synchronized block, we acquire the monitor, invalidating the
+  local processor cache, so that variables will be reloaded from main memory, so are now able
+  to see all of the writes made by the previous release.
+
+
+### Java Memory Model
+
+Ref:
+[Wikipedia](http://en.wikipedia.org/wiki/Java_Memory_Model)
+
+* On modern platforms, code is frequently reordered by the compiler, the processor and
+  the memory subsystem to achieve maximum performance.
+* On multiprocessor architectures, individual processors may have their own local caches that
+  are out of sync with main memory.
+* It is generally undesirable to require threads to remain perfectly in sync with one
+  another because this would be too costly from a performance point of view.
+* This means that at any given time, different threads may see different values for the
+  same shared data.
+* **The Java Memory Model (JMM) defines** the allowable behavior of multithreaded
+  programs, and therefore describes **when such reorderings are possible**.
+* It places execution-time constraints on the relationship between threads and main
+  memory in order to achieve consistent and reliable Java applications.
+* By doing this, it makes it possible to reason about code execution in a multithreaded
+  environment, even in the face of optimizations performed by the dynamic compiler, the
+  processor(s) and the caches.
+* The *Java Language Specification* requires a *Java Virtual Machine* to observe
+  `within-thread` `as-if-serial` semantics.
+* The major caveat of this is that `as-if-serial` semantics do *not* prevent different threads
+  from having different views of the data.
+* Everything that happens before the release of a lock will be seen to be ordered before
+  and visible to everything that happens after a subsequent acquisition of that same lock.
+
+
+### Synchronized
+
+Ref:
+
+* [SO-1](http://stackoverflow.com/questions/442564/avoid-synchronizedthis-in-java)
+* [SO-2](http://stackoverflow.com/questions/574240/synchronized-block-vs-synchronized-method)
+* [SO-3](http://stackoverflow.com/questions/1085709/what-does-synchronized-mean)
+
+Here is a quote from Sun:
+
+> Synchronized methods enable a simple strategy for preventing thread interference and
+> memory consistency errors: if an object is visible to more than one thread, all reads
+> or writes to that object's variables are done through synchronized methods.
+
+
+#### Block vs Method
+
+Synchronized block
+
+	public void blah() {
+	  synchronized (this) {
+	    // do stuff
+	  }
+	}
+
+is semantically equivalent to synchronized method
+
+	public synchronized void blah() {
+	  // do stuff
+	}
+
+* The only real difference is that a synchronized block can choose which object
+  it synchronizes on.
+* A `synchronized` method can only use `this`
+	* Or the corresponding `class` instance for a synchronized `static` class method
+
+
+#### synchronized(this) block
+
+* Unlike synchronized methods, synchronized statements must specify the object that
+  provides the intrinsic lock
+
+#### synchronized method
+
+Two Effects:
+
+1. When one thread is executing a synchronized method for an object, all other
+   threads that invoke synchronized methods for the same object block (suspend
+   execution) until the first thread is done with the object.
+2. When a synchronized method exits, it automatically establishes a happens-before
+   relationship with any subsequent invocation of a synchronized method for the same
+   object. This guarantees that changes to the state of the object are visible to
+   all threads. (not sure what this means)
+   
+Other notes:
+
+* Constructors cannot be synchronized — using the synchronized keyword with a
+  constructor is a syntax error. Synchronizing constructors doesn't make sense,
+  because only the thread that creates an object should have access to it while
+  it is being constructed.
+
+#### Other
+
+* Every object has an intrinsic lock associated with it
+	* This is what the implementation of `synchronized` relies upon to use the
+	  `monitor` synchronization pattern
+* Note that of course we *could* also use an "explicit lock" such as
+  `java.util.concurrent.locks.ReentrantLock`, which provides the same implications
+  for memory behavior.
+  
+
+### Volatile Fields
+
+* Guarantees that every thread accessing a volatile field will read its current value
+  before continuing, instead of (potentially) using a cached value.
+* However, there is no guarantee about the relative ordering of volatile reads and
+  writes with regular reads and writes, meaning that it's generally not a useful
+  threading construct.
+* Volatile reads and writes establish a happens-before relationship, much like acquiring
+  and releasing a mutex.
+	* This relationship is simply a guarantee that memory writes by one specific statement
+	  are visible to another specific statement.
+
 Inheritance
 -----------
 
@@ -67,10 +246,44 @@ Rules
 Comparable vs. Comparator
 -------------------------
 
-* [SO](http://stackoverflow.com/questions/4108604)
-* [digizol](http://www.digizol.com/2008/07/java-sorting-comparator-vs-comparable.html)
+Refs:
+[SO](http://stackoverflow.com/questions/4108604),
+[digizol](http://www.digizol.com/2008/07/java-sorting-comparator-vs-comparable.html)
 
-Both are `interfaces` you can `implement`
+* Both are **`interfaces`** you can implement
+* **Comparable says "I can compare *myself* with another object"**
+* **Comparator says "I can compare two *other* objects with each other"**
+* **Use `comparable` if it's your class, otw use `comparator`**
+
+
+### Comparable
+
+* **Says "I can compare *myself* with another object"**
+* Allows you to define comparison logic for *your own* types.
+
+#### Signature
+  
+	java.lang.Comparable: int compareTo(Object o1) {
+		
+		case this > o2 => x > 0;
+		case this = o2 => x = 0;
+		case this < o2 => x < 0;
+	
+	}
+	
+#### How to declare
+
+	public class MyClass implements Comparable<MyClass> {
+	
+		public int compareTo(MyClass o) {
+			return this.field - o.field;
+		}
+	
+	}
+
+#### How to use
+
+Simply declare it as in the "How to declare" section above.
 
 ### Comparator
 
@@ -140,36 +353,4 @@ And then do this
 	Arrays.sort(fruits); // ClassCastException
 	
 	Arrays.sort(fruits, Fruit.FruitNameComparator);  // works
-	
-### Comparable
 
-* **Says "I can compare *myself* with another object"**
-* Allows you to define comparison logic for *your own* types.
-
-#### Signature
-  
-	java.lang.Comparable: int compareTo(Object o1) {
-		
-		case this > o2 => x > 0;
-		case this = o2 => x = 0;
-		case this < o2 => x < 0;
-	
-	}
-	
-#### How to declare
-
-	public class MyClass implements Comparable<MyClass> {
-	
-		public int compareTo(MyClass o) {
-			return this.field - o.field;
-		}
-	
-	}
-
-#### How to use
-
-Simply declare it as in the "How to declare" section above.
-
-### Upshot
-
-**Use `comparable` if it's your class, otw use `comparator`**
