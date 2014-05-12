@@ -1,8 +1,94 @@
-Java Notes
-==========
+Java I/O
+========
+
+**5/12/14**
+
+Ref: [docs.oracle-tutorial](http://docs.oracle.com/javase/tutorial/essential/io/index.html)
+
+I/O Streams
+-----------
+
+[Oracle's Java Tuts](http://docs.oracle.com/javase/tutorial/essential/io/streams.html)
+
+* Represents an input source *or* an output destination
+* Could be disk files, devices, other programs, a network socket, or memory arrays
+* Could be any *kind* of data (bytes, primitives, objects, etc.)
+* Streams can manipulate and transform the data
+* **Input** streams *read* from a source, one item at a time
+* **Output** streams *write* to a destination, one item at a time
+
+
+### Byte Streams
+
+* Byte streams perform I/O of 8-bit bytes
+* All byte stream classes descend from `InputStream` and `OutputStream`
+* E.g. `FileInputStream` and `FileOutputStream`, which in particular `read()`s/`write()`s from files
+	* Otw they act much the same as any other byte stream
+* Only use byte streams when there is no higher-level abstraction of your use-case available
+	* But note that those higher-level abstractions are *built* on byte streams
+
+
+### Character Streams
+
+* Uses Unicode conventions
+* All character stream classes descend from `Reader` and `Writer`
+* For file I/O, we have `FileReader` and `FileWriter`
+
+
+### Buffered Streams
+
+* The aforementioned I/O classes use *unbuffered I/O* -- where each read/write is
+  handled directly by the underlying OS
+    * This can be inefficient, so we use *buffered I/O* streams
+* **Buffered I/O streams read data from a memory area known as a *buffer*; the native
+  input API is called only when the buffer is empty**
+    * Writing data is analogously done to a buffer, with the OS only writing-out
+      when the buffer is full
+* One can **convert an unbuffered into a buffered stream by passing the unbuffered stream
+  object into the constructor for a buffered stream class**
+  
+		inputStream = new BufferedReader(new FileReader("xanadu.txt"));
+		
+	* This is that thing you've seen oh-so-many times
+* *Flushing* the buffer is when you write out non-full buffer (use `flush()`)
+
+### Scanners
+
+	s = new Scanner(new BufferedReader(new FileReader("xanadu.txt")));
+
+* A `Scanner` breaks input into *tokens*
+* By default it uses whitespace to separate tokens
+* To change it to `comma with optional following whitespace`, use:
+
+		s.useDelimiter(",\\s*");
+		
+### Data streams
+
+Support I/O of primitive data types
+
+### Object streams
+
+* Support I/O of objects
+* Objects that support serialization implement `Serializable`
+
+E.g.
+
+	out.writeObject(obj);
+	Object obj = in.readObject();
+	
+	
+GSON
+----
+
+[On Google Code](https://code.google.com/p/google-gson/)
+
+* A library that can convert Java Objects into their JSON representation, and back.
+* Gson can work with arbitrary Java objects including pre-existing objects that you
+  do not have source-code of.
+* Provides simple `toJson()` and `fromJson()` methods to convert Java objects to JSON and vice-versa
 
 Java concurrency
-----------------
+================
 
 **5/12/14**
 
@@ -180,8 +266,9 @@ Other notes:
 	* This relationship is simply a guarantee that memory writes by one specific statement
 	  are visible to another specific statement.
 
+
 Inheritance
------------
+===========
 
 ### Private fields
 
@@ -217,6 +304,24 @@ find this counterintuitive, personally.
 
 `child instanceof Parent` will return **`true`**
 
+
+### The question mark wildcard type
+
+**5/9/14**
+
+[SO](http://stackoverflow.com/questions/3009745/what-does-the-question-mark-in-java-generics-type-parameter-mean)
+
+E.g.
+
+	List<? extends HasWord> wordList = toke.tokenize();
+	
+This means we'll allow anything that extends `HasWord`, plus `null`, but we don't
+care to name the type because we'll just be calling methods that are specified by
+`HasWord`.
+
+
+Other things one simply must know about Java
+======================================
 
 Equals and HashCode
 -------------------

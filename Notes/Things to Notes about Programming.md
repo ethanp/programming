@@ -1,3 +1,8 @@
+The correct type to use for currency values is java.math.BigDecimal
+-------------------------------------------------------------------
+
+Don't use `doubles`
+
 Heap
 ----
 
