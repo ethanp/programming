@@ -10,15 +10,15 @@ The app looks like this:
 
 #### Search for a video
 
-![](/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Blog\ Posts/CA0\ New.png)
+![](https://raw.githubusercontent.com/ethanp/programming/master/Blog%20Posts/CA0%20New.png)
 
 #### View comment analysis of a video
 
-![](/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Blog\ Posts/CA0\ Coltrane.png)
+![](https://raw.githubusercontent.com/ethanp/programming/master/Blog%20Posts/CA0%20Coltrane.png)
 
 #### View list of videos retrieved
 
-![](/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/Blog\ Posts/CA0\ Home.png)
+![](https://raw.githubusercontent.com/ethanp/programming/master/Blog%20Posts/CA0%20Home.png)
 
 The point is, first you paste in the URL of a YouTube video whose comments you want to analyze. Eventually you see all the comments and replies to those comments, and a sentiment analysis score for each, as well as an overall sentiment for the movie.
 
