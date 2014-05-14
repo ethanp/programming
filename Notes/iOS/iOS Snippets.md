@@ -1,3 +1,18 @@
+### JSON
+
+#### Encode dict as string
+
+    NSDictionary *dict = @{passedKey: @(self.passed), circlesKey: items };
+  
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:dict options:0 error:nil];
+    self.jsonResult = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+
+#### Decode dict from string
+
+	#import <Foundation/Foundation.h>
+	NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
+	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:jsonData options:NSJSONReadingMutableContainers error:nil];
+
 ### Turn view into image to be saved to Camera Roll
 
     UIGraphicsBeginImageContext(view.bounds.size);
