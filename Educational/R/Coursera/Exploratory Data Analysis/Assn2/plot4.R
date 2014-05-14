@@ -12,7 +12,29 @@
 setwd('/Users/ethan/code/non_apple/programming/Educational/R/Coursera/Exploratory Data Analysis/Assn2')
 
 plot4 <- function() {
-    # grep the SCC for the word coal in the short.name
-    # use the associated SCCs to filter the NEI
-    # plot that data by year similarly to the rest
+    
+    # find SCCs that have to do with coal
+    coal_codes <- SCC[grepl("Coal",SCC$Short.Name),]
+    
+    # only keep NEIs that have to do with coal
+    coal_neis <- NEI[NEI$SCC %in% coal_codes$SCC,]
+    
+    # aggregate by year
+    by_year <- aggregate(coal_neis$Emissions,
+                         by  = list(year=coal_neis$year),
+                         FUN = sum)
+    
+    # make into scatter plot
+    q <- qplot(year, x, data = by_year,
+               ylab='Emissions (tons)', 
+               main='Emissions from coal in the US')
+    
+    # add linear model
+    q <- q + geom_smooth(method = 'lm', fill=NA)
+    q <- q + coord_cartesian(ylim = c(0, 650000))
+    q <- q + geom_point(size = 3)
+    q
+    
+    ggsave(file="plot4.png")
+    
 }
