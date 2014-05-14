@@ -13,4 +13,17 @@ setwd('/Users/ethan/code/non_apple/programming/Educational/R/Coursera/Explorator
 
 plot5 <- function() {
     # this is probably data.category == onroad
+    
+    balt_on_road <- baltimore_type_year[baltimore_type_year$type == 'ON-ROAD',]
+    
+    # use baltimore_type_year
+    q <- qplot(year, Emissions, data = balt_on_road,
+               ylab='Emissions (tons)', 
+               main='Emissions from motor vehicles in Baltimore')
+    
+    # add linear model
+    q <- q + geom_smooth(method = 'lm', fill=NA)
+    q <- q + geom_smooth(fill=NA, color = 'grey')
+    q
+    ggsave(file="plot5.png")
 }
