@@ -152,10 +152,8 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
         2. collect the Tweets matching p in the left and right sets (if they exist)
      */
 
-    val a =
-      acc
-        .union { left.filterAcc(p, new Empty) }
-        .union { right.filterAcc(p, new Empty) }
+    val a = acc.union { left.filterAcc(p, new Empty)  }
+               .union { right.filterAcc(p, new Empty) }
 
     if (p(elem))
       a incl elem
@@ -163,7 +161,7 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
       a
   }
 
-  // TODO is this gonna do it?
+  // this is working...
   def union(that: TweetSet): TweetSet = that.union(left).union(right).incl(elem)
 
 
@@ -181,15 +179,10 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
       ts = ts.remove(mr)
     }
 
-    // TODO not functionally implemented
-    var toReturn: TweetList = Nil
-    tl.foreach { tweet =>
-      toReturn = new Cons(tweet, toReturn)
-    }
-    toReturn
+    tl.reverse
   }
 
-  // TODO not implemented
+  // TODO not functionally implemented
   /** Returns the tweet from this set which has the greatest retweet count. */
   // throws Exc
   // TODO keep in mind that calling mostRetweeted on an Empty throws an Exception!
@@ -201,7 +194,7 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     val b = if (!right.isEmpty && right.mostRetweeted.retweets > elem.retweets) right.mostRetweeted
             else elem
 
-    List(a, b).maxBy(_.retweets)
+    if (a.retweets > b.retweets) a else b
   }
 
   // TODO remove
@@ -243,16 +236,20 @@ trait TweetList {
       f(head)
       tail.foreach(f)
     }
+  def reverse: TweetList = tail.reverseAcc(new Cons(head, Nil))
+  def reverseAcc(to: TweetList): TweetList
 }
 
 object Nil extends TweetList {
   def head = throw new java.util.NoSuchElementException("head of EmptyList")
   def tail = throw new java.util.NoSuchElementException("tail of EmptyList")
   def isEmpty = true
+  def reverseAcc(to: TweetList) = to
 }
 
 class Cons(val head: Tweet, val tail: TweetList) extends TweetList {
   def isEmpty = false
+  def reverseAcc(to: TweetList): TweetList = tail.reverseAcc(new Cons(head, to))
 }
 
 
@@ -260,14 +257,21 @@ object GoogleVsApple {
   val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
   val apple = List("ios", "iOS", "iphone", "iPhone", "ipad", "iPad")
 
-  lazy val googleTweets: TweetSet = ???
-  lazy val appleTweets: TweetSet = ???
+  // TODO test this? at least make sure it makes sense
+  def filterAllTweetsOn(list: List[String]) =
+    allTweets.filter { tweet =>
+      list.exists(tweet.text.contains(_))
+    }
+
+  lazy val googleTweets: TweetSet = filterAllTweetsOn(google)
+  lazy val appleTweets: TweetSet = filterAllTweetsOn(apple)
 
   /**
    * A list of all tweets mentioning a keyword from either apple or google,
    * sorted by the number of retweets.
    */
-  lazy val trending: TweetList = ???
+  // (googleTweets union appleTweets).descendingByRetweet
+  lazy val trending: TweetList = filterAllTweetsOn(google ++ apple).descendingByRetweet
 }
 
 object Main extends App {

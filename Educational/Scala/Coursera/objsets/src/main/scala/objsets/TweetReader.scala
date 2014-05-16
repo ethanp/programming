@@ -4,7 +4,7 @@ object TweetReader {
 
   object ParseTweets {
     import scala.util.parsing.json._
-    
+
     def getList[T](s: String): List[T] =
       JSON.parseFull(s).get.asInstanceOf[List[T]]
 
@@ -45,7 +45,7 @@ object TweetReader {
   }
 
   val sites = List("gizmodo", "TechCrunch", "engadget", "amazondeals", "CNET", "gadgetlab", "mashable")
-  
+
   private val gizmodoTweets = TweetReader.ParseTweets.getTweetData("gizmodo", TweetData.gizmodo)
   private val techCrunchTweets = TweetReader.ParseTweets.getTweetData("TechCrunch", TweetData.TechCrunch)
   private val engadgetTweets = TweetReader.ParseTweets.getTweetData("engadget", TweetData.engadget)
@@ -53,7 +53,7 @@ object TweetReader {
   private val cnetTweets = TweetReader.ParseTweets.getTweetData("CNET", TweetData.CNET)
   private val gadgetlabTweets = TweetReader.ParseTweets.getTweetData("gadgetlab", TweetData.gadgetlab)
   private val mashableTweets = TweetReader.ParseTweets.getTweetData("mashable", TweetData.mashable)
-  
+
   private val sources = List(gizmodoTweets, techCrunchTweets, engadgetTweets, amazondealsTweets, cnetTweets, gadgetlabTweets, mashableTweets)
 
   val tweetMap: Map[String, List[Tweet]] =
@@ -66,7 +66,7 @@ object TweetReader {
                  (sites(6) -> mashableTweets))
 
   val tweetSets: List[TweetSet] = sources.map(tweets => toTweetSet(tweets))
-  
+
   private val siteTweetSetMap: Map[String, TweetSet] =
     Map() ++ (sites zip tweetSets)
 
