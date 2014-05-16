@@ -161,7 +161,8 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
       a
   }
 
-  // this is working...
+  // this is working...but I think it is not fast enough
+  // to allow you to be able to read all the tweets in
   def union(that: TweetSet): TweetSet = that.union(left).union(right).incl(elem)
 
 
@@ -182,18 +183,19 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     tl.reverse
   }
 
-  // TODO not functionally implemented
   /** Returns the tweet from this set which has the greatest retweet count. */
   // throws Exc
-  // TODO keep in mind that calling mostRetweeted on an Empty throws an Exception!
   def mostRetweeted: Tweet = {
     // idea from https://class.coursera.org/progfun-004/forum/thread?thread_id=733
     // define current tweet as most retweeted and recurse through and compare with subtrees
-    val a = if (!left.isEmpty && left.mostRetweeted.retweets > elem.retweets) left.mostRetweeted
-            else elem
-    val b = if (!right.isEmpty && right.mostRetweeted.retweets > elem.retweets) right.mostRetweeted
-            else elem
 
+    // TODO don't use .isEmpty
+    // TODO note that Empty.mostRetweeted throws an Exception!
+    // TODO follow the hint in the link above or find another hint in the forum
+    val leftMost = if (!left.isEmpty) Some(left.mostRetweeted) else None
+    val rightMost = if (!right.isEmpty) Some(right.mostRetweeted) else None
+    val a = if (leftMost.isDefined && leftMost.get.retweets > elem.retweets) leftMost.get else elem
+    val b = if (rightMost.isDefined && rightMost.get.retweets > elem.retweets) rightMost.get else elem
     if (a.retweets > b.retweets) a else b
   }
 
@@ -257,8 +259,8 @@ object GoogleVsApple {
   val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
   val apple = List("ios", "iOS", "iphone", "iPhone", "ipad", "iPad")
 
-  // TODO test this? at least make sure it makes sense
-  def filterAllTweetsOn(list: List[String]) =
+  // TODO test this? at least make sure it works properly
+  def filterAllTweetsOn(list: List[String]): TweetSet =
     allTweets.filter { tweet =>
       list.exists(tweet.text.contains(_))
     }
@@ -271,7 +273,7 @@ object GoogleVsApple {
    * sorted by the number of retweets.
    */
   // (googleTweets union appleTweets).descendingByRetweet
-  lazy val trending: TweetList = filterAllTweetsOn(google ++ apple).descendingByRetweet
+  lazy val trending: TweetList = filterAllTweetsOn(List(google(0))).descendingByRetweet
 }
 
 object Main extends App {
