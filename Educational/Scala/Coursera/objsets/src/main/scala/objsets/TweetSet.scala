@@ -42,7 +42,7 @@ abstract class TweetSet {
    * Question: Can we implement this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def filter(p: Tweet => Boolean): TweetSet = filterAcc(p, this)
+  def filter(p: Tweet => Boolean): TweetSet = filterAcc(p, new Empty)
 
   /**
    * This is a helper method for `filter` that propagates the accumulated tweets.
@@ -106,6 +106,9 @@ abstract class TweetSet {
    * This method takes a function and applies it to every element in the set.
    */
   def foreach(f: Tweet => Unit): Unit
+
+  // TODO should be able to do without this
+  def isEmpty: Boolean
 }
 
 class Empty extends TweetSet {
@@ -116,8 +119,10 @@ class Empty extends TweetSet {
 
   def descendingByRetweet: TweetList = Nil
 
-  // TODO this can't be right
-  def mostRetweeted: Tweet = ???
+  def mostRetweeted: Tweet = throw new NoSuchElementException
+
+  // TODO remove
+  def isEmpty = true
 
   /**
    * The following methods are already implemented
@@ -134,23 +139,73 @@ class Empty extends TweetSet {
 
 class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
 
-  def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet =
-    if (p(elem)) right.filterAcc(p, acc incl elem)
-    else right.filterAcc(p, acc)
+  /**
+   * This is a helper method for `filter` that propagates the accumulated tweets.
+   *
+   * I have `acc` starting as `new Empty`
+   */
+  def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
+    /*
+      Things we must do:
 
-  def union(that: TweetSet): TweetSet = ((left union right) union that) incl elem
+        1. incl elem if it matches p, otw not
+        2. collect the Tweets matching p in the left and right sets (if they exist)
+     */
+
+    val a =
+      acc
+        .union { left.filterAcc(p, new Empty) }
+        .union { right.filterAcc(p, new Empty) }
+
+    if (p(elem))
+      a incl elem
+    else
+      a
+  }
+
+  // TODO is this gonna do it?
+  def union(that: TweetSet): TweetSet = that.union(left).union(right).incl(elem)
 
 
-  // TODO this can't be right
-  def descendingByRetweet: TweetList = new Cons(mostRetweeted, descendingByRetweet)
-    // new Cons(elem, right.descendingByRetweet))
+  // the FAQ says this method should use the mostRetweeted method below
+  // https://class.coursera.org/progfun-004/forum/thread?thread_id=679
+  // TODO not functionally implemented
+  def descendingByRetweet: TweetList = {
+    // I need to find the mostRetweeted, cons it, then remove it, then continue
+    var ts: TweetSet = (new Empty).union(this)
+    var tl: TweetList = Nil
+    // TODO not functionally implemented
+    while (!ts.isEmpty) {
+      val mr = ts.mostRetweeted
+      tl = new Cons(mr, tl)
+      ts = ts.remove(mr)
+    }
 
-  // TODO this can't be right
-  def mostRetweeted: Tweet =
-    if (left.mostRetweeted.retweets > elem.retweets) left.mostRetweeted
-    else if (right.mostRetweeted.retweets > elem.retweets) right.mostRetweeted
-    else elem
+    // TODO not functionally implemented
+    var toReturn: TweetList = Nil
+    tl.foreach { tweet =>
+      toReturn = new Cons(tweet, toReturn)
+    }
+    toReturn
+  }
 
+  // TODO not implemented
+  /** Returns the tweet from this set which has the greatest retweet count. */
+  // throws Exc
+  // TODO keep in mind that calling mostRetweeted on an Empty throws an Exception!
+  def mostRetweeted: Tweet = {
+    // idea from https://class.coursera.org/progfun-004/forum/thread?thread_id=733
+    // define current tweet as most retweeted and recurse through and compare with subtrees
+    val a = if (!left.isEmpty && left.mostRetweeted.retweets > elem.retweets) left.mostRetweeted
+            else elem
+    val b = if (!right.isEmpty && right.mostRetweeted.retweets > elem.retweets) right.mostRetweeted
+            else elem
+
+    List(a, b).maxBy(_.retweets)
+  }
+
+  // TODO remove
+  def isEmpty = false
 
   /**
    * The following methods are already implemented

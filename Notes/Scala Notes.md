@@ -1,5 +1,33 @@
-Notes on Scala
-==============
+Accessibility specifiers in class definitions
+---------------------------------------------
+
+**5/14/14**
+
+Ref: [SO](http://stackoverflow.com/questions/14694712/do-scala-constructor-parameters-default-to-private-val)
+
+To be clear, I'm talking about
+
+    class Foo(** THIS SPOT HERE **)
+
+### bar: Int
+
+If the variable isn't used anywhere besides the constructor, no
+field is generated. Otherwise, `private val bar` is created, with
+no getter.
+
+### private val bar: Int
+
+Creates a `private val bar` field with a private getter.
+No longer matters whether the variables is used anywhere besides
+the constructor.
+
+### val bar: Int
+
+Same as above, but with a public getter.
+
+### bar: Int (in a case class)
+
+Will behave as though it were `val bar: Int` in a regular class.
 
 Span on Collections
 -------------------

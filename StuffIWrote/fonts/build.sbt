@@ -8,3 +8,4 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.1.4" % "test",
   "org.apache.mahout" % "mahout-core" % "0.9"
 )
+

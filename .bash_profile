@@ -61,6 +61,9 @@ function cs { cd "$1"; ls; }
 # as in Does Directory Have... ( -i := Case Insensitive )
 function ddh { ls "$1" | grep -i "$2"; }
 
+# supposed to enable autocomplete for rbenv
+if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
 # remove the first 49 lines of each *.[mh] file in this- & sub-directories
 # assembled from the following:
 # stackoverflow.com/questions/9954680/how-to-store-directory-files-listing-into-an-array/15416377#15416377
