@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>50E9B3FE-A377-46E6-8676-74D12EF2D24B</string>
+	<key>IDESourceControlProjectName</key>
+	<string>TreeGen</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>B36FB712-B9CE-47C4-9DD8-8B5BD0DC15A9</key>
+		<string>ssh://github.com/ethanp/programming.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>StuffIWrote/OSXApp/TreeGen/TreeGen.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>B36FB712-B9CE-47C4-9DD8-8B5BD0DC15A9</key>
+		<string>../../../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/ethanp/programming.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>B36FB712-B9CE-47C4-9DD8-8B5BD0DC15A9</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>B36FB712-B9CE-47C4-9DD8-8B5BD0DC15A9</string>
+			<key>IDESourceControlWCCName</key>
+			<string>ProgrammingGit</string>
+		</dict>
+	</array>
+</dict>
+</plist>

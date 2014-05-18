@@ -7,7 +7,13 @@ What is the difference between `$(c)`, `<backtick>c</backtick>`, and `eval c`?
   and `<backtick>c</backtick>` captures the *return value*,
   and `eval c` runs the command and doesn't capture nada.
   Surely this is wrong though.
+  
+### Backticks
+#### 5/17/14
 
+    $ echo "The name is `hostname`"
+    The name is mymacbookinstance
+    
 File Descriptors
 ----------------
 #### 3/24/14

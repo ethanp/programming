@@ -51,7 +51,8 @@ function uto { ssh -o ServerAliveInterval=30 -X ethanp@$1.cs.utexas.edu ; }
 function uts { scp "$1" ethanp@almond-joy.cs.utexas.edu: ; }
 
 # download movie to Movies dir
-function dlmov { cd ~/Desktop/Movies/ && youtube-dl -t $1 && cd -; }
+function dlmov { cd ~/Desktop/Movies/ && youtube-dl -t $1  && cd - ; }
+function qdlmov { cd ~/Desktop/Movies/ && youtube-dl -tq $1  && cd - & }
 
 # pretty-print raw JSON
 function json { cat $1 | python -mjson.tool | less; }
@@ -69,12 +70,21 @@ if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
 # assembled from the following:
 # stackoverflow.com/questions/9954680/how-to-store-directory-files-listing-into-an-array/15416377#15416377
 # stackoverflow.com/questions/316590/how-to-count-lines-of-code-including-sub-directories/316613#316613
+# stackoverflow.com/questions/15691942/bash-print-array-elements-on-separate-lines
 function decrust {
+    echo "The following files will have their first 48 lines removed:"
+    echo
     files=($(find . -name "*.[mh]"))  # create array of names matching *.[mh]
-    for item in ${files[*]}; do
-        tail +49 $item > ${item}.copy # put all but first 49 lines in buffer
-        mv ${item}.copy $item         # overwrite original file with buffer
-    done                              # doesn't work without the buffer file
+    printf -- '%s\n' "${files[@]}"    # kinda cool that printf exists in bash
+    if [ "$1" == "doit" ]; then
+        for item in ${files[*]}; do
+            tail +49 $item > ${item}.copy # put all but first 49 lines in buffer
+            mv ${item}.copy $item         # overwrite original file with buffer
+        done                              # doesn't work without the buffer file
+    else
+        echo "currently in dry mode, use ..decrust doit.. to actually run it"
+        echo
+    fi
 }
 
 # delete directory
