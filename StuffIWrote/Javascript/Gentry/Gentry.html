@@ -1,8 +1,6 @@
 <!-- Based on: https://gist.github.com/mbostock/999346
-     else, by Ethan Petuchowski, started 5/18/14
-     meant to be a Java tree testcase generator,
-     once I figure out enough of the base-code to
-     be able to make it do what I want. -->
+     else, by Ethan Petuchowski, starting 5/18/14.
+     Meant to be a Java tree testcase generator. -->
 
 <!DOCTYPE html>
 <meta charset="utf-8">
@@ -45,7 +43,7 @@ for (var i = 0; i < max_size; i++) {
 var tree = d3.layout.tree()
     .size([width - inset, height - inset]);
 
-var root = {},
+var root = {intValue : 243},
     nodes = tree(root); // Runs the tree layout, returning the array of
                         // nodes associated with the specified root node.
 
@@ -130,7 +128,7 @@ function uiAfterAddingNode() {
       .attr('width', 50)
       .attr('height', 50)
       .attr('abcd', 344)
-      .html(function (d) { return d.intValue})
+      .html(function (d) { return d.intValue })
 
 
   // Add entering link in the parent’s old position.
@@ -139,8 +137,8 @@ function uiAfterAddingNode() {
   link.enter().insert("path", ".node")
       .attr("class", "link")
       .attr("d", function(d) {
-        var o = {x: d.source.px, y: d.source.py};
-        return diagonal({source: o, target: o});
+        var o = { x: d.source.px, y: d.source.py };
+        return diagonal({ source: o, target: o });
       });
 
   // Transition (relocate) nodes and links to their new positions.
