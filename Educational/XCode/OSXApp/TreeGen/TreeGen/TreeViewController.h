@@ -7,8 +7,9 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "TreeView.h"
 
 @interface TreeViewController : NSViewController
 @property (unsafe_unretained) IBOutlet NSTextView *generatedCodeView;
-
+@property (weak) IBOutlet TreeView *treeView;
 @end

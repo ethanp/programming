@@ -7,9 +7,8 @@
 //
 
 #import "EPAppDelegate.h"
-#import "NodeView.h"
 
-@interface NodeView ()
+@interface EPAppDelegate ()
 @end
 @implementation EPAppDelegate
 
@@ -23,6 +22,7 @@
     //   this should dynamically adjust when necessary
     
     // location of children of nodes should be dynamically adjusted at all times
+    _treeVC = [[TreeViewController alloc] init];
 }
 
 @end

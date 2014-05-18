@@ -12,6 +12,7 @@
 		AAB5362A1928E0B300C80DAA /* TreeView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAB536291928E0B300C80DAA /* TreeView.m */; };
 		AAB5362E1928F95D00C80DAA /* EdgeView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAB5362D1928F95D00C80DAA /* EdgeView.m */; };
 		AAB536311928FC2A00C80DAA /* TreeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AAB536301928FC2A00C80DAA /* TreeViewController.m */; };
+		AAB536341928FFC600C80DAA /* Tree.m in Sources */ = {isa = PBXBuildFile; fileRef = AAB536331928FFC600C80DAA /* Tree.m */; };
 		AAE8E61D1928BD5800E7143D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE8E61C1928BD5800E7143D /* Cocoa.framework */; };
 		AAE8E6271928BD5800E7143D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AAE8E6251928BD5800E7143D /* InfoPlist.strings */; };
 		AAE8E6291928BD5800E7143D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE8E6281928BD5800E7143D /* main.m */; };
@@ -46,6 +47,8 @@
 		AAB5362D1928F95D00C80DAA /* EdgeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EdgeView.m; sourceTree = "<group>"; };
 		AAB5362F1928FC2A00C80DAA /* TreeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeViewController.h; sourceTree = "<group>"; };
 		AAB536301928FC2A00C80DAA /* TreeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeViewController.m; sourceTree = "<group>"; };
+		AAB536321928FFC600C80DAA /* Tree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tree.h; sourceTree = "<group>"; };
+		AAB536331928FFC600C80DAA /* Tree.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Tree.m; sourceTree = "<group>"; };
 		AAE8E6191928BD5800E7143D /* TreeGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TreeGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAE8E61C1928BD5800E7143D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		AAE8E61F1928BD5800E7143D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -153,6 +156,8 @@
 				AAB536291928E0B300C80DAA /* TreeView.m */,
 				AAB5362F1928FC2A00C80DAA /* TreeViewController.h */,
 				AAB536301928FC2A00C80DAA /* TreeViewController.m */,
+				AAB536321928FFC600C80DAA /* Tree.h */,
+				AAB536331928FFC600C80DAA /* Tree.m */,
 				AAE8E6311928BD5800E7143D /* MainMenu.xib */,
 				AAE8E6341928BD5800E7143D /* Images.xcassets */,
 				AAE8E6231928BD5800E7143D /* Supporting Files */,
@@ -291,6 +296,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAB5362A1928E0B300C80DAA /* TreeView.m in Sources */,
+				AAB536341928FFC600C80DAA /* Tree.m in Sources */,
 				AAB5362E1928F95D00C80DAA /* EdgeView.m in Sources */,
 				AAE8E6291928BD5800E7143D /* main.m in Sources */,
 				AAE8E6521928BE5900E7143D /* EPNode.m in Sources */,

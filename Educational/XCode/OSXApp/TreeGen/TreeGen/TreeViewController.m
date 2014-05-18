@@ -7,9 +7,10 @@
 //
 
 #import "TreeViewController.h"
+#import "Tree.h"
 
 @interface TreeViewController ()
-
+@property Tree *tree;
 @end
 
 @implementation TreeViewController
@@ -18,13 +19,8 @@
     [_generatedCodeView setString:[[_generatedCodeView string] stringByAppendingString:@"Something"]];
 }
 
-- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
-{
-    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
-    if (self) {
-        // Initialization code here.
-    }
-    return self;
+- (void)awakeFromNib {
+    _tree = [[Tree alloc] initWithTreeVC:self];
 }
 
 @end

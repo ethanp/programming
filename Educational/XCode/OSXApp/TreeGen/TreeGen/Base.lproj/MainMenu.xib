@@ -730,6 +730,7 @@
         <viewController id="wNj-1O-uv6" customClass="TreeViewController">
             <connections>
                 <outlet property="generatedCodeView" destination="O5J-k4-ABP" id="aV0-o7-an8"/>
+                <outlet property="treeView" destination="Y8O-6w-5LM" id="A8E-JN-6dc"/>
             </connections>
         </viewController>
     </objects>

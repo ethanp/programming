@@ -10,4 +10,5 @@
 
 @interface NodeView : NSView
 @property (nonatomic) NSColor *color;
+@property (nonatomic) BOOL isSelected;
 @end

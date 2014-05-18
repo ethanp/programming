@@ -7,9 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "NodeView.h"
+#import "TreeViewController.h"
+
 @interface EPAppDelegate : NSObject <NSApplicationDelegate>
 
 @property (assign) IBOutlet NSWindow *window;
-
+@property (nonatomic) TreeViewController *treeVC;
 @end
