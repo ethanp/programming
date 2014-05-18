@@ -14,16 +14,16 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        // Initialization code here.
+        _color = [NSColor lightGrayColor];
     }
     return self;
 }
 
-- (void)drawRect:(NSRect)dirtyRect
-{
+- (void)drawRect:(NSRect)dirtyRect {
+    // set any NSColor for filling, say white:
+    [_color setFill];
+    NSRectFill(dirtyRect);
     [super drawRect:dirtyRect];
-    
-    // Drawing code here.
 }
 
 @end

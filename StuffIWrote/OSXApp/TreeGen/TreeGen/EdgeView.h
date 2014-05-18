@@ -1,5 +1,5 @@
 //
-//  TreeView.h
+//  EdgeView.h
 //  TreeGen
 //
 //  Created by Ethan Petuchowski on 5/18/14.
@@ -7,7 +7,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "EPNode.h"
 
-@interface TreeView : NSView
-@property (nonatomic) NSColor *color;
+@interface EdgeView : NSView
+
+@property (nonatomic) EPNode *parent;
+@property (nonatomic) EPNode *child;
+
 @end

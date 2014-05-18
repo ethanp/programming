@@ -1,5 +1,5 @@
 //
-//  TreeView.h
+//  TreeViewController.h
 //  TreeGen
 //
 //  Created by Ethan Petuchowski on 5/18/14.
@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface TreeView : NSView
-@property (nonatomic) NSColor *color;
+@interface TreeViewController : NSViewController
+@property (unsafe_unretained) IBOutlet NSTextView *generatedCodeView;
+
 @end

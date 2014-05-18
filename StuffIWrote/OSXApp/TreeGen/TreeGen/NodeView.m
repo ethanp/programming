@@ -14,7 +14,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        _color = [NSColor blueColor];
+        _color = [NSColor lightGrayColor];
     }
     return self;
 }

@@ -25,7 +25,4 @@
     // location of children of nodes should be dynamically adjusted at all times
 }
 
-- (IBAction)generateJavaCode:(id)sender {
-    [_generatedCodeView setString:[[_generatedCodeView string] stringByAppendingString:@"Something"]];
-}
 @end

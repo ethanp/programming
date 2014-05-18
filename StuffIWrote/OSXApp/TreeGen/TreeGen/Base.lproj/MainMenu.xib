@@ -672,7 +672,7 @@
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="335" y="390" width="557" height="447"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="878"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1178"/>
             <view key="contentView" id="EiT-Mj-1SZ">
                 <rect key="frame" x="0.0" y="0.0" width="557" height="447"/>
                 <autoresizingMask key="autoresizingMask"/>
@@ -706,27 +706,31 @@
                             <autoresizingMask key="autoresizingMask"/>
                         </scroller>
                     </scrollView>
-                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="a5w-8Y-cYC">
-                        <rect key="frame" x="6" y="83" width="97" height="32"/>
-                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                        <buttonCell key="cell" type="push" title="Generate" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="n6H-Ae-IVT">
-                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                            <font key="font" metaFont="smallSystem" size="13"/>
-                        </buttonCell>
-                        <connections>
-                            <action selector="generateJavaCode:" target="Voe-Tx-rLC" id="kML-n9-XsY"/>
-                        </connections>
-                    </button>
-                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y8O-6w-5LM" customClass="NodeView">
-                        <rect key="frame" x="150" y="331" width="163" height="96"/>
+                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y8O-6w-5LM" customClass="TreeView">
+                        <rect key="frame" x="-1" y="120" width="559" height="327"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     </customView>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="QMl-Hd-ba2">
+                        <rect key="frame" x="223" y="81" width="110" height="39"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="squareTextured" title="Generate" bezelStyle="texturedSquare" imagePosition="overlaps" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="67S-Z8-ktB">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" size="19" name="ArialMT"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="generateCodeButtonPressed:" target="wNj-1O-uv6" id="4YB-hj-Ahz"/>
+                        </connections>
+                    </button>
                 </subviews>
             </view>
             <connections>
                 <outlet property="delegate" destination="Y8O-6w-5LM" id="zgD-3e-5FX"/>
             </connections>
         </window>
-        <viewController id="wNj-1O-uv6"/>
+        <viewController id="wNj-1O-uv6" customClass="TreeViewController">
+            <connections>
+                <outlet property="generatedCodeView" destination="O5J-k4-ABP" id="aV0-o7-an8"/>
+            </connections>
+        </viewController>
     </objects>
 </document>
