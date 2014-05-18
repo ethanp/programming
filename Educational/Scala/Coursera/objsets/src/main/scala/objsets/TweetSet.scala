@@ -107,6 +107,24 @@ abstract class TweetSet {
    */
   def foreach(f: Tweet => Unit): Unit
 
+
+  /**
+   * The following methods were added by me
+   */
+
+  /**
+   * @return a TweetList of all elements of `this` TweetSet
+   */
+  def collect(traveller: TweetList): TweetList
+
+  /**
+   * @return a TweetSet containing the union of its current tweets with those of the given list
+   */
+  def includeList(list: TweetList): TweetSet = {
+    if (list.isEmpty) this
+    else incl(list.head).includeList(list.tail)
+  }
+
   // TODO should be able to do without this
   def isEmpty: Boolean
 }
@@ -121,8 +139,17 @@ class Empty extends TweetSet {
 
   def mostRetweeted: Tweet = throw new NoSuchElementException
 
+  /**
+   * The following methods were added by me
+   */
+
   // TODO remove
   def isEmpty = true
+
+  /**
+   * @return a TweetList of all elements of `this` TweetSet
+   */
+  def collect(traveller: TweetList): TweetList = traveller
 
   /**
    * The following methods are already implemented
@@ -161,9 +188,9 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
       a
   }
 
-  // this is working...but I think it is not fast enough
-  // to allow you to be able to read all the tweets in
-  def union(that: TweetSet): TweetSet = that.union(left).union(right).incl(elem)
+  def union(that: TweetSet): TweetSet = that.includeList(collect(Nil))
+
+  def collect(traveller: TweetList): TweetList = right.collect(left.collect(new Cons(elem, traveller)))
 
 
   // the FAQ says this method should use the mostRetweeted method below
@@ -259,7 +286,6 @@ object GoogleVsApple {
   val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
   val apple = List("ios", "iOS", "iphone", "iPhone", "ipad", "iPad")
 
-  // TODO test this? at least make sure it works properly
   def filterAllTweetsOn(list: List[String]): TweetSet =
     allTweets.filter { tweet =>
       list.exists(tweet.text.contains(_))
@@ -272,8 +298,7 @@ object GoogleVsApple {
    * A list of all tweets mentioning a keyword from either apple or google,
    * sorted by the number of retweets.
    */
-  // (googleTweets union appleTweets).descendingByRetweet
-  lazy val trending: TweetList = filterAllTweetsOn(List(google(0))).descendingByRetweet
+  lazy val trending: TweetList = (googleTweets union appleTweets).descendingByRetweet
 }
 
 object Main extends App {

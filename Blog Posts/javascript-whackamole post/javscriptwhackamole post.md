@@ -13,7 +13,7 @@ this game.
 
 The reason not to include jQuery was that web-designing friend said
 it's uncool to use jQuery these days because then you have to send
-it out to people everytime they load your page. I'm not sure whether
+it out to people every time they load your page. I'm not sure whether
 that's true or not, but I went with it.... Until I got to the last part
 of the game which involved adding a subtree of divs to the DOM.
 
