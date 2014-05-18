@@ -31,7 +31,9 @@ var width = 960,
     update_interval = 350,
     max_size = 2,
     radius = 20,
-    inset = radius * 2.5;
+    inset = radius * 2.5,
+    takenValues = {},
+    connections = {};
 
 var buff = [];
 for (var i = 0; i < max_size; i++) {
@@ -48,6 +50,8 @@ var root = { intValue : 2 },
     nodes = tree(root); // Runs the tree layout, returning the array of
                         // nodes associated with the specified root node.
 
+takenValues[root.intValue] = true;
+
 root.parent = root;
 root.px = root.x; // I think we're saving the current values so that these
 root.py = root.y; // values will still be available after the root moves
@@ -55,17 +59,16 @@ root.py = root.y; // values will still be available after the root moves
 // returns a function that generates the path data for
 // a cubic Bézier connecting the source and target points
 var diagonal = d3.svg.diagonal();
-
+var childVal;
 // @connections: { parentValue -> { childValue } }
-var connections = {}
 function collectConnections(node) {
   if (node.children) {
     for (var i = 0; i < node.children.length; i++) {
-      var childVal = node.children[i].intValue + "";  // this is (ostensibly) a unique identifier
-      var connctedSet = connections[node.intValue];
-      if (connctedSet && !(childVal in connctedSet))
-        connctedSet[childVal] = true;
-      if (!connctedSet) {
+      childVal = node.children[i].intValue + "";  // this is (ostensibly) a unique identifier
+      var connectedSet = connections[node.intValue];
+      if (connectedSet && !(childVal in connectedSet))
+        connectedSet[childVal] = true;
+      if (!connectedSet) {
         connections[node.intValue] = {childVal: true};
       }
       collectConnections(node.children[i]);
@@ -106,12 +109,14 @@ function create_initial_nodes() {
 
   // create a new node with a unique id and an intValue
   // not sure that the id is useful
-  var n = {id: nodes.length, intValue: buff.shift()},  // should initially be 1 (root)
+  var n = {id: nodes.length, intValue: buff.shift()+""},  // should initially be 1 (root)
 
       // we're choosing a node to be the parent
       // TODO here we could restrict it to a Binary Tree
       // the `| 0` casts (quickly[!]) to Integer (stackoverflow.com/questions/596467)
       p = nodes[Math.random() * nodes.length | 0];
+
+  takenValues[n.intValue] = true;
 
   // add new node to its parent's list of children
   if (p.children) {
@@ -132,7 +137,7 @@ function uiAfterAddingNode() {
   link = link.data(tree.links(nodes), function(d) { return d.source.id + "-" + d.target.id; });
 
   // Add entering node in the parent’s old position.
-  var g = node.enter()
+  var g = node.enter();
   g.append("circle")
       .attr("class", "node")
       .attr("r", radius)
@@ -147,7 +152,7 @@ function uiAfterAddingNode() {
       .attr('width', 50)
       .attr('height', 50)
       .attr('abcd', 344)
-      .html(function (d) { return d.intValue })
+      .html(function (d) { return d.intValue });
 
 
   // Add entering link in the parent’s old position.
@@ -182,32 +187,47 @@ function uiAfterAddingNode() {
 
 // seems this is the preferred technical spelling of the word "dialogue"
 function newChildDialog(clickedParent) {
-  var val = prompt("Please enter the new node's intValue, it must make sense too!");
-  var newNode = {id: nodes.length, intValue: val};
-  if (clickedParent.children) {
-    clickedParent.children.push(newNode);
-    clickedParent.children.sort(function(a,b) { return a.intValue - b.intValue });
-  }
-  else clickedParent.children = [newNode];
-  nodes.push(newNode);
-  uiAfterAddingNode();
+    var val = prompt("Please enter the new node's intValue, it must make sense too!");
+    if ( !val || val.search(/[^0-9]/) != -1 || val in takenValues) return;
+    var newNode = {id: nodes.length, intValue: val};
+    if (clickedParent.children) {
+        if (clickedParent.children.length == 2) return;
+        takenValues[val] = true;
+        clickedParent.children.push(newNode);
+        clickedParent.children.sort(function(a,b) { return a.intValue - b.intValue });
+    }
+    else clickedParent.children = [newNode];
+    nodes.push(newNode);
+    collectConnections(root);
+    uiAfterAddingNode();
 }
 
 /**
  * The Java Generation
  */
-var a = 1
+var a = 1;
 document.getElementById("generate").onclick = function () {
-  text = document.getElementById("code").innerHTML;
-  text += "  bst.getRoot().setLeft(new BSTN<Int>(r.nextInt("+a+++")));<br>"
-  document.getElementById("code").innerHTML = text;
+    var text = document.getElementById("code").innerHTML;
+    // text += "  bst.getRoot().setLeft(new BSTN<Int>(r.nextInt("+a+++")));<br>"
+    // @connections: { parentValue -> { childValue } }
+    for (var parent in connections) {
+        for (child in connections[parent]) {
+            if (child == "childVal" || parent == "childval") continue;
+            if (parseInt(child) < parseInt(parent)) {
+                text += "    var node" + child + " = node" + parent + ".setLeft(new BSTN&lt;Int&gt;(" + child + "));<br>"
+            } else {
+                text += "    var node" + child + " = node" + parent + ".setLeft(new BSTN&lt;Int&gt;(" + child + "));<br>"
+            }
+        }
+    }
+    document.getElementById("code").innerHTML = text;
 };
 
 </script>
 <pre id="code">
 boolean testCase_N() {
-  BST bst = BST<BSTN<Int>>(r.nextInt());
-  bst.getRoot().setLeft(new BSTN<Int>(r.nextInt()));
+    BST bst = BST&lt;BSTN&lt;Int&gt;&gt;(2);
+    BSTNode = bst.getRoot()
 </pre>
 <pre>
   return bst.test_N == /* TODO FILL IN intValue */);
