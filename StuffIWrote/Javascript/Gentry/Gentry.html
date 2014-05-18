@@ -21,6 +21,7 @@
 
 </style>
 <body>
+<br><button id="generate">Generate!</button>
 <script src="http://d3js.org/d3.v3.min.js"></script>
 <script>
 
@@ -28,7 +29,7 @@
 var width = 960,
     height = 500,
     update_interval = 350,
-    max_size = 3,
+    max_size = 2,
     radius = 20,
     inset = radius * 2.5;
 
@@ -70,7 +71,7 @@ function collectConnections(node) {
       collectConnections(node.children[i]);
     }
   }
-  console.log(connections)
+  console.log(connections);
 }
 
 // I guess we're appending a giant svg elem to the body
@@ -192,11 +193,23 @@ function newChildDialog(clickedParent) {
   uiAfterAddingNode();
 }
 
+/**
+ * The Java Generation
+ */
+var a = 1
+document.getElementById("generate").onclick = function () {
+  text = document.getElementById("code").innerHTML;
+  text += "  bst.getRoot().setLeft(new BSTN<Int>(r.nextInt("+a+++")));<br>"
+  document.getElementById("code").innerHTML = text;
+};
+
 </script>
-<br><button>Generate!</button> <!-- add event handler to append to #code -->
 <pre id="code">
 boolean testCase_N() {
   BST bst = BST<BSTN<Int>>(r.nextInt());
   bst.getRoot().setLeft(new BSTN<Int>(r.nextInt()));
+</pre>
+<pre>
   return bst.test_N == /* TODO FILL IN intValue */);
 }
+</pre>
