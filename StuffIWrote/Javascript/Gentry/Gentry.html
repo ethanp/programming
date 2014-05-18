@@ -43,7 +43,7 @@ for (var i = 0; i < max_size; i++) {
 var tree = d3.layout.tree()
     .size([width - inset, height - inset]);
 
-var root = {intValue : 243},
+var root = { intValue : 2 },
     nodes = tree(root); // Runs the tree layout, returning the array of
                         // nodes associated with the specified root node.
 
@@ -55,6 +55,23 @@ root.py = root.y; // values will still be available after the root moves
 // a cubic Bézier connecting the source and target points
 var diagonal = d3.svg.diagonal();
 
+// @connections: { parentValue -> { childValue } }
+var connections = {}
+function collectConnections(node) {
+  if (node.children) {
+    for (var i = 0; i < node.children.length; i++) {
+      var childVal = node.children[i].intValue + "";  // this is (ostensibly) a unique identifier
+      var connctedSet = connections[node.intValue];
+      if (connctedSet && !(childVal in connctedSet))
+        connctedSet[childVal] = true;
+      if (!connctedSet) {
+        connections[node.intValue] = {childVal: true};
+      }
+      collectConnections(node.children[i]);
+    }
+  }
+  console.log(connections)
+}
 
 // I guess we're appending a giant svg elem to the body
 // that will contain the entire tree
@@ -77,6 +94,7 @@ var node = svg.selectAll(".node"),
 
 // run `create_initial_nodes()` every 750 ms
 var timer = setInterval(create_initial_nodes, update_interval);
+
 
 function create_initial_nodes() {
   if (nodes.length >= max_size) {
@@ -161,9 +179,6 @@ function uiAfterAddingNode() {
 
 }
 
-// TODO collect all the connections
-// we have root.children means
-
 // seems this is the preferred technical spelling of the word "dialogue"
 function newChildDialog(clickedParent) {
   var val = prompt("Please enter the new node's intValue, it must make sense too!");
@@ -177,9 +192,9 @@ function newChildDialog(clickedParent) {
   uiAfterAddingNode();
 }
 
-
 </script>
-<pre>
+<br><button>Generate!</button> <!-- add event handler to append to #code -->
+<pre id="code">
 boolean testCase_N() {
   BST bst = BST<BSTN<Int>>(r.nextInt());
   bst.getRoot().setLeft(new BSTN<Int>(r.nextInt()));
