@@ -13,6 +13,8 @@
         <customObject id="-3" userLabel="Application"/>
         <customObject id="Voe-Tx-rLC" customClass="EPAppDelegate">
             <connections>
+                <outlet property="first" destination="Y8O-6w-5LM" id="G6n-Uk-Ooa"/>
+                <outlet property="generatedCodeView" destination="O5J-k4-ABP" id="4ck-AM-vV4"/>
                 <outlet property="window" destination="QvC-M9-y7g" id="gIp-Ho-8D9"/>
             </connections>
         </customObject>
@@ -711,9 +713,20 @@
                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                             <font key="font" metaFont="smallSystem" size="13"/>
                         </buttonCell>
+                        <connections>
+                            <action selector="generateJavaCode:" target="Voe-Tx-rLC" id="kML-n9-XsY"/>
+                        </connections>
                     </button>
+                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Y8O-6w-5LM" customClass="NodeView">
+                        <rect key="frame" x="150" y="331" width="163" height="96"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    </customView>
                 </subviews>
             </view>
+            <connections>
+                <outlet property="delegate" destination="Y8O-6w-5LM" id="zgD-3e-5FX"/>
+            </connections>
         </window>
+        <viewController id="wNj-1O-uv6"/>
     </objects>
 </document>

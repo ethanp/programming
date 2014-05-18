@@ -7,9 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
-
+#import "NodeView.h"
 @interface EPAppDelegate : NSObject <NSApplicationDelegate>
 
 @property (assign) IBOutlet NSWindow *window;
+@property (weak) IBOutlet NodeView *first;
+- (IBAction)generateJavaCode:(id)sender;
+@property (unsafe_unretained) IBOutlet NSTextView *generatedCodeView;
 
 @end

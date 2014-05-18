@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AAB536241928E06100C80DAA /* Node.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAB536231928E06100C80DAA /* Node.xib */; };
+		AAB536271928E09D00C80DAA /* NodeView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAB536261928E09D00C80DAA /* NodeView.m */; };
+		AAB5362A1928E0B300C80DAA /* TreeView.m in Sources */ = {isa = PBXBuildFile; fileRef = AAB536291928E0B300C80DAA /* TreeView.m */; };
 		AAE8E61D1928BD5800E7143D /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAE8E61C1928BD5800E7143D /* Cocoa.framework */; };
 		AAE8E6271928BD5800E7143D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AAE8E6251928BD5800E7143D /* InfoPlist.strings */; };
 		AAE8E6291928BD5800E7143D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE8E6281928BD5800E7143D /* main.m */; };
@@ -19,7 +22,6 @@
 		AAE8E6451928BD5800E7143D /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = AAE8E6431928BD5800E7143D /* InfoPlist.strings */; };
 		AAE8E6471928BD5800E7143D /* TreeGenTests.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE8E6461928BD5800E7143D /* TreeGenTests.m */; };
 		AAE8E6521928BE5900E7143D /* EPNode.m in Sources */ = {isa = PBXBuildFile; fileRef = AAE8E6511928BE5900E7143D /* EPNode.m */; };
-		AAE8E6541928BF1C00E7143D /* NodeView.xib in Resources */ = {isa = PBXBuildFile; fileRef = AAE8E6531928BF1C00E7143D /* NodeView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +35,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		AAB536231928E06100C80DAA /* Node.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = Node.xib; sourceTree = "<group>"; };
+		AAB536251928E09D00C80DAA /* NodeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NodeView.h; sourceTree = "<group>"; };
+		AAB536261928E09D00C80DAA /* NodeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NodeView.m; sourceTree = "<group>"; };
+		AAB536281928E0B300C80DAA /* TreeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TreeView.h; sourceTree = "<group>"; };
+		AAB536291928E0B300C80DAA /* TreeView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TreeView.m; sourceTree = "<group>"; };
 		AAE8E6191928BD5800E7143D /* TreeGen.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TreeGen.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAE8E61C1928BD5800E7143D /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		AAE8E61F1928BD5800E7143D /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -54,7 +61,6 @@
 		AAE8E6461928BD5800E7143D /* TreeGenTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TreeGenTests.m; sourceTree = "<group>"; };
 		AAE8E6501928BE5900E7143D /* EPNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EPNode.h; sourceTree = "<group>"; };
 		AAE8E6511928BE5900E7143D /* EPNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EPNode.m; sourceTree = "<group>"; };
-		AAE8E6531928BF1C00E7143D /* NodeView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NodeView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +84,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AAB5362B1928E0BF00C80DAA /* Node */ = {
+			isa = PBXGroup;
+			children = (
+				AAB536251928E09D00C80DAA /* NodeView.h */,
+				AAB536261928E09D00C80DAA /* NodeView.m */,
+				AAE8E6501928BE5900E7143D /* EPNode.h */,
+				AAE8E6511928BE5900E7143D /* EPNode.m */,
+				AAB536231928E06100C80DAA /* Node.xib */,
+			);
+			name = Node;
+			sourceTree = "<group>";
+		};
 		AAE8E6101928BD5800E7143D = {
 			isa = PBXGroup;
 			children = (
@@ -122,10 +140,10 @@
 			children = (
 				AAE8E62E1928BD5800E7143D /* EPAppDelegate.h */,
 				AAE8E62F1928BD5800E7143D /* EPAppDelegate.m */,
-				AAE8E6501928BE5900E7143D /* EPNode.h */,
-				AAE8E6511928BE5900E7143D /* EPNode.m */,
+				AAB5362B1928E0BF00C80DAA /* Node */,
+				AAB536281928E0B300C80DAA /* TreeView.h */,
+				AAB536291928E0B300C80DAA /* TreeView.m */,
 				AAE8E6311928BD5800E7143D /* MainMenu.xib */,
-				AAE8E6531928BF1C00E7143D /* NodeView.xib */,
 				AAE8E6341928BD5800E7143D /* Images.xcassets */,
 				AAE8E6231928BD5800E7143D /* Supporting Files */,
 			);
@@ -240,7 +258,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AAE8E6271928BD5800E7143D /* InfoPlist.strings in Resources */,
-				AAE8E6541928BF1C00E7143D /* NodeView.xib in Resources */,
+				AAB536241928E06100C80DAA /* Node.xib in Resources */,
 				AAE8E6351928BD5800E7143D /* Images.xcassets in Resources */,
 				AAE8E62D1928BD5800E7143D /* Credits.rtf in Resources */,
 				AAE8E6331928BD5800E7143D /* MainMenu.xib in Resources */,
@@ -262,8 +280,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAB5362A1928E0B300C80DAA /* TreeView.m in Sources */,
 				AAE8E6291928BD5800E7143D /* main.m in Sources */,
 				AAE8E6521928BE5900E7143D /* EPNode.m in Sources */,
+				AAB536271928E09D00C80DAA /* NodeView.m in Sources */,
 				AAE8E6301928BD5800E7143D /* EPAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -477,6 +497,7 @@
 				AAE8E64C1928BD5900E7143D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		AAE8E64D1928BD5900E7143D /* Build configuration list for PBXNativeTarget "TreeGenTests" */ = {
 			isa = XCConfigurationList;
@@ -485,6 +506,7 @@
 				AAE8E64F1928BD5900E7143D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
