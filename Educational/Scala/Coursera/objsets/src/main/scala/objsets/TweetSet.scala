@@ -125,6 +125,11 @@ abstract class TweetSet {
     else incl(list.head).includeList(list.tail)
   }
 
+  /**
+   * @return the most retweeted tweet in this TweetSet
+   */
+  def mostRetweetedHelper(tweet: Tweet): Tweet
+
   // TODO should be able to do without this
   def isEmpty: Boolean
 }
@@ -150,6 +155,12 @@ class Empty extends TweetSet {
    * @return a TweetList of all elements of `this` TweetSet
    */
   def collect(traveller: TweetList): TweetList = traveller
+
+  /**
+   * @return the most retweeted tweet in this TweetSet
+   */
+  def mostRetweetedHelper(tweet: Tweet): Tweet = tweet
+
 
   /**
    * The following methods are already implemented
@@ -211,20 +222,17 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
   }
 
   /** Returns the tweet from this set which has the greatest retweet count. */
-  // throws Exc
-  def mostRetweeted: Tweet = {
-    // idea from https://class.coursera.org/progfun-004/forum/thread?thread_id=733
-    // define current tweet as most retweeted and recurse through and compare with subtrees
+  // throws Exception on Empty
+  def mostRetweeted: Tweet = mostRetweetedHelper(elem)
 
-    // TODO don't use .isEmpty
-    // TODO note that Empty.mostRetweeted throws an Exception!
-    // TODO follow the hint in the link above or find another hint in the forum
-    val leftMost = if (!left.isEmpty) Some(left.mostRetweeted) else None
-    val rightMost = if (!right.isEmpty) Some(right.mostRetweeted) else None
-    val a = if (leftMost.isDefined && leftMost.get.retweets > elem.retweets) leftMost.get else elem
-    val b = if (rightMost.isDefined && rightMost.get.retweets > elem.retweets) rightMost.get else elem
-    if (a.retweets > b.retweets) a else b
-  }
+  /**
+   * @return the most retweeted tweet in this TweetSet
+   */
+  def mostRetweetedHelper(tweet: Tweet): Tweet =
+    right.mostRetweetedHelper(
+      left.mostRetweetedHelper(
+        List(tweet, elem)
+          .maxBy(_.retweets)))
 
   // TODO remove
   def isEmpty = false
