@@ -129,9 +129,6 @@ abstract class TweetSet {
    * @return the most retweeted tweet in this TweetSet
    */
   def mostRetweetedHelper(tweet: Tweet): Tweet
-
-  // TODO should be able to do without this
-  def isEmpty: Boolean
 }
 
 class Empty extends TweetSet {
@@ -147,9 +144,6 @@ class Empty extends TweetSet {
   /**
    * The following methods were added by me
    */
-
-  // TODO remove
-  def isEmpty = true
 
   /**
    * @return a TweetList of all elements of `this` TweetSet
@@ -183,43 +177,18 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
    * I have `acc` starting as `new Empty`
    */
   def filterAcc(p: Tweet => Boolean, acc: TweetSet): TweetSet = {
-    /*
-      Things we must do:
-
-        1. incl elem if it matches p, otw not
-        2. collect the Tweets matching p in the left and right sets (if they exist)
-     */
-
     val a = acc.union { left.filterAcc(p, new Empty)  }
                .union { right.filterAcc(p, new Empty) }
 
-    if (p(elem))
-      a incl elem
-    else
-      a
+    if (p(elem)) a.incl(elem) else a
   }
 
   def union(that: TweetSet): TweetSet = that.includeList(collect(Nil))
 
   def collect(traveller: TweetList): TweetList = right.collect(left.collect(new Cons(elem, traveller)))
 
-
-  // the FAQ says this method should use the mostRetweeted method below
-  // https://class.coursera.org/progfun-004/forum/thread?thread_id=679
-  // TODO not functionally implemented
-  def descendingByRetweet: TweetList = {
-    // I need to find the mostRetweeted, cons it, then remove it, then continue
-    var ts: TweetSet = (new Empty).union(this)
-    var tl: TweetList = Nil
-    // TODO not functionally implemented
-    while (!ts.isEmpty) {
-      val mr = ts.mostRetweeted
-      tl = new Cons(mr, tl)
-      ts = ts.remove(mr)
-    }
-
-    tl.reverse
-  }
+  // I need to find the mostRetweeted, cons it, then remove it, then continue
+  def descendingByRetweet: TweetList = new Cons(mostRetweeted, remove(mostRetweeted).descendingByRetweet)
 
   /** Returns the tweet from this set which has the greatest retweet count. */
   // throws Exception on Empty
@@ -234,8 +203,6 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
         List(tweet, elem)
           .maxBy(_.retweets)))
 
-  // TODO remove
-  def isEmpty = false
 
   /**
    * The following methods are already implemented
