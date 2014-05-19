@@ -1,3 +1,15 @@
+### Types
+
+##### 5/19/14
+
+#### size_t
+
+* `unsigned integer` type
+* in `<stddef.h>` and `<stdlib.h>`
+* Used to represent the size of an object
+* It is a type guaranteed to be able to hold any (in-memory) array index
+* It is the type returned by `sizeof` and `strlen()`
+
 ### Operators
 
 ##### 4/6/14
