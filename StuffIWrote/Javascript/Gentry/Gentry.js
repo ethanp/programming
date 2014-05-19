@@ -40,20 +40,18 @@ var diagonal = d3.svg.diagonal();
 var childVal;
 // @connections: { parentValue -> { childValue } }
 function collectConnections(node) {
-    if (node.children) {
-        for (var i = 0; i < node.children.length; i++) {
-            childVal = node.children[i].intValue + "";  // this is (ostensibly) a unique identifier
-            var connectedSet = connections[node.intValue];
-            if (connectedSet && !(childVal in connectedSet)) {
-                connectedSet[childVal] = true;
-            }
-            if (!connectedSet) {
-                connections[node.intValue] = {childVal: true};
-            }
-            collectConnections(node.children[i]);
+    if (!node.children) return;
+    for (var i = 0; i < node.children.length; i++) {
+        childVal = node.children[i].intValue + "";  // this is (ostensibly) a unique identifier
+        var connectedSet = connections[node.intValue];
+        if (connectedSet && !(childVal in connectedSet)) {
+            connectedSet[childVal] = true;
         }
+        if (!connectedSet) {
+            connections[node.intValue] = { childVal : true };
+        }
+        collectConnections(node.children[i]);
     }
-    console.log(connections);
 }
 
 // We're appending a giant svg elem to the body that will contain the entire tree
@@ -161,7 +159,7 @@ function uiAfterAddingNode() {
 // seems this is the preferred technical spelling of the word "dialogue"
 function newChildDialog(clickedParent) {
     var val = prompt("Please enter the new node's intValue, it must make sense too!");
-    if (!val || val.search(/[^0-9]/) != -1 || val in takenValues) return;
+    if (!val || val.search(/^-?[1-9][0-9]*$/) == -1 || val in takenValues) return;
     var newNode = {id: nodes.length, intValue: val};
     if (clickedParent.children) {
         if (clickedParent.children.length == 2) return;
