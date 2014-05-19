@@ -212,7 +212,7 @@ document.getElementById("generate").onclick = function () {
     // @connections: { parentValue -> { childValue } }
     for (var parent in connections) {
         for (child in connections[parent]) {
-            if (child == "childVal" || parent == "childval") continue;
+            if (child == "childVal" || parent == "childVal") continue;
             if (parseInt(child) < parseInt(parent)) {
                 text += "    var node" + child + " = node" + parent + ".setLeft(new BSTN&lt;Int&gt;(" + child + "));<br>"
             } else {
