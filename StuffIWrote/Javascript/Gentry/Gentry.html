@@ -208,16 +208,12 @@ function newChildDialog(clickedParent) {
 var a = 1;
 document.getElementById("generate").onclick = function () {
     var text = document.getElementById("code").innerHTML;
-    // text += "  bst.getRoot().setLeft(new BSTN<Int>(r.nextInt("+a+++")));<br>"
     // @connections: { parentValue -> { childValue } }
     for (var parent in connections) {
         for (child in connections[parent]) {
             if (child == "childVal" || parent == "childVal") continue;
-            if (parseInt(child) < parseInt(parent)) {
-                text += "    var node" + child + " = node" + parent + ".setLeft(new BSTN&lt;Int&gt;(" + child + "));<br>"
-            } else {
-                text += "    var node" + child + " = node" + parent + ".setLeft(new BSTN&lt;Int&gt;(" + child + "));<br>"
-            }
+            var dir = parseInt(child) < parseInt(parent) ? "Left" : "Right";
+            text += "    var node"+child+" = node"+parent+".set"+dir+"(new BSTNode&lt;Int&gt;("+child+"));<br>"
         }
     }
     document.getElementById("code").innerHTML = text;
@@ -226,7 +222,7 @@ document.getElementById("generate").onclick = function () {
 </script>
 <pre id="code">
 boolean testCase_N() {
-    BST bst = BST&lt;BSTN&lt;Int&gt;&gt;(2);
+    BST bst = new BST&lt;BSTNode&lt;Int&gt;&gt;(2);
     BSTNode = bst.getRoot()
 </pre>
 <pre>
