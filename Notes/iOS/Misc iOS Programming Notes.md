@@ -87,12 +87,12 @@ Retrieving the data
 
 # [Implementing NSCoding](https://www.mikeash.com/pyblog/friday-qa-2010-08-12-implementing-nscoding.html)
 
-Objects in memory can't be directly saved or moved to other programs. They
-contain data, such as pointers, which are only valid in the context of your
-process's memory space. Move the contents of an object into another program and
-all of those pointers suddenly make no sense. Serialization is the process of
-converting the non-portable, in-memory representation of an object into a
-portable stream of bytes that can be stored and moved between processes.
+Objects in memory can't be directly saved or moved to other programs. Their 
+pointers' values are only valid in the context of your process's memory space.
+
+**Serialization is the process of converting the non-portable, in-memory
+representation of an object into a portable stream of bytes that can be
+stored and moved between processes.**
 
 The rest must be some other time.
 

@@ -1,15 +1,67 @@
+Useful external libraries and frameworks
+========================================
+
+JUnit
+-----
+**5/20/14**
+
+[JUnit Homepage][],
+[JUnit Wikipedia][]
+
+* Simple framework for writing repeatable tests
+* Uses [xUnit][] unit-testing architecture
+
+From the [Github Wiki & Tutorial][]
+
+* There are various [assertions][] you can make like
+	* `testAssertEquals(msg, input, expected)`
+	* `testAssertNotNull(msg, input)`
+	* `assertThat(input, both(containsString("a")).and(containsString("b")))`
+	* `assertThat(input, anyOf(equalTo("bad"), equalTo("good"))`
+* There are provided abstractions for [test fixtures][]
+
+[test fixtures]: https://github.com/junit-team/junit/wiki/Test-fixtures
+[assertions]: https://github.com/junit-team/junit/wiki/Assertions
+[JUnit Wikipedia]: http://en.wikipedia.org/wiki/JUnit
+[xUnit]: http://en.wikipedia.org/wiki/XUnit
+[JUnit Homepage]: http://junit.org/
+[Github Wiki & Tutorial]: https://github.com/junit-team/junit/wiki
+
+
+Gson
+----
+**5/20/14**
+
+[Gson Wiki][],
+[On Google Code][]
+
+* Open source Google library for de/serializing Java objects to/from JSON using `toJson()` and `fromJson()`
+* Can work with arbitrary Java objects including pre-existing objects that you do not have source-code of
+* Support for Java Generics
+* Support "arbitrarily complex objects"
+* Fields present in the JSON but not the object to be deserialized to are *ignored* 
+	* This is a "feature" because it makes things more flexible
+* In general, this looks like a simple and useful tool
+* You use `GsonBuilder()` instead of `Gson()` to allow more customization
+
+[Gson Wiki]: http://en.wikipedia.org/wiki/Gson
+[On Google Code]: https://code.google.com/p/google-gson/
+
+
 Collections
 ===========
 
 HashMap vs. TreeMap vs. LinkedHashMap
 -------------------------------------
-
 **5/12/14**
-[SO](http://stackoverflow.com/questions/2889777/difference-between-hashmap-linkedhashmap-and-sortedmap-in-java)
+
+[SO Maps][]
 
 * `HashMap` -- **no guarantees** about iteration order
 * `TreeMap`-- iterates **according to `compareTo()`** (or supplied `Comparator`)
 * `LinkedHashMap` -- iterates **in order of insertion**
+
+[SO Maps]: http://stackoverflow.com/questions/2889777/difference-between-hashmap-linkedhashmap-and-sortedmap-in-java
 
 
 Java I/O
@@ -333,6 +385,28 @@ care to name the type because we'll just be calling methods that are specified b
 Other things one simply must know about Java
 ======================================
 
+JAR
+---
+**5/20/14**
+
+[JAR Wikipedia][]
+
+* **J**ava **AR**chive (compressed collection of Java files)
+* Used to aggregate many Java class files and associated metadata and resources
+  (text, images, etc.) into one file to distribute applicatoin software or libraries
+  on the Java platform.
+* Built on the *ZIP* file format
+* Allows Java runtimes to efficiently deploy a set of classes and their associated resources
+* Optional **manifest file** can add metadata like
+	* dependencies on other JARs (`Class-Path: `)
+	* digital signatures
+	* Which class to call `main()` on to start the application (`Main-Class: `)
+	* Versioning (`Specification-Version: "1.2"`)
+* **WAR** (**W**eb application **AR**chive) -- a JAR used to deliver Java server stuff
+  and static web pages that together constitute a web application.
+
+[JAR Wikipedia]: http://en.wikipedia.org/wiki/JAR_(file_format)
+
 Equals and HashCode
 -------------------
 
@@ -345,7 +419,7 @@ Must be
 * reflexive -- `a.equals(a) == true`
 * symmetric -- `a.equals(b) iff b.equals(a)`
 * transitive -- `a.equals(b) && b.equals(c) => a.equals(c)`
-* consistent  -- always returns the same value for the same [unchanged] object
+* consistent -- always returns the same value for the same [unchanged] object
 
 If you *don't* `@Override public boolean equals(Object o){}`, each instance is
 *equal only to itself*. If this is what you want: *don't override* `equals` (e.g. `Thread`).

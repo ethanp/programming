@@ -1,3 +1,67 @@
+Unit testing
+-------------------------------
+**5/20/14**
+
+[xUnit Wikipedia](http://en.wikipedia.org/wiki/XUnit)
+
+* **Unit testing** -- testing the fundamental units of the software,
+  checking outputs against expected outputs for given inputs
+
+### xUnit architecture
+* **xUnit** -- the collective name of frameworks for unit testing that use a
+  particular popular architecture described by the collection of vocab terms herein
+
+#### Test runner
+Executable program that runs tests and reports their results
+
+#### Test case
+Elemental test case class
+
+* A set of conditions or variables set up to determine whether some code is doing what it is supposed to
+* Could be a requirement, a use case, a heuristic, etc.
+
+#### Text fixture (context)
+Preconditions (state) needed to run the test repeatable/consistently
+
+* Loading a database with a specific, known set of data
+* Creation of fake/mock objects
+
+#### Test suite
+A set of tests that all share the same fixture.
+The order of the tests shouldn't matter.
+
+#### Test execution
+Each individual unit test is run in the following way
+
+	setup(); // create text fixture
+	execute test case
+	teardown(): // destroy fixture to avoid disturbing other tests
+	
+#### Results formatter
+Can output *plain text* or *XML* to integrate with build tools like Jenkins
+
+#### Assertions
+Expresses a logical condition that must be true in a correct environment.
+
+### Other imortant vocab
+[Javaranch - Evil unit testing](http://www.javaranch.com/unit-testing.jsp)
+
+* **Regression suite** -- collection of tests that can all be run at once; could be unit or functional tests
+* **Functional test** -- bigger than unit, smaller than component test
+	* Exercises several methods/functions/classes working together
+	* Allowed to take much longer than unit tests (which should be blazing fast)
+* **Integration test** -- testing two+ components working together
+* **Component test** -- running one component (defined by the application) by itself
+* **System test** -- all components run together, as would happen in a normal usage scenario
+* **Stress test** -- go bonkers; try to test concurrent code.
+* **Mock** -- a fake version of an object that would have had to be used to test another object
+
+### Sample opinions on unit testing
+
+* "Usually, for every pound of production code, I would like to see about two pounds of unit
+  tests and two ounces of functional tests (a little bit goes a long ways).
+  The problem I see in too many shops is zero unit tests and a pound of functional tests." (Javaranch)
+
 The correct type to use for currency values is java.math.BigDecimal
 -------------------------------------------------------------------
 
@@ -10,8 +74,10 @@ Heap
 
 [Wikipedia](http://en.wikipedia.org/wiki/Heap_(data_structure))
 
-* a binary heap is a **complete** binary tree which satisfies the heap ordering property. The ordering can be one of two types:
-    1. the **min-heap** property: the value of each node is *greater than or equal* to the value of its parent, with the minimum-value element at the root.
+* a binary heap is a **complete** binary tree which satisfies the heap ordering property.
+* The ordering can be one of two types:
+    1. the **min-heap** property: the value of each node is *greater than or equal* to
+       the value of its parent, with the minimum-value element at the root.
     2. the **max-heap** property: same but flipped
 * A heap is not a sorted structure but can be regarded as **partially ordered**.
     * There is no particular relationship among nodes on any given level, even among the siblings
