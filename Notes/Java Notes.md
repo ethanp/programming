@@ -1,3 +1,17 @@
+latex input:		mmd-article-header
+Title:		Java Notes
+Author:		Ethan C. Petuchowski
+Base Header Level:		1
+latex mode:		memoir
+Keywords:		Math, DSP, Digital Signal Processing, Fourier Transform
+CSS:		http://fletcherpenney.net/css/document.css
+xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+copyright:			2014 Ethan Petuchowski
+latex input:		mmd-natbib-plain
+latex input:		mmd-article-begin-doc
+latex footer:		mmd-memoir-footer
+
 Useful external libraries and frameworks
 ========================================
 
@@ -51,15 +65,36 @@ Gson
 Collections
 ===========
 
-HashMap vs. TreeMap vs. LinkedHashMap
--------------------------------------
+Maps
+----
 **5/12/14**
 
 [SO Maps][]
 
-* `HashMap` -- **no guarantees** about iteration order
-* `TreeMap`-- iterates **according to `compareTo()`** (or supplied `Comparator`)
-* `LinkedHashMap` -- iterates **in order of insertion**
+### HashMap
+* **no guarantees** about iteration order
+
+### NavigableMap (interface) 
+
+### TreeMap
+* A `SortedMap`  which allows searches for "closest matches"
+	* `lowerEntry`, `floorEntry`, `ceilingEntry`, `higherEntry`,
+	  `=> Map.Entry<K,V>`
+	* `lowerKey`, ..., `=> K`
+* Can be traversed in ascending *or* descending order
+
+* Iterates/sorted **according to `compareTo()`** (or supplied `Comparator`)
+* Requires `O(log(n))` `containsKey`, `get`, `put`, and `remove`
+* It's a Red-Black tree based `NavigableMap`
+
+### LinkedHashMap
+
+* **iterates in order of insertion**
+* Contains both a hashmap *and* a **double-linked-list** in ordered by *insertion-order*
+	* In other words, when you call `map.entrySet()` the *first* one out is
+     the *first* one you *inserted*
+* If you (re-)insert a `key` that the map already `contains`, the order is
+  *not* affected
 
 [SO Maps]: http://stackoverflow.com/questions/2889777/difference-between-hashmap-linkedhashmap-and-sortedmap-in-java
 
@@ -382,8 +417,136 @@ care to name the type because we'll just be calling methods that are specified b
 `HasWord`.
 
 
-Other things one simply must know about Java
-======================================
+Other things one simply must know about
+=======================================
+
+Reflection
+----------
+**5/21/14**
+
+This is all just a quote from [StOve](http://stackoverflow.com/questions/37628/what-is-reflection-and-why-is-it-useful/37638#37638)
+
+"Reflection" is a language's ability to inspect and dynamically call classes, methods, attributes, etc. at runtime. For example, all objects in Java has the method getClass, which lets you determine its class even if you don't know it at compile time (like if you declared it as Object) - this might seem trivial, but such reflection is not by default possible in less dynamic languages such as C++.
+
+More advanced uses lets you list and call methods, constructors, etc.
+
+Reflection is important since it lets you write programs that does not have to "know" everything at compile time, making them more dynamic, since they can be tied together at runtime. The code can be written against known interfaces, but the actual classes to be used can be instantiated using reflection from configuration files.
+
+Lots of modern frameworks uses reflection extensively for this very reason.
+
+Most other modern languages uses reflection as well, and in script languages like Python can be said to be even more tightly integrated, since it matches more naturally with the general programming model for those languages.
+
+### Notes from a [great tutorial][]
+
+[great tutorial]: http://tutorials.jenkov.com/java-reflection/index.html
+
+Using Java Reflection you can inspect Java classes at runtime. Inspecting classes is often the first thing you do when using Reflection. From the classes you can obtain information about
+
+* Class Name
+* Class Modifies (public, private, synchronized etc.)
+* Package Info
+* Superclass
+* Implemented Interfaces
+* Constructors
+* Methods
+* Fields
+* Annotations
+
+You get this from the **`Class` object**, which you get from `Class class = MyObject.class`
+
+### Notes from the [Oracle docs][]
+
+[Oracle docs]: http://docs.oracle.com/javase/tutorial/reflect/
+
+#### Uses
+
+* creating Visual Development Environments (ie. visual IDE features)
+* or a Debugger
+* or Test Tools
+
+#### Drawbacks
+
+* Slow performance
+* Can't be run in certain restricted security contexts (such as in an Applet)
+* Allows you to access `private` fields and do unexpected side-effecting and break portability
+
+
+Annotations
+-----------
+**5/21/14**
+
+[Oracle Tutorial](http://docs.oracle.com/javase/tutorial/java/annotations/)
+
+* An annotation is metadata about a program that is not part of the program itself
+* Info for the compiler -- e.g. detect errors or suppress warnings
+* Compile/Deploy-time processing -- generate code for processing XML files
+* Runtime processing
+
+### Basics
+
+* Starts with an `@` character
+* Can be `@Title(key = value, key2 = value2)` or `@Title(value)`
+* You can stack multiple annotations onto one declaration, but style-wise one
+  should only have one per line
+  
+#### Placement options
+
+##### Pre Java 8
+* Placed before any sort of *declaration*
+	* Class, method, field, etc.
+	
+##### Java 8+
+* Constructor: `new @Annot MyObject();`
+* Type cast: `m = (@Ann A) v;`
+* Implements: `class A<T> implements @Annot B<@Annot T> {...}`
+* Exception declaration: `void meth() throws @Annot Excep {...}`
+
+### Declaring an Annotation
+
+**This part of the explanation is not helpful.**
+
+	@interface AnnotationName {
+	  String annotVar1();
+	  int annotVar2() default 3;
+	  String[] vars3();
+	}
+
+Now we can use it like
+
+	@AnnotationName(
+	  annotVar1 = "asdf",
+	  annotVar2 = 44, 		 // or don't include it bc there's a default
+	  vars3 = {"a","b","c"} // no semicolon
+	)	
+
+### Predefined annotation types
+
+#### @Deprecated
+
+The compiler generates a warning whenever a program uses something with this annotation.
+
+	/**
+	 * @deprecated   // put this in the JavaDoc
+	 * reason for deprecation
+	 */
+	@Deprecated
+	static void meth() { }
+
+#### @Override
+
+Informs the compiler that the following element is meant to override something declared
+in a superclass. **This annotation is not required, but if you fail to correctly
+override something when you *said you were trying to*, you'll get a compiler warning.**
+
+#### The other ones don't look so important
+
+### Why would I use annotations?
+
+[StOve](http://stackoverflow.com/questions/37628/what-is-reflection-and-why-is-it-useful)
+
+Using **reflection** over annotations is how *JUnit* works out your methods are.
+When you run JUnit, it uses reflection to look through your classes for methods
+tagged with the `@Test` annotation, and then calls them when running the unit test.
 
 JAR
 ---
@@ -543,3 +706,19 @@ And then do this
 	
 	Arrays.sort(fruits, Fruit.FruitNameComparator);  // works
 
+Asides
+======
+
+[`this` keyword](http://stackoverflow.com/questions/577575/using-the-keyword-this-in-java)
+
+It can be used to access enclosing instances from within a nested class:
+
+	public class MyClass {
+	    String name = "asd";
+	    private class InnerClass {
+	        String name = "bte";
+	        public String getOuterName() {
+	            return MyClass.this.name; // "asd"
+	        }
+	    }
+	}

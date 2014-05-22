@@ -304,3 +304,6 @@ Glossary
       orderings.
         * E.g. RSS feeds
         * Provides better scalability than *request-response*
+* **[Referential Transparency](http://en.wikipedia.org/wiki/Referential_transparency_(computer_science))**
+  -- when you can replace an expression with its value without changing the program.
+

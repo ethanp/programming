@@ -173,25 +173,34 @@ function newChildDialog(clickedParent) {
     uiAfterAddingNode();
 }
 
+searchTree = false;
 /**
  * The Java Generation
+ * TODO 1: Case for BinarySearchTree generation.
+ * TODO 2: Case for if node value is negative, then node variable name can't be e.g. node-43.
+ * TODO 3: For some reason node0 is showing up twice when there are nodes hanging to the right of the root node2.
+ * TODO 4: the nodes should be added in depth order, at this point they are not.
  */
 document.getElementById("generate").onclick = function () {
-    var text = "boolean testCase_N() {<br>";
-    text += "    BST&lt;BSTNode&lt;Integer&gt;&gt; bst = new BST&lt;BSTNode&lt;Integer&gt;&gt;(2);<br>";
-    text += "    BSTNode&lt;Integer&gt; node2 = bst.getRoot();<br>";
-    text += "    BSTNode&lt;Integer&gt; node0 = new BSTNodeNode&lt;Integer&gt(0);<br>";
-    text += "    node2.setLeft(node0);<br>";
-    // @connections: { parentValue -> { childValue } }
-    for (var parent in connections) {
-        for (var child in connections[parent]) {
-            if (child == "childVal" || parent == "childVal") continue;
-            var dir = parseInt(child) < parseInt(parent) ? "Left" : "Right";
-            text += "    BSTNode&lt;Integer&gt; node" + child + " = new BSTNode&lt;Integer&gt;(" + child + ");<br>";
-            text += "    node" + parent + ".set" + dir + "(node"+child+");<br>"
+    if (!searchTree) {
+        var text = "public static BinaryTree gend() {<br>";
+        text += "    BinaryTree bt = new BinaryTree(new BinaryTreeNode&lt;Integer&gt;(2));<br>";
+        text += "    BinaryTreeNode&lt;Integer&gt; node2 = bt.getRoot();<br>";
+        text += "    BinaryTreeNode&lt;Integer&gt; node0 = new BinaryTreeNode&lt;Integer&gt;(0);<br>"
+        text += "    node2.setLeft(node0);<br>"
+        // @connections: { parentValue -> { childValue } }
+        for (var parent in connections) {
+            for (var child in connections[parent]) {
+                if (child == "childVal" || parent == "childVal") continue;
+                var dir = parseInt(child) < parseInt(parent) ? "Left" : "Right";
+                text += "    BinaryTreeNode&lt;Integer&gt; node" + child + " = new BinaryTreeNode&lt;Integer&gt;(" + child + ");<br>";
+                text += "    node" + parent + ".set" + dir + "(node"+child+");<br>"
+            }
         }
+        text += "    return bt;<br>";
+        text += "}";
+        document.getElementById("code").innerHTML = text;
+    } else {
+        // TODO!!
     }
-    text += "    return bst.test_N == /* TODO FILL IN intValue */);<br>";
-    text += "}";
-    document.getElementById("code").innerHTML = text;
 };
