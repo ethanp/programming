@@ -384,10 +384,10 @@ Inheritance
 
 | Modifier    | Class | Package | Subclass | World|
 |:-----------:|:-----:|:-------:|:--------:|:----:|
-| public      |   ✔   |    ✔    |    ✔     |   ✔  |
-| protected   |   ✔   |    ✔    |    ✔     |   ✘  |
-| no modifier |   ✔   |    ✔    |    ✘     |   ✘  |
-| private     |   ✔   |    ✘    |    ✘     |   ✘  |
+| public      |   Y   |    Y    |    Y     |   Y  |
+| protected   |   Y   |    Y    |    Y     |   N  |
+| no modifier |   Y   |    Y    |    N     |   N  |
+| private     |   Y   |    N    |    N     |   N  |
 
 
 #### Notes on chart
@@ -417,8 +417,123 @@ care to name the type because we'll just be calling methods that are specified b
 `HasWord`.
 
 
-Other things one simply must know about
-=======================================
+Useful interfaces/abstract classes
+==================================
+
+Comparable vs. Comparator
+-------------------------
+
+Refs:
+[SO](http://stackoverflow.com/questions/4108604),
+[digizol](http://www.digizol.com/2008/07/java-sorting-comparator-vs-comparable.html)
+
+* Both are **`interfaces`** you can implement
+* **Comparable says "I can compare *myself* with another object"**
+* **Comparator says "I can compare two *other* objects with each other"**
+* **Use `comparable` if it's your class, otw use `comparator`**
+
+
+### Comparable
+
+* **Says "I can compare *myself* with another object"**
+* Allows you to define comparison logic for *your own* types.
+
+#### Signature
+  
+	java.lang.Comparable: int compareTo(Object o1) {
+		
+		case this > o2 => x > 0;
+		case this = o2 => x = 0;
+		case this < o2 => x < 0;
+	
+	}
+	
+#### How to declare
+
+	public class MyClass implements Comparable<MyClass> {
+	
+		public int compareTo(MyClass o) {
+			return this.field - o.field;
+		}
+	
+	}
+
+#### How to use
+
+Simply declare it as in the "How to declare" section above.
+
+### Comparator
+
+* **Says "I can compare two *other* objects with each other"**
+* Allows *you* to define comparison logic for types you don't control.
+* E.g. you could write a new way to compare strings by `extending
+  Comparator`.
+
+#### Signature
+  
+	java.lang.Comparator: int compare(Object o1, Object o2) {
+		
+		case o1 > o2 => x > 0;
+		case o1 = o2 => x = 0;
+		case o1 < o2 => x < 0;
+	
+	}
+
+#### How to declare
+
+	public class MyClassSortByField implements Comparator<MyClass> {
+	
+		public int compare(MyClass o1, MyClass o2) {
+			o1.getField().compareTo(o2.getField());
+		}
+	
+	}
+	
+#### How to use
+
+Make a method like this
+
+
+	public static Comparator<Fruit> FruitNameComparator 
+                         = new Comparator<Fruit>() {
+
+	    public int compare(Fruit fruit1, Fruit fruit2) {
+	
+	      String fruitName1 = fruit1.getFruitName().toUpperCase();
+	      String fruitName2 = fruit2.getFruitName().toUpperCase();
+	
+	      //ascending order
+	      return fruitName1.compareTo(fruitName2);
+	
+	      //descending order
+	      //return fruitName2.compareTo(fruitName1);
+	    }
+
+	};
+		
+And then do this
+	
+	import java.util.Arrays;
+	
+	Fruit[] fruits = new Fruit[4];
+ 
+	Fruit pineappale = new Fruit("Pineapple", "Pineapple description",70); 
+	Fruit apple = new Fruit("Apple", "Apple description",100); 
+	Fruit orange = new Fruit("Orange", "Orange description",80); 
+	Fruit banana = new Fruit("Banana", "Banana description",90); 
+
+	fruits[0] = pineappale;
+	fruits[1] = apple;
+	fruits[2] = orange;
+	fruits[3] = banana;
+
+	Arrays.sort(fruits); // ClassCastException
+	
+	Arrays.sort(fruits, Fruit.FruitNameComparator);  // works
+
+
+Miscellaneous language features
+===============================
 
 Reflection
 ----------
@@ -548,6 +663,11 @@ Using **reflection** over annotations is how *JUnit* works out your methods are.
 When you run JUnit, it uses reflection to look through your classes for methods
 tagged with the `@Test` annotation, and then calls them when running the unit test.
 
+
+Other things one simply must know about
+=======================================
+
+
 JAR
 ---
 **5/20/14**
@@ -594,117 +714,6 @@ Rules
 
 * `a.equals(b) => a.hashCode() == b.hashCode()`
 
-
-Comparable vs. Comparator
--------------------------
-
-Refs:
-[SO](http://stackoverflow.com/questions/4108604),
-[digizol](http://www.digizol.com/2008/07/java-sorting-comparator-vs-comparable.html)
-
-* Both are **`interfaces`** you can implement
-* **Comparable says "I can compare *myself* with another object"**
-* **Comparator says "I can compare two *other* objects with each other"**
-* **Use `comparable` if it's your class, otw use `comparator`**
-
-
-### Comparable
-
-* **Says "I can compare *myself* with another object"**
-* Allows you to define comparison logic for *your own* types.
-
-#### Signature
-  
-	java.lang.Comparable: int compareTo(Object o1) {
-		
-		case this > o2 => x > 0;
-		case this = o2 => x = 0;
-		case this < o2 => x < 0;
-	
-	}
-	
-#### How to declare
-
-	public class MyClass implements Comparable<MyClass> {
-	
-		public int compareTo(MyClass o) {
-			return this.field - o.field;
-		}
-	
-	}
-
-#### How to use
-
-Simply declare it as in the "How to declare" section above.
-
-### Comparator
-
-* **Says "I can compare two *other* objects with each other"**
-* Allows *you* to define comparison logic for types you don't control.
-* E.g. you could write a new way to compare strings by `extending
-  Comparator`.
-
-#### Signature
-  
-	java.lang.Comparator: int compare(Object o1, Object o2) {
-		
-		case o1 > o2 => x > 0;
-		case o1 = o2 => x = 0;
-		case o1 < o2 => x < 0;
-	
-	}
-
-#### How to declare
-
-	public class MyClassSortByField implements Comparator<MyClass> {
-	
-		public int compare(MyClass o1, MyClass o2) {
-			o1.getField().compareTo(o2.getField());
-		}
-	
-	}
-	
-#### How to use
-
-Make a method like this
-
-
-	public static Comparator<Fruit> FruitNameComparator 
-                         = new Comparator<Fruit>() {
-
-	    public int compare(Fruit fruit1, Fruit fruit2) {
-	
-	      String fruitName1 = fruit1.getFruitName().toUpperCase();
-	      String fruitName2 = fruit2.getFruitName().toUpperCase();
-	
-	      //ascending order
-	      return fruitName1.compareTo(fruitName2);
-	
-	      //descending order
-	      //return fruitName2.compareTo(fruitName1);
-	    }
-
-	};
-		
-And then do this
-	
-	import java.util.Arrays;
-	
-	Fruit[] fruits = new Fruit[4];
- 
-	Fruit pineappale = new Fruit("Pineapple", "Pineapple description",70); 
-	Fruit apple = new Fruit("Apple", "Apple description",100); 
-	Fruit orange = new Fruit("Orange", "Orange description",80); 
-	Fruit banana = new Fruit("Banana", "Banana description",90); 
-
-	fruits[0] = pineappale;
-	fruits[1] = apple;
-	fruits[2] = orange;
-	fruits[3] = banana;
-
-	Arrays.sort(fruits); // ClassCastException
-	
-	Arrays.sort(fruits, Fruit.FruitNameComparator);  // works
 
 Asides
 ======
