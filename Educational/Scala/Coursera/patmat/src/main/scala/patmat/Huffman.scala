@@ -181,7 +181,7 @@ object Huffman {
                    toRet: List[Char]):
   List[Char] = {
     iAmAt match {
-      case Fork(left, right, chars, weight) =>
+      case Fork(left, right, char, weight) =>
         val next = if (bitsLeft.head == 0) left else right
         decodeHelper(tree, next, bitsLeft.tail, toRet)
       case Leaf(char, weight) =>
@@ -216,8 +216,33 @@ object Huffman {
    * This function encodes `text` using the code tree `tree`
    * into a sequence of bits.
    */
-  def encode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  def encode(tree: CodeTree)(text: List[Char]): List[Bit] =
+    encodeHelper(tree, tree, text, List.empty[Bit])
 
+  /*
+      I don't have to search for each letter individually,
+      I /have/ a list of the letters contained in the left and right parts of the tree,
+      and I can just traverse that direction until I get to the leaf
+      and then remove it from `textLeft`.
+   */
+  def encodeHelper(tree: CodeTree,
+                   iAmAt: CodeTree,
+                   textLeft: List[Char],
+                   toRet: List[Bit]):
+  List[Bit] = {
+    iAmAt match {
+      case Fork(left, right, charList, weight) =>
+        val (next, newRet) =
+          if (chars(left).contains(textLeft.head))
+            (left, 0 :: toRet)
+          else
+            (right, 1 :: toRet)
+        encodeHelper(tree, next, textLeft, newRet)
+      case Leaf(char, weight) =>
+        if (textLeft.tail.isEmpty) toRet
+        else encodeHelper(tree, tree, textLeft.tail, toRet)
+    }
+  }
 
   // Part 4b: Encoding using code table
 
