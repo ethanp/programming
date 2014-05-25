@@ -120,11 +120,15 @@ object Huffman {
 
   @tailrec
   def insertByWeightHelper(newTree: CodeTree,
-                           smaller: List[CodeTree],
+                           smallerDescending: List[CodeTree],
                            rest: List[CodeTree]):
   List[CodeTree] = {
-    if (weight(newTree) < weight(rest.head)) smaller.reverse ::: newTree :: rest
-    else insertByWeightHelper(newTree, rest.head :: smaller, rest.tail)
+    rest match {
+      case Nil => (newTree :: smallerDescending).reverse
+      case h :: t =>
+        if (weight(newTree) < weight(h)) smallerDescending.reverse ::: (newTree :: rest)
+        else insertByWeightHelper(newTree, h :: smallerDescending, t)
+    }
   }
 
   /**
