@@ -217,12 +217,11 @@ object Huffman {
    * into a sequence of bits.
    */
   def encode(tree: CodeTree)(text: List[Char]): List[Bit] =
-    encodeHelper(tree, tree, text, List.empty[Bit])
+    encodeHelper(tree, tree, text, List.empty[Bit]).reverse
 
   /*
-      I don't have to search for each letter individually,
-      I /have/ a list of the letters contained in the left and right parts of the tree,
-      and I can just traverse that direction until I get to the leaf
+      I have a list of the letters contained in the left and right parts of the tree,
+      so I can just traverse that direction until I get to the leaf,
       and then remove it from `textLeft`.
    */
   def encodeHelper(tree: CodeTree,
@@ -252,7 +251,10 @@ object Huffman {
    * This function returns the bit sequence that represents the character `char` in
    * the code table `table`.
    */
-  def codeBits(table: CodeTable)(char: Char): List[Bit] = ???
+  @tailrec
+  def codeBits(table: CodeTable)(char: Char): List[Bit] =
+    if (table.head._1 == char) table.head._2
+    else codeBits(table.tail)(char)
 
   /**
    * Given a code tree, create a code table which contains, for every character in the
@@ -262,14 +264,35 @@ object Huffman {
    * a valid code tree that can be represented as a code table. Using the code tables of the
    * sub-trees, think of how to build the code table for the entire tree.
    */
-  def convert(tree: CodeTree): CodeTable = ???
+  def convert(tree: CodeTree): CodeTable = tree match {
+    case Fork(left, right, charList, weight) =>
+      mergeCodeTables(
+        convertHelper(left, 0 :: Nil),
+        convertHelper(right, 1 :: Nil))
+    case Leaf(char, weight) => (char, 0 :: Nil) :: Nil
+  }
+
+  def convertHelper(tree: CodeTree, bits: List[Bit]): CodeTable = tree match {
+    case Fork(left, right, charList, weight) =>
+      mergeCodeTables(
+        convertHelper(left, 0 :: Nil),
+        convertHelper(right, 1 :: Nil))
+    case Leaf(char, weight) => (char, bits) :: Nil
+  }
 
   /**
    * This function takes two code tables and merges them into one. Depending on how you
    * use it in the `convert` method above, this merge method might also do some transformations
    * on the two parameter code tables.
    */
-  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable = ???
+  def mergeCodeTables(a: CodeTable, b: CodeTable): CodeTable =
+    prefixBitLists(a, 0, List.empty[(Char, List[Bit])]) :::
+      prefixBitLists(b, 1, List.empty[(Char, List[Bit])])
+
+  def prefixBitLists(before: CodeTable, i: Bit, after: CodeTable): CodeTable = before match {
+    case Nil => after
+    case h :: t => prefixBitLists(t, i, (h._1, i :: h._2) :: after)
+  }
 
   /**
    * This function encodes `text` according to the code tree `tree`.
@@ -277,5 +300,16 @@ object Huffman {
    * To speed up the encoding process, it first converts the code tree to a code table
    * and then uses it to perform the actual encoding.
    */
-  def quickEncode(tree: CodeTree)(text: List[Char]): List[Bit] = ???
+  def quickEncode(tree: CodeTree)(text: List[Char]): List[Bit] = {
+    val codeTable = convert(tree)
+    quickEncodeHelper(codeBits(codeTable), text, List.empty[Bit])
+  }
+
+  def quickEncodeHelper(bitListFromChar: Char => List[Bit],
+                        text: List[Char],
+                        bitList: List[Bit]):
+  List[Bit] = text match {
+    case Nil => bitList
+    case h :: t => quickEncodeHelper(bitListFromChar, t, bitList ::: bitListFromChar(h))
+  }
 }
