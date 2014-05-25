@@ -39,9 +39,60 @@ class HuffmanSuite extends FunSuite {
     assert(combine(leaflist) === List(Fork(Leaf('e',1),Leaf('t',2),List('e', 't'),3), Leaf('x',4)))
   }
 
+  test("encode string using t1") {
+    new TestTrees {
+      assert(encode(t1)("ab".toList) === List[Bit](0,1))
+      assert(encode(t1)("abaab".toList) === List[Bit](0,1,0,0,1))
+    }
+  }
+
+  test("encode string using t2") {
+    new TestTrees {
+      assert(encode(t2)("abaab".toList) === List[Bit](0,0,0,1,0,0,0,0,0,1))
+      assert(encode(t2)("d".toList) === List[Bit](1))
+      assert(encode(t2)("dbad".toList) === List[Bit](1,0,1,0,0,1))
+    }
+  }
+
+  test("decode to string using t1") {
+    new TestTrees {
+      assert(decode(t1, List[Bit](0,1)) === "ab".toList)
+      assert(decode(t1, List[Bit](0,1,0,0,1)) ===  "abaab".toList)
+    }
+  }
+
+  test("decode to string using t2") {
+    new TestTrees {
+      assert(decode(t2, List[Bit](0,0,0,1,0,0,0,0,0,1)) === "abaab".toList)
+      assert(decode(t2, List[Bit](1)) === "d".toList)
+      assert(decode(t2, List[Bit](1,0,1,0,0,1)) === "dbad".toList)
+    }
+  }
+
+  test("print decoded French secret") {
+    new TestTrees {
+      assert(decodedSecret.mkString === "huffmanestcool") // lol
+    }
+  }
+
   test("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
+      assert(decode(t2, encode(t2)("abd".toList)) === "abd".toList)
+    }
+  }
+
+  test("quickEncode string using t1") {
+    new TestTrees {
+      assert(quickEncode(t1)("ab".toList) === List[Bit](0,1))
+      assert(quickEncode(t1)("abaab".toList) === List[Bit](0,1,0,0,1))
+    }
+  }
+  test("quickEncode string using t2") {
+    new TestTrees {
+      assert(quickEncode(t2)("abaab".toList) === List[Bit](0,0,0,1,0,0,0,0,0,1))
+      assert(quickEncode(t2)("d".toList) === List[Bit](1))
+      assert(quickEncode(t2)("dbad".toList) === List[Bit](1,0,1,0,0,1))
     }
   }
 }

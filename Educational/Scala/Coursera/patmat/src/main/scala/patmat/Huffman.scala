@@ -186,7 +186,7 @@ object Huffman {
         decodeHelper(tree, next, bitsLeft.tail, toRet)
       case Leaf(char, weight) =>
         if (bitsLeft.isEmpty) char :: toRet
-        else decodeHelper(tree, tree, bitsLeft.tail, char :: toRet)
+        else decodeHelper(tree, tree, bitsLeft, char :: toRet)
     }
   }
 
@@ -267,16 +267,16 @@ object Huffman {
   def convert(tree: CodeTree): CodeTable = tree match {
     case Fork(left, right, charList, weight) =>
       mergeCodeTables(
-        convertHelper(left, 0 :: Nil),
-        convertHelper(right, 1 :: Nil))
+        convertHelper(left, List.empty[Bit]),
+        convertHelper(right, List.empty[Bit]))
     case Leaf(char, weight) => (char, 0 :: Nil) :: Nil
   }
 
   def convertHelper(tree: CodeTree, bits: List[Bit]): CodeTable = tree match {
     case Fork(left, right, charList, weight) =>
       mergeCodeTables(
-        convertHelper(left, 0 :: Nil),
-        convertHelper(right, 1 :: Nil))
+        convertHelper(left, List.empty[Bit]),
+        convertHelper(right, List.empty[Bit]))
     case Leaf(char, weight) => (char, bits) :: Nil
   }
 
