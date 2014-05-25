@@ -667,6 +667,16 @@ tagged with the `@Test` annotation, and then calls them when running the unit te
 Other things one simply must know about
 =======================================
 
+Initialization
+--------------
+**5/24/14**
+
+[Javaworld description](http://www.javaworld.com/article/2076614/core-java/object-initialization-in-java.html)
+
+**Instance and class variables** are **given initial values** of **`0 / 0.0 / false / null`**.
+
+**Local variables** are **not given initial values** and **must be initialized explicitly before they are used**.
+This is true for local object references too, not only primitive types.
 
 JAR
 ---
@@ -692,6 +702,7 @@ JAR
 
 Equals and HashCode
 -------------------
+**5/12/14**
 
 [SO](http://stackoverflow.com/questions/27581)
 
@@ -717,6 +728,7 @@ Rules
 
 Asides
 ======
+**5/20/14**
 
 [`this` keyword](http://stackoverflow.com/questions/577575/using-the-keyword-this-in-java)
 
