@@ -1,3 +1,14 @@
+Appending List to List
+----------------------
+**5/25/14**
+
+Ref: [SO](http://stackoverflow.com/questions/6559996/scala-list-concatenation-vs)
+
+It looks like one should generally use `++` instead of `:::` to
+concatenate lists, because that works with *any* two `Collections`,
+even `Iterators`. The same goes for using `+:` over `::`, **except
+when pattern matching**, which you *cannot do with* `+:`.
+
 Accessibility specifiers in class definitions
 ---------------------------------------------
 
