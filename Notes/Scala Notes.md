@@ -1,3 +1,36 @@
+Nested for-yield statements
+---------------------------
+**5/27/14**
+
+* These are supposedly super-helpful, and I'm finally starting to get it.
+* I've adapted Wikipedia's Haskell example to Scala.
+* Note that this example is also in the `Things to Notes about Programming.md` under `The Monad`.
+
+Example
+
+    scala> def maybePlus(a: Option[Int], b: Option[Int]): Option[Int] = {
+         |   for {
+         |     ia <- a
+         |     ib <- b
+         |   } yield (ia + ib)
+         | }
+    maybePlus: (a: Option[Int], b: Option[Int])Option[Int]
+    
+    scala> maybePlus(Some(3), Some(4))
+    res0: Option[Int] = Some(7)
+    
+    scala> maybePlus(Some(3), None)
+    res1: Option[Int] = None
+
+What's Haapnin
+
+* First we unwrap the options containing the ints
+    * If they both exist, we add them
+    * Otherwise we return `None`.
+* The `None` case comes from the *definition of the **bind** operator on `Option[T]`*
+    * We didn't have to do anything special here to take care of that 
+        * (this is, in fact, the entire point of the Option monad).
+
 Appending List to List
 ----------------------
 **5/25/14**

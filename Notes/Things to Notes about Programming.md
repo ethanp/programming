@@ -1,5 +1,83 @@
+The Monad
+---------
+
+### From Wikipedia
+
+**5/27/14**
+
+#### Intro
+
+* A structure used in functional programming to represent computations defined as sequences of steps
+* Defining a monad *type* means defining how operations of that type can be chained or nested together
+* Facilitates the construction of data processing pipelines
+* The monad defines extra code that gets executed *between* statements in the pipeline
+* Can be seen as a functional design pattern for building generic types
+* Used in *"purely functional"* programs to allow sequenced operation including
+  side effects like I/O, variable assignment, exception handling, concurrency, etc.
+
+### What is it
+
+* Consists of a type constructor *M* and two operations *bind* and *return/unit*
+* These operations must fulfill several properties to allow proper composition
+* *Return* takes puts a value of a plain type into the type constructor, creating a *monadic value*
+* *Bind* does the reverse, extracting the original value from the container and passing
+  it to the next function in the pipeline, possibly with additional checks and transformations
+
+### Example (Option)
+
+* We want a monadic type such that computations can be chained such that if
+  one computation fails, the rest of the computations simply won't *do* anything.
+* So we have a type `Option[T]` s.t. if a computation fails it returns `None`,
+  and if it succeeds it returns `Some[T]`, and when we perform operations on two
+  `Options`, we only actually compute a result if they are both `Somes`, but simply
+  return `None` if at least one operand is a `None`.
+  
+The following is my Scala translation of their Haskell example for this. It merits careful study.
+
+    scala> def maybePlus(a: Option[Int], b: Option[Int]): Option[Int] = {
+         |   for {
+         |     ia <- a
+         |     ib <- b
+         |   } yield (ia + ib)
+         | }
+    maybePlus: (a: Option[Int], b: Option[Int])Option[Int]
+    
+    scala> maybePlus(Some(3), Some(4))
+    res0: Option[Int] = Some(7)
+    
+    scala> maybePlus(Some(3), None)
+    res1: Option[Int] = None
+
+### Example Writer monad
+
+My Scala translation of their Javascript example for this. Also merits study.
+
+    // the bind() method from the example
+    case class Writer[A](value: A, log: String) {
+      def flatMap[B](f: (A) => Writer[B]): Writer[B] = {
+        f(value) match {
+          case Writer(newVal, newStr) =>
+            Writer(newVal, log + newStr)
+        }
+      }
+    }
+    
+    // the unit() method from the example
+    object Writer {
+      def apply[A](a: A): Writer[A] = Writer(a, "")
+    }
+    
+    object Run extends App {
+      println(
+        Writer(2)
+          .flatMap(x => Writer(x*x, "squared."))
+          .flatMap(x => Writer(x + 3, "plus threed."))
+      )
+    }
+
+
 Unit testing
--------------------------------
+------------
 **5/20/14**
 
 [xUnit Wikipedia](http://en.wikipedia.org/wiki/XUnit)
