@@ -27,14 +27,14 @@ plot4 <- function() {
     # make into scatter plot
     q <- qplot(year, x, data = by_year,
                ylab='Emissions (tons)', 
-               main='Emissions from coal in the US')
+               main='Emissions from coal with linear model')
     
     # add linear model
+    q <- q + geom_bar(stat='identity', position = 'dodge', fill="#FF9999", colour="black")
     q <- q + geom_smooth(method = 'lm', fill=NA)
     q <- q + coord_cartesian(ylim = c(0, 650000))
-    q <- q + geom_point(size = 3)
     q
     
-    ggsave(file="plot4.png")
+    ggsave(file="plot4.png", dpi=100)
     
 }

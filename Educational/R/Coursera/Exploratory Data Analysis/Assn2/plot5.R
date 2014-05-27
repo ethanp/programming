@@ -25,5 +25,6 @@ plot5 <- function() {
     q <- q + geom_smooth(method = 'lm', fill=NA)
     q <- q + geom_smooth(fill=NA, color = 'grey')
     q
-    ggsave(file="plot5.png")
+    ggsave(file="plot5.png", dpi = 100)
 }
+

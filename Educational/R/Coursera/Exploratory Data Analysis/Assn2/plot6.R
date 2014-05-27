@@ -37,10 +37,11 @@ plot6 <- function() {
     q <- ggplot(data = dat, aes(year, value, color = variable))
     q <- q + geom_point()
     q <- q + scale_color_manual(values = c('red', 'blue'))
-    q <- q + opts(title = 'Emissions changes in Baltimore and LA compared')
+    q <- q + opts(title = 'Emissions in Baltimore vs LA')
     q <- q + ylab(expression('PM2.5 Emissions (tons)'))
     q <- q + geom_smooth(method = 'lm', fill=NA)
     q <- q + coord_cartesian(ylim = c(0, 50000))
     q
-    ggsave(file="plot6.png")
+    ggsave(file="plot6.png", dpi = 100)
 }
+

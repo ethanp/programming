@@ -17,12 +17,18 @@
 setwd('/Users/ethan/code/non_apple/programming/Educational/R/Coursera/Exploratory Data Analysis/Assn2')
 library(ggplot2)
 
+
+if (!exists("baltimore_data"))
+    baltimore_data <- NEI[NEI$fips == "24510",]
+
 # group by two factor variables at once (type & year)
 if (!exists('baltimore_type_year')) {
     baltimore_type_year <- aggregate(Emissions ~ type + year, data = baltimore_data, sum)
 }
 
 plot3 <- function() {
+    
+    #### THIS IS A GROUPED-LINEAR MODEL VERSION OF THE SAME THING ####
     
     # plot each type in a different color
     # plot linear models over year, by type
@@ -34,13 +40,15 @@ plot3 <- function() {
     q <- q + geom_point(size = 3)
     q
     
-    ggsave(file="plot3.png")
     
     
-    #### THIS IS A GROUPED-HISTOGRAM VERSION OF THE SAME THING ####
+    #### THIS IS THE PICTURED GROUPED-HISTOGRAM VERSION ####
     
-#    q <- ggplot(baltimore_type_year, aes(factor(year), Emissions, fill=type))
- #   q <- q + geom_bar(stat='identity', position = 'dodge')
-  #  q <- q + scale_fill_brewer(palette='Set1')
-   # q
+    q <- ggplot(baltimore_type_year, aes(factor(year), Emissions, fill=type))
+    q <- q + geom_bar(stat='identity', position = 'dodge')
+    q <- q + scale_fill_brewer(palette='Set1')
+    q
+    
+    ggsave(file="plot3B.png", dpi = 100)
+    
 }
