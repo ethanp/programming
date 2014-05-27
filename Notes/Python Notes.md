@@ -1,6 +1,22 @@
 Notes on Python
 ===============
 
+Python 3
+--------
+
+### The "//" operator
+
+Always does *"integer division"*, even on floats (returns floored float value)
+
+    >>> 4 / 3
+    1.3333333333333333
+    >>> 4 // 3
+    1
+    >>> 4.0 / 3
+    1.3333333333333333
+    >>> 4.0 // 3
+    1.0
+
 Global variables
 ----------------
 

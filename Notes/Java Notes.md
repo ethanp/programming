@@ -725,7 +725,26 @@ Rules
 
 * `a.equals(b) => a.hashCode() == b.hashCode()`
 
+Useful things for interview questions
+=====================================
 
+## Copy raw array
+
+### Arrays.copyOfRange(oldArr, fromInd, toInd)
+
+    int[] oldArr = {3, 4, 5};
+    int[] first2 = Arrays.copyOfRange(oldArr, 0, 2);
+
+## String to char[]
+
+### myString.toCharArray()
+
+    char[] charArr = "My String".toCharArray();
+    
+*Bonus*: now we may use a *foreach* loop
+
+    for (char c : charArr) { ... }
+    
 Asides
 ======
 **5/20/14**
