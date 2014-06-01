@@ -75,6 +75,11 @@ My Scala translation of their Javascript example for this. Also merits study.
       )
     }
 
+### Monad laws
+
+There is a small set laws that must be followed in order for a monad to behave correctly,
+but I don't understand the Haskell used to identify them on the Monad Wikipedia page.
+
 
 Unit testing
 ------------
@@ -168,10 +173,16 @@ Redis
 * Highly scalable data store shared by multiple processes, applications, or servers
 * Caching layer
 
+Philosophy
+----------
 
+### When something is too slow
 
-On the Method of Understanding a Programme
-------------------------------------------
+#### 5/30/14
+
+**Cache it**
+
+### On the Method of Understanding a Programme
 
 #### 3/13/14
 

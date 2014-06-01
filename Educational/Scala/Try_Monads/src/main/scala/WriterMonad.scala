@@ -28,7 +28,7 @@ object Run extends App {
 
   def maybePlus(a: Option[Int], b: Option[Int]): Option[Int] =
     for (ia <- a; ib <- b) yield ia + ib
-  
+
   println("------- Maybe Plus ---------")
   println(maybePlus(Some(3), Some(4)))
   println(maybePlus(Some(3), None))
