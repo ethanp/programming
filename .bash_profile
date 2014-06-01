@@ -34,7 +34,6 @@ else
     PROGRAMMINGGIT=~/code/programming
 fi
 alias ca='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentAnalyzer_0'
-alias cc='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentCollector_0'
 alias playakka='cs $PROGRAMMINGGIT/StuffIWrote/Scala/akka-redis-websockets-play-scala_translation'
 alias octop='cs /Users/Ethan/code/personal_project_use/libraries_to_use/Ruby/octopress'
 
@@ -136,12 +135,10 @@ function dedir {
 }
 
 
-#############################################
-#  Compile C programs with useful gcc flags #
-#############################################
-
+# Compile C programs with useful gcc flags
+# ----------------------------------------
 # TODO this could probably be upgraded using stuff from "Learn C the Hard Way"
-
+#
 # I've removed -O2 & -ffast-math optimization because I figure there are going
 # to be more situations where I don't want something optimized out than where I
 # really care about the speed of program execution.
@@ -186,19 +183,20 @@ PATH="/Users/Ethan/Applications/javacc-5.0/bin:${PATH}"
 PATH="/Users/Ethan/Applications/apache-ant-1.8.4/bin:${PATH}"
 PATH="$PATH":~/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools  # don't remember this
 PATH="/Applications/Anaconda/anaconda/bin:$PATH"  # allows for "conda" command
-PATH="$PATH":/usr/local/share/scala-2.10.1/bin
+PATH="$PATH":/usr/local/share/scala-2.10.1/bin    # I hope I'm not using this (TODO verify & remove)
 PATH=${PATH}:$HOME/gsutil                         # this was for getting patent info
-PATH="/usr/local/lib/ruby:${PATH}"
+PATH="/usr/local/lib/ruby:${PATH}"                # not sure here bc I have like 5 Rubys
 PATH=$PATH:$HOME/.rvm/bin                         # allows for "rvm" command
-PATH="/Applications/Postgres93.app/Contents/MacOS/bin:$PATH:$PATH"
+PATH="/Applications/Postgres93.app/Contents/MacOS/bin:$PATH:$PATH" # for use with Postgres.app
 
+# accommodate directory-structure differences between two computers
 if [[ -d ~/code/fuzzycd ]]; then
     FUZZYCD=~/code/fuzzycd
 else  # TODO why doesn't this work when surrounded by either '' or "" ??
     FUZZYCD=~/code/personal_project_use/code_to_base_off_of/Ruby/fuzzycd
 fi
-PATH=$FUZZYCD:$PATH
-PATH="/usr/local/bin:${PATH}"
+PATH=$FUZZYCD:$PATH                               # add fuzzycd, may have to precede RVM in PATH
+PATH="/usr/local/bin:${PATH}"                     # Homebrew comes last
 export PATH
 
 
@@ -209,7 +207,7 @@ export PATH
 # These are the places the "cd" command will LOOK, in this order too
 CDPATH="::"                         # Current Directory
 CDPATH="${CDPATH}:$HOME"            # Global Var == /Users/Ethan
-CDPATH="${CDPATH}:${HOME}/Dropbox"  # add Dropbox to the list
+CDPATH="${CDPATH}:${HOME}/Dropbox"  # add Dropbox to the list (TODO doesn't work)
 export CDPATH
 
 
@@ -229,7 +227,7 @@ export PYTHONPATH
 
 # tells java where to look for classes referenced by your program
 # e.g: import my.package.Foo
-CLASSPATH=.:/usr/share/java/commons-math3-3.2
+CLASSPATH=.:/usr/share/java/commons-math3-3.2  # this is legacy, now I just use Maven
 export CLASSPATH
 
 
@@ -243,8 +241,9 @@ export CLASSPATH
 
 # These are only saved _this_ session
 HISTSIZE=2000
+
 # These are saved _between_ sessions in .bash_history
-HISTFILESIZE=2000
+HISTFILESIZE=2000   # TODO it's unclear why this file is only ~850 lines/~2 months worth
 
 # Load RVM into a shell session *as a function*
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
