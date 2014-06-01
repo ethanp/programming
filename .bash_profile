@@ -2,6 +2,11 @@
 # Cron jobs for
 #   brew update && brew upgrade
 
+
+######################
+#  Terminal Aliases  #
+######################
+
 # Aliases: if you use "quotes", then the substitution is made here in the _profile
 #           but if you use 'aposts', then the substitution is done at call-time
 #   You probably want 'single quotes' if you're using variables
@@ -15,8 +20,8 @@ alias lg='ls | grep'
 alias llg='ls -l | grep'
 alias hisg='history | grep'
 alias bug='brew update && brew upgrade'
-alias vimrc='mvim ~/.vimrc'
-alias bprof='mvim ~/.bash_profile'
+alias vimrc='sb ~/.vimrc'
+alias bprof='sb ~/.bash_profile'
 alias this='export PATH="${PATH}:."'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n $@'
 alias ut='ssh -o ServerAliveInterval=30 ethanp@almond-joy.cs.utexas.edu'
@@ -33,11 +38,21 @@ alias cc='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentCollector_
 alias playakka='cs $PROGRAMMINGGIT/StuffIWrote/Scala/akka-redis-websockets-play-scala_translation'
 alias octop='cs /Users/Ethan/code/personal_project_use/libraries_to_use/Ruby/octopress'
 
+
+######################
+#  Terminal Options  #
+######################
+
 # 4lolz
 set -o vi
 
 # turn on extra metacharacters: (?|*|+|@|!)(pattern)
 shopt -s extglob
+
+
+########################
+#  Terminal Functions  #
+########################
 
 # render manpage as postscript in Preview
 function pman { man -t $1 | open -fa /Applications/Preview.app ; }
@@ -65,6 +80,20 @@ function ddh { ls "$1" | grep -i "$2"; }
 
 # supposed to enable autocomplete for rbenv
 if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+
+# 5/27/14
+# open mmd as pdf
+function mtx {
+    TEX_NAME=$(basename "$1" | sed s'|.md|.tex|')
+    PDF_NAME=$(basename "$1" | sed s'|.md|.pdf|')
+    LATEX_DIR=~/Desktop/Latex
+    # mkdir -p "$LATEX_DIR"
+    TEX_LOC=$LATEX_DIR/"$TEX_NAME"
+    multimarkdown -t latex "$1" > "$TEX_LOC"
+    pdflatex --output-directory "$LATEX_DIR" "$TEX_LOC" > /dev/null
+    open -a /Applications/Preview.app "$LATEX_DIR"/"$PDF_NAME"
+    # rm -rf "$LATEX_DIR"
+}
 
 # remove the first 49 lines of each *.[mh] file in this- & sub-directories
 # assembled from the following:
@@ -106,6 +135,13 @@ function dedir {
     fi
 }
 
+
+#############################################
+#  Compile C programs with useful gcc flags #
+#############################################
+
+# TODO this could probably be upgraded using stuff from "Learn C the Hard Way"
+
 # I've removed -O2 & -ffast-math optimization because I figure there are going
 # to be more situations where I don't want something optimized out than where I
 # really care about the speed of program execution.
@@ -139,6 +175,11 @@ function xlj {
     java -jar $THEPROJECT/$THEJAR "$*"
 }
 
+
+##########
+#  PATH  #
+##########
+
 # PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:${PATH}"
 # PATH="/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}" # switch to new Python
 PATH="/Users/Ethan/Applications/javacc-5.0/bin:${PATH}"
@@ -149,6 +190,8 @@ PATH="$PATH":/usr/local/share/scala-2.10.1/bin
 PATH=${PATH}:$HOME/gsutil                         # this was for getting patent info
 PATH="/usr/local/lib/ruby:${PATH}"
 PATH=$PATH:$HOME/.rvm/bin                         # allows for "rvm" command
+PATH="/Applications/Postgres93.app/Contents/MacOS/bin:$PATH:$PATH"
+
 if [[ -d ~/code/fuzzycd ]]; then
     FUZZYCD=~/code/fuzzycd
 else  # TODO why doesn't this work when surrounded by either '' or "" ??
@@ -158,34 +201,45 @@ PATH=$FUZZYCD:$PATH
 PATH="/usr/local/bin:${PATH}"
 export PATH
 
+
+############
+#  CDPATH  #
+############
+
 # These are the places the "cd" command will LOOK, in this order too
 CDPATH="::"                         # Current Directory
 CDPATH="${CDPATH}:$HOME"            # Global Var == /Users/Ethan
 CDPATH="${CDPATH}:${HOME}/Dropbox"  # add Dropbox to the list
 export CDPATH
 
+
+################
+#  PYTHONPATH  #
+################
+
 # PYTHONPATH is where Python looks for user-defined Modules/Packages
 #  after searching the current directory
 PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
 export PYTHONPATH
+
+
+###############
+#  CLASSPATH  #
+###############
 
 # tells java where to look for classes referenced by your program
 # e.g: import my.package.Foo
 CLASSPATH=.:/usr/share/java/commons-math3-3.2
 export CLASSPATH
 
+
+###############
+#  JAVA_HOME  #
+###############
+
 #JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home
 #export JAVA_HOME
 
-# 6/18/13
-# from http://jeethurao.com/blog/?p=217 for getting Scala to work with Intellij
-# (I don't think it made a difference, I'm still "using an external compiler")
-# deleted this and see what happens: 1/15/14
-# export JAVA_HOME=$(/usr/libexec/java_home)
-# export SCALA_HOME=/usr/local/Cellar/scala/2.10.0/libexec
-# export JAVACMD=drip
-# export DRIP_SHUTDOWN=30
-# export SBT_OPTS="-XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:PermSize=128M -XX:MaxPermSize=512M"
 
 # These are only saved _this_ session
 HISTSIZE=2000
@@ -203,8 +257,12 @@ fi
 # Must overwrite cd-command after loading rvm bc rvm redefines cd too
 source $FUZZYCD/fuzzycd_bash_wrapper.sh
 
-##############################################################################
-# The Cool Terminal from https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
+
+#####################
+# The Cool Terminal #
+#####################
+
+# from https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
 
 # Define colornames
 NC='\033[0m'   # No Color
@@ -233,5 +291,4 @@ function promptFill {
     echo -n $NOW
     return $PREV_ERROR
 }
-### End Cool Terminal #########################################################
 
