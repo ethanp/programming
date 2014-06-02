@@ -232,3 +232,9 @@ RingBuffer
 
 ### LinkedHashMap
 
+
+TODO
+----
+
+Scala's `Vector` is a tree of arrays, kind of like a *B-Tree*, also like one of the main *file formats*
+
