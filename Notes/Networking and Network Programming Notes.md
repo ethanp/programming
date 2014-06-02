@@ -1,3 +1,43 @@
+## Socket
+### What it is, what it do
+**5/30/14**
+
+* A **socket** is how a **process** (an 'object' managed by the OS), interacts with the network
+* This is on the **application** layer (#7)
+* It can shove a message into it, or receive a message from it
+
+#### IP address, port, process
+
+* You can send a message to a server by sending to it's **IP adress**,
+* but you still need to make sure your message gets to the correct **process** on that server,
+* which is why you append a **port number**.
+* The server uses this to figure out which process should receive your message.
+* For example, if you send it to **port 80**, the server will route it to a process that handles **HTTP requests**.
+
+## SSL
+
+### What it is, why it be
+**5/30/14**
+
+* TCP & UDP do not provide encryption
+* **SSL provides an encrypted TCP connection**
+	* **data integrity**
+	* **endpoint authentication**
+* SSL has a socket API
+
+## Network Core
+
+### Difference between a router and a switch
+**5/29/14**
+
+* From [about.com](http://compnetworking.about.com/od/homenetworkhardware/f/routervsswitch.htm) (not a great reference though)
+* Traditionally, **routers** join together multiple **LAN**s with a **WAN**.
+* They are intermediate destinations for network traffic, forwarding packets along toward their destinations.
+* For example, your router at home connects your house's LAN to the Internet WAN.
+* **Switches** (and **hubs**) can't do that.
+* Instead, they just forward packets *within one LAN*.
+* Switches (not hubs) can inspect the messages as they pass through, and forward data only to the specific device intended.
+
 ## REST
 
 ##### 3/30/14

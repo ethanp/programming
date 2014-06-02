@@ -144,7 +144,25 @@ Which will be expanded to
 
 which works as we expect!
 
+#### Pass operator into macro
 
+##### 5/29/14
+
+I found this in Apple's [RosyWriter][] example app. The macro itself
+doesn't look useful (at all), but the fact that you pass a `<` into
+it is pretty cool.
+
+###### Definition
+
+	#define CMTIME_COMPARE_INLINE(time1, comparator, time2) ((Boolean)(CMTimeCompare(time1, time2) comparator 0))
+	
+###### Usage
+
+	while( CMTIME_COMPARE_INLINE( [[previousSecondTimestamps objectAtIndex:0] CMTimeValue], <, oneSecondAgo ) )
+		[previousSecondTimestamps removeObjectAtIndex:0];	
+
+
+[RosyWriter]: https://developer.apple.com/library/ios/samplecode/RosyWriter/Introduction/Intro.html
 
 ### string.h
 

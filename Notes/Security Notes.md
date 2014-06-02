@@ -86,6 +86,9 @@ Glossary
 * **Semantically secure** --- when an attacker cannot distinguish two encryptions from each other even if the they chose the corresponding plaintexts
 * **Signature** --- scheme for checking **authentication** and **integrity**
 * **SSL (Secure Sockets Layer) / TLS (Transport Layer Security)** --- cryptographic protocols designed to provide communication security over the Internet
+    * **SSL provides an encrypted TCP connection**
+    * **data integrity**
+    * **endpoint authentication**
     * First they *assure the counterparty*, aka *handshake*, then they exchange a *symmetric key* which is then used to encrypt data sent between them
     * Often uses port 443 for **HTTPS**
     * *Uses:* eCommerce and banking
