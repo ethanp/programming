@@ -107,28 +107,6 @@ object Anagrams {
    *  and has no zero-entries.
    */
   def subtract(x: Occurrences, y: Occurrences): Occurrences = {
-    def updateCountInOcc(occ: Occurrences, char: Char, newValue: Int) = {
-      occ.map { case (ch, count) =>
-        ch match {
-          case c if c == char => (c, newValue)
-          case c => (c, count)
-        }
-      }
-    }
-
-    def removeFromOcc(occ: Occurrences, char: Char): Occurrences = {
-      occ.flatMap { case (ch, count) =>
-        ch match {
-          case c if c == char => None
-          case c => Some(c, count)
-        }
-      }
-    }
-
-    def getCountInOcc(occ: Occurrences, char: Char): Int = {
-      occ.filter(_._1 == char).head._2
-    }
-
     y match {
       case Nil => x  // we're done, so just return
       case (char, count) :: tail => getCountInOcc(x, char)-count match {
@@ -138,6 +116,27 @@ object Anagrams {
     }
   }
 
+  def updateCountInOcc(occ: Occurrences, char: Char, newValue: Int) = {
+    occ.map { case (ch, count) =>
+      ch match {
+        case c if c == char => (c, newValue)
+        case c => (c, count)
+      }
+    }
+  }
+
+  def removeFromOcc(occ: Occurrences, char: Char): Occurrences = {
+    occ.flatMap { case (ch, count) =>
+      ch match {
+        case c if c == char => None
+        case c => Some(c, count)
+      }
+    }
+  }
+
+  def getCountInOcc(occ: Occurrences, char: Char): Int = {
+    occ.filter(_._1 == char).head._2
+  }
   /** Returns a list of all anagram sentences of the given sentence.
    *
    *  An anagram of a sentence is formed by taking the occurrences of all the characters of
