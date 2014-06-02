@@ -107,12 +107,33 @@ object Anagrams {
    *  and has no zero-entries.
    */
   def subtract(x: Occurrences, y: Occurrences): Occurrences = {
-    val xMap = x.toMap.withDefaultValue(0)  // transform to suitable data-structure
+    def updateCountInOcc(occ: Occurrences, char: Char, newValue: Int) = {
+      occ.map { case (ch, count) =>
+        ch match {
+          case c if c == char => (c, newValue)
+          case c => (c, count)
+        }
+      }
+    }
+
+    def removeFromOcc(occ: Occurrences, char: Char): Occurrences = {
+      occ.flatMap { case (ch, count) =>
+        ch match {
+          case c if c == char => None
+          case c => Some(c, count)
+        }
+      }
+    }
+
+    def getCountInOcc(occ: Occurrences, char: Char): Int = {
+      occ.filter(_._1 == char).head._2
+    }
+
     y match {
       case Nil => x  // we're done, so just return
-      case (char, count) :: tail => xMap(char)-count match {
-        case 0 => subtract((xMap-char).toList, tail)          // count 0, remove char from x
-        case diff => subtract(xMap.updated(char, diff).toList, tail) // subtract count from x
+      case (char, count) :: tail => getCountInOcc(x, char)-count match {
+        case 0 => subtract(removeFromOcc(x, char).toList, tail)      // count 0, remove char from x
+        case diff => subtract(updateCountInOcc(x, char, diff), tail) // subtract count from x
       }
     }
   }
