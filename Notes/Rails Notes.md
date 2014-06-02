@@ -13,6 +13,75 @@ latex footer:       mmd-memoir-footer
 
 # Useful snippets from Rails Tutorial dot org
 
+## Templates
+
+### For the base template
+
+#### Located at `app/views/layouts/application.html.erb`
+
+#### IE lt 9 shim
+
+    <%= render 'layouts/shim' %>
+
+* Put it in the `<head>`.
+* This is a **partial**, which means it loads the contents of a file named
+  `app/views/layouts/_shim.html.erb`. You actually have to define that file
+  yourself to have the standard content.
+  
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+#### Insert body content
+
+      <body>
+        <%= render 'layouts/header' %>
+        <div class="container">
+          <%= yield %>
+        </div>
+      </body>
+
+* This assumes we have a **partial** called `app/views/layouts/_header.html.erb`
+  with our bootstrap code
+  
+        <header class="navbar navbar-fixed-top navbar-inverse">
+          <div class="navbar-inner">
+            <div class="container">
+              <%= link_to "sample app", '#', id: "logo" %>
+              <nav>
+                <ul class="nav pull-right">
+                  <li><%= link_to "Home",    '#' %></li>
+                  <li><%= link_to "Help",    '#' %></li>
+                  <li><%= link_to "Sign in", '#' %></li>
+                </ul>
+              </nav>
+            </div>
+          </div>
+        </header>
+
+
+### The <%= link_to %> thing
+
+#### For example
+
+    <%= link_to "sample app", '#', id: "logo" %>
+    
+Turns into
+
+    <a href="#" id="logo">sample app</a>
+    
+Basically, we have
+
+* Text to display
+* URL to link to
+* And the `id` attribute (not required, obviously)
+
+### Yield
+
+    <%= yield %>
+    
+This inserts the contents of each page into the site layout.
+
 ## Models
 
 ### Connect two models as One-To-Many
@@ -112,7 +181,93 @@ which produces `static_pages_spec.rb`, where your associated tests live.
     heroku run rake db:migrate
 
 
+# Rails/Ruby/ERb Syntax
+
 ## Embedded Ruby (ERb) templates
 
 * `<%...%>` **executes** the code inside
 * `<%=...%>` **executes** it **and** ***inserts*** the results into the template.
+
+## Modules
+
+Modules give us a way to package together related methods, which can
+then be mixed in to Ruby classes using include. When writing ordinary
+Ruby, you often write modules and include them explicitly yourself,
+but in the case of a helper module Rails handles the inclusion for us.
+
+    module ApplicationHelper
+      def full_title(page_title)    
+        ...codez...
+      end
+    end
+    
+## Ranges
+
+    >> a[2..-1]                         # Use the index -1 trick.
+    => [2, 3, 4, 5, 6, 7, 8, 9]
+    
+Ranges also work with characters:
+
+    >> ('a'..'e').to_a
+    => ["a", "b", "c", "d", "e"]
+    
+Oops:
+
+    >> 0..9.to_a              # Oops, call to_a on 9.
+    NoMethodError: undefined method `to_a' for 9:Fixnum
+    >> (0..9).to_a            # Use parentheses to call to_a on the range.
+    => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+    
+## Do vs. Braces
+
+The common convention is to use curly braces only for short one-line blocks
+and the `do..end` syntax for longer one-liners and for multi-line blocks.
+
+## Optional Parentheses and Curly Braces
+
+#### TFAE
+
+    stylesheet_link_tag("application", media: "all", "data-turbolinks-track" => true)
+    stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true
+    stylesheet_link_tag "application", { media: "all", "data-turbolinks-track" => true }
+    
+Note that in this case, writing
+
+    data-turbolinks-track: true
+    
+would be invalid because of the hyphens.
+
+* **Parentheses** are *optional*
+* When *hashes* are the last argument in a function call, the **curly braces** are *optional*
+
+## Symbols
+
+Symbols are easier to compare to each other; strings need to be compared
+character by character, while symbols can be compared all in one go. You
+*cannot* call `String` methods on `Symbols` though.
+
+## Modifying built-in classes
+
+Ruby classes can be opened and modified, allowing us to add methods to them:
+
+    class String
+      # Returns true if the string is its own reverse.
+      def palindrome?
+        self == self.reverse
+      end
+    end
+    
+    => nil
+    
+    "deified".palindrome?
+    
+    => true
+    
+It’s considered bad form to add methods to built-in classes without
+having a really good reason for doing so.
+
+## Defining your own classes
+
+* Use `<` for inheritance
+* `attr_accessor :name, :email` -- creates **getter** and **setter** methods
+  for the `@name` and `@email` *instance variables*.
