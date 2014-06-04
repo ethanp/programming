@@ -12,9 +12,37 @@ latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
 
-This document requires MathJax (and possibly MultiMarkdown) to be viewed properly.
+This document requires MathJax (and possibly [`MultiMarkdown`](http://fletcherpenney.net)) to be viewed properly.
 
 # Statistics #
+
+
+## Ordinary Least Squares ##
+
+#### 6/4/14
+### Finding the Intercept and the Slope ###
+
+[On Wikipedia](http://en.wikipedia.org/wiki/Simple_linear_regression)
+
+We're trying to find the equation of the straight line
+
+\\[y = \alpha + \beta x \\]
+
+which would provide a line that minimizes the sum of squared residuals of the linear regression model.
+
+We can use 
+
+\\[\hat{\beta} = \frac{\mathrm{Cov}[x, y]}{\mathrm{Var}[x]} = r_{xy} \frac{s_y}{s_x}\\] 
+
+\\[\hat{\alpha} = \bar{y} - \hat{\beta} \bar{x}\\]
+
+* The line always passes through \\((\bar{x},\bar{y})\\)
+* If you normalize the data, the slope is \\(Cor(Y,X)\\)
+
+#### Without the Intercept Term ####
+
+\\[y = \beta x \\]
+\\[\hat{\beta} = \frac{\bar{xy}}{x^2}\\]
 
 ## Similarity Measures ##
 
@@ -106,7 +134,6 @@ And the inverse:
 \\[FT^{-1}\{FT\{f(x)\}\} := \frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}\!FT\{f(x)\}e^{iwx}dx\\]
 
 
-![](Fourier%20Transform%20Summary.png)
 
 ### Useful Tidbits
 

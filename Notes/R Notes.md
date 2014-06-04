@@ -13,6 +13,22 @@ latex footer:       mmd-memoir-footer
 
 ### Started April 21, 2014
 
+# Statistics
+
+## Linear Regression
+
+### Fit a regression line
+
+	x <- c(0.8, 0.47, 0.51, 0.73, 0.36, 0.58, 0.57, 0.85, 0.44, 0.42)
+	y <- c(1.39, 0.72, 1.55, 0.48, 1.19, -1.59, 1.23, -0.65, 1.49, 0.05)
+	fit <- lm(y ~ x)
+	
+Produces:
+	
+	Coefficients:
+	(Intercept)           x  
+    1.567       		-1.713  
+
 # Processing Data
 ## Downloading data
 **6/2/14**
@@ -34,6 +50,7 @@ latex footer:       mmd-memoir-footer
 	dateDownloaded <- date()
 
 ## Reading data
+**6/2-4/14**
 
 ### Delimited Values
 
@@ -136,6 +153,10 @@ Drill down even further
 #### Write out tod JSON
 
 	myjson <- toJSON(iris, pretty=TRUE)
+	
+### MySQL
+
+
 
 # Data Frames
 
@@ -251,7 +272,7 @@ E.g. apply the `min()` function, to collapse each column into its minimum value
 	...
 	multiplot(p1, p2, ..., cols=2)
 
-#### Using StdLib
+#### Using Base
 
 Column of three
 
