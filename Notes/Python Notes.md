@@ -1,5 +1,33 @@
-Notes on Python
-===============
+latex input:        mmd-article-header
+Title:              Python Notes
+Author:             Ethan C. Petuchowski
+Base Header Level:  1
+latex mode:         memoir
+Keywords:           Programming language, Python
+CSS:                http://fletcherpenney.net/css/document.css
+xhtml header:       <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+Copyright:          2014 Ethan Petuchowski
+latex input:        mmd-natbib-plain
+latex input:        mmd-article-begin-doc
+latex footer:       mmd-memoir-footer
+
+unittest
+--------
+#### 6/3/14
+
+Python's **built-in xUnit framework**
+
+    import unittest
+    
+    class TestMyClass(unittest.TestCase):
+    
+        def setUp(self):
+            setup_code()
+    
+        def test_my_test_case(self):
+            something = use_code_under_test()
+            self.assertFalse(not something, 'returned None instead of something')
+            self.assertEqual(something, 'that thing my code returns', 'my code did not return what it's supposed to')
 
 Python 3
 --------

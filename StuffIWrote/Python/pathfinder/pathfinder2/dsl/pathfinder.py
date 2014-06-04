@@ -49,18 +49,18 @@ def pathfinder(cd_here, find):
             if start_string and not f.startswith(elem): continue
             if end_string and not f.endswith(elem):     continue
             if not_dir and os.path.isdir(f):            continue
-            if elem not in f and not asterisk:          continue
+            if not asterisk and elem not in f:          continue
             queue.append((depth, os.path.abspath(f)))
 
-    search('.',find.pop(0)) # should be a using a deque, but this is just a list
+    search('.', find.pop(0))
     while find:
-        locs = [q[1] for q in queue if q[0] == depth]
+        locs = [name for file_depth, name in queue if file_depth == depth]
         depth += 1
         if locs:
-            next_elem = find.pop()
+            next_elem = find.pop(0)
             for location in locs:
                 search(location, next_elem)
         else:
-            find.pop()
+            find.pop(0)
 
     return [name for depth, name in queue if depth == final_depth]
