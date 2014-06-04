@@ -1,0 +1,48 @@
+# coding=utf-8
+# 6/3/14
+# Ethan Petuchowski
+# create a sample directory structure for
+# testing the correctness of pathfinder2
+
+import os
+import sys
+import shutil
+
+STRUCTURE_DIR = '/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Python/pathfinder/pathfinder2/test'
+STRUCTURE_LOC = './structure'
+
+SAMPLE_CSV = '''
+1,comma,2,comma,3,little indians,
+4,comma,5,comma,6,little indians,
+'''
+
+SAMPLE_TXT = '''
+this is my text
+on the computer
+'''
+
+def re_establish(loc):
+    if os.path.isdir(loc):
+        # TODO this can't be right, must be recursive too etc.
+        shutil.rmtree(loc)
+    os.mkdir(loc)
+
+def rebuild_test_structure():
+    # go to *this* location
+    # TODO find the better way to do this on Stack Overflow
+    os.chdir(STRUCTURE_DIR)
+    re_establish(STRUCTURE_LOC)
+    os.chdir(STRUCTURE_LOC)
+    # TODO abstract this to function to produce arbitrary number of levels
+    for i in range(10):
+        os.mkdir(str(i))
+    for file_num, d in enumerate(os.listdir('.')):
+        os.chdir(d)
+        with open('readIt'+str(file_num)+'.txt', 'w+') as out_txt:
+            out_txt.write(SAMPLE_TXT)
+        with open('data'+str(file_num)+'.csv', 'w+') as out_csv:
+            out_csv.write(SAMPLE_CSV)
+        os.chdir('..')
+
+if __name__ == '__main__':
+    rebuild_test_structure()
