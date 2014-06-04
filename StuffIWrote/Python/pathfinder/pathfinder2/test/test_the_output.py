@@ -8,12 +8,14 @@ import unittest
 from pathfinder2.dsl import pathfinder as p2
 import create_test_structure as cts
 
+class TestPathfinder(unittest.TestCase):
+    def setUp(self):
+        cts.rebuild_test_structure()
 
-def find_csvs():
-    cts.rebuild_test_structure()
-    found_files = p2.pathfinder('.', ['*','.csv'])
-    if not len(found_files) == 10:
-        print '10 files were NOT found'
-    else:
-        print 'found 10 files'
+    def test_find_csvs(self):
+        found_files = p2.pathfinder('.', ['*','.csv'])
+        self.assertFalse(not found_files, 'returned None instead of 10 files')
+        self.assertEqual(len(found_files), 10, 'did not find 10 files')
 
+if __name__ == '__main__':
+    unittest.main()

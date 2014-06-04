@@ -23,17 +23,15 @@ on the computer
 
 def re_establish(loc):
     if os.path.isdir(loc):
-        # TODO this can't be right, must be recursive too etc.
         shutil.rmtree(loc)
     os.mkdir(loc)
 
-def rebuild_test_structure():
-    # go to *this* location
-    # TODO find the better way to do this on Stack Overflow
-    os.chdir(STRUCTURE_DIR)
-    re_establish(STRUCTURE_LOC)
-    os.chdir(STRUCTURE_LOC)
-    # TODO abstract this to function to produce arbitrary number of levels
+# TODO abstract this to function to produce arbitrary number of levels
+def create_dirs_and_fill_them():
+    """
+    create 10 folders and fill each with a
+    uniquely named sample .txt and sample.csv
+    """
     for i in range(10):
         os.mkdir(str(i))
     for file_num, d in enumerate(os.listdir('.')):
@@ -43,6 +41,13 @@ def rebuild_test_structure():
         with open('data'+str(file_num)+'.csv', 'w+') as out_csv:
             out_csv.write(SAMPLE_CSV)
         os.chdir('..')
+
+def rebuild_test_structure():
+    # go to *this* location
+    os.chdir(STRUCTURE_DIR)
+    re_establish(STRUCTURE_LOC)
+    os.chdir(STRUCTURE_LOC)
+    create_dirs_and_fill_them()
 
 if __name__ == '__main__':
     rebuild_test_structure()
