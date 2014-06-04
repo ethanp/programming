@@ -14,19 +14,18 @@ STRUCTURE_LOC = './structure'
 SAMPLE_CSV = '''
 1,comma,2,comma,3,little indians,
 4,comma,5,comma,6,little indians,
-'''
+'''[1:]
 
 SAMPLE_TXT = '''
 this is my text
 on the computer
-'''
+'''[1:]
 
 def re_establish(loc):
     if os.path.isdir(loc):
         shutil.rmtree(loc)
     os.mkdir(loc)
 
-# TODO abstract this to function to produce arbitrary number of levels
 def create_dirs_and_fill_them():
     """
     create 10 folders and fill each with a

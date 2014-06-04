@@ -17,5 +17,12 @@ class TestPathfinder(unittest.TestCase):
         self.assertFalse(not found_files, 'returned None instead of 10 files')
         self.assertEqual(len(found_files), 10, 'did not find 10 files')
 
+    def test_10_csvs(self):
+        found_files = p2.pathfinder('structure', ['*', '.csv$'])
+        self.assertFalse(not found_files, 'returned None instead of 10 files')
+        self.assertEqual(len(found_files), 10, 'did not find 10 files')
+        for f in found_files:
+            self.assertTrue(f.endswith('.csv'), 'found non-csv file')
+
 if __name__ == '__main__':
     unittest.main()
