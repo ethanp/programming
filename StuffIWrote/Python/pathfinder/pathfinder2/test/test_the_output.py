@@ -12,8 +12,8 @@ class TestPathfinder(unittest.TestCase):
     def setUp(self):
         cts.rebuild_test_structure()
 
-    def test_find_csvs(self):
-        found_files = p2.pathfinder('.', ['*','.csv'])
+    def test_10_base_dirs(self):
+        found_files = p2.pathfinder('structure', ['*'])
         self.assertFalse(not found_files, 'returned None instead of 10 files')
         self.assertEqual(len(found_files), 10, 'did not find 10 files')
 

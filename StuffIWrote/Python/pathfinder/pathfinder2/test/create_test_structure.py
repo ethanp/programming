@@ -48,6 +48,7 @@ def rebuild_test_structure():
     re_establish(STRUCTURE_LOC)
     os.chdir(STRUCTURE_LOC)
     create_dirs_and_fill_them()
+    os.chdir('..')
 
 if __name__ == '__main__':
     rebuild_test_structure()

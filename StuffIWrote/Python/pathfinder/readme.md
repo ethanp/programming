@@ -52,3 +52,7 @@ Signature
     * `$` must precede `=` if both are being used as directives
     * There is no escape if you want the directives as literals
 
+### TODO
+What'd be cool is like an XPath `\\search` thing where it searches
+arbitrarily nested dirs for the first thing that matches after.
+I'd say `**` would be cool for that.
