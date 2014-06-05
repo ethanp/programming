@@ -1,3 +1,14 @@
+### Unique vs Distinct
+
+[From StackOverflow](http://stackoverflow.com/questions/336268/sql-difference-between-select-unique-and-select-distinct)
+
+* **`Unique`** is a keyword used in the **`Create Table()`** directive
+	* to denote that a field will contain unique data
+	* usually used for natural keys, foreign keys etc.
+* **`Distnct`** is used in the **`Select`** statement to notify the query
+  that you only want the unique items returned when a field holds data
+  that may not be unique.
+
 ### Foreign Keys
 
 Sample (PostgreSQL) Code for creating a Foreign Key

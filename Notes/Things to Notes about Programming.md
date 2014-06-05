@@ -1,3 +1,11 @@
+Local databases
+---------------
+
+After I ran `brew install mysql`, it told me
+
+* to launch mysql, run `mysql.server start`
+* to connect, run `mysql -uroot`
+
 The Monad
 ---------
 
