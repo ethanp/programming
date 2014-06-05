@@ -103,7 +103,7 @@ This inserts the contents of each page into the site layout.
 
 ### Generate Controller
 
-    rails generate controller StaticPages home help
+    rails generate controller StaticPages home help (--no-test-framework, doesn't create unit test files)
     
 ##### This
 
@@ -182,6 +182,43 @@ which produces `static_pages_spec.rb`, where your associated tests live.
 
 
 # Rails/Ruby/ERb Syntax
+
+## Defining named routes
+
+We'd like to stop hard-coding the url in our unit tests and view templates like
+
+    visit '/static_pages/about'
+
+or
+
+    <%= link_to "About", /static_pages/about' %>
+
+and instead use a keyword like
+
+    visit about_path
+    
+or
+
+    <%= link_to "About", about_path %>
+    
+So we change our `route` from
+
+    get 'static_pages/about'
+    
+to
+
+    match '/about', to: 'static_pages#about', via: 'get'
+    
+This gives us both the keywords
+
+    about_path -> '/about'
+    about_url  -> 'http://localhost:3000/about'
+
+### It's different for the homepage
+
+    root  'static_pages#home'
+    
+This maps the url `/` to `/static_pages/home`
 
 ## Embedded Ruby (ERb) templates
 
