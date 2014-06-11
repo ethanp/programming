@@ -40,6 +40,10 @@
 
 ## REST
 
+### Summary
+
+**REST is an architectural style for developing distributed, networked systems and software applications such as the World Wide Web and web applications.** REST means that most *application components* (such as users and microposts) are modeled as *resources* that can be *created, read, updated, and deleted* -— operations that correspond both to the `CRUD` operations of *relational databases* and four fundamental `HTTP` request methods: `POST`, `GET`, `PATCH`, and `DELETE`.
+
 ##### 3/30/14
 
 [Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content, expires 8/10/14](http://tools.ietf.org/pdf/draft-ietf-httpbis-p2-semantics-26.pdf)

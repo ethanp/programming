@@ -1,3 +1,12 @@
+Scala's *Vector* Seq
+--------------------
+**6/10/14**
+
+* According to [Stack Overflow](http://stackoverflow.com/questions/20612729/how-does-scalas-vector-work),
+  the `Vector` data type uses a *32-ary* **tree**
+* Each '32-way node' has a 32-element `Array` that **either** holds *references* **or** *data*
+* The tree is "balanced" such that levels `1` to `n-1` hold 100% references, and level `n` contains 100% data
+
 Nested for-yield statements
 ---------------------------
 **5/27/14**

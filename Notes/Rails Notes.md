@@ -95,15 +95,82 @@ This inserts the contents of each page into the site layout.
       validates :content, length: { maximum: 140 } # just another thing to note
     end
 
+## Routes
+
+### For creating the `about_path` method etc., see the section **Defining Named Routes** below.
+
+### Defining REST-style URLs for a Model
+
+Add the following line to `routes.rb`
+
+    resources :users
+
+In the following table
+
+* **HTTP request** -- request type sent by the browser to the server
+* **URL** -- where to send it
+* **Action** -- the method that get's called on the associated controller
+* **Named route** -- method we can call to invoke this action from within the server
+* **Purpose** -- why we'd want to perform this action
+
+
+| HTTP request | URL             | The Action  | Named route | Purpose |
+| :----------- | :-------------- | :---------- | :---------- | :------ |
+| `GET`        | `/users`        | **index**   | `users_path` | page to list all users |
+| `GET`        | `/users/1`      | **show**    | `user_path(user)` | page to show user |
+| `GET`        | `/users/new`    | **new**     | `new_user_path` | signup page |
+| `POST`       | `/users`        | **create**  | `users_path` | create a new user |
+| `GET`        | `/users/1/edit` | **edit**    | `edit_user_path(user)` | page to edit user with id `1` |
+| `PATCH`      | `/users/1`      | **update**  | `user_path(user)` | update user |
+| `DELETE`     | `/users/1`      | **destroy** | `user_path(user)` | delete user |
+
 ## Code Generation Commands
-
-### Generate model with CRUD code
-
-    rails generate scaffold User name:string email:string
 
 ### Generate Controller
 
-    rails generate controller StaticPages home help (--no-test-framework, doesn't create unit test files)
+    rails generate controller StaticPages home help 
+    
+To *not* create **unit test** files, append `--no-test-framework`
+
+### Generate Model
+
+#### Basic Model
+
+    rails generate model User name:string email:string
+ 
+Note that **unlike controller names, model names are singular**
+
+##### This
+
+1. creates a new **migration file** called `db/migrate/[timestamp]_create_users.rb`, 
+   which allows us to alter the structure of the database *incrementally*
+
+        class CreateUsers < ActiveRecord::Migration
+          def change
+            create_table :users do |t|  # note it's plural, "a DB has many users"
+              t.string :name
+              t.string :email
+        
+              t.timestamps  # creates magic columns 'created at' and 'updated at'
+            end
+          end
+        end
+
+2. creates a **model file** called `app/models/user.rb` with the simple code
+
+        class User < ActiveRecord::Base
+        end
+
+
+##### Migrate
+
+Now we *"migrate up"* using
+    
+    [bundle exec] rake db:migrate
+
+#### Generate model with CRUD code
+
+    rails generate scaffold User name:string email:string
     
 ##### This
 
@@ -127,6 +194,21 @@ This inserts the contents of each page into the site layout.
 **Note:** of course you can always perform these 3 steps *after* executing
 the `generate` command to add pages that you didn't generate.
 
+
+#### Generate model migration
+
+    rails generate migration add_password_digest_to_users password_digest:string
+    
+In fact, this gives *Rails* enough information to construct the entire migration
+adding the `password_digest` field to the `User` table
+
+    class AddPasswordDigestToUsers < ActiveRecord::Migration
+      def change
+        add_column :users, :password_digest, :string
+      end
+    end
+
+
 ### Undo
 
 #### Controllers
@@ -141,19 +223,35 @@ the `generate` command to add pages that you didn't generate.
 
 #### Migrations
 
-Migrations change the state of the database using
+* Migrations change the state of the database using
 
-    rake db:migrate
+        rake db:migrate
 
-We can undo a single migration step using
+* We can undo a single migration step using
 
-    rake db:rollback
+        [bundle exec] rake db:rollback
 
-To go all the way back to the beginning, we can use
+* To go all the way back to the beginning, we can use
 
-    rake db:migrate VERSION=<NUMBER> 
+        rake db:migrate VERSION=<NUMBER> 
     
-The version numbering starts at zero
+* The version numbering starts at zero
+
+* For things like `create table`, undo is simple, but for adding/removing columns,
+  if you want to be able to undo, you must define `up` and `down` in place of the
+  `change` method. These define how to do/undo your the changes to your DB.
+
+* After running a `db:migrate`, you probably want to run
+
+        [bundle exec] rake test:prepare
+   
+     to make sure the test DB (`db/test.sqlite3`) matches the development DB
+      (`db/development.sqlite3`)
+      
+
+    * Also, sometimes the test database gets corrupted and needs to be reset.
+    * If your test suite is mysteriously breaking, be sure to try running
+      `rake test:prepare` to see if that fixes the problem.
 
 
 ### Integration tests
@@ -179,9 +277,76 @@ which produces `static_pages_spec.rb`, where your associated tests live.
     git push
     git push heroku
     heroku run rake db:migrate
+    
+### Opening on heroku
 
+    heroku open
+    
+### View logfile  on heroku
 
-# Rails/Ruby/ERb Syntax
+    heroku logs
+    
+### Remote console
+
+    heroku run console
+    
+    >> Rails.env
+    => "production"
+
+## Specifying environments
+
+### Console
+
+Defaults to development
+
+    rails console
+
+You can specify others
+
+    rails console test
+    
+    >> Rails.env
+    => "test"
+
+### Server
+
+Turn your local machine into a `localhost` server (defaults to development)
+
+    rails server
+    
+You can specify other environments
+
+    rails server --environment production
+    
+### Migrating databases
+
+Defaults to development
+
+    bundle exec rake db:migrate
+
+But you can specify others
+
+    bundle exec rake db:migrate RAILS_ENV=production
+    
+## Adding passwords to the (e.g. User) model
+
+1. Add the line `has_secure_password` to the model for which you'd like to install passwords (e.g. `User`)
+2. Run a migration to add *password digests* to that model (this generates all you need to run the migration)
+
+        rails generate migration add_password_digest_to_users password_digest:string
+
+### What does this ensure?
+
+1. `User.password` must match `User.password_confirmation`
+2. `User.password` cannot be empty or `" "` *(ensure presence)*
+3. We can *authenticate* the retrieved `User` using:
+
+        current_user = user.authenticate(password)
+
+    * this is supposed to **return** the **user** **if** the *password* is *correct*
+    * otherwise it **returns** **false**
+    
+4. Adds `password` and `password_confirmation` attributes to `User`
 
 ## Defining named routes
 
@@ -220,12 +385,17 @@ This gives us both the keywords
     
 This maps the url `/` to `/static_pages/home`
 
+
+
+# Rails/Ruby/ERb Syntax
 ## Embedded Ruby (ERb) templates
 
 * `<%...%>` **executes** the code inside
 * `<%=...%>` **executes** it **and** ***inserts*** the results into the template.
 
-## Modules
+## Ruby
+
+### Modules
 
 Modules give us a way to package together related methods, which can
 then be mixed in to Ruby classes using include. When writing ordinary
@@ -238,7 +408,7 @@ but in the case of a helper module Rails handles the inclusion for us.
       end
     end
     
-## Ranges
+### Ranges
 
     >> a[2..-1]                         # Use the index -1 trick.
     => [2, 3, 4, 5, 6, 7, 8, 9]
@@ -254,13 +424,18 @@ Oops:
     NoMethodError: undefined method `to_a' for 9:Fixnum
     >> (0..9).to_a            # Use parentheses to call to_a on the range.
     => [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-    
-## Do vs. Braces
+
+### Words
+
+    >> %w[foo bar baz]
+    => ["foo", "bar", "baz"]
+
+### Do vs. Braces
 
 The common convention is to use curly braces only for short one-line blocks
 and the `do..end` syntax for longer one-liners and for multi-line blocks.
 
-## Optional Parentheses and Curly Braces
+### Optional Parentheses and Curly Braces
 
 #### TFAE
 
@@ -277,13 +452,13 @@ would be invalid because of the hyphens.
 * **Parentheses** are *optional*
 * When *hashes* are the last argument in a function call, the **curly braces** are *optional*
 
-## Symbols
+### Symbols
 
 Symbols are easier to compare to each other; strings need to be compared
 character by character, while symbols can be compared all in one go. You
 *cannot* call `String` methods on `Symbols` though.
 
-## Modifying built-in classes
+### Modifying built-in classes
 
 Ruby classes can be opened and modified, allowing us to add methods to them:
 
@@ -303,8 +478,30 @@ Ruby classes can be opened and modified, allowing us to add methods to them:
 It’s considered bad form to add methods to built-in classes without
 having a really good reason for doing so.
 
-## Defining your own classes
+### Defining your own classes
 
 * Use `<` for inheritance
 * `attr_accessor :name, :email` -- creates **getter** and **setter** methods
   for the `@name` and `@email` *instance variables*.
+
+### Importing external functionality
+
+* [From tutorialspoint](http://www.tutorialspoint.com/ruby/ruby_modules.htm)
+
+In `FileA.rb`
+
+    module Foo
+      fooVar = "Something"
+      def Foo.bar
+        puts "something else"
+      end
+ 
+meanwhile in another file
+
+    require `FileA`
+    class ABC
+      include Foo
+      puts Foo::fooVar  # => Something
+    end
+    Foo.bar             # => something else
+
