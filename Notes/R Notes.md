@@ -27,7 +27,7 @@ Produces:
 
 	Coefficients:
 	(Intercept)           x
-    1.567       		-1.713
+	1.567       		-1.713
 
 # Loading Data
 
