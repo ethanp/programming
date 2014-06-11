@@ -37,7 +37,8 @@ trait Solver extends GameDef {
    * make sure that we don't explore circular paths.
    */
   def newNeighborsOnly(neighbors: Stream[(Block, List[Move])],
-                       explored: Set[Block]): Stream[(Block, List[Move])] = ???
+                       explored: Set[Block]):
+  Stream[(Block, List[Move])] = neighbors filterNot { explored contains _._1 }
 
   /**
    * The function `from` returns the stream of all possible paths
@@ -63,7 +64,11 @@ trait Solver extends GameDef {
    * construct the correctly sorted stream.
    */
   def from(initial: Stream[(Block, List[Move])],
-           explored: Set[Block]): Stream[(Block, List[Move])] = ???
+           explored: Set[Block]): Stream[(Block, List[Move])] = {
+    // should be breadth-first traversed
+    // similar to water-pouring problem in lec 7.5
+    newNeighborsOnly(initial, explored) // TODO what happens if I do this (left as exc.)
+  }
 
   /**
    * The stream of all paths that begin at the starting block.
