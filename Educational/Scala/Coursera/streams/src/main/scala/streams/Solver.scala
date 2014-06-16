@@ -71,29 +71,33 @@ trait Solver extends GameDef {
     // for each element of initial, find all its new-neighbors, and append them to the end
     // NOTE: from the FAQ it looks like my use of #::: is *on the right track*
 
-    // TODO this is currently *incorrect*
-    // TODO I think it is lacking a recursive call to from that wraps the newNeighbors
-    //      but this can't just be done flat-out, it must be finessed in some way
-    val a = initial #::: newNeighborsOnly(initial, explored)
+    // Here's a new experiment based on his solution in the video (7.5)
+    // https://class.coursera.org/progfun-004/lecture/125
+    val more: Stream[(Block, List[Move])] = for {
+      path: (Block, List[Move]) <- initial
+      next: (Block, List[Move]) <- newNeighborsOnly(neighborsWithHistory(path._1, path._2), explored)
+    } yield next
+    val newExplored: Set[Block] = explored | more.map(_._1).toSet
 
-    // here's my current experiment
-    val n: List[(Block, List[Move])] = newNeighborsOnly(initial, explored).toList
-    val updatedExplored = explored | n.map(_._1).toSet
-
-    a
+    if (newExplored.size <= explored.size) initial
+    else {
+//      val forDebug = more.toList
+      val toRet = initial #::: from(more, newExplored)
+      toRet
+    }
   }
 
   /**
    * The stream of all paths that begin at the starting block.
    */
-  lazy val pathsFromStart: Stream[(Block, List[Move])] = from(Stream((startBlock, Nil)), Set.empty).take(6)
+  lazy val pathsFromStart: Stream[(Block, List[Move])] = from(Stream((startBlock, Nil)), Set(startBlock))
 
   /**
    * Returns a stream of all possible pairs of the goal block along
    * with the history how it was reached.
    */
   lazy val pathsToGoal: Stream[(Block, List[Move])] = {
-    val a = pathsFromStart.take(6).toList
+//    val a = pathsFromStart.take(2).toList
     pathsFromStart.filter { case (block, moves) => done(block) }
   }
 
@@ -106,7 +110,7 @@ trait Solver extends GameDef {
    * position.
    */
   lazy val solution: List[Move] = {
-    val a = pathsToGoal.take(6).toList
+//    val a = pathsToGoal.take(2).toList
     pathsToGoal.sortBy { _._2.length }.head._2.reverse
   }
 }

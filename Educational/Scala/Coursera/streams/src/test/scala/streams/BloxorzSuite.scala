@@ -5,7 +5,7 @@ import org.scalatest.FunSuite
 import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 
-import Bloxorz._
+import Bloxorz._  // TODO this is here so that I can *choose* to use it for better testing
 
 @RunWith(classOf[JUnitRunner])
 class BloxorzSuite extends FunSuite {
@@ -66,7 +66,7 @@ class BloxorzSuite extends FunSuite {
     new Level1 {
       newNeighborsOnly(
         Set(
-          (Block(Pos(1,2),Pos(1,3)), List(Right,Left,Up)),  // gets filtered out
+          (Block(Pos(1,2),Pos(1,3)), List(Right,Left,Up)),  // should get filtered out
           (Block(Pos(2,1),Pos(3,1)), List(Down,Left,Up))).toStream,
         Set(
           Block(Pos(1,2),Pos(1,3)),

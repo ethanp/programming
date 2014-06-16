@@ -1,4 +1,28 @@
-Scala's *Vector* Seq
+updated() on SeqLike
+--------------------
+**6/15/14**
+
+**A *functional* way to mutate *immutable* sequences.**
+
+From the [source code][SeqLike.scala]:
+
+    def updated[B >: A, That](index: Int, elem: B)(implicit bf: CanBuildFrom[Repr, B, That]): That = {
+      val b = bf(repr)
+      val (prefix, rest) = this.splitAt(index)
+      b ++= toCollection(prefix)
+      b += elem
+      b ++= toCollection(rest).view.tail
+      b.result
+    }
+
+E.g. for a `List[A]`, this will *copy* the first `index` elements to a
+*new* `List`, then append the new element, then stick that onto the the
+*existing* rest of the `List`. The implementation would be different for
+an `Array[A]` or a `Vector[A]`.
+
+[SeqLike.scala]: https://lampsvn.epfl.ch/trac/scala/browser/scala/trunk/src//library/scala/collection/SeqLike.scala
+
+*Vector* Seq
 --------------------
 **6/10/14**
 
