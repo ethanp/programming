@@ -40,6 +40,48 @@ class BloxorzSuite extends FunSuite {
     val optsolution = List(Right, Right, Down, Right, Right, Right, Down)
   }
 
+  trait Level0 extends SolutionChecker {
+    val level =
+      """------
+        |--ST--
+        |--oo--
+        |--oo--
+        |------""".stripMargin
+
+    val optsolution = List(Down, Right, Up)
+  }
+
+  trait Level6 extends SolutionChecker {
+    val level =
+      """-----oooooo
+        |-----o--ooo
+        |-----o--ooooo
+        |Sooooo-----oooo
+        |----ooo----ooTo
+        |----ooo-----ooo
+        |------o--oo
+        |------ooooo
+        |------ooooo
+        |-------ooo""".stripMargin
+
+    val optsolution = List(
+      Right, Right, Right, Down, Right, Down, Down,Right, Down, Down,
+      Right, Up, Left, Left, Left, Up, Up, Left, Up, Up, Up, Right,
+      Right, Right, Down, Down, Left, Up, Right, Right, Down, Right,
+      Down, Down, Right)
+  }
+
+  trait LevelUnsolvable extends SolutionChecker {
+    val level =
+      """------
+        |--ST--
+        |--oo--
+        |--o---
+        |------""".stripMargin
+
+    val optsolution = Nil
+  }
+
   test("terrain function level 1") {
     new Level1 {
       assert(terrain(Pos(0,0)), "0,0")
@@ -79,14 +121,36 @@ class BloxorzSuite extends FunSuite {
 
   test("optimal solution for level 1") {
     new Level1 {
-      val a = solution // length 0...uh oh, should have length 7
-      val b = solve(a) // (1,1)...uh oh, should be (4,7)
+      val a = solution
+      val b = solve(a)
       assert(solve(solution) == Block(goal, goal))
     }
   }
 
   test("optimal solution length for level 1") {
     new Level1 {
+      assert(solution.length == optsolution.length)
+    }
+  }
+
+  test("optimal solution for level 0") {
+    new Level0 {
+      assert(solve(solution) == Block(goal, goal))
+      assert(solution == optsolution) // this one definitely only has one solution
+    }
+  }
+
+  test("solution length for level 6") {
+    new Level6 {
+      println("Solution: " + solution)
+      assert(solution.length == optsolution.length)
+      if (solution == optsolution) println("Found the example solution")
+      else println("Found something other than the example solution")
+    }
+  }
+
+  test("solution for unsolvable level should be Nil") {
+    new LevelUnsolvable {
       assert(solution.length == optsolution.length)
     }
   }

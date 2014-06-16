@@ -65,14 +65,9 @@ trait Solver extends GameDef {
    */
   def from(initial: Stream[(Block, List[Move])],
            explored: Set[Block]): Stream[(Block, List[Move])] = {
-    // should be breadth-first traversed
-    // similar to water-pouring problem in lec 7.5
-
-    // for each element of initial, find all its new-neighbors, and append them to the end
-    // NOTE: from the FAQ it looks like my use of #::: is *on the right track*
-
-    // Here's a new experiment based on his solution in the video (7.5)
+    // based on his solution in the video (7.5)
     // https://class.coursera.org/progfun-004/lecture/125
+
     val more: Stream[(Block, List[Move])] = for {
       path: (Block, List[Move]) <- initial
       next: (Block, List[Move]) <- newNeighborsOnly(neighborsWithHistory(path._1, path._2), explored)
@@ -80,11 +75,7 @@ trait Solver extends GameDef {
     val newExplored: Set[Block] = explored | more.map(_._1).toSet
 
     if (newExplored.size <= explored.size) initial
-    else {
-//      val forDebug = more.toList
-      val toRet = initial #::: from(more, newExplored)
-      toRet
-    }
+    else initial #::: from(more, newExplored)
   }
 
   /**
@@ -97,7 +88,6 @@ trait Solver extends GameDef {
    * with the history how it was reached.
    */
   lazy val pathsToGoal: Stream[(Block, List[Move])] = {
-//    val a = pathsFromStart.take(2).toList
     pathsFromStart.filter { case (block, moves) => done(block) }
   }
 
@@ -110,7 +100,8 @@ trait Solver extends GameDef {
    * position.
    */
   lazy val solution: List[Move] = {
-//    val a = pathsToGoal.take(2).toList
-    pathsToGoal.sortBy { _._2.length }.head._2.reverse
+    // this first option is to prevent "head of empty stream" error when the level is unsolvable
+    if (pathsToGoal.isEmpty) Nil
+    else pathsToGoal.sortBy { _._2.length }.head._2.reverse
   }
 }
