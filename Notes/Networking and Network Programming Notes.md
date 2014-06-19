@@ -1,4 +1,19 @@
 ## Socket
+
+### Socket Vs Port
+**6/18/14**
+
+* From [StackOverflow][S vs P]
+* A **TCP Socket** is an `(IP-Address) + (Port Number)`
+* A **Socket** is an **endpoint of a Connection**
+* A **Port** is the *location* to which **packets** are shipped
+* A **TCP Connection** is *defined by* **2 sockets**
+* In general, a *Socket* needs to define its **transport protocol** (e.g. **TCP**)
+* Every connection between a client and server requires a unique socket.
+
+
+[S vs P]: http://stackoverflow.com/questions/152457
+
 ### What it is, what it do
 **5/30/14**
 
