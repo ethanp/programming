@@ -12,22 +12,7 @@ latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
 
-Unsolved Riddles
-----------------
 
-What is the difference between `$(c)`, `<backtick>c</backtick>`, and `eval c`?
-
-* My guess is that `$(c)` captures the *output*
-  and `<backtick>c</backtick>` captures the *return value*,
-  and `eval c` runs the command and doesn't capture nada.
-  Surely this is wrong though.
-  
-### Backticks
-#### 5/17/14
-
-    $ echo "The name is `hostname`"
-    The name is mymacbookinstance
-    
 File Descriptors
 ----------------
 #### 3/24/14
@@ -44,20 +29,46 @@ We can think of **`2>&1`** as **"point `STDERR` to where `STDOUT` points"**
 
 And then of course `| tee file` means "and also print it to the log-file"
 
-Commands to Command
--------------------
+# Commands to Command
+
+## 6/20/14
+
+### `$(c)` vs ```c` `` vs `eval c`
+
+* `$(c)` are ```c` `` (at least practically) the same, they capture the output.
+* `eval c` interprets the text you give it as a bash command.
+
+### remove duplicate lines: `uniq` and/or `sort`
+
+	$ cat a.txt
+	a
+	a
+	b
+	b
+	a
+	a
+
+	$ uniq a.txt
+	a
+	b
+	a
+	
+	$ sort a.txt | uniq
+	a
+	b
+	
+	$ sort -u a.txt
+	a
+	b
+	
+
 ## 4/11/14
-
-### eval
-
-(I think..., I'm on a boat) Interprets the text you give it as a bash command.
 
 ### ps -- Process Status
 
 ##### Example:
 
-    ┌──[~]--[10:56 PM ]
-    └──╼ ps
+    [~]--[10:56 PM] ps
     PID TTY           TIME CMD
     370 ttys000    0:00.11 -bash
     2802 ttys001    0:00.01 -bash

@@ -1,12 +1,12 @@
-latex input:		mmd-article-header
-Title:				Ruby Notes
-Author:			Ethan C. Petuchowski
+latex input:    mmd-article-header
+Title:				  Ruby Notes
+Author:			    Ethan C. Petuchowski
 Base Header Level:		1
-latex mode:		memoir
-Keywords:			Ruby, programming language, syntax, fundamentals
-CSS:				http://fletcherpenney.net/css/document.css
+latex mode:     memoir
+Keywords:			  Ruby, programming language, syntax, fundamentals
+CSS:				    http://fletcherpenney.net/css/document.css
 xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-copyright:		2014 Ethan Petuchowski
+copyright:		  2014 Ethan Petuchowski
 latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
@@ -23,7 +23,7 @@ E.g.
 
 	> "asdf\n".chomp
 	=> "asdf"
-	
+
 	> 'abc123'.chomp('123')
 	=> "abc"
 
@@ -31,10 +31,10 @@ E.g.
 
 	> Dir.pwd
 	=> "/Users/ethan/code/non_apple/programming/Educational/Ruby/Sinatra/Singing with Sinatra/Part 2"
-	
+
 	> `pwd`.chomp == Dir.pwd
 	=> true
-	
+
 
 
 
@@ -46,21 +46,21 @@ Ruby, you often write modules and include them explicitly yourself,
 but in the case of a helper module Rails handles the inclusion for us.
 
     module ApplicationHelper
-      def full_title(page_title)    
+      def full_title(page_title)
         ...codez...
       end
     end
-    
+
 ## Ranges
 
     >> a[2..-1]                         # Use the index -1 trick.
     => [2, 3, 4, 5, 6, 7, 8, 9]
-    
+
 Ranges also work with characters:
 
     >> ('a'..'e').to_a
     => ["a", "b", "c", "d", "e"]
-    
+
 Oops:
 
     >> 0..9.to_a              # Oops, call to_a on 9.
@@ -85,11 +85,11 @@ and the `do..end` syntax for longer one-liners and for multi-line blocks.
     stylesheet_link_tag("application", media: "all", "data-turbolinks-track" => true)
     stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true
     stylesheet_link_tag "application", { media: "all", "data-turbolinks-track" => true }
-    
+
 Note that in this case, writing
 
     data-turbolinks-track: true
-    
+
 would be invalid because of the hyphens.
 
 * **Parentheses** are *optional*
@@ -111,13 +111,13 @@ Ruby classes can be opened and modified, allowing us to add methods to them:
         self == self.reverse
       end
     end
-    
+
     => nil
-    
+
     "deified".palindrome?
-    
+
     => true
-    
+
 It’s considered bad form to add methods to built-in classes without
 having a really good reason for doing so.
 
@@ -138,7 +138,7 @@ In `FileA.rb`
       def Foo.bar
         puts "something else"
       end
- 
+
 meanwhile in another file
 
     require `FileA`

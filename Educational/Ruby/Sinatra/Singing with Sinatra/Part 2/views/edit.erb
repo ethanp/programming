@@ -1,0 +1,15 @@
+<% if @note %>
+  <form action="/<%= @note.id %>" method="post" id="edit">
+    <!-- This line makes it so that what is actually sent as a POST
+         by the browser, is received as a PUT by the router. This is
+         because browsers don't support PUT requests. You would do
+         the same thing in Rails. -->
+    <input type="hidden" name="_method" value="put">
+    <textarea name="content"><%= @note.content %></textarea>
+    <input type="checkbox" name="complete" <%= "checked" if @note.complete %>>
+    <input type="submit">
+  </form>
+  <p><a href="/<%= @note.id %>/delete">Delete</a></p>
+<% else %>
+  <p>Note not found.</p>
+<% end %>

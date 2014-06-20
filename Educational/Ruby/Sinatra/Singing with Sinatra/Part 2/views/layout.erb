@@ -1,0 +1,41 @@
+<!-- This file (due to its name, I guess)
+     gets displayed on *all routes* -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf8">
+  <title>
+    <!-- these tags print the evaluation of what's
+         inside them -->
+    <%= @title + ' | Recall' %>
+  </title>
+  <link href="/reset.css" rel="stylesheet">
+  <link href="/style.css" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <!-- * hgroup has been removed from the HTML5 spec
+           (http://html5doctor.com/the-hgroup-element/)
+         * It's point is (was) to group together one or
+           more h1-h6 helements -->
+    <hgroup>
+      <h1><a href="/">Recall</a></h1>
+      <h2>'cause you're too busy to remember</h2>
+    </hgroup>
+  </header>
+
+  <div id="main">
+    <!-- This is where the HTML from the actual view that
+         is being rendered goes -->
+    <%= yield %>
+  </div>
+
+  <footer>
+    <p>
+      <small>
+        An app for <a href="http://net.tutsplus.com">Nettuts+</a>.
+      </small>
+    </p>
+  </footer>
+</body>
+</html>

@@ -11,6 +11,13 @@ latex input:		 mmd-natbib-plain
 latex input:		 mmd-article-begin-doc
 latex footer:	 mmd-memoir-footer
 
+PUT
+---
+#### 6/20/14
+**Find more in the *Networking and Network Programming Notes***
+
+* Used for **modifying data on the server**
+* **Idempotent** -- doing the same thing a second time has no effect
 
 Web Cache
 ---------
