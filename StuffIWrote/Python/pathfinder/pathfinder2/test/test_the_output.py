@@ -37,14 +37,28 @@ class TestComplexStructure(unittest.TestCase):
         cts.build_more_complex_structure()
 
     def test_ignore_dir_1(self):
-        a = os.listdir('.')
         found_files = p2.pathfinder('structure', ['*','0','*'])
-        self.assertFalse(not found_files, 'returned None instead of 10 files')
+        self.assertFalse(not found_files, 'returned None instead of 20 files')
         self.assertEqual(len(found_files), 20, 'did not find 20 files')
         for f in found_files:
             self.assertRegexpMatches(f, r'data|readIt', "didn't find required file")
             self.assertNotRegexpMatches(f, r'ignore', "found file that should've been ignored")
 
+    def test_find_all(self):
+        found_files = p2.pathfinder('structure', ['*','*','*'])
+        self.assertFalse(not found_files, 'returned None instead of 30 files')
+        self.assertEqual(len(found_files), 30, 'did not find 30 files')
+        for f in found_files:
+            self.assertRegexpMatches(f, r'data|readIt|ignore', "didn't find required file")
+
+
+    def test_find_txts(self):
+        found_files = p2.pathfinder('structure', ['*','*','.txt'])
+        self.assertFalse(not found_files, 'returned None instead of 20 files')
+        self.assertEqual(len(found_files), 20, 'did not find 20 files')
+        for f in found_files:
+            self.assertRegexpMatches(f, r'ignore|readIt', "didn't find required file")
+            self.assertNotRegexpMatches(f, r'data', "found file that should've been ignored")
 
 if __name__ == '__main__':
     unittest.main()
