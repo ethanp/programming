@@ -13,10 +13,25 @@ latex footer:		mmd-memoir-footer
 
 ## Useful Tags
 
-### <small>
+### \<small>
 
 	<p> normal sized text </p>
 	<p><small> slightly smaller sized text </small></p>
+
+
+### Link in a CSS stylesheet
+
+In the `<head>`, put
+
+    <link href="/mycss.css" rel="stylesheet">
+    
+`rel="stylesheet"` means it is CSS
+
+### \<button>
+Literally just puts a button on the page.  
+You can use Javascript to make it your bitch.
+
+    <button>Like</button>
 
 ## Useful snippets
 

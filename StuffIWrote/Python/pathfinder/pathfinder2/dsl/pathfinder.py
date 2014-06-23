@@ -17,8 +17,8 @@ def pathfinder(cd_here, find):
       I'd need to think about this one
     """
     assert isinstance(cd_here, str), 'first param must be a string'
-    assert isinstance(find, list), 'second param must be a list'
-    assert len(find) > 0, 'second param must be nonempty'
+    assert isinstance(find, list),   'second param must be a list'
+    assert len(find) > 0,            'second param must be nonempty'
     final_depth = len(find)-1
     queue = []
     depth = 0

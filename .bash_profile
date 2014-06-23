@@ -12,10 +12,11 @@
 #   You probably want 'single quotes' if you're using variables
 #       Or you may just want to use a function instead as I did with cs(){}
 alias h='cd ~'
+alias gohome='cd ~'
 alias ls='ls -AFG'
 alias rm='rm -i'
 alias grep='grep --color'
-alias ll='ls -l'
+alias ll='ls -lh'  # longform, human-readable sizes (as opposed to machine-readable)
 alias lg='ls | grep'
 alias llg='ls -l | grep'
 alias hisg='history | grep'
