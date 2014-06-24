@@ -1,3 +1,16 @@
+latex input:		mmd-article-header
+Title:				Networking and Network Programming Notes
+Author:			Ethan C. Petuchowski
+Base Header Level:		2
+latex mode:		memoir
+Keywords:			REST protocol, protocols, sockets, TCP/IP
+CSS:				http://fletcherpenney.net/css/document.css
+xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+copyright:		2014 Ethan C. Petuchowski
+latex input:		mmd-natbib-plain
+latex input:		mmd-article-begin-doc
+latex footer:		mmd-memoir-footer
+
 ## Socket
 
 ### Socket Vs Port
@@ -67,8 +80,6 @@ HTML forms (up to and including HTML 5) can only send `GET` and `POST`.
 
 ### POST
 
-Used to **modify and update a resource** (*not create*).
-
 The `POST` method requests that the target resource process the 
 representation enclosed in the request according to the resource’s
 own specific semantics. For example, `POST` is used for the following
@@ -91,9 +102,31 @@ for your service -- if this would cause side effects visible to the client,
 then something's wrong. **This is true even if you're just sending a query
 string with no body.**
 
+
+#### The format
+
+	POST /index.html HTTP/1.1
+	Host: www.example.com
+	Content-Type: application/x-www-form-urlencoded
+	Content-Length: length
+	
+	licenseID=string&content=string&paramsXML=string
+
+##### Key-Value pair encoding
+
+For example, the key-value pairs
+
+	Name: Jonathan Doe
+	Age: 23
+	Formula: a + b == 13%!
+
+are encoded as
+
+	Name=Jonathan+Doe&Age=23&Formula=a+%2B+b+%3D%3D+13%25%21
+
 ### PUT
 
-Used to **create a resource, or overwrite it**. While you specify the resources new URL.
+Used to **create a resource, or overwrite it**. While you **specify the resources new URL**.
 
 The `PUT` method requests that the state of the target resource be
 created or replaced with the state defined by the representation
@@ -118,6 +151,19 @@ this has exactly the same effect as sending once.
 
 It must be stressed that `PUT` is *defined* to be idempotent, but you still have to
 write your server in such a way that `PUT` behaves correctly.
+
+### PUT vs. POST
+
+Here is the same thing stated over and over again in different ways, from [StackOverflow][PUTvPOST]:
+
+* `PUT` is merely a statement of what content the service should, from now on, use to render representations of the resource identified by the client; `POST` is a statement of what content the service should, from now on, contain (possibly duplicated) but it's up to the server how to identify that content.
+* `POST` means "create new" as in "Here is the input for creating a user, create it for me".
+* `PUT` means "insert, replace if already exists" as in "Here is the data for user 5".
+* `POST` to a URL creates a child resource at a server defined URL.
+* `PUT` to a URL creates/replaces the resource in it's entirety at the client defined URL.
+* `PATCH` to a URL updates part of the resource at that client defined URL.
+
+[PUTvPOST]: http://stackoverflow.com/questions/630453/put-vs-post-in-rest/
 
 ## [SOAP](http://en.wikipedia.org/wiki/SOAP)
 

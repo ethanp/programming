@@ -1,7 +1,6 @@
 require 'sinatra'
 
-# note: I had to manually `gem install dm-sqlite-adapter`
-# to get this to work
+# note: I had to manually `gem install dm-sqlite-adapter` to get this to work
 require 'data_mapper' # there was a typo in the tutorial
 
 # this is "Singing with Sinatra, Part 2", from
@@ -27,7 +26,6 @@ DataMapper.finalize.auto_upgrade!
 
 ######## ROUTES ########
 
-# on getting root
 get '/' do
   # Retrieve all notes in descending order by id
   # (syntax just like RoR's ActiveRecord).¸

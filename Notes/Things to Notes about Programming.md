@@ -1,3 +1,16 @@
+latex input:	mmd-article-header
+Title:			Things to Notes about Programming
+Author:		Ethan C. Petuchowski
+Base Header Level:		1
+latex mode:  memoir
+Keywords:		general, databases, testing, unit testing, monads, personal interest, research, fundamentals
+CSS:			http://fletcherpenney.net/css/document.css
+xhtml header:	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+copyright:	2014 Ethan Petuchowski
+latex input:	mmd-natbib-plain
+latex input:	mmd-article-begin-doc
+latex footer:	mmd-memoir-footer
+
 Local databases
 ---------------
 
@@ -89,18 +102,50 @@ There is a small set laws that must be followed in order for a monad to behave c
 but I don't understand the Haskell used to identify them on the Monad Wikipedia page.
 
 
-Unit testing
-------------
-**5/20/14**
+## Testing
 
-[xUnit Wikipedia](http://en.wikipedia.org/wiki/XUnit)
+#### Meta-Note
+* The notes I've taken on testing are based on the slim number of data-sources I read
+* It appears that testing is highly philosophical and controversial
+* Seems to me though, it's ***really useful*** too
+* So even if I'm not a *testing guru* I can still DIY some tests and reap ~80% of the benefits
+  (according to the 80/20 rule)
 
+#### Bibliography
+
+* [xUnit Wikipedia](http://en.wikipedia.org/wiki/XUnit)
+* [Javaranch - Evil unit testing](http://www.javaranch.com/unit-testing.jsp)
+* [Phawk Blog: Testing Sinatras APIs](http://phawk.co.uk/blog/testing-sinatra-apis/)
+
+### Vocab
 * **Unit testing** -- testing the fundamental units of the software,
   checking outputs against expected outputs for given inputs
-
-### xUnit architecture
+    * A *"Unit"* is commonly a single method
+    * Assert that the method and the object it operates on behaves as-expected *in that case*
+    * If your app is small enough, just get an acceptance test to pass *first*,
+      then worry about this if you feel you have to
 * **xUnit** -- the collective name of frameworks for unit testing that use a
   particular popular architecture described by the collection of vocab terms herein
+* **Regression suite** -- collection of tests that can all be run at once; could be unit or functional tests
+* **Functional test** -- bigger than unit, smaller than component test
+	* Exercises several methods/functions/classes working together
+	* Allowed to take much longer than unit tests (which should be blazing fast)
+* **Integration test** -- testing 2+ components working together
+* **Component test** -- running one component (defined by the application) by itself
+* **System test** -- all components run together, as would happen in a normal usage scenario
+* **Stress test** -- go bonkers; try to test concurrent code.
+* **Mock** -- a fake version of an object that would have had to be used to test another object
+* **Acceptance test** -- end-to-end, test that the system as a whole *works*
+	* These are a pain to write and maintain for constantly-changing user interfaces
+	* But are great to have in place for RESTful web-services/APIs
+	* "Allows for" complete refactoring of the internal architecture
+
+### Unit testing
+
+**5/20/14**
+
+
+### xUnit architecture
 
 #### Test runner
 Executable program that runs tests and reports their results
@@ -133,19 +178,6 @@ Can output *plain text* or *XML* to integrate with build tools like Jenkins
 
 #### Assertions
 Expresses a logical condition that must be true in a correct environment.
-
-### Other imortant vocab
-[Javaranch - Evil unit testing](http://www.javaranch.com/unit-testing.jsp)
-
-* **Regression suite** -- collection of tests that can all be run at once; could be unit or functional tests
-* **Functional test** -- bigger than unit, smaller than component test
-	* Exercises several methods/functions/classes working together
-	* Allowed to take much longer than unit tests (which should be blazing fast)
-* **Integration test** -- testing two+ components working together
-* **Component test** -- running one component (defined by the application) by itself
-* **System test** -- all components run together, as would happen in a normal usage scenario
-* **Stress test** -- go bonkers; try to test concurrent code.
-* **Mock** -- a fake version of an object that would have had to be used to test another object
 
 ### Sample opinions on unit testing
 
@@ -328,4 +360,5 @@ Glossary
         * Provides better scalability than *request-response*
 * **[Referential Transparency](http://en.wikipedia.org/wiki/Referential_transparency_(computer_science))**
   -- when you can replace an expression with its value without changing the program.
-
+* **[Dithering](http://en.wikipedia.org/wiki/Dither)** --- applying noise to randomize quantization error,
+  used when compressing audio and video data
