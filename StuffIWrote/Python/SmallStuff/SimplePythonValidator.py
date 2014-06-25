@@ -16,30 +16,7 @@ def validate(input_text):
         3. Lines receding indentation levels must match a previous indentation level
         4. Ignore comments, but comments can't start inside a string (' or ")
 
-    BUG: this validator stumbles parsing the line that says
-    `if line.count("'", 0, hash_loc) % 2 == 0:   # if it's not in a 'string'`
-    It does not notice that the line's code ends with a ':' because it it thinks the
-    comment is in a 'string' because there's only one "'" before it.  So sure, I could
-    count the number of '"'s to its left, but that's turtles all the way down.
-
-    SOLUTION: see remove_comment_from_line()
-
-
-    BUG: closure scoping isn't as simple as I anticipated
-
-    SOLUTION 1: make it variable to modify inside closure an attribute of its declaring function
-    stackoverflow.com/questions/3190706/nonlocal-keyword-in-python-2-x
-    This is the best looking workaround, but it causes the PyCharm debugger to fail
-
-    SOLUTION 2: wrap the variable into a list
-    line_list = [line]
-    line_list[0] = line_list[0][:close_loc[0]] etc.
-    it's certainly gross but it's worth it for the debugger functionality
-
-    SOLUTION 3: make it a global variable
-    This is too hackish, though the soln I went with is just as hackish
-
-    TODO: ignore the text in a docstring
+    TODO: ignore docstrings
     TODO: get rid of the nested functions and closure-vars because they are gross
     '''
     stack = [0]                             # default starting values

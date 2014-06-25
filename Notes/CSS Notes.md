@@ -27,7 +27,7 @@ latex footer:		mmd-memoir-footer
     
 ### Center the background image on the page
 
-    backgound-position: center
+    backgound-position: center;
     
 ### Prevent the background image from being "tiled"
 
@@ -49,11 +49,27 @@ latex footer:		mmd-memoir-footer
 
 ### Change the default border on things like `<input>` and `<table>`
 
-    border: 0[px] [color name];
+Styles: `solid, dashed, dotted, double`
+
+    border: width [style] [color];
+
+    border: 0;
+
+#### Adjust the border for each side of the element individually
+
+    border-left: width style color;
+    border-top: ...
+    etc...
 
 ### Make the corners *rounded*
 
     border-radius: 20px;
+    
+    border-radius: top_left top_right bottom_right bottom_left;
+
+### Create a perfectly circular curve
+
+Make the radius at least *half* the length of the shape's edge.
 
 ### Set the width of the element
 
@@ -64,6 +80,24 @@ latex footer:		mmd-memoir-footer
 As mentioned below, this makes the site more *responsive*
 
     max-width: 500px;
+
+### Break an element out of the document's regular flow
+
+    position: absolute;
+
+### Make height changes appear in a 1/2 second *animation*
+
+    [-webkit|moz-]transition: height .5s;
+    
+### Add a radial gradient
+
+**Shapes:** `circle, ellipse`
+
+(It looks like the *vendor prefix* isn't necessary for my Chrome, but it *is* a CSS3 thing)
+
+    background: [-webkit|moz-]radial-gradient(shape, center color, outer_color)[, bg_color];
+    
+    background: radial-gradient(circle, white 15%, transparent 40%), #cc5;
 
 ## Media Queries
 
@@ -103,9 +137,17 @@ So you can do
 
     padding: top right bottom left;
     
+Which has the **mnemonic**:  
+**N**ever **E**at **S**hredded **W**heat
+
+    padding: Never Eat Shredded Wheat;
+    padding: North East South West;
+
+For example:
+
     padding: 0px 10px 0px 10px;
     
-Or even
+Or alternatively you can specify **2 sizes**
 
     padding: top-and-bottom left-and-right;
     
@@ -124,6 +166,13 @@ Or even
 The first piece is `top-and-bottom` the second is `left-and-right`
 
     margin: 0 auto;
+
+### Padding vs Margin
+
+After playing around a bit, I *believe* this is the difference:
+
+* **Padding** is the space between the stuff in the element and the borders of the element.
+* **Margin** is the space between the element and its container
 
 ## Selecting elements
 
@@ -159,9 +208,24 @@ Good for use in a **navbar**
 * **Block elements** stretch the *whole width of the page* and have *line breaks before and after*
 * **Inline elements** exist within the normal flow of the text they're contained within (no line breaks etc.)
 
-### `<a>` tags won't inherit properties from their parents
+### Gotchas
 
-## Making things responsive
+1. `<a>` tags won't inherit properties from their parents
+2. `<p>` tags have a non-zero `margin` by default
+
+### Linking in Google Web Fonts (nice, free fonts)
+
+1. Go to [google.com/fonts](www.google.com/fonts)
+2. Find the font you want
+3. Hit the right-arrow-box
+4. Go to section (3) of the web-page
+5. Copy the `<link href='http://fonts.googleapis.com/css?family=Londrina+Shadow' rel='stylesheet' type='text/css'>`
+   part to the top of your `<head>`
+6. Go to section (4) of the web-page
+7. Copy the CSS `font-family: 'Londrina Shadow', cursive;` into the CSS block selecting where the font should be applied
+8. Change the `http` in the `<link>` to `https`
+
+### Making things responsive
 
 1. Link to `<link href="/normalize.css" rel="stylesheet">`
     * This is something you have to download or install or something
