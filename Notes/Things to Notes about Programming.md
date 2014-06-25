@@ -127,6 +127,7 @@ but I don't understand the Haskell used to identify them on the Monad Wikipedia 
 * **xUnit** -- the collective name of frameworks for unit testing that use a
   particular popular architecture described by the collection of vocab terms herein
 * **Regression suite** -- collection of tests that can all be run at once; could be unit or functional tests
+* **Regression tests** --- make sure that fixing a bug didn't break something that used to work
 * **Functional test** -- bigger than unit, smaller than component test
 	* Exercises several methods/functions/classes working together
 	* Allowed to take much longer than unit tests (which should be blazing fast)
@@ -145,50 +146,50 @@ but I don't understand the Haskell used to identify them on the Monad Wikipedia 
 **5/20/14**
 
 
-### xUnit architecture
+#### xUnit architecture
 
-#### Test runner
+##### Test runner
 Executable program that runs tests and reports their results
 
-#### Test case
+##### Test case
 Elemental test case class
 
 * A set of conditions or variables set up to determine whether some code is doing what it is supposed to
 * Could be a requirement, a use case, a heuristic, etc.
 
-#### Text fixture (context)
+##### Text fixture (context)
 Preconditions (state) needed to run the test repeatable/consistently
 
 * Loading a database with a specific, known set of data
 * Creation of fake/mock objects
 
-#### Test suite
+##### Test suite
 A set of tests that all share the same fixture.
 The order of the tests shouldn't matter.
 
-#### Test execution
+##### Test execution
 Each individual unit test is run in the following way
 
 	setup(); // create text fixture
 	execute test case
 	teardown(): // destroy fixture to avoid disturbing other tests
 	
-#### Results formatter
+##### Results formatter
 Can output *plain text* or *XML* to integrate with build tools like Jenkins
 
-#### Assertions
+##### Assertions
 Expresses a logical condition that must be true in a correct environment.
 
-### Sample opinions on unit testing
+#### Sample opinions on unit testing
 
 * "Usually, for every pound of production code, I would like to see about two pounds of unit
   tests and two ounces of functional tests (a little bit goes a long ways).
   The problem I see in too many shops is zero unit tests and a pound of functional tests." (Javaranch)
 
-The correct type to use for currency values is java.math.BigDecimal
--------------------------------------------------------------------
+The correct type to use for currency values
+-------------------------------------------
 
-Don't use `doubles`
+Don't use `double`, use `java.math.BigDecimal`
 
 
 Redis
