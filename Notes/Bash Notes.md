@@ -31,6 +31,19 @@ And then of course `| tee file` means "and also print it to the log-file"
 
 # Commands to Command
 
+## 6/25/14
+
+### tr -- translate characters
+
+To map all characters a to j, b to k, c to m, and d to n
+
+	tr 'abcd' 'jkmn'
+
+
+* **-d** --- delete all specified characters
+
+		tr -d ' '   # removes all spaces
+
 ## 6/20/14
 
 ### `$(c)` vs ```c` `` vs `eval c`
