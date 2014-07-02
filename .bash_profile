@@ -29,6 +29,8 @@ alias ut='ssh -o ServerAliveInterval=30 ethanp@almond-joy.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
 alias tracker='cs /Users/Ethan/Dropbox/School\ Help\ Files/Tracker'
 alias play_activator='~/Applications/activator-1.0.10/activator ui'
+alias blog='cs ~/code/personal_project_use/libraries_to_use/Ruby/octopress/'
+alias octop='cs /Users/Ethan/code/personal_project_use/libraries_to_use/Ruby/octopress'
 if [[ -d ~/Dropbox/CSyStuff/ProgrammingGit ]]; then
     PROGRAMMINGGIT=~/Dropbox/CSyStuff/ProgrammingGit
 else
@@ -36,7 +38,7 @@ else
 fi
 alias ca='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentAnalyzer_0'
 alias playakka='cs $PROGRAMMINGGIT/StuffIWrote/Scala/akka-redis-websockets-play-scala_translation'
-alias octop='cs /Users/Ethan/code/personal_project_use/libraries_to_use/Ruby/octopress'
+alias notes='cs $PROGRAMMINGGIT/Notes'
 
 
 ######################

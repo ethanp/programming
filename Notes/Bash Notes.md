@@ -3,7 +3,7 @@ Title:		Bash Notes
 Author:		Ethan C. Petuchowski
 Base Header Level:		1
 latex mode:		memoir
-Keywords:		Math, DSP, Digital Signal Processing, Fourier Transform
+Keywords:		Bash, Unix, Linux, Shell, Command Line, Terminal, Syntax
 CSS:		http://fletcherpenney.net/css/document.css
 xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
 </script>
@@ -12,6 +12,77 @@ latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
 
+# Sed & Awk
+
+Sed
+---
+
+### Delete matching lines from file
+
+[Source](http://en.kioskea.net/faq/1451-sed-delete-one-or-more-lines-from-a-file)
+
+    sed '{[/]<n>|<string>|<regex>[/]}d' <fileName>
+    sed '{[/]<addr1>[,<addr2>][/]d' <fileName>
+
+* `/.../` = delimiters
+* `n` = line number
+* `string` = string found in in line
+* `regex` = regular expression corresponding to the searched pattern
+* `addr` = address of a line (number or pattern)
+* `d` = delete
+* `!d` = delete anything that *doesn't match*
+
+#### This is the command I *wanted*
+
+Replace `file1` with only the lines that *don't* contain `dlm`
+
+    sed '/dlm/d' file1 > tmp; cat tmp > file1; rm -f tmp
+
+#### These are the given examples
+
+* These examples are just printed (stdout1= screen).
+* Using, the `-i"tmpfile"` option, you can save the original version to `tmpfile` as a backup
+
+        sed -i".bak" '3d' filename.txt
+
+Remove the 3rd line:
+
+    sed '3d' fileName.txt
+
+
+Remove the line containing the string "awk":
+
+    sed '/awk/d' filename.txt
+
+
+Remove the last line:
+
+    sed '$d' filename.txt
+
+
+
+Remove all empty lines:
+
+    sed '/^$/d' filename.txt
+    sed '/./!d' filename.txt
+
+
+Remove the line matching by a regular expression (by eliminating one containing digital characters, at least 1 digit, located at the end of the line):
+
+    sed '/[0-9/][0-9]*$/d' filename.txt
+
+
+Remove the interval between lines 7 and 9:
+
+    sed '7,9d' filename.txt
+
+
+The same operation as above but replacing the address with parameters:
+
+    sed '/-Start/,/-End/d' filename.txt
+
+
+# Other
 
 File Descriptors
 ----------------
@@ -35,21 +106,36 @@ And then of course `| tee file` means "and also print it to the log-file"
 
 ### tr -- translate characters
 
-To map all characters a to j, b to k, c to m, and d to n
+**I think you *have* to pipe or carrat stuff into this thing, there's no place for an input file**
 
-	tr 'abcd' 'jkmn'
+To map all uppercase characters to their corresponding lowercase variants:
+
+	tr A-Z a-z
 
 
-* **-d** --- delete all specified characters
+* **-d** --- **delete** all specified characters
 
 		tr -d ' '   # removes all spaces
 
+* **-c** --- set **complement**
+
+        tr -cd ' '  # removes *everything but* the spaces
+
+* **-s** --- **squeeze** multiple repetitions into a single instance
+
+        tr -s ' ' '\t'  # convert spaces to tabs
+
+* **-cs** --- convert repetitions of compliments first string into singles,
+              then turn them into the second string (used by Doug McIlroy)
+
+        tr -cs A-Za-z '\n' < /tmp/a.txt  # convert any number of non-letters into a single newline
+
 ## 6/20/14
 
-### `$(c)` vs ```c` `` vs `eval c`
+### `$(c)` vs `backtick(c)` vs `eval c`
 
-* `$(c)` are ```c` `` (at least practically) the same, they capture the output.
-* `eval c` interprets the text you give it as a bash command.
+* `$(c)` and `backtick(c)` are (at least practically) the same, they **capture the output**.
+* `eval c` **interprets the text** you give it as a bash command.
 
 ### remove duplicate lines: `uniq` and/or `sort`
 
@@ -65,15 +151,20 @@ To map all characters a to j, b to k, c to m, and d to n
 	a
 	b
 	a
-	
+
 	$ sort a.txt | uniq
 	a
 	b
-	
+
 	$ sort -u a.txt
 	a
 	b
-	
+
+* **`uniq -c --count`**	 --- prefix lines by the number of occurrences
+
+        $ sort < a.txt | uniq -c
+        4 a
+        2 b
 
 ## 4/11/14
 
@@ -130,13 +221,13 @@ this is the **opposite of [`basename`](#basename)**
 ##### Examples
 
     $ dirname a/b/myfile
-    > a/b
+    a/b
 
     $ dirname a/myfile
-    > a
+    a
 
     $ dirname myfile
-    > .
+    .
 
 
 ### basename
@@ -148,13 +239,13 @@ This is the **opposite of [`dirname`](#dirname)**
 ##### Examples
 
     $ basename "./dir space/other dir/file.txt"
-    > file.txt
+    file.txt
 
     # DON'T do this by accident (viz. ALWAYS quote the filename)
     $ basename ./dir space/other dir/file.txt
-    > dir
-    > other
-    > file.txt
+    dir
+    other
+    file.txt
 
 ### find
 
@@ -163,12 +254,12 @@ This is the **opposite of [`dirname`](#dirname)**
 ##### Example
 
     $ find .
-    > ./.DS_STORE
-    > ./file.txt
-    > ./a
-    > ./a/anotherFile.txt
-    > ./a space b
-    > ./a space b/file.txt
+    ./.DS_STORE
+    ./file.txt
+    ./a
+    ./a/anotherFile.txt
+    ./a space b
+    ./a space b/file.txt
 
 #### Useful-looking options
 

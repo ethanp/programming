@@ -75,10 +75,11 @@ Tree
 
 Heap
 ----
+1. [Wikipedia](http://en.wikipedia.org/wiki/Heap_(data_structure))
+2. [Algorithms -- Sedgewick, pg. 316]()
+3. [Heapsort Summary Page](http://www.sorting-algorithms.com/heap-sort)
 
 #### 5/4/14
-
-[Wikipedia](http://en.wikipedia.org/wiki/Heap_(data_structure))
 
 * a binary heap is a **complete** binary tree which satisfies the heap ordering property.
 * The ordering can be one of two types:
@@ -88,6 +89,11 @@ Heap
 * A heap is not a sorted structure but can be regarded as **partially ordered**.
     * There is no particular relationship among nodes on any given level, even among the siblings
 * The heap is one maximally efficient implementation of a **priority queue**
+
+#### 6/27/14
+
+* the parent of the node at position `k` in a heap is at position `k/2`
+* See implementation with explanation at `~/Dropbox/CSyStuff/PrivateCode/PreDraft_6-27-14`
 
 Queue
 -----

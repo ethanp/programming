@@ -11,6 +11,50 @@ latex input:        mmd-natbib-plain
 latex input:        mmd-article-begin-doc
 latex footer:       mmd-memoir-footer
 
+`vars(thing)`: Turn `thing` into an equivalent dictionary
+-----------------------------------------
+#### 6/29/14
+    
+    >>> class A(object):
+    ...    def __init__(self):
+    ...       self.a = 123
+    ...       self.b = 436
+    ...
+
+    >>> vars(a)
+    {'a': 123, 'b': 436}
+
+    >>> a.__dict__          # maybe this is the same thing
+    {'a': 123, 'b': 436}
+    
+### This gives you a cheap implementation of object equivalence
+
+This is my own invention, so maybe it's a Bad Idea for some reason.
+
+    >>> class A(object):
+    ...    def __init__(self):
+    ...       self.a = 123
+    ...       self.b = 436
+    ...    def __eq__(self, other):
+    ...       return vars(self) == vars(other)
+
+Append to file Real Quick
+-------------------------
+#### 6/28/14
+
+To append to a file real quick, use
+
+    print >> file_handle, 'msg'     # 2.x only
+    
+
+To do breakneck speed logging while running a `nose unittest`, use
+
+    logfile = open('/tmp/test.log', 'a')
+    print >> logfile, 'the thing to write out'
+    logfile.close()
+
+Though what you're *supposed* to do is use the `logging` framework
+
 unittest
 --------
 #### 6/3/14
@@ -28,6 +72,9 @@ Python's **built-in xUnit framework**
             something = use_code_under_test()
             self.assertFalse(not something, 'returned None instead of something')
             self.assertEqual(something, 'that thing my code returns', 'my code did not return what it's supposed to')
+    
+    if __name__ == '__main__'
+        unittest.main()
 
 Python 3
 --------
