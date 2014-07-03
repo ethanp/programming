@@ -96,26 +96,88 @@ Get the length of **the longer of** the number of `rows` & `cols`
 
     length(myMatrix)
 
-### Create useful matrices
+### Create useful matrices/vectors
 Create a `rows` by `cols` matrix of `zeros`
 
     zeros(rows, cols)
-    
+
+Create the **identity matrix** of size `5`
+
+	eye(5)
+
 Create the **complex transpose** of A
 
     A'
 
+Create a `rows x cols` **matrix of all ones**
+
+	ones(rows, cols)
+
+Create the vector `[1 2 3 4]`
+
+	1:4
+	linspace(1, 4, 4)
+
+Create `N` elements, evenly spaced in range `[a,b]`
+
+	linspace(a, b, N)
+
 ## Plotting
 
+### Most basic plotting
+
     % open a new figure window
-    figure;
+    figure
     
     % Plot the data as red crosses of size 10
-    plot(x, y, 'rx', 'MarkerSize', 10);
+    plot(x, y, 'rx', 'MarkerSize', 10)
     
+    % plot multiple lines
+    plot(x, y1, x, y2)
+    
+    % plot using dashed line
+    plot(x, y, '--')
+    
+    % plot multiple lines in multiple styles
+    plot(x, y1, '--', x, y2, ':')
+
+    % with specified color
+    plot(x, y1, '--g', x, y2, ':r')
+    
+    % with specified markers of data locations
+    plot(x, y1, '--go', x, y2, ':r*')
+    
+    % only plot the marker of the data point
+    plot(x, y, '*')
+    
+#### Adjusting the plot
+
     % Set the y−axis label
     ylabel('Profit in $10,000s');
     
     % Set the x−axis label
     xlabel('Population of City in 10,000s');
     
+    % Set the title lable
+    title('This title has a \pi in it')
+    
+    % Add a legend to a plot with two lines.
+    % The formatting of that line will be correlated
+    % with the legend item by index.
+    legend('y = sin(x)', 'y = cos(x)')
+    
+    % Move it to the bottom left
+    legend('y = sin(x)', 'y = cos(x)', 'Location', 'southwest')
+        
+    % Display the current colormap in the figure
+    colorbar
+
+### Interesting plot types
+
+[3D] Surface plots
+
+	surf(x, y, z, gradient(z))
+	
+Contour plots
+
+	contour(x, y, z)

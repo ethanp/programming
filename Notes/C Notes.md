@@ -1,3 +1,5 @@
+## Language
+
 ### Types
 
 ##### 5/19/14
@@ -199,4 +201,7 @@ it is pretty cool.
 
 * Basically, it calls `printf` on the `format` argument, but instead of writing the output to `stdout`, it writes it into the `buffer` argument
 * **Returns** the number of characters written, or a negative value if there was an error
+
+## Concepts
+
 
