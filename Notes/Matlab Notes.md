@@ -31,7 +31,7 @@ latex footer:		mmd-memoir-footer
 
 The function declaration outline looks like
 
-    function A, B = warmUpExercise(param1, param2)
+    function [A, B] = warmUpExercise(param1, param2)
         % ... my code
     end
 
@@ -82,19 +82,38 @@ Load data from a csv
 
     load('ex1data1.txt');
 
-### Find lengths
+### Summarize Matrices
+
+#### Find lengths
+
 Get the length of a vector
 
     length(myVector)
     
 Get the **number of rows** or **columns** of a matrix
 
-    rows(myMatrix)   # do NOT use length(myMatrix)
+> do NOT use length(myMatrix)
+
+    rows(myMatrix)   
+    size(myMatrix, 1)  % alternative
+    
     columns(myMatrix)
+    size(myMatrix, 2)  % alternative
     
 Get the length of **the longer of** the number of `rows` & `cols`
 
     length(myMatrix)
+
+#### Find summary stats
+
+Find **mean/std-dev of each column of `A`**
+
+	mean(A)
+	std(A)
+	
+Find mean of each **row** of `A`
+
+	mean(A, 2)
 
 ### Create useful matrices/vectors
 Create a `rows` by `cols` matrix of `zeros`
@@ -105,9 +124,13 @@ Create the **identity matrix** of size `5`
 
 	eye(5)
 
-Create the **complex transpose** of A
+Create the **complex transpose** of `A`
 
     A'
+
+Create the (pseudo) **inverse matrix** of `A`
+
+	pinv(A)
 
 Create a `rows x cols` **matrix of all ones**
 
