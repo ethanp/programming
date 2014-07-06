@@ -99,6 +99,16 @@ This inserts the contents of each page into the site layout.
 
 ### For creating the `about_path` method etc., see the section **Defining Named Routes** below.
 
+### _path vs _url
+
+    rails c
+    
+    > app.categories_path
+     => "/categories" 
+    
+    > app.categories_url
+     => "http://www.example.com/categories" 
+
 ### Defining REST-style URLs for a Model
 
 Add the following line to `routes.rb`
@@ -123,6 +133,39 @@ In the following table
 | `GET`        | `/users/1/edit` | **edit**    | `edit_user_path(user)` | page to edit user with id `1` |
 | `PATCH`      | `/users/1`      | **update**  | `user_path(user)` | update user |
 | `DELETE`     | `/users/1`      | **destroy** | `user_path(user)` | delete user |
+
+
+## Forms
+
+### For Active Record objects
+
+E.g. to construct a `User` object, we have
+
+    <div class="row">
+      <div class="span6 offset3">
+        <%= form_for(@user) do |f| %>
+    
+          <%= f.label :name %>
+          <%= f.text_field :name %>
+    
+          <%= f.label :email %>
+          <%= f.text_field :email %>
+    
+          <%= f.label :password %>
+          <%= f.password_field :password %>
+    
+          <%= f.label :password_confirmation, "Confirmation" %>
+          <%= f.password_field :password_confirmation %>
+    
+          <%= f.submit "Create my account", class: "btn btn-large btn-primary" %>
+        <% end %>
+      </div>
+    </div>
+
+In this example, looking at the two lines with `:name` in them, we shall output
+
+    <label for="user_name">Name</label>
+    <input id="user_name" name="user[name]" type="text" />
 
 ## Code Generation Commands
 
@@ -278,7 +321,7 @@ which produces `static_pages_spec.rb`, where your associated tests live.
     git push heroku
     heroku run rake db:migrate
     
-### Opening on heroku
+### Go to the heroku webpage
 
     heroku open
     
@@ -385,7 +428,51 @@ This gives us both the keywords
     
 This maps the url `/` to `/static_pages/home`
 
+## Commands
 
+Start development server
+
+    rails s
+
+Run all tests
+
+    bundle exec rspec spec/
+
+Run a specific test suite
+
+    bundle exec rspec spec/requests/user_pages_spec.rb
+    
+Run a single test within a test suite
+
+    bundle exec rspec spec/requests/user_pages_spec.rb -e "signup page"
+
+## App Configuration
+
+Force all access to the app over SSL, use Strict-Transport-Security,
+and use secure cookies.
+
+`config/environments/production.rb`
+
+    config.force_ssl = true
+
+## Debugging
+
+### Model items are "invalid"
+
+E.g.
+
+    Failure/Error: expect(@user.reload.email).to eq mixed_case_email.downcase
+         ActiveRecord::RecordNotFound:
+           Couldn't find User without an ID
+
+Try this
+
+    rake db:migrate
+    rake db:test:prepare
+
+### Resetting the development database
+
+    rake db:reset
 
 # Rails/ERb Syntax
 ## Embedded Ruby (ERb) templates
