@@ -11,6 +11,14 @@ latex input:        mmd-natbib-plain
 latex input:        mmd-article-begin-doc
 latex footer:       mmd-memoir-footer
 
+## These need to be placed wherever they go
+
+1. If you open the `rails console --sandbox`, it will reverse whatever changes you make to the database during the console session.
+2. If you save some DB items into a variable, then modify those items, the items *within* the variable will appear to not have changed, but *make no mistake*, if you re-query the DB, the items will be changed.
+2. To do `ON DELETE CASCADE`, you put
+
+        has_many :subtasks, dependent: :destroy
+        
 # Useful snippets from Rails Tutorial dot org
 
 ## Templates
@@ -169,6 +177,8 @@ In this example, looking at the two lines with `:name` in them, we shall output
 
 ## Code Generation Commands
 
+
+
 ### Generate Controller
 
     rails generate controller StaticPages home help 
@@ -176,6 +186,8 @@ In this example, looking at the two lines with `:name` in them, we shall output
 To *not* create **unit test** files, append `--no-test-framework`
 
 ### Generate Model
+
+1. See [RailsGuides tutorial: advanced model generators](http://railsguides.net/advanced-rails-model-generators/)
 
 #### Basic Model
 
@@ -251,6 +263,65 @@ adding the `password_digest` field to the `User` table
       end
     end
 
+#### Inherit from other table
+
+    $ rails g model admin --parent user
+    
+generates the model
+
+    class Admin < User
+    end
+
+#### Make columns indexes
+
+    $ rails g model user email:index location_id:integer:index
+    
+#### Make column unique
+
+    $ rails g model user pseudo:string:uniq
+    
+#### Set string length limit
+
+    $ rails generate model user pseudo:string{30}
+    
+#### Make column *not NULL*
+
+According to [StOve][ModelNulling], you have to manually edit the migration file for that.
+The generator just offers a starting point, it does not do everything.
+Doing this in the migration file is very easy anyway.
+
+    class CreateIntervals < ActiveRecord::Migration
+      def change
+        create_table :intervals do |t|
+          t.datetime :start,  null: :false
+          t.datetime :end,    null: :false
+          t.references :task, index: true
+    
+          t.timestamps
+        end
+      end
+    end
+    
+
+Well, I tried that, and it *didn't* put it in the `schema.rb`, so I had to it *again* as a migration,
+and now it's there in the `schema.rb`.
+
+    class ChangeTimesNotNullInterval < ActiveRecord::Migration
+      def change
+        change_column_null( :intervals, :start, false )
+        change_column_null( :intervals, :end,   false )
+      end
+    end
+
+
+[ModelNulling]: http://stackoverflow.com/questions/4562677/passing-additional-parameters-to-rails-generate-model
+
+#### Reference another table
+
+Creates a `group_id` *and* add's `belongs_to: :group`
+
+    # yes, it's *singular*
+    $ rails g model member group:references
 
 ### Undo
 
