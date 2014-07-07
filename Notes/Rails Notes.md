@@ -11,15 +11,56 @@ latex input:        mmd-natbib-plain
 latex input:        mmd-article-begin-doc
 latex footer:       mmd-memoir-footer
 
-## These need to be placed wherever they go
+# Useful snippets
 
-1. If you open the `rails console --sandbox`, it will reverse whatever changes you make to the database during the console session.
-2. If you save some DB items into a variable, then modify those items, the items *within* the variable will appear to not have changed, but *make no mistake*, if you re-query the DB, the items will be changed.
-2. To do `ON DELETE CASCADE`, you put
+## Configuration
 
-        has_many :subtasks, dependent: :destroy
+1. To make life easier, put this in `config/application.rb`
+
+        I18n.enforce_available_locales = false
+
+1. To allow your customized `devise`-based `User` forms to work with the authentication system, you're going to need to append something like this in `app/controllers/application_controller.rb`
+
+        # http://stackoverflow.com/questions/16297797/add-custom-field-column-to-devise-with-rails-4
+        before_filter :configure_permitted_parameters, if: :devise_controller?
         
-# Useful snippets from Rails Tutorial dot org
+        protected
+        
+        def configure_permitted_parameters
+          registration_params = [:first_name, :last_name, :email, :password, :password_confirmation]
+        
+          if params[:action] == 'update'
+            devise_parameter_sanitizer.for(:account_update) {
+              |u| u.permit(registration_params << :current_password)
+            }
+          elsif params[:action] == 'create'
+            devise_parameter_sanitizer.for(:sign_up) {
+              |u| u.permit(registration_params)
+            }
+          end
+        end
+
+    Now you can add the new items to the registration form in `app/views/devise/registrations/new.html.erb`
+    
+          <div><%= f.label :first_name %><br/>
+            <%= f.text_field :first_name, autocomplete: "off" %>
+          </div>
+        
+          <div><%= f.label :last_name %><br/>
+            <%= f.text_field :last_name, autocomplete: "off" %>
+          </div>
+
+    Lastly, not sure why, but you have to do put this in `config/routes.rb`
+    
+        # http://stackoverflow.com/questions/6567863/no-route-matches-get-users-sign-out
+        devise_for :users do get '/users/sign_out' => 'devise/sessions#destroy' end
+        # devise_for :users
+## Controllers
+
+### Don't allow access to the controller without authenticating with *devise*
+
+    before_filter :admin_required, only: :destroy
+    before_action :authenticate_user!
 
 ## Templates
 
@@ -54,16 +95,7 @@ latex footer:       mmd-memoir-footer
   
         <header class="navbar navbar-fixed-top navbar-inverse">
           <div class="navbar-inner">
-            <div class="container">
-              <%= link_to "sample app", '#', id: "logo" %>
-              <nav>
-                <ul class="nav pull-right">
-                  <li><%= link_to "Home",    '#' %></li>
-                  <li><%= link_to "Help",    '#' %></li>
-                  <li><%= link_to "Sign in", '#' %></li>
-                </ul>
-              </nav>
-            </div>
+            ...
           </div>
         </header>
 
@@ -103,6 +135,10 @@ This inserts the contents of each page into the site layout.
       validates :content, length: { maximum: 140 } # just another thing to note
     end
 
+### ON DELETE CASCADE
+
+    has_many :subtasks, dependent: :destroy
+    
 ## Routes
 
 ### For creating the `about_path` method etc., see the section **Defining Named Routes** below.
@@ -142,42 +178,177 @@ In the following table
 | `PATCH`      | `/users/1`      | **update**  | `user_path(user)` | update user |
 | `DELETE`     | `/users/1`      | **destroy** | `user_path(user)` | delete user |
 
+### Nesting
+1. From [The Rails 3 Way Chp 3.7][]
+2. To created nested resource routes, put this in routes.rb:
 
+        resources :auctions do
+          resources :bids
+        end
+    
+3. now you can access the `auction_id` in the `bids_controller` via
+    
+        params[:auction_id]
+        
+4. This changes the names of the routes for `bids` *and* the way you call them
+
+        auction_bids_path(auction)
+        auction_bid_path(auction, bid), method: :delete
+        
+5. Now: If you want to add a bid to an auction, your nested resource URL would be
+
+        http://localhost:3000/auctions/5/bids/new
+
+    **The auction is identified in the URL rather than having to clutter your new bid form data with hidden fields or resorting to non-RESTful practices.** *(bingo!)*
+    
+6. Resource routes accept a `:shallow` option that helps to shorten URLs where possible. The goal is to leave off parent collection URL segments where they are not needed. The end result is that the only nested routes generated are for the `:index`, `:create`, and `:new` actions. The rest are kept in their own shallow URL context.
+
+7. It's easier to illustrate than to explain, so let's define a nested set of resources and set `:shallow` to `true`:
+
+        resources :auctions, :shallow => true do
+          resources :bids do
+            resources :comments
+          end
+        end
+
+    alternatively coded as follows (if you're block-happy)
+
+        resources :auctions do
+          shallow do
+            resources :bids do
+              resources :comments
+            end
+          end
+        end
+    
+    The resulting `comments` routes are:
+
+                        GET    /bids/:bid_id/comments(.:format)
+           bid_comments POST   /bids/:bid_id/comments(.:format)
+        new_bid_comment GET    /bids/:bid_id/comments/new(.:format
+                        GET    /comments/:id(.:format)
+                        PUT    /comments/:id(.:format)
+                comment DELETE /comments/:id(.:format)
+           edit_comment GET    /comments/:id/edit(.:format)
+
+    If you analyze the routes generated carefully, you'll notice that the nested parts of the URL are only included when they are needed to determine what data to display.
+
+8. Now, let's say you want to be able to view a resource in a *different* way then the ones you've provided for the standard CRUD operations, how do you cleanly add in the URL for the new way of viewing/updating/etc. that resource? Well to get a URL that looks like
+
+        /auctions/3/bids/5/retract 
+   
+    You'd add an extra "member route"
+   
+        resources :auctions do
+          resources :bids do
+            member do
+            
+              # v1
+              get :retract
+              post :retract
+              
+              # v2
+              match :retract, via: [:get, :post]
+              
+            end
+          end
+        end
+    
+    That you can call like
+    
+        link_to "Retract", retract_bid_path(auction, bid)
+        
+9. To create a route that only applies to "news resources (that haven't been saved to the DB yet), use a `new` block
+
+        resources :reports do
+          new do
+            post :preview
+          end
+        end
+        
+    which gives you
+    
+        preview_new_report POST   /reports/new/preview(.:format)
+  
+[The Rails 3 Way Chp 3.7]: http://www.informit.com/articles/article.aspx?p=1671632&seqNum=7
 ## Forms
+### Notes
 
-### For Active Record objects
+1. By default, a `<%= form_tag do %>` will `POST` to the **current page**
+2. The CSRF `authenticity_token` is provided automatically in a `hidden input`
+3. You can choose the destination and method quite simply
 
-E.g. to construct a `User` object, we have
+        <%= form_tag "/search", method: "get" do %>
 
-    <div class="row">
-      <div class="span6 offset3">
-        <%= form_for(@user) do |f| %>
-    
-          <%= f.label :name %>
-          <%= f.text_field :name %>
-    
-          <%= f.label :email %>
-          <%= f.text_field :email %>
-    
-          <%= f.label :password %>
-          <%= f.password_field :password %>
-    
-          <%= f.label :password_confirmation, "Confirmation" %>
-          <%= f.password_field :password_confirmation %>
-    
-          <%= f.submit "Create my account", class: "btn btn-large btn-primary" %>
+4. One can rely on the router as well
+
+        form_tag({controller: "people", action: "search"}, method: "get", class: "nifty_form")
+        
+5. Basic helpers, with names ending in "`_tag`" (such as `text_field_tag` and `check_box_tag`), generate just a single `<input>` element.
+    1. **When the form is submitted, the first parameter name will be passed along with the form data, and will make its way to the params hash in the controller with the value entered by the user for that field**
+        1. For example, if the form contains `<%= text_field_tag(:query) %>`, then you would be able to get the value of this field in the controller with `params[:query]`.
+
+#### Forms for editing or creating a model object
+6. Rails provides helpers tailored to use for this *instead* of the `*_tag` tags, for example `text_field` and `text_area`.
+8. the **first argument** is the name of an `@instance_variable` and 
+2. the **second argument** is the name of a method (usually an `@attribute`) to call on that object
+    7. If your *controller* has defined `@person` and that person's name is `Henry` then a form containing:
+
+            <%= text_field(:person, :name) %>
+
+        will produce output similar to
+
+            <input id="person_name" name="person[name]" type="text" value="Henry"/>
+
+8. Upon form submission the value entered by the user will be stored in `params[:person][:name]`.
+9. The `params[:person]` hash is suitable for passing to `Person.new` or, if `@person` is an instance of `Person`, `@person.update`. 
+10. While the name of an attribute is the most common second parameter to these helpers this is not compulsory.
+11. In the example above, as long as person objects have a name and a name= method Rails will be happy.
+12. You must pass the *name of an instance variable*, i.e. `:person` or `"person"`, *not an actual instance* of your model object.
+
+#### Binding a form to an object
+1. **This is what comes with the *scaffold***
+2. Imagine an `@article` was passed in from the *controller*
+3. Now we have
+
+        <%= form_for @article, url: {action: "create"}, html: {class: "nifty_form"} do |f| %>
+          <%= f.text_field :title %>
+          <%= f.text_area :body, size: "60x12" %>
+          <%= f.submit "Create" %>
         <% end %>
-      </div>
-    </div>
 
-In this example, looking at the two lines with `:name` in them, we shall output
+4. In this:
+    5. `@article` is the actual object being edited.
+    6. There is a *single* hash of options.
+    3. *Routing* options are passed in the `:url` hash,
+    4. *HTML* options are passed in the `:html` hash.
+    5. One can provide a `:namespace` option for your form to ensure uniqueness of id attributes on form elements.
+    6. The `form_for` method yields a `form builder` object `f`.
+    7. Methods to create form controls are called on the form builder object `f`
+5. The name passed to `form_for` controls the key used in `params` to access the form's values.
+    6. Here the name is `article` and so in the `create` *action* `params[:article]` will have keys `:title` and `:body`.
+6. If you want to do this stuff, you should declare `resources :article`
+    7. This means you can make `create` and `edit` forms, without specifying the URL or the Method, you just do `form_for @article`
+#### Ref
+* [Rails Guide to Forms](http://guides.rubyonrails.org/form_helpers.html)
 
-    <label for="user_name">Name</label>
-    <input id="user_name" name="user[name]" type="text" />
+#### Params hash info
+
+For example if a form contains
+
+    <input id="person_name" name="person[name]" type="text" value="Henry"/>
+    
+the params hash will contain
+
+    {'person' => {'name' => 'Henry'}}
+
+and 
+    
+    params[:person][:name]
+    
+will retrieve the submitted value in the controller.
 
 ## Code Generation Commands
-
-
 
 ### Generate Controller
 
@@ -496,6 +667,14 @@ This gives us both the keywords
 ### It's different for the homepage
 
     root  'static_pages#home'
+
+### Resources
+
+    resources :products
+    
+    # customizeable
+    resources :products, :except => [:new, :create, :destroy]
+    resources :products, :only => [:index, :show]
     
 This maps the url `/` to `/static_pages/home`
 
@@ -505,6 +684,10 @@ Start development server
 
     rails s
 
+Make `console` reverse whatever changes you make to the database during the session
+
+    rails console --sandbox
+    
 Run all tests
 
     bundle exec rspec spec/
@@ -545,10 +728,21 @@ Try this
 
     rake db:reset
 
-# Rails/ERb Syntax
+### Quirks
+
+1. If you save some DB items into a variable, then modify those items, the items *within* the variable will appear to not have changed, but *make no mistake*, if you re-query the DB, the items will be changed.
+
+### Controller not instantiated
+
+1. Make sure the controller file and it's class name have the resource *in **plural***
+
 ## Embedded Ruby (ERb) templates
 
 * `<%...%>` **executes** the code inside
 * `<%=...%>` **executes** it **and** ***inserts*** the results into the template.
+
+## Other
+
+1. Those `model_helper.rb` files are for *view* specific logic, not *model* specific logic. Who'da thunk it?
 
 ## Ruby (moved to its own Ruby Notes.md)

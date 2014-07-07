@@ -163,6 +163,14 @@ Here is the same thing stated over and over again in different ways, from [Stack
 * `PUT` to a URL creates/replaces the resource in it's entirety at the client defined URL.
 * `PATCH` to a URL updates part of the resource at that client defined URL.
 
+### PUT vs. PATCH
+
+The HTTP RFC specifies that **`PUT` must take a full new resource** representation as the request entity. This means that if for example only certain attributes are provided, those should be removed (i.e. set to null).
+
+The semantics of **PATCH** are like PUT in that it updates a resource, but unlike PUT, it **applies a delta** rather than replacing the entire resource.
+For simple resource representations, the difference is often not important, and **many APIs simply implement PUT as a synonym for PATCH**. [Restful API Design][]
+
+[Restful API Design]: http://restful-api-design.readthedocs.org/en/latest/methods.html
 [PUTvPOST]: http://stackoverflow.com/questions/630453/put-vs-post-in-rest/
 
 ## [SOAP](http://en.wikipedia.org/wiki/SOAP)
