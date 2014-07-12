@@ -6,7 +6,6 @@ flowers
 https://www.hackerrank.com/challenges/flowers
 '''
 
-# code snippet illustrating input/output methods
 flowers_to_buy, ppl = map(int, raw_input().split())
 flower_costs = sorted(map(int, raw_input().split()), reverse=True)
 
