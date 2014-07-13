@@ -83,10 +83,30 @@ def lookup(i, j, L):
         return hash_table[(i, j, L)]
     else:
         # here's my stroke of brilliance!
-        # TODO RuntimeError: maximum recursion depth exceeded (FOILED AGAYNE!@!)
-        val = lookup(i, j, L-1) + lookup(i+L-1, j+L-1, 1)
-        hash_table[(i, j, L)] = val
-        return val
+        """
+        first shot here used simple recursion:
+            val = lookup(i, j, L-1) + lookup(i+L-1, j+L-1, 1)
+            hash_table[(i, j, L)] = val
+            return val
+
+        However:
+            RuntimeError: maximum recursion depth exceeded (FOILED AGAYNE!@!)
+        """
+        """
+        perhaps I need to do an iteration instead of a recursion:
+            for k in range(2, L+1):
+                hash_table[(i, j, k)] = hash_table[(i, j, k-1)] + hash_table[(i+k-1, j+k-1, 1)]
+            return hash_table[(i, j, L)]
+
+        However:
+            it is still *correct*, and now it doesn't hit recursion limits...
+            but the hash_table just gobbles up all my RAM and it doesn't finish computing.
+
+        I'm not sure what to try next, I'll probably have to look up what to do in this situation....
+        """
+        for k in xrange(2, L+1):
+            hash_table[(i, j, k)] = hash_table[(i, j, k-1)] + hash_table[(i+k-1, j+k-1, 1)]
+        return hash_table[(i, j, L)]
 
 def hash_loop(a, b, S):
     for L in reversed(xrange(1,len(a)+1)):
