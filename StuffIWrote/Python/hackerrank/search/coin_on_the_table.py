@@ -73,11 +73,22 @@ def neighbors(coords):
 N, M, K = map(int, raw_input().split())
 board = [raw_input() for _ in range(N)]
 
-star_coords = (0,0)
+
+star_coords = (-1, -1)
 for i, row in enumerate(board):
     if '*' in row:
         star_coords = i, row.find('*')
         break
+
+if star_coords == (-1, -1):
+    print 'star not found'
+    exit(1)
+
+# it's impossible if there exists a corner whose (manhattan dist. > K)!
+for row, col in [(0,0), (0, M-1), (N-1, 0), (N-1, M-1)]:
+    if abs(row-star_coords[0]) + abs(col-star_coords[1]) > K:
+        print -1
+        exit(0)
 
 # zeros(N, M)
 # contains (initial [at least at first...]) min-dist to each loc from '*'
