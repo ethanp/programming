@@ -103,6 +103,10 @@ def lookup(i, j, L):
             but the hash_table just gobbles up all my RAM and it doesn't finish computing.
 
         I'm not sure what to try next, I'll probably have to look up what to do in this situation....
+
+         *  I suppose one thing to try would be doing the calculation of the previous ones binary-wise
+            instead of linearly, to get log_2, that'd be way faster, but I feel like it would still
+            not be fast enough.
         """
         for k in xrange(2, L+1):
             hash_table[(i, j, k)] = hash_table[(i, j, k-1)] + hash_table[(i+k-1, j+k-1, 1)]
