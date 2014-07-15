@@ -1,35 +1,47 @@
-updated() on SeqLike
---------------------
-**6/15/14**
+latex input:    mmd-article-header
+Title:				  Scala Notes
+Author:			    Ethan C. Petuchowski
+Base Header Level:		1
+latex mode:     memoir
+Keywords:			  Scala, programming language, syntax, fundamentals
+CSS:				    http://fletcherpenney.net/css/document.css
+xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+copyright:		  2014 Ethan Petuchowski
+latex input:		mmd-natbib-plain
+latex input:		mmd-article-begin-doc
+latex footer:		mmd-memoir-footer
 
-**A *functional* way to mutate *immutable* sequences.**
+# Language Features
 
-From the [source code][SeqLike.scala]:
+## Traits
+**7/15/14**
 
-    def updated[B >: A, That](index: Int, elem: B)(implicit bf: CanBuildFrom[Repr, B, That]): That = {
-      val b = bf(repr)
-      val (prefix, rest) = this.splitAt(index)
-      b ++= toCollection(prefix)
-      b += elem
-      b ++= toCollection(rest).view.tail
-      b.result
-    }
+From *Programming in Scala* by Martin Odersky, Lex Spoon, and Bill Venners; Chapter 12 "Traits", beginning on pg 258.
 
-E.g. for a `List[A]`, this will *copy* the first `index` elements to a
-*new* `List`, then append the new element, then stick that onto the the
-*existing* rest of the `List`. The implementation would be different for
-an `Array[A]` or a `Vector[A]`.
+Traits are a fundamental unit of code reuse in Scala. **A trait encapsulates method and field definitions, which can then be reused by mixing them into classes.** Unlike class inheritance, in which each class must inherit from just one superclass, **a class can mix in any number of traits.**
 
-[SeqLike.scala]: https://lampsvn.epfl.ch/trac/scala/browser/scala/trunk/src//library/scala/collection/SeqLike.scala
+You can do anything in a trait definition that you can do in a class definition, and the syntax looks exactly the same, with only two exceptions.
 
-*Vector* Seq
---------------------
-**6/10/14**
+1. First, a trait cannot have any “class” parameters, i.e., parameters passed to the primary constructor of a class.
 
-* According to [Stack Overflow](http://stackoverflow.com/questions/20612729/how-does-scalas-vector-work),
-  the `Vector` data type uses a *32-ary* **tree**
-* Each '32-way node' has a 32-element `Array` that **either** holds *references* **or** *data*
-* The tree is "balanced" such that levels `1` to `n-1` hold 100% references, and level `n` contains 100% data
+        trait NoPoint(x: Int, y: Int) // Does not compile
+
+2. The other difference between classes and traits is that whereas in classes, super calls are statically bound, in traits, they are dynamically bound. If you write “`super.toString`” in a class, you know exactly which method implementation will be invoked. When you write the same thing in a trait, however, the method implementation to invoke for the super call is undefined when you define the trait. Rather, the implementation to invoke will be determined anew each time the trait is mixed into a concrete class. This curious behavior of super is key to allowing traits to work as *stackable modifications*.
+
+
+Sealed classes
+--------------
+**7/15/14**
+
+From *Programming in Scala* by Martin Odersky, Lex Spoon, and Bill Venners; pgs 326-7.
+
+**Whenever you write a pattern match, you need to make sure you have covered all of the possible cases.** Sometimes **you can do this by adding a default case at the end of the match**, but that only applies if there is a sensible default behavior. *What do you do if there is no default? How can you ever feel safe that you covered all the cases?*In fact, you can enlist the help of the Scala compiler in detecting missing combinations of patterns in a match expression. To be able to do this, *the compiler needs to be able to tell which are the possible cases. In general, this is impossible in Scala, because new case classes can be defined at any time and in arbitrary compilation units.* For instance, nothing would prevent you from adding a fifth case class to the Expr class hierarchy in a different compilation unit from the one where the other four cases are defined.
+
+The alternative is to *make the superclass of your case classes sealed*. **A sealed class cannot have any new subclasses added except the ones in the same file.** This is very useful for pattern matching, because it means you only need to worry about the subclasses you already know about. What’s more, you get better compiler support as well. *If you match against case classes that inherit from a sealed class, the compiler will flag missing combinations of patterns with a warning message.*
+
+**Therefore, if you write a hierarchy of classes intended to be pattern matched, you should consider sealing them. Simply put the sealed keyword in front of the class at the top of the hierarchy.** Programmers using your class hierarchy will then feel confident in pattern matching against it. The sealed keyword, therefore, is often a license to pattern match. Listing 15.16 shows an example in which Expr is turned into a sealed class.
+    sealed abstract class Expr    case class Var(name: String) extends Expr    case class Number(num: Double) extends Expr    case class UnOp(operator: String, arg: Expr) extends Expr    case class BinOp(operator: String, left: Expr, right: Expr) extends Expr    Listing 15.16 · A sealed hierarchy of case classes.Now define a pattern match where some of the possible cases are left out:    def describe(e: Expr): String = e match {      case Number(_) => "a number"      case Var(_)    => "a variable"    }You will get a compiler warning like the following:    warning: match is not exhaustive!    missing combination           UnOp    missing combination          BinOp
+
 
 Nested for-yield statements
 ---------------------------
@@ -64,16 +76,16 @@ What's Haapnin
     * We didn't have to do anything special here to take care of that 
         * (this is, in fact, the entire point of the Option monad).
 
-Appending List to List
-----------------------
-**5/25/14**
 
-Ref: [SO](http://stackoverflow.com/questions/6559996/scala-list-concatenation-vs)
+*Vector* Seq
+--------------------
+**6/10/14**
 
-It looks like one should generally use `++` instead of `:::` to
-concatenate lists, because that works with *any* two `Collections`,
-even `Iterators`. The same goes for using `+:` over `::`, **except
-when pattern matching**, which you *cannot do with* `+:`.
+* According to [Stack Overflow](http://stackoverflow.com/questions/20612729/how-does-scalas-vector-work),
+  the `Vector` data type uses a *32-ary* **tree**
+* Each '32-way node' has a 32-element `Array` that **either** holds *references* **or** *data*
+* The tree is "balanced" such that levels `1` to `n-1` hold 100% references, and level `n` contains 100% data
+
 
 Accessibility specifiers in class definitions
 ---------------------------------------------
@@ -106,44 +118,6 @@ Same as above, but with a public getter.
 
 Will behave as though it were `val bar: Int` in a regular class.
 
-Span on Collections
--------------------
-
-**5/4/14**
-
-It's like `partition`, only it stops looking as soon as it finds
-the first value in the collection for whom the predicate is `false`.
-
-    scala> val a = List(1, 2, 3, 45, 56, 1, 2, 3)
-    
-    scala> val (b,c) = a.span(_ < 5)
-    b: List[Int] = List(1, 2, 3)
-    c: List[Int] = List(45, 56, 1, 2, 3)
-    
-    scala> val (d,e) = a.partition(_ < 5)
-    d: List[Int] = List(1, 2, 3, 1, 2, 3)
-    e: List[Int] = List(45, 56)
-    
-Example from **P09** in [Ninety-Nine Scala Problems](http://aperiodic.net/phil/scala/s-99/p09.scala)
-
-    // P09 (**) Pack consecutive duplicates of list elements into sublists.
-    //     If a list contains repeated elements they should be placed in separate
-    //     sublists.
-    //
-    //     Example:
-    //     scala> pack(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
-    //     res0: List[List[Symbol]] = List(List('a, 'a, 'a, 'a), List('b), List('c, 'c), List('a, 'a), List('d), List('e, 'e, 'e, 'e))
-    
-    object P09 {
-      def pack[A](ls: List[A]): List[List[A]] = {
-        if (ls.isEmpty) List(List())
-        else {
-          val (packed, next) = ls span { _ == ls.head }
-          if (next == Nil) List(packed)
-          else packed :: pack(next)
-        }
-      }
-    }
 
 
 Private instance variables
@@ -165,53 +139,6 @@ subclass instances).
 Make the variable *visible to only this specific instance, and subclass instances*.
 
     protected[this] var watchers: HashSet[ActorRef] = HashSet.empty[ActorRef]
-
-My Guide to a crazy function
-----------------------------
-
-Check out the following function from a nice [tutorial on Iteratees](http://blog.higher-order.com/blog/2010/10/14/scalaz-tutorial-enumeration-based-io-with-iteratees/)
-
-    def enumerate[E,A]: (List[E], IterV[E,A]) => IterV[E,A] = {
-      case (Nil, i) => i
-      case (_, i@Done(_, _)) => i
-      case (x :: xs, Cont(k)) => enumerate(xs, k(El(x)))
-    }
-
-### Now we translate:
-
-#### First line
-
-    def enumerate[E,A]: (List[E], IterV[E,A]) => IterV[E,A] = {
-
-* The **function** `enumerate` has an **input** type `E`, and a **result** type `A`.
-* It **returns** a *function* that
-    * **takes** 
-         * `List` of *inputs*
-         * `Iteratee` parameterized by the same input/result types as this function
-    * **returns** another `Iteratee`
-
-#### Case 1
-
-    case (Nil, i) => i
-
-* If the `List` passed in is empty, return the `Iteratee` as-is
-
-#### Case 2
-
-      case (_, i@Done(_, _)) => i
-
-* If the `Iteratee` is in the `Done` state (I think it means `isInstanceOf[Done]`),
-  return it as-is
-
-#### Case 3
-
-      case (x :: xs, Cont(k)) => enumerate(xs, k(El(x)))
-
-* If the `Iteratee` is in the `Cont` state, recurse on this method
-    * Pass the `tail` of this `List` as the new `List`
-    * For the `Iteratee`, pass that `Iteratee` obtained by creating an
-      **input** element from the `head` of the `List`, and (I think)
-      appending it to the `Iteratee` using the function `k()`
 
 Override Keyword
 ----------------
@@ -436,7 +363,6 @@ The method `completeWith` completes the promise with another future. After the f
     }
 
 
-
 Case Class vs. Regular Class
 ----------------------------
 
@@ -476,22 +402,170 @@ article spells them out quite simply, and the following example is based on thei
     scala> foo("Implicit variables:")
     res1: String = Implicit variables: it's scary!
 
+# Some functions worth knowing
 
-Iterator.collect[B]\\(pf: PartialFunction[A,B|)
-----------------------------------------------
+## Functions on Collections
+
+### Iterator.collect[B]\\(pf: PartialFunction[A,B|)
 
 **1/18/14**
 
-### A convenient way to **simultaneously map and filter**.
+#### A convenient way to **simultaneously map and filter**.
 
 The `PartialFunction` parameter means you can use a *Pattern Matching Anonymous Function* as the argument,
 and if none of your `cases` match an element, that element gets filtered
 
-#### E.g.
+##### E.g.
   
     scala> (1 to 10) collect { 
         case x if x % 2 == 0 => -x
         case 1 => 11 
     }
     res0: Vector(11, -2, -4, -6, -8, -10)
+
+### (xs groupBy f)
+
+**7/15/14**
+
+Partitions `xs` into a `Map` of collections according to a discriminator function `f`.
+
+E.g. getting word count via MapReduce type algorithm
+
+    scala> val wordString = "asdf qwer asdf asdf rtyu rtyu"    
+    scala> val words = wordString.split(" ")
+
+    // Oops!
+    scala> val wordsGrouped = words.groupBy(_)
+    <console>:9: error: missing parameter type for expanded function ((x$1) => words.groupBy(x$1))
+           val wordsGrouped = words.groupBy(_)
+                                            ^
+    // If you insist
+    scala> val wordsGrouped = words.groupBy(identity)
+    wordsGrouped: scala.collection.immutable.Map[String,Array[String]] = Map(qwer -> Array(qwer), rtyu -> Array(rtyu, rtyu), asdf -> Array(asdf, asdf, asdf))
+    
+    scala> val wordCounts = wordsGrouped.map { case (k, v) => k -> v.length }
+    wordCounts: scala.collection.immutable.Map[String,Int] = Map(qwer -> 1, rtyu -> 2, asdf -> 3)
+
+
+### Appending List to List with `++` & `:::`
+
+**5/25/14**
+
+Ref: [SO](http://stackoverflow.com/questions/6559996/scala-list-concatenation-vs)
+
+It looks like one should generally use `++` instead of `:::` to
+concatenate lists, because that works with *any* two `Collections`,
+even `Iterators`. The same goes for using `+:` over `::`, **except
+when pattern matching**, which you *cannot do with* `+:`.
+
+        
+### updated() on SeqLike
+**6/15/14**
+
+**A *functional* way to mutate *immutable* sequences.**
+
+From the [source code][SeqLike.scala]:
+
+    def updated[B >: A, That](index: Int, elem: B)(implicit bf: CanBuildFrom[Repr, B, That]): That = {
+      val b = bf(repr)
+      val (prefix, rest) = this.splitAt(index)
+      b ++= toCollection(prefix)
+      b += elem
+      b ++= toCollection(rest).view.tail
+      b.result
+    }
+
+E.g. for a `List[A]`, this will *copy* the first `index` elements to a
+*new* `List`, then append the new element, then stick that onto the the
+*existing* rest of the `List`. The implementation would be different for
+an `Array[A]` or a `Vector[A]`.
+
+[SeqLike.scala]: https://lampsvn.epfl.ch/trac/scala/browser/scala/trunk/src//library/scala/collection/SeqLike.scala
+
+
+### Span on Collections
+
+**5/4/14**
+
+It's like `partition`, only it stops looking as soon as it finds
+the first value in the collection for whom the predicate is `false`.
+
+    scala> val a = List(1, 2, 3, 45, 56, 1, 2, 3)
+    
+    scala> val (b,c) = a.span(_ < 5)
+    b: List[Int] = List(1, 2, 3)
+    c: List[Int] = List(45, 56, 1, 2, 3)
+    
+    scala> val (d,e) = a.partition(_ < 5)
+    d: List[Int] = List(1, 2, 3, 1, 2, 3)
+    e: List[Int] = List(45, 56)
+    
+Example from **P09** in [Ninety-Nine Scala Problems](http://aperiodic.net/phil/scala/s-99/p09.scala)
+
+    // P09 (**) Pack consecutive duplicates of list elements into sublists.
+    //     If a list contains repeated elements they should be placed in separate
+    //     sublists.
+    //
+    //     Example:
+    //     scala> pack(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
+    //     res0: List[List[Symbol]] = List(List('a, 'a, 'a, 'a), List('b), List('c, 'c), List('a, 'a), List('d), List('e, 'e, 'e, 'e))
+    
+    object P09 {
+      def pack[A](ls: List[A]): List[List[A]] = {
+        if (ls.isEmpty) List(List())
+        else {
+          val (packed, next) = ls span { _ == ls.head }
+          if (next == Nil) List(packed)
+          else packed :: pack(next)
+        }
+      }
+    }
+    
+
+My Guide to a crazy function
+----------------------------
+
+Check out the following function from a nice [tutorial on Iteratees](http://blog.higher-order.com/blog/2010/10/14/scalaz-tutorial-enumeration-based-io-with-iteratees/)
+
+    def enumerate[E,A]: (List[E], IterV[E,A]) => IterV[E,A] = {
+      case (Nil, i) => i
+      case (_, i@Done(_, _)) => i
+      case (x :: xs, Cont(k)) => enumerate(xs, k(El(x)))
+    }
+
+### Now we translate:
+
+#### First line
+
+    def enumerate[E,A]: (List[E], IterV[E,A]) => IterV[E,A] = {
+
+* The **function** `enumerate` has an **input** type `E`, and a **result** type `A`.
+* It **returns** a *function* that
+    * **takes** 
+         * `List` of *inputs*
+         * `Iteratee` parameterized by the same input/result types as this function
+    * **returns** another `Iteratee`
+
+#### Case 1
+
+    case (Nil, i) => i
+
+* If the `List` passed in is empty, return the `Iteratee` as-is
+
+#### Case 2
+
+      case (_, i@Done(_, _)) => i
+
+* If the `Iteratee` is in the `Done` state (I think it means `isInstanceOf[Done]`),
+  return it as-is
+
+#### Case 3
+
+      case (x :: xs, Cont(k)) => enumerate(xs, k(El(x)))
+
+* If the `Iteratee` is in the `Cont` state, recurse on this method
+    * Pass the `tail` of this `List` as the new `List`
+    * For the `Iteratee`, pass that `Iteratee` obtained by creating an
+      **input** element from the `head` of the `List`, and (I think)
+      appending it to the `Iteratee` using the function `k()`
 
