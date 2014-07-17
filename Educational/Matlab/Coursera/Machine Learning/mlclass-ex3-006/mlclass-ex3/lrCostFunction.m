@@ -37,29 +37,26 @@ grad = zeros(size(theta));
 %
 
 % Cost function w/o regularization
-c = X*theta;
-J = sum(-y.*log(sigmoid(c))-(1-y).*log(sigmoid(1-c)))/m;
 
-% add regularization [avoiding theta(1)]
+c = X*theta;
+J = mean(-y.*log(sigmoid(c))-(1-y).*log(1-sigmoid(c)));
+
+% add regularization
 temp = theta;
 temp(1) = 0;
 temp = (temp.^2)./(2*m).*lambda;
 J += sum(temp);
 
-% old gradient code
-for j = 1:size(grad)
-  for i = 1:m
-    grad(j) += (sigmoid(theta'*X(i,:)')-y(i))*X(i,j);
-  end
-  grad(j) /= m;
-end
+
+% Gradient w/o regularization
+beta = sigmoid(X*theta)-y;
+grad = (X'*beta)/m;
 
 % add regularization
-for j = 2:size(grad)
-  grad(j) += lambda * theta(j) / m;
-end
 
-
+temp = theta;
+temp(1) = 0;
+grad += temp*lambda/m;
 
 % =============================================================
 
