@@ -1,3 +1,15 @@
+### Make Up Your Own Table ("Scalar Query") ###
+
+	SELECT 'q' as docid, 'treasury' as term, 1 as count
+
+Creates the database row
+
+| docid | term | count |  
+| :------: | :------: | :------: |
+| q | treasury |  1 |  
+
+as a standalone row.
+
 ### Unique vs Distinct
 
 [From StackOverflow](http://stackoverflow.com/questions/336268/sql-difference-between-select-unique-and-select-distinct)
