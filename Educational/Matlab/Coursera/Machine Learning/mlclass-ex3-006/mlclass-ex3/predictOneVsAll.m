@@ -28,13 +28,20 @@ X = [ones(m, 1) X];
 %       max element, for more information see 'help max'. If your examples 
 %       are in rows, then, you can use max(A, [], 2) to obtain the max 
 %       for each row.
-%       
 
 
+%% This is what they're talking about in the hint %%
 
+% >> [x, ix] = max ( [1 2 3; 4 5 6],[],2)
+% x =
+%    3
+%    6
+%
+% ix =
+%    3
+%    3
 
-
-
+[x, p] = max(X*all_theta', [], 2);
 
 % =========================================================================
 
