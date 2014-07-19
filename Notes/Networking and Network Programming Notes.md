@@ -287,3 +287,97 @@ the wire, TLS authenticates a server with a certificate to prevent spoofing.
     * **ICMP** (Internet Control Message Protocol) -- provides error messages
     * **UDP** (User Datagram Protocol) -- *broadcasts* messages over a network
 
+
+# Coursera Course: Networks Illustrated
+
+## Intro -- Principles
+
+### Sharing is hard (most important?)
+* Interference
+* Multiple phones must be able to *share* the same air between the phone and the tower
+
+### Consensus is hard
+* How do we decide what is *important*?
+* How should we facilitate an auction/election?
+* Wikipedia uses "rough consensus" to decide whose edits to keep
+* Google uses referrals and auctions to decide how to rank webpages
+
+### Crowds are wise
+* Amazon's star-rating
+* Knowledge of the many are better than knowledge of the few
+* Netflix recommendations
+
+### Crowds are not so wise
+* Information cascade -- people do what they see everyone else doing, even if it's wrong
+* Peer pressure
+
+### 	Networks are expensive
+* E.g. cellular mobile data plans
+
+### Network of networks
+* Different ISPs own different parts of the whole network
+* How do different users *share* the pipeline?
+
+### Layers on layers
+* E.g. the Internet is built on many layers
+* Physical/link layer(s) --- get data onto link and send it across
+* Network layer --- Packet hits router, which looks at IP address, and sends it to appropriate *next* router
+* Transport layer --- end-to-end connectivity, congestion control
+* Application layer --- directly visible to end-users
+
+### Bigger and bigger
+* Internet keeps growing
+* By 2020, each person will have 6-7 internet-connected devices
+* Cloud = datacenters = servers = CPUs + switches --- holds data so you don't have to
+
+## Week 1: How does your cell phone decide what power to transmit?
+
+1. There are about as many cell phones as people
+2. Morse invented Morse Code for the Telegraph was invented in the 1800s
+3. A.G. Bell figured out how to get multiple messages on the same wire ("multiple telegraph") in the 1860s
+	* We could divide the wire by *timeslices*
+	* We could divide by *pitch/frequency*
+	* We could divide by *language* (this is mainly a metaphor)
+
+### FDMA -- Frequency division multiple access
+1. Give each link a separate band of frequencies
+
+### 0G
+1. MTS (1946) --- operator connects people physically
+2. IMTS (1964) --- automated the operator
+3. DynaTAC (1973) --- first mobile phone (2 lb., $3000, 30 mins battery)
+4. MTS & IMTS had 32 frequency channels
+5. You need a license from the FCC to use a band of cellular frequencies (WiFi is *unlicensed*)
+6. **Attenuation** --- the fading away of a signal as you move further from its source
+	* Might sound like a bad thing, but we can take advantage of it to *reuse* pieces of the spectrum
+
+### 1G -- Cells
+1. **Cell** --- hexagon with **base stations** at the corners
+2. **Mobile station** --- e.g. cell phone, each must be on a different channel
+3. Adjacent cells must use different sets of frequencies --- non-adjacent cells may use the same frequencies
+	* Using graph coloring, we can use 4 sets of frequencies (4 colors of cells)
+	* So if there are 12 channels, each cell can have 3 bands of frequencies
+
+### 2G -- 2000 -- Analog to digital
+1. Heretofore network signals were all analog
+2. Then they realized using digital signals would be more efficient
+3. Allowed for *texting*
+
+### TDMA -- [Addition of] Time division multiple access
+1. We're *already* splitting on *frequency*, but let's *also* add **timesharing**
+2. With analog signals, this was impossible, but not so for digital
+
+### GSM -- 1982
+1. Adopted in Europe as a whole, but not in the USA
+
+### CDMA -- 1988
+1. Everyone uses same frequency band and time domain, but each side of the communication has its own key which is in some way applied to the signal
+
+### DPC -- Distributed power control
+1. Each person who wants to connect to the cell tower transmits something
+2. Cell tower measures signal interference ratios, and tells transmitters what theirs is
+3. Transmitters readjust their powers
+4. Process repeats
+5. Eventually converges to optimal location, provided there *is* a solution
+
+## Dropping the course new because this stuff is not relevant to anything I've got going on in my life right now.
