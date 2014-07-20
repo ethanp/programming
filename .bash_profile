@@ -127,11 +127,11 @@ function dedir {
         tree $1
         echo "Enter 1 to remove $1 from the face of the Earth: "
         read response
-        if [ $response -ne 1 ]; then
-            echo "Action Cancelled"
-        else
+        if (("$response" == "1")); then
             rm -fR $1
             echo "Action Completed"
+        else
+            echo "Action Cancelled"
         fi
     else
         echo "$1 is not a directory."
