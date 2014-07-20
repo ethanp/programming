@@ -113,6 +113,10 @@ function decrust {
             tail +49 $item > ${item}.copy # put all but first 49 lines in buffer
             mv ${item}.copy $item         # overwrite original file with buffer
         done                              # doesn't work without the buffer file
+
+    # learned my lesson from dedir(), put the do_nothing option in `else`
+    # because with bash you never know what sort of crap is going to get to
+    # your else statement
     else
         echo "currently in dry mode, use ..decrust doit.. to actually run it"
         echo
@@ -144,8 +148,8 @@ function dedir {
 # TODO this could probably be upgraded using stuff from "Learn C the Hard Way"
 #
 # I've removed -O2 & -ffast-math optimization because I figure there are going
-# to be more situations where I don't want something optimized out than where I
-# really care about the speed of program execution.
+# to be more situations where I don't want something optimized out than where
+# I really care about the speed of program execution.
 function compile {
     if [[ $# == 0 ]]; then
         echo "This is a shortcut for compiling simple .c files with a whole lot of warnings enabled"
