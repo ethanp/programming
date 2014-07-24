@@ -126,6 +126,28 @@ And then of course `| tee file` means "and also print it to the log-file"
 
 # Commands to Command
 
+## 7/24/14
+### ack -- better than grep
+
+Basic:
+
+    ack pattern
+    ack --[no]language pattern
+
+Searches she-bang line for file-types too!
+
+Options:
+
+* **-w** --- match only whole words
+* **-i** --- ignore case
+* **-h** --- don't print filename
+* **-l** --- only print filenames
+* **-c** --- show count of matching lines in *all* files
+* **-lc** --- show count of matching lines in *files with matches*
+* **-C** --- specify lines of context (default: `2`)
+* **--pager=LESS** --- pipe it into less (same as `ack ... | less`), except that it can be added (not sure yet if I want this) to the `~/.ackrc`
+* **--[no]smart-case** --- Ignore case distinctions in `PATTERN`, only if `PATTERN` contains no upper case. Ignored if **-i** is specified.
+
 ## 6/25/14
 
 ### tr -- translate characters

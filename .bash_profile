@@ -52,6 +52,10 @@ set -o vi
 # turn on extra metacharacters: (?|*|+|@|!)(pattern)
 shopt -s extglob
 
+# R: Let `less` use colors,
+# F: Just `cat` if it's only one screen worth of info
+# X: "Disables sending the termcap initialization strings to the terminal." (?)
+export LESS=-RFX
 
 ########################
 #  Terminal Functions  #
