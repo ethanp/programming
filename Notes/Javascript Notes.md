@@ -1,5 +1,26 @@
-delete keyword
---------------
+## ready callback
+**Called when the entire page has loaded** (or something like that)
+#### 7/22/14
+In `jQuery`, you can do
+
+    // A
+    $(document).ready(myHandler);
+    
+    // B
+    $(myHandler);
+    
+    // C
+    $(function() {
+      myCode;
+    });
+    
+    // C in Coffeescript
+    $ ->
+      myCode
+
+
+## delete keyword
+
 **Removes a property from an object**
 #### 4/15/14
 
@@ -24,8 +45,8 @@ Examples:
 
 Deleting inherited properties has no effect, though returns `true`
 
-this keyword
-------------
+## this keyword
+
 #### 4/14/14
 [Nice Tutorial](http://javascriptissexy.com/understand-javascripts-this-with-clarity-and-master-it/)
 

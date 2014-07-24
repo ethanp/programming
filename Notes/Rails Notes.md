@@ -63,6 +63,8 @@ latex footer:       mmd-memoir-footer
     before_action :authenticate_user!
 
 ## Templates
+### Notes
+1. If a controller action doesn’t want to render its default template, it can render a different one by calling the render method explicitly. Any template file in the app/views directory tree is available.
 
 ### For the base template
 
