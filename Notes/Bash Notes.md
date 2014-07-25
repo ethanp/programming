@@ -134,7 +134,9 @@ Basic:
     ack pattern
     ack --[no]language pattern
 
-Searches she-bang line for file-types too!
+Specify output format
+
+    ack '^([^:]+)if:(.*)$' --output='$1 and $2 too!'
 
 Options:
 

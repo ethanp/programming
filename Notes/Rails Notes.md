@@ -11,6 +11,37 @@ latex input:        mmd-natbib-plain
 latex input:        mmd-article-begin-doc
 latex footer:       mmd-memoir-footer
 
+# Notes from Beggining Rails 4
+**This could be a blog topic about how it is hard to *intuit* while learning Rails without knowing much Ruby, what is "magic" and what isn't.** For example it is a surprise to know (see below) that scaffolds are not magical at all, they just print code into files you have access to modify. That's pretty simple. I guess as you learn more Rails it just becomes less magical overtime as you become acquainted with the sausage factory. **I wonder what the piece of code looks like that turns `as: "something"` into the methods `something_path` and `something_url`. Is that what they call *"metaprogramming"?***
+
+* All controllers inherit from `application_controller.rb`, so put methods here to make them accessible in every controller.
+* The generators don't do any behind-your-back voodoo-magic, they just create the files you see and fill them with barebones-boilerplate that you can edit
+* `Rake` is a build language & task automator
+    * Its default actions are things like running database migrations, tests, and updates
+    * Use `rake -T` to see what it can do
+* Remember that **controllers are *plural***, and **models are *singular***, but the **database tables are *plural***
+* When you `generate` new versions of `scaffold` files, it will ask you to confirm if you want to overwrite files you already have
+* Ruby hash objects *preserve their order* (how strange)
+* "An `ActiveRecord` subclass isn’t much different from a regular Ruby class; about the only difference is that you need to make sure you don’t unintentionally overwrite any of Active Record’s methods (find, save, or destroy, for example)"
+    * "There is no difference between the methods Active Record creates and those you define."
+* `ActiveRecord` handles the **ORM**. Your `model` classes inherit from `ActiveRecord::Base`
+* `ActionPack` contains `ActionController` as well as `ActionView`
+    * These facilitate the coordination between these two major components of your app
+* Controllers inherit from `ApplicationController`, which is a class you can modify to imbue all your controllers with methods
+    * `ApplicationController` in turn, inherits from `ActionController::Base`
+* "Action Pack’s helpers provide a convenient location to encapsulate code that would otherwise clutter the view and violate MVC."
+* The router is a great thing, because it decouples your *files* from your app's *interface*
+* If you `generated` a `model` with `scaffolding`, then you can request `url/mymodels.json` and it will return a `JSON` array of all those objects in the database! Bind mlown.
+* `redirect_to(@article)` simply performs `redirect_to(article_ path(:id => @article))`
+
+## Directory structure
+* **bin** --- executables
+* **config** --- configuration files
+* **config.ru** --- used by rack servers to start the app
+* **lib** --- libraries your app might use
+* **vendor** --- gems and plug-ins bundled automatically by the app
+
+
 # Useful snippets
 
 ## Configuration
@@ -136,6 +167,23 @@ This inserts the contents of each page into the site layout.
       belongs_to :user
       validates :content, length: { maximum: 140 } # just another thing to note
     end
+
+### Validations
+
+This is a *comprehensive* summary of the stuff [in the guide][validation guide]
+
+[validation guide]: http://guides.rubyonrails.org/active_record_validations.html
+
+1. Presence
+2. Format (using regex
+3. Length (min, max, range; errors for each type of mistake)
+4. Must be a number (or int specifically) (min, max, range)
+5. `on:` -- only check during (create, update)
+6. You can specifically add `allow_blank` even if that breaks some other criterion
+7. Must be empty
+8. Must be unique (amongst specified attributes) (case insensitive)
+9. You can also define your own validator function so things don't get all cluttered in-line
+10. You can use `:if` and `:unless` options that call your boolean function on the data
 
 ### ON DELETE CASCADE
 

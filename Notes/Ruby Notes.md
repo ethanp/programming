@@ -14,6 +14,61 @@ latex footer:		mmd-memoir-footer
 
 ## Useful commands
 
+When it's `Class#method`, this means (in the `Ruby` docs) that it's an **instance method**
+
+### Enumerable#grep(pattern)
+**7/24/14**
+
+Filter array according to whether they match the passed parameter
+
+    2.1.2 :001 > [1,3,45].grep (1...3)
+     => [1] 
+
+    2.1.2 :002 > [1,3,45].grep (1..3)
+     => [1, 3] 
+
+    # elements aren't string
+    # so nothing matches
+    2.1.2 :003 > [1,3,45].grep /1/
+     => []
+
+    2.1.2 :004 > ['a', 'ab', 'b'].grep /a/
+     => ["a", "ab"] 
+
+### === aka "Triple Equal"
+**7/24/14**
+
+1. **General definition** --- return `true` if both parts are identical or if the **right part is contained within the range of the left**.
+        
+        # yes
+        2.1.2 :005 > (1..3) === 1
+         => true 
+        
+        # no (exception)
+        2.1.2 :006 > 1..3 === 1
+        ArgumentError: bad value for range
+        
+        # no (just doesn't work, use .grep, see above)
+        [1,2,3] === 1
+         => false 
+        
+        # no, think of this as saying [(1..3)] ==> Array[RangeObject]
+        2.1.2 :008 > [1..3] === 1
+         => false 
+2. For `Class.===` --- `true` if the argument is an **instance of** the class (**or subclass**)
+3. Left side is a regular expression --- `true` when the right side *matches* the regular expression.
+4. The `when` of `case` is an **implied** `===`, which compares the `case` variable to the `when` clause using `===`, so that the following two statements produce the same result:
+
+        # version 1
+        case a
+        when String
+          # statement
+        
+        # version 2
+        if String === a
+          # statement
+
+
 ### Chomp
 **6/19/14**
 
