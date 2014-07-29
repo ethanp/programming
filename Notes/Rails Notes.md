@@ -12,7 +12,14 @@ latex input:        mmd-article-begin-doc
 latex footer:       mmd-memoir-footer
 
 # Notes from Beggining Rails 4
-**This could be a blog topic about how it is hard to *intuit* while learning Rails without knowing much Ruby, what is "magic" and what isn't.** For example it is a surprise to know (see below) that scaffolds are not magical at all, they just print code into files you have access to modify. That's pretty simple. I guess as you learn more Rails it just becomes less magical overtime as you become acquainted with the sausage factory. **I wonder what the piece of code looks like that turns `as: "something"` into the methods `something_path` and `something_url`. Is that what they call *"metaprogramming"?***
+**This could be a blog topic about how it is hard to *intuit* while learning Rails without knowing much Ruby, what is "magic" and what isn't.**
+
+* For example it is a surprise to know (see below) that scaffolds are not magical at all, they just print code into files you have access to modify. That's pretty simple.
+* I guess as you learn more Rails it just becomes less magical overtime as you become acquainted with the sausage factory.
+* **I wonder what the piece of code looks like that turns `as: "something"` into the methods `something_path` and `something_url`. Is that what they call *"metaprogramming"?***
+    * Finding the answer to that would be a *better* blog topic than the first option
+
+Quotes in this section are from *Beginning Rails 4*, written by Adam Gamble et al., published by Apress.
 
 * All controllers inherit from `application_controller.rb`, so put methods here to make them accessible in every controller.
 * The generators don't do any behind-your-back voodoo-magic, they just create the files you see and fill them with barebones-boilerplate that you can edit
@@ -33,6 +40,8 @@ latex footer:       mmd-memoir-footer
 * The router is a great thing, because it decouples your *files* from your app's *interface*
 * If you `generated` a `model` with `scaffolding`, then you can request `url/mymodels.json` and it will return a `JSON` array of all those objects in the database! Bind mlown.
 * `redirect_to(@article)` simply performs `redirect_to(article_ path(:id => @article))`
+* "In order to simulate state atop HTTP, Rails uses cookies. When the first request comes in, Rails sets a cookie on the client’s browser. The browser remembers the cookie locally and sends it along with each subsequent request. The result is that Rails is able to match the cookie that comes along in the request with session data stored on the server."
+    * So where do you put the data when you want to give your app state? *In the* `session` *hash!*
 
 ## Directory structure
 * **bin** --- executables
@@ -41,6 +50,35 @@ latex footer:       mmd-memoir-footer
 * **lib** --- libraries your app might use
 * **vendor** --- gems and plug-ins bundled automatically by the app
 
+### Assets directories
+* **app/assets** --- for assets owned by this application (images, style sheets, javascript)
+* **lib/assets** --- for assets shared across applications, but created/owned by you (for perhaps a collection of apps)
+* **vendor/assets** --- for assets created/owned by someone who isn't you (e.g. a framework)
+
+## Controllers
+### respond_to
+    def abcd
+      @task = Task.find(params[:task_id])
+      respond_to do |format|
+        format.html { redirect_to @task, notice: 'Task was successfully created.' }
+        format.json { render :show, status: :created, location: @task }
+      end
+    end
+        
+1. If you want to respond to specific formats in different ways, you declare here (in a block) how to respond to each format
+2. If you leave the default empty, it will `render` the `template` associated with this *controller-action* for this format
+3. If that's not what you want, you can use `redirect_to` or `render` to declare what you *do* want
+4. I think if you leave a format out, it will not be able to respond to that format
+    5. So that's why you see `format.js` (with no block) to enable support for responses to AJAX requests.
+1. This is an example of what a render partial with local variables looks like:
+
+        <% = render 'header', title: 'My Blog' %>
+        
+   Any number of local variables can be assigned this way, and any object can be set as the value. In the preceding example, the partial has access to the local variable title.
+
+### Testing
+1. There's a *testing database* just for testing
+2. The database gets dropped and re-created every time the tests are run
 
 # Useful snippets
 
