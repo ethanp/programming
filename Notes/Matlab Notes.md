@@ -103,6 +103,10 @@ Get the **number of rows** or **columns** of a matrix
 Get the length of **the longer of** the number of `rows` & `cols`
 
     length(myMatrix)
+    
+Get the dimensions of a matrix
+
+    [rows cols] = size(myMatrix)
 
 #### Find summary stats
 
@@ -144,6 +148,28 @@ Create the vector `[1 2 3 4]`
 Create `N` elements, evenly spaced in range `[a,b]`
 
 	linspace(a, b, N)
+
+Turn a vector into a matrix
+
+    >> reshape(1:6,2,3)    
+    ans =
+       1   3   5
+       2   4   6
+
+Turn a matrix into a vector
+
+    >> [1 3 5; 2 4 6](:)
+    ans =
+       1
+       2
+       3
+       4
+       5
+       6
+
+The above two allow us to state the following
+
+    >> reshape(myMat(:),rows(myMat),columns(myMat)) == myMat
 
 ## Plotting
 
