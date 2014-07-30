@@ -33,32 +33,29 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
-% ====================== YOUR CODE HERE ======================
-% Instructions: You should complete the code by working through the
-%               following parts.
-%
-% Part 1: Feedforward the neural network and return the cost in the
-%         variable J. After implementing Part 1, you can verify that your
-%         cost function computation is correct by verifying the cost
-%         computed in ex4.m
-
-% Feedforward
-pad_X = [ones(m,1) X];
-a2 = sigmoid(pad_X*Theta1');
+% Part 1: Feedforward
+a1 = [ones(m,1) X];
+z2 = a1 * Theta1';
+a2 = sigmoid(z2);
 a2 = [ones(m,1) a2];
-nn_output = sigmoid(a2*Theta2');
+a3 = sigmoid(a2*Theta2');
 
-% Create correct output matrix
-correct_output = zeros(size(y), num_labels);
-for i = 1:size(y)
-    correct_output(i, y(i)) = 1;
-end
+% Create correct_output matrix
+% correct_output = zeros(size(y), num_labels);
+% for i = 1:size(y)
+%     correct_output(i, y(i)) = 1;
+% end
+
+% Snazzier way to do it
+% 1. Create a matrix containing each of the logical vectors,
+% 2. Then create a matrix by mashing those logical vectors we want, together
+correct_output = eye(num_labels)(y,:);
 
 % Compute non-regularized Cost "J"
 % this works, though it's not vectorized...
 for i = 1:m
     for k = 1:num_labels
-        J += (-correct_output(i,k)*log(nn_output(i,k))-(1-correct_output(i,k))*log(1-nn_output(i,k)));
+        J += (-correct_output(i,k)*log(a3(i,k))-(1-correct_output(i,k))*log(1-a3(i,k)));
     end
 end
 J /= m;
@@ -77,17 +74,44 @@ J += (st1s+st2s)*lambda/(2*m);
 %         the cost function with respect to Theta1 and Theta2 in Theta1_grad and
 %         Theta2_grad, respectively. After implementing Part 2, you can check
 %         that your implementation is correct by running checkNNGradients
-%
-%         Note: The vector y passed into the function is a vector of labels
-%               containing values from 1..K. You need to map this vector into a
-%               binary vector of 1's and 0's to be used with the neural network
-%               cost function.
-%
-%         Hint: We recommend implementing backpropagation using a for-loop
-%               over the training examples if you are implementing it for the
-%               first time.
 
+% Step 2: delta^(3)
+% the matrix of errors associated with each OUTPUT node on each example
+d3 = a3 - correct_output;
 
+% Step 3: delta^(2)
+% the matrix of errors associated with each HIDDEN node on each example
+
+% size(Theta2'*d3') = [26 5000], so looks like we have
+%   Row: hidden neuron
+%   Col: training example
+%   Val: error associated with each hidden node in corresponding example
+% So now, I want to *multiply each error value* by (what I understand to be)
+%       how much it would be affected by a miniscule change in weight-value
+%   This is because part of the gradient decent algorithm uses the gradient
+%       to decide /how far/ to jump in a given direction, though IMHO it
+%       would still be "gradient decending" if it used a different means to
+%       determine how far to jump.
+% size(d2) => 5000 X 25
+d2 = d3*Theta2(:,2:end).*sigmoidGradient(z2);
+
+% Step 4: accumulate gradient into Delta^(l)
+% In English:
+%   * D2 is associated with each weight
+%   * It is calculated by summing over each example, how far off was
+%     that output neuron, multiplied by how lit up was the hidden neuron
+%   * So if it was too low (on average), it will be negative
+%   * This will dictate how we alter Theta2 for the next go-round
+%   * Nicely, this summation over each example is accomplished via the
+%     normal matrix dot-product
+D2 = d3'*a2;
+D1 = d2'*a1;
+
+% Turn the sum of the errors over the examples (as discussed above)
+% into the average error over the examples
+% This is our new gradient
+Theta2_grad += D2/m;
+Theta1_grad += D1/m;
 
 % Part 3: Implement regularization with the cost function and gradients.
 %
