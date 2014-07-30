@@ -54,16 +54,23 @@ for i = 1:size(y)
     correct_output(i, y(i)) = 1;
 end
 
+% Compute non-regularized Cost "J"
 % this works, though it's not vectorized...
 for i = 1:m
-    a = 0;
     for k = 1:num_labels
-        a += (-correct_output(i,k)*log(nn_output(i,k))-(1-correct_output(i,k))*log(1-nn_output(i,k)));
+        J += (-correct_output(i,k)*log(nn_output(i,k))-(1-correct_output(i,k))*log(1-nn_output(i,k)));
     end
-    J += a;
 end
-
 J /= m;
+
+% Regularize Cost "J"
+reg = 0;
+t1s = Theta1.^2;
+st1s = sum(t1s(:,2:end)(:)); % 2:end to chop off bias neuron
+
+t2s = Theta2.^2;
+st2s = sum(t2s(:,2:end)(:));
+J += (st1s+st2s)*lambda/(2*m);
 
 % Part 2: Implement the backpropagation algorithm to compute the gradients
 %         Theta1_grad and Theta2_grad. You should return the partial derivatives of
