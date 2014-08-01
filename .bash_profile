@@ -250,6 +250,27 @@ export CLASSPATH
 #JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home
 #export JAVA_HOME
 
+# This is the reason I have JAVA_HOME set:
+# Summary: running `pig` requires it
+
+# brew install pig
+# ==> Downloading http://www.apache.org/dyn/closer.cgi?path=pig/pig-0.12
+###################################################
+# ==> Caveats                                     #
+# You may need to set JAVA_HOME:                  #
+#    export JAVA_HOME="$(/usr/libexec/java_home)" #
+###################################################
+# ==> Summary
+# 🍺  /usr/local/Cellar/pig/0.12.0: 8 files, 26M, built in 7.9 minutes
+# ┌──[~/Desktop/Movies]--[ 4:49 PM ]
+# └──╼pig
+# Error: JAVA_HOME is not set.
+# ┌──[~/Desktop/Movies]--[ 4:58 PM ]
+# └──╼export JAVA_HOME="$(/usr/libexec/java_home)"
+# ┌──[~/Desktop/Movies]--[ 5:00 PM ]
+# └──╼pig
+# grunt>
+export JAVA_HOME="$(/usr/libexec/java_home)"
 
 # These are only saved _this_ session
 HISTSIZE=2000

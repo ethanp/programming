@@ -113,6 +113,15 @@ D1 = d2'*a1;
 Theta2_grad += D2/m;
 Theta1_grad += D1/m;
 
+% Regularize that bit
+Theta2_grad += lambda*Theta2/m;
+Theta1_grad += lambda*Theta1/m;
+
+% "Note that you should NOT be regularizing the first column of Θ(l)
+% which is used for the bias term."
+Theta2_grad(:,1) -= lambda*Theta2(:,1)/m;
+Theta1_grad(:,1) -= lambda*Theta1(:,1)/m;
+
 % Part 3: Implement regularization with the cost function and gradients.
 %
 %         Hint: You can implement this around the code for
