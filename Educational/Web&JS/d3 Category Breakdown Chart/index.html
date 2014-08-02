@@ -52,32 +52,58 @@ var y = d3.scale.linear()
 var z = d3.scale.category20c();
 
 
-var xAxis = d3.svg.axis()   // create a new "default" axis
-    .scale(x)               // scale it according to the scaling-function
-    .orient("bottom")       //     defined as "x" above
-    .ticks(d3.time.days);   // use the parameter to generate tick values
-                            //     when rendering
+/* 1. Create a new axis to go on the bottom.
+   2. Scale it according to the scaling-function defined as "x" above.
+   3. In particular, use "days" to generate tick values when rendering. */
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom")
+    .ticks(d3.time.days);
 
 var yAxis = d3.svg.axis()
     .scale(y)
     .orient("left");
 
 /* * This graph shall use the "stack" layout, which allows you to render
-     elements on top of each other Cartesianally or Radially.
-   * We shall start with an initial offset of zero from the baseline
-     (x-axis line).
-   * TODO */
+      elements one above the other (Cartesianally or Radially), starting with
+      an initial offset of zero from the x-axis line.
+
+   * `values()` takes a function which receives the current "layer" of the
+        "stack" being created
+       -- a "layer" is an array of values
+       -- I'M NOT REALLY CLEAR ON WHAT'S GOING ON HERE
+
+   * x() specifies:
+      For each object being rendered, what is the name of the field that
+      contains the value that should be rendered as this object's
+      x-coordinate?
+*/
 var stack = d3.layout.stack()
     .offset("zero")
     .values(function(d) { return d.values; })
     .x(function(d) { return d.date; })
     .y(function(d) { return d.value; });
 
+/* this turns our single list of objects into
+   the following data structure:
+
+   [
+     {
+       "key":"categ1",
+       "values":[array of data]
+     }, {
+       "key":"categ2",
+       "values":[array of data]
+     }
+   ]
+
+*/
 var nest = d3.nest()
     .key(function(d) { return d.name; });
 
+/* Create an "area generator" */
 var area = d3.svg.area()
-    .interpolate("cardinal")
+    .interpolate("monotone") // was "cardinal", which was better but went below zero
     .x(function(d) { return x(d.date); })
     .y0(function(d) { return y(d.y0); })
     .y1(function(d) { return y(d.y0 + d.y); });
@@ -88,10 +114,11 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.json("data.json", function(data) {
+d3.json("data2.json", function(data) {
   data.forEach(function(d) {
     d.date = format.parse(d.date);
     d.value = +d.value;
+    d.name = d.name
   });
 
   var layers = stack(nest.entries(data));
@@ -114,6 +141,25 @@ d3.json("data.json", function(data) {
   svg.append("g")
       .attr("class", "y axis")
       .call(yAxis);
-});
+
+  console.log(layers);
+  // add legend
+      var legend = svg.selectAll('.g')
+        .data(layers)
+        .enter()
+      .append('g')
+        .attr('class', 'legend');
+
+    legend.append('rect')
+        .attr('x', width - 60)
+        .attr('y', function(d, i){ return i *  20;})
+        .attr('width', 10)
+        .attr('height', 10)
+        .style('fill', function(d) {return z(d.key);});
+
+    legend.append('text')
+        .attr('x', width - 40)
+        .attr('y', function(d, i){ return (i *  20) + 9;})
+        .text(function(d){ return d.key; });});
 
 </script>
