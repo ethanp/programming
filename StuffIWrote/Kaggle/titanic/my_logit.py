@@ -44,32 +44,31 @@ def preprocess(df):
             from Categorical(['C', 'Q', 'S']),
             to Indicator('C'), Indicator('Q')
     """
-    df = pd.concat([df, pd.get_dummies(df.Embarked)], axis=1)
-    df = df.drop(['S'], axis=1)
+    df = pd.concat([df,pd.get_dummies(df.Embarked)], axis=1).drop(['S'], axis=1)
 
 
     # All the ages with no data -> make the median of all Ages
     median_age = df.Age.dropna().median()
     if len(df.Age[ df.Age.isnull() ]) > 0:
-        df.loc[ (df.Age.isnull()), 'Age'] = median_age
+        df.loc[ df.Age.isnull(), 'Age' ] = median_age
 
     df = df.drop(['Name', 'Ticket', 'Cabin', 'Embarked', 'PassengerId'], axis=1)
     return df
 
+# Load the Data
 
-# Load the train file into a dataframe
+print 'Preprocessing...'
+
 train_df = pd.read_csv('data/train.csv', header=0)
 train_df = preprocess(train_df)
 
-# TEST DATA
-
 test_df = pd.read_csv('data/test.csv', header=0)
 
-# Collect the test data's PassengerIds before dropping it
+# collect the test data's PassengerIds before dropping it
 ids = test_df.PassengerId.values
 test_df = preprocess(test_df)
 
-# For all the missing Fares -> assume median of their respective Pclass
+# for all the missing Fares -> assume median of their respective Pclass
 if len(test_df.Fare[ test_df.Fare.isnull() ]) > 0:
     median_fare = np.zeros(3) # => array([ 0.,  0.,  0.])
     for f in range(0,3):
@@ -78,25 +77,26 @@ if len(test_df.Fare[ test_df.Fare.isnull() ]) > 0:
         test_df.loc[ (test_df.Fare.isnull()) & (test_df.Pclass == f+1 ), 'Fare'] = median_fare[f]
 
 # Convert dataframes back to numpy arrays
-train_data = train_df.values
-test_data = test_df.values
+train_arr = train_df.values
+test_arr = test_df.values
 
 print 'Training...'
 
 # scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
 logit = LogisticRegression(penalty='l2')
 
-# columns 1: contain all the predictors
-# column 0: contains the "Survived" column,
-#            the variable we're learning to predict
-logit = logit.fit( train_data[:,1:], train_data[:,0] )
+X = train_arr[:,1:]
+y = train_arr[:,0]
+logit = logit.fit(X,y)
 
 print 'Predicting...'
-output = logit.predict(test_data).astype(int)
+survival_predictions = logit.predict(test_arr).astype(int)
 
-predictions_file = open("data/output/mylogit3.csv", "wb")
-open_file_object = csv.writer(predictions_file)
-open_file_object.writerow(["PassengerId","Survived"])
-open_file_object.writerows(zip(ids, output))
-predictions_file.close()
+
+with open("data/output/mylogit3.csv", "wb") as predictions_file:
+    csv_writer = csv.writer(predictions_file)
+    submission_header = ["PassengerId","Survived"]
+    csv_writer.writerow(submission_header)
+    csv_writer.writerows(zip(ids, survival_predictions))
+
 print 'Done.'
