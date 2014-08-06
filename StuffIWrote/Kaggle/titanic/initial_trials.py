@@ -55,13 +55,22 @@ from patsy import dmatrices
 # as well as containers for holding and managing the datasets
 from sklearn import datasets, svm
 
+# make sure we're in the right place on the file system
+import os
+os.chdir('/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Kaggle/titanic')
+
+# import KaggleAux
+import sys
+ka_loc = '/Users/Ethan/code/personal_project_use/libraries_to_use/Python/KaggleAux'
+if ka_loc not in sys.path:
+    sys.path.append(ka_loc)
+from kaggleaux import modeling as ka
+
+
 #################################################
 ##  Part 1:  WRANGLE THE DATA (not much to do) ##
 #################################################
 
-# make sure we're in the right place on the file system
-import os
-os.chdir('/Users/Ethan/Dropbox/CSyStuff/ProgrammingGit/StuffIWrote/Kaggle/titanic')
 
 df = pd.read_csv("data/train.csv")
 
@@ -255,67 +264,186 @@ def plots_4():
 
 ### Algorithm 1: Logistic/Logit Regression
 
-def logit_regression():
+# store regression results for analysis later
+results = {}
 
-    """
-    Model `formula`, this is where we're using the "patsy" library.
-    This formula system is documented in detail here:
+#def logit_regression():
 
-        http://patsy.readthedocs.org/en/latest/formulas.html#formulas
+"""
+Model `formula`, this is where we're using the "patsy" library.
+This formula system is documented in detail here:
 
-    Here the ~ sign is an = sign, and the features of our dataset
-    are written as a formula to predict survived.
+    http://patsy.readthedocs.org/en/latest/formulas.html#formulas
 
-    The C() lets our regression know that those variables are categorical.
+Here the ~ sign is an = sign, and the features of our dataset
+are written as a formula to predict survived.
 
-    For our first, simplest try, we're just saying the Survival indicator
-    is some simple linear combination of the other variables
-    """
-    formula = 'Survived ~ C(Pclass) + C(Sex) + Age + SibSp  + C(Embarked)'
+The C() lets our regression know that those variables are categorical.
 
-    # store regression results for analysis later
-    results = {}
+For our first, simplest try, we're just saying the Survival indicator
+is some simple linear combination of the other variables
+"""
+formula = 'Survived ~ C(Pclass) + C(Sex) + Age + SibSp  + C(Embarked)'
 
-    """
-    Here we create two patsy "design matrices" in dataframes
 
-    According to the statsmodels docs [1]
+"""
+Here we create two patsy "design matrices" in dataframes
 
-        To fit most of the models covered by statsmodels, you will need to
-        create two design matrices. The first is a matrix of endogenous
-        variable(s) (i.e. dependent, response, regressand, etc.). The second
-        is a matrix of exogenous variable(s) (i.e. independent, predictor,
-        regressor, etc.).
+According to the statsmodels docs [1]
 
-        The patsy module provides a convenient function to prepare design
-        matrices using R-like formulas.
+    To fit most of the models covered by statsmodels, you will need to
+    create two design matrices. The first is a matrix of endogenous
+    variable(s) (i.e. dependent, response, regressand, etc.). The second
+    is a matrix of exogenous variable(s) (i.e. independent, predictor,
+    regressor, etc.).
 
-    [1]: statsmodels.sourceforge.net/devel/gettingstarted.html#design-matrices-endog-exog
+    The patsy module provides a convenient function to prepare design
+    matrices using R-like formulas.
 
-    So the variable `y` we're creating is (I'm pretty sure) the same as df.Survived.as_dataframe()
+[1]: statsmodels.sourceforge.net/devel/gettingstarted.html#design-matrices-endog-exog
 
-    And the variable `x` is a dataframe with columns
+So the variable `y` we're creating is (I'm pretty sure) the same as df.Survived.as_dataframe()
 
-        Intercept        # always 1
-        C(Pclass)[T.2]   # indicator of whether Pclass == 2
-        C(Pclass)[T.3]   # also indicators...
-        C(Sex)[T.male]
-        C(Embarked)[T.Q]
-        C(Embarked)[T.S]
-        Age              # integer (e.g. 38)
-        SibSp            # number of siblings/spouses aboard (max = 5, mean = 0.5)
+And the variable `x` is a dataframe with columns
 
-    """
-    y, x = dmatrices(formula, data=df, return_type='dataframe')
+    Intercept        # always 1
+    C(Pclass)[T.2]   # indicator of whether Pclass == 2
+    C(Pclass)[T.3]   # also indicators...
+    C(Sex)[T.male]
+    C(Embarked)[T.Q]
+    C(Embarked)[T.S]
+    Age              # integer (e.g. 38)
+    SibSp            # number of siblings/spouses aboard (max = 5, mean = 0.5)
 
-    # create a statsmodels' Logit regression model on all the data
-    model = sm.Logit(y,x)
+"""
+y, x = dmatrices(formula, data=df, return_type='dataframe')
 
-    # run the algorithm
-    res = model.fit()
+# create a statsmodels' Logit regression model on all the data
+model = sm.Logit(y,x)
 
-    # save the result for outputing predictions later
-    results['Logit'] = [res, formula]
+# run the algorithm
+res = model.fit()
 
-    # print a nice little summary like you'd find with STATA
-    return res.summary()
+# save the result for outputing predictions later
+results['Logit'] = [res, formula]
+
+# print a nice little summary like you'd find with STATA
+print res.summary()
+
+
+###############
+# Logit Plots #
+###############
+
+# Plot Predictions Vs Actual
+plt.figure(figsize=(18,4));
+plt.subplot(121, axisbg="#DBDBDB")
+
+# generate predictions from `res`, our fitted model
+# we're using the training data again to form these predictions, I believe
+# but it's just quick-and-dirty-work to see whether the logit was even
+# halfway-decent.
+ypred = res.predict(x)
+
+"""
+this is saying
+    make predicted values (in range (0,1)) blue circles
+    make true values (in set {0,1}) red circles
+    both with low opacity
+"""
+plt.plot(x.index, ypred, 'bo', x.index, y, 'mo', alpha=.25);
+
+# this makes it look like R
+plt.grid(color='white', linestyle='dashed')
+plt.title('Logit predictions, Blue: \nFitted/predicted values: Red');
+
+# Residuals
+ax2 = plt.subplot(122, axisbg="#DBDBDB")
+
+"""
+this is the "deviance residual", i.e.
+
+    "the measure of deviance contributed from each observation"
+
+where
+
+    "deviance is a quality of fit statistic for a model"
+
+It shall be a red dashed line on a white dashed grid
+
+I believe we should use this plot to see whether there is any trend
+    in the residuals.
+"""
+plt.plot(res.resid_dev, 'r-')
+plt.grid(color='white', linestyle='dashed')
+ax2.set_xlim(-1, len(res.resid_dev))
+plt.title('Logit Residuals');
+
+
+# Hey I've got an idea, let's just make more plots...
+
+fig = plt.figure(figsize=(18,9), dpi=1600)
+a = .2
+
+fig.add_subplot(221, axisbg="#DBDBDB")
+
+"""
+this is the "kernel density estimator", just like was used above,
+to create a nice smoothed density plot of the predictions
+the y-values look incorrect, but I'm guessing the shape is right
+"""
+kde_res = KDEUnivariate(res.predict())
+kde_res.fit()
+
+# I think the "support" is simply the domain in which the
+# density is greater than 0.
+plt.plot(kde_res.support,kde_res.density)
+plt.fill_between(kde_res.support,kde_res.density, alpha=a)
+plt.title("Distribution of our Predictions")
+
+# show that predicted survival probabilities are much lower
+# for males than females
+fig.add_subplot(222, axisbg="#DBDBDB")
+plt.scatter(res.predict(),x['C(Sex)[T.male]'] , alpha=a)
+plt.grid(b=True, which='major', axis='x')
+plt.xlabel("Predicted chance of survival")
+plt.ylabel("Gender Bool")
+plt.title("The Change of Survival Probability by Gender (1 = Male)")
+
+# show that surval probabilities are strongly dependent on Pclass
+fig.add_subplot(223, axisbg="#DBDBDB")
+plt.scatter(res.predict(),x['C(Pclass)[T.3]'] , alpha=a)
+plt.xlabel("Predicted chance of survival")
+plt.ylabel("Class Bool")
+plt.grid(b=True, which='major', axis='x')
+plt.title("The Change of Survival Probability by Lower Class (1 = 3rd Class)")
+
+# show that predicted survival probabilities are
+# inversely correlated with Age
+fig.add_subplot(224, axisbg="#DBDBDB")
+plt.scatter(res.predict(),x.Age , alpha=a)
+plt.grid(True, linewidth=0.15)
+plt.title("The Change of Survival Probability by Age")
+plt.xlabel("Predicted chance of survival")
+plt.ylabel("Age")
+
+
+################################
+##  Part 4:  RUN ON TEST SET  ##
+################################
+
+test_data = pd.read_csv("data/test.csv")
+
+# "Add our independent variable to our test data. (It's usually left
+# blank by Kaggle because it's the value you're trying to predict.)"
+# 1.23 is just a random value, it could have been anything
+test_data['Survived'] = 1.23
+
+# use model to make prediction on test set
+compared_results = ka.predict(test_data, results, 'Logit')
+
+# convert model to Series for easy output
+compared_results = Series(compared_results)
+
+# output and submit to Kaggle
+compared_results.to_csv("data/output/logitregres.csv")
