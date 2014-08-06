@@ -230,6 +230,7 @@ export CDPATH
 # PYTHONPATH is where Python looks for user-defined Modules/Packages
 #  after searching the current directory
 PYTHONPATH="/usr/local/lib/python2.7/site-packages:$PYTHONPATH"
+# PYTHONPATH="/Applications/Anaconda/anaconda/lib/python2.7/site-packages:$PYTHONPATH"
 export PYTHONPATH
 
 
