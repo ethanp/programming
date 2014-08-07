@@ -30,10 +30,10 @@ J += (lambda / (2*m)) * sum(theta(2:end).^2);
 
 % unregularized (this took a little while)
 % the default sum computes over each COL
-grad = sum((pX*theta-y).*pX) / m;
+grad = sum((X*theta-y).*X) / m;
 
 % regularize
-reg = theta * lambda / m;
+reg = theta' * lambda / m;
 reg(1) = 0;
 grad += reg;
 

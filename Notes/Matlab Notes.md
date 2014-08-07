@@ -108,6 +108,11 @@ Get the dimensions of a matrix
 
     [rows cols] = size(myMatrix)
 
+Get the **number of elements** in a matrix (i.e. rows X cols)
+
+    numElements = numel(myMatrix)
+
+
 #### Find summary stats
 
 Find **mean/std-dev of each column of `A`**
