@@ -11,8 +11,76 @@ latex input:        mmd-natbib-plain
 latex input:        mmd-article-begin-doc
 latex footer:       mmd-memoir-footer
 
-`vars(thing)`: Turn `thing` into an equivalent dictionary
------------------------------------------
+## Data libraries
+
+### File I/O
+
+    df = pd.read_csv('data/train.csv', header=0)
+    
+### Quick column-by-name access
+
+    df['colName']
+    df.colName
+
+### Wrangling strategies
+
+#### Assign mode value to all rows with null value
+
+We use `values` because `mode()` returns a `pd.Series` and we want a `np.array`
+
+    df.Embarked[ df.Embarked.isnull() ] = df.Embarked.dropna().mode().values
+    
+##### A more complex example using a different syntax:
+
+In all locations where the column `Fare` is null `and` the `Pclass` equals `f+1`,
+set the value in the `Fare` column to the `median_fare[f]` calculated before.
+
+    df.loc[ (df.Fare.isnull()) & (df.Pclass == f+1 ), 'Fare'] = median_fare[f]
+    
+#### Convert Categorical variable to a set of dummies/indicators
+
+First we create a dataframe of dummy variable columns for each of the values found in the Categorical variable
+
+    dummies = pd.get_dummies(df.Categ_Column)
+
+Then we append those to the original dataframe
+
+    df = pd.concat([df, dummies], axis=1)
+    
+Then we drop the original categorical variable and one of the dummies (because having *all* of them is redundant)
+
+    df = df.drop(['one_of_the_vars', 'Embarked'], axis=1)
+    
+##### All in one go it would be
+
+    df = pd.concat([df,pd.get_dummies(df.Embarked)], axis=1).drop(['one_of_the_vars', 'Embarked'], axis=1)
+    
+### Convert dataframe to numpy array
+sklearn expects a `numpy array`, not a `dataframe`
+
+    np_arr = df.values
+
+    logit = LogisticRegression(penalty='l2')
+    X = np_arr[:,1:]
+    y = np_arr[:,0]
+    logit = logit.fit(X,y)
+    predictions = logit.predict(test_arr).astype(int)
+    
+### Exploratory Data Analysis
+
+    df.groupby(['col']).mean().plot()
+    
+    df.describe()      # print summary stats of *only those cols for which this is available*
+    df.head(n=5)       # print first 'n' rows
+    df.count()         # count of non-nulls
+    df.mean()          # probably DON'T want to do this, not sure how it treats NaNs
+    df.dropna().mean() #  \-> use this instead
+    df.columns         # np.array of unicode column names
+    df.Column.value_counts() # Series showing counts for each value in Column
+    df.Column.value_counts().hist() # histogram of the count info for Column
+    
+
+## `vars(thing)`: Turn `thing` into an equivalent dictionary
 #### 6/29/14
     
     >>> class A(object):
@@ -38,8 +106,7 @@ This is my own invention, so maybe it's a Bad Idea for some reason.
     ...    def __eq__(self, other):
     ...       return vars(self) == vars(other)
 
-Append to file Real Quick
--------------------------
+## Append to file Real Quick
 #### 6/28/14
 
 To append to a file real quick, use
@@ -55,8 +122,7 @@ To do breakneck speed logging while running a `nose unittest`, use
 
 Though what you're *supposed* to do is use the `logging` framework
 
-unittest
---------
+## unittest
 #### 6/3/14
 
 Python's **built-in xUnit framework**
@@ -76,8 +142,8 @@ Python's **built-in xUnit framework**
     if __name__ == '__main__'
         unittest.main()
 
-Python 3
---------
+## Python 3
+
 
 ### The "//" operator
 
@@ -92,8 +158,7 @@ Always does *"integer division"*, even on floats (returns floored float value)
     >>> 4.0 // 3
     1.0
 
-Global variables
-----------------
+## Global variables
 
 #### 5/5/14
 
@@ -114,8 +179,7 @@ as `global` first**
 	    global globvar # Needed to modify global copy of globvar
 	    globvar = 1
 
-next(`iterator`)
---------------
+## next(`iterator`)
 
 #### 4/16/14
 
@@ -160,8 +224,7 @@ next(`iterator`)
     >>> next(a)
     StopIteration
 
-Filter and Map
---------------
+## Filter and Map
 
 **Stuff the iterable in the second parameter
 through the function in the first parameter.**
@@ -181,8 +244,7 @@ through the function in the first parameter.**
     [False, False, False, True, True, True]
 
 
-Sorting in-place & out-of-body
-------------------------------
+## Sorting in-place & out-of-body
 
 Sort the `list` in-place
 
@@ -270,6 +332,8 @@ but using `re.compile()` saves the resulting regular expression object
 for reuse
 
 #### Maketrans
+
+The same as `Unix`'s `tr` command
 
     >>> from string import maketrans   # Required to call maketrans function.
     >>> print "this is example, wow!".translate(maketrans("aeiou", "12345"))

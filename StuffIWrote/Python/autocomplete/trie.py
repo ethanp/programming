@@ -18,6 +18,7 @@ class Trie(object):
     It can only hold strings
 
     The plan: it's just a giant nest of hashmaps
+    Realization: it should probably just be a giant nest of Tries (do'h!)
 
     For example:
 
@@ -75,11 +76,14 @@ class Trie(object):
         via depth-first traversal
         '''
         curr_hash = self.base
-        if not curr_hash:
+        if curr_hash:
             for i in self._get_word_counts(curr_hash, '', []):
                 print i
         else:
             print 'This trie is totally empty'
+
+    def get_word_counts(self):
+        return self._get_word_counts(self.base, '', [])
 
     def _get_word_counts(self, curr_hash, curr_str, curr_arr):
         for ch, (count, next_hash) in curr_hash.items():
@@ -89,56 +93,32 @@ class Trie(object):
                 curr_arr += self._get_word_counts(next_hash, curr_str+ch, [])
         return curr_arr
 
-    # TODO implement the whole prefix thing
-    def get_top_k_with_prefix(self, k, prefix):
+    def get_top_k_with_prefix(self, prefix, k=5):
         if not self.base:
             print 'This trie is totally empty'
             return
 
         curr_hash = self.base
-        # TODO consider if the -1 is the right move in this situation
         for ch in prefix[:-1]:
             if ch in curr_hash:
-                curr_hash = curr_hash[ch]
+                curr_hash = curr_hash[ch][CHILDREN]
             else:
                 print prefix, 'is not in this trie'
                 return []
 
-        # TODO consider if the -1 is the right move in this situation
-        for i in sorted(self._get_word_counts(curr_hash, prefix[:-1], []), key=lambda x: x[1])[:k]:
-            print i
+        arr = []
+        if prefix:
+            ch = prefix[-1]
+            if ch in curr_hash:
+                count = curr_hash[ch][COUNT]
+                if count > 0:
+                    arr.append((prefix, count))
+                curr_hash = curr_hash[ch][CHILDREN]
 
-def simple_test_1():
-    t = Trie()
-    t.print_word_counts()
-    print
-    t.insert('a')
-    t.print_word_counts()
-    print
-    t.insert('b')
-    t.print_word_counts()
-    print
-    t.insert('ab')
-    t.print_word_counts()
-    print
-    t.insert('a')
-    t.print_word_counts()
-    print
-
-def simple_test_2():
-    t = Trie()
-    t.insert('a')
-    t.insert('a')
-    t.insert('ab')
-    t.insert('abc')
-    t.insert('abc')
-    t.insert('abc')
-    t.insert('abc')
-    t.insert('abc')
-    t.insert('abcd')
-    t.insert('abcd')
-    t.insert('abcd')
-    t.get_top_k_with_prefix(3, 'abc')
+        words_counts = self._get_word_counts(curr_hash, prefix, arr)
+        sorted_counts = sorted(words_counts, key=lambda x: x[1], reverse=True)
+        k_sorted_counts = sorted_counts[:k]
+        return k_sorted_counts
 
 if __name__ == '__main__':
-    simple_test_2()
+    pass

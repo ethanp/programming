@@ -25,7 +25,7 @@ def preprocess(df):
 
     # All missing Embarked -> just make them embark from most common place
 
-    # if there are null values
+    # if there are null values (the training set has 2)
     if len(df.Embarked[ df.Embarked.isnull() ]) > 0:
 
         # all rows with null values, should instead receive the mode value
@@ -46,12 +46,13 @@ def preprocess(df):
     if len(df.Age[ df.Age.isnull() ]) > 0:
         df.loc[ df.Age.isnull(), 'Age' ] = median_age
 
-    df = df.drop(['Name', 'Ticket', 'Cabin', 'Embarked', 'PassengerId'], axis=1)
+    df = df.drop(['Name', 'Ticket', 'Embarked', 'PassengerId'], axis=1)
     return df
 
 # Load the Data
 
 train_df = pd.read_csv('data/train.csv', header=0)
+rt = train_df.copy()
 train_df = preprocess(train_df)
 
 test_df = pd.read_csv('data/test.csv', header=0)
@@ -79,25 +80,72 @@ def age_analysis():
     """
     AGE
 
-    My conclusion from this thing, is that age, as a variable on-its-own
-    has no impact on chance of survival.
+    My conclusion from this thing, is that there are three categories,
+    young, middle, old, and so I will create appropriate indicator bins for them
     """
 
     train_df.Age.hist()
     plt.show()
 
-    # select just the Survived and Age columns
-    survival_age = zip(train_df.Survived.values, train_df.Age.values)
-
-    # round ages to the tens
-    binned = [(surv, int(age)/10*10) for surv, age in survival_age]
-
-    gb = pd.DataFrame(binned, columns=['Survived', 'Age']).groupby(['Age'])
-    print 'Total counts in each age bin:'
-    print gb.count()
-    print
-    print 'Fraction Surviving:'
-    print gb.mean()
-
+    dd = pd.DataFrame(train_df.Survived)
+    dd['Age'] = train_df.Age
+    gb = dd.groupby(['Age'])
     gb.mean().plot()
-    plt.show()
+
+
+def bin_ages(df):
+    """
+    Perhaps this is something the Random Forest is already
+    taking care of on its own?
+    """
+    df['Young'] = (df.Age < 15).astype(int)
+    df['Old'] = (df.Age > 50).astype(int)
+    df = df.drop['Age']
+    return df
+
+
+def family_analysis():
+    """
+    Including the family size in the form of Parch or SibSp
+    don't seem to be too helpful
+
+    I'm going to leave them out in the future
+    """
+
+    # look at just Parch
+    train_df.Parch.hist()
+    dd = pd.DataFrame(train_df.Survived)
+    dd['Parch'] = train_df.Parch
+    gb = dd.groupby(['Parch'])
+    gb.mean().plot()
+
+    # look at (Parch + SibSp)
+    dd = pd.DataFrame(train_df.Survived)
+    dd['Fam'] = train_df.Parch + train_df.SibSp
+    dd.Fam.hist()
+    gb = dd.groupby(['Fam'])
+    gb.mean().plot()
+
+def cabin_analysis():
+    """
+    My initial hunch is that having a cabin means you're wealthier
+    and more likely to have made it onto a safety raft.
+
+    The analysis here confirms that (more than I'd expected)
+    """
+    dd = pd.DataFrame(rt.Survived)
+    dd['Cabin'] = rt.Cabin.isnull().astype(int)
+    dd.Cabin.hist()
+    gb = dd.groupby(['Cabin'])
+    gb.mean().plot()
+
+def embarked_analysis():
+    """
+    What we see here, is that a person from C is significantly more likely to survive.
+    Also, most people are from S, which is where you're least likely to survive.
+    """
+    dd = pd.DataFrame(rt.Survived)
+    dd['Embarked'] = rt.Embarked
+    dd.groupby(['Embarked']).mean()
+    dd.groupby(['Embarked']).mean().plot()
+    dd.groupby(['Embarked']).count()
