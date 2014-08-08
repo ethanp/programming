@@ -5,6 +5,7 @@ Trie
 
 A description in here
 '''
+import operator
 
 from heap import HeapElem, MaxHeap
 
@@ -55,6 +56,9 @@ class Trie(object):
         adds it if it doesn't exist in the structure
         adds to the counter if it does exist already
         '''
+        if not in_string:
+            return
+
         curr_hash = self.base
 
         # go to the spot
@@ -83,7 +87,13 @@ class Trie(object):
             print 'This trie is totally empty'
 
     def get_word_counts(self):
-        return self._get_word_counts(self.base, '', [])
+        word_counts = self._get_word_counts(self.base, '', [])
+
+        # this sorting by this then that doesn't seem to work...
+        # it does sort by count, but it doesn't seem to then sort lexicographically
+        sorted_counts = sorted(word_counts, key=operator.itemgetter(1, 0), reverse=True)
+
+        return sorted_counts
 
     def _get_word_counts(self, curr_hash, curr_str, curr_arr):
         for ch, (count, next_hash) in curr_hash.items():
@@ -116,7 +126,7 @@ class Trie(object):
                 curr_hash = curr_hash[ch][CHILDREN]
 
         words_counts = self._get_word_counts(curr_hash, prefix, arr)
-        sorted_counts = sorted(words_counts, key=lambda x: x[1], reverse=True)
+        sorted_counts = sorted(words_counts, key=operator.itemgetter(1, 0), reverse=True)
         k_sorted_counts = sorted_counts[:k]
         return k_sorted_counts
 
