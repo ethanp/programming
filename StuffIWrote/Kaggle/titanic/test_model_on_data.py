@@ -6,7 +6,8 @@ load_data
 Full framework for testing different models for the Titanic Kaggle competition
 '''
 from sklearn import cross_validation
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.cross_validation import StratifiedKFold
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier
 from sklearn.linear_model import LogisticRegression
 import pandas as pd, numpy as np, csv, os
 
@@ -84,6 +85,9 @@ class Titanic(object):
         right = full_str.rfind("'")
         return full_str[left:right]
 
+    def csv_named(self, name):
+        return self.out_loc+'/'+name+'.csv'
+
     def __init__(self,
                  train_loc='data/train.csv',
                  test_loc='data/test.csv',
@@ -96,7 +100,8 @@ class Titanic(object):
         3. print cross-validation scores for model on data
         4. save csv of predictions for test-set
         '''
-        self.out_file = out_loc+'/'+out_name+'.csv'
+        self.out_loc = out_loc
+        self.out_file = self.csv_named(out_name)
         self.model = model if model is not None else LogisticRegression()
         print 'Model: %s' % self.model_name()
         self.raw_train_df = pd.read_csv(train_loc, header=0)
@@ -112,7 +117,7 @@ class Titanic(object):
 
         # convert dataframes back to numpy arrays
         self.train_arr = self.prep_train_df.values
-        self.test_arr = self.prep_test_df.values
+        self.test_attr = self.prep_test_df.values
 
         # separate record-attributes from record-targets
         self.train_attr = self.train_arr[:,1:]
@@ -123,23 +128,81 @@ class Titanic(object):
         self.k_fold_cross_validate()
         print "Mean CV result: %.3f\n" % float( np.array(self.results).mean() )
         self.fitted_model = self.model.fit(self.train_attr, self.train_target)
-        self.survival_predictions = self.fitted_model.predict(self.test_arr).astype(int)
-        self.write_submission()
+        self.survival_predictions = self.fitted_model.predict(self.test_attr).astype(int)
+        self.write_submission(self.survival_predictions, self.out_file)
 
-    def write_submission(self):
-        with open(self.out_file, 'wb') as predictions_file:
+        # ensemble
+        self.pipeline_ensemble()
+
+    def write_submission(self, predictions, name):
+        with open(name, 'wb') as predictions_file:
             csv_writer = csv.writer(predictions_file)
             csv_writer.writerow(['PassengerId', 'Survived'])
-            csv_writer.writerows(zip(self.ids, self.survival_predictions))
+            csv_writer.writerows(zip(self.ids, predictions))
+
+    def pipeline_ensemble(self):
+        '''
+        blended trainer
+        based on https://github.com/emanuele/kaggle_pbr/blob/master/blend.py
+        '''
+        skf = list(StratifiedKFold(self.train_target, n_folds = 10))
+
+        classifiers = [RandomForestClassifier(n_estimators=100, n_jobs=-1, criterion='gini'),
+                       RandomForestClassifier(n_estimators=100, n_jobs=-1, criterion='entropy'),
+                       ExtraTreesClassifier(n_estimators=100, n_jobs=-1, criterion='gini'),
+                       ExtraTreesClassifier(n_estimators=100, n_jobs=-1, criterion='entropy'),
+                       GradientBoostingClassifier(learning_rate=0.05, subsample=0.5, max_depth=6, n_estimators=50)]
+
+        # This is a new feature-set we are creating as training data
+        # by running the training data through classifiers.
+        # Each column is the output of a single classifier trained on /other/
+        # data (i.e. the value of each row is created when this row a hold-out element).
+        dataset_blend_train = np.zeros((self.train_attr.shape[0], len(classifiers)))
+
+        # This is the matrix we will map the test-dataset to using the 5 classifiers
+        # chosen above. Then we will train on the above matrix, and using the function
+        # created by that, map this matrix to our submission vector.
+        dataset_blend_test = np.zeros((self.test_attr.shape[0], len(classifiers)))
+
+        for j, clf in enumerate(classifiers):
+            print j, clf
+            dataset_blend_test_j = np.zeros((self.test_attr.shape[0], len(skf)))
+            for i, (train, test) in enumerate(skf):
+                print "Fold", i
+                X_train = self.train_attr[train]
+                y_train = self.train_target[train]
+                X_test = self.train_attr[test]
+                y_test = self.train_target[test]  # not used
+                clf.fit(X_train, y_train)
+                y_submission = clf.predict_proba(X_test)[:,1] # col 1 is P(0), 2 is P(1)
+                dataset_blend_train[test, j] = y_submission
+                dataset_blend_test_j[:, i] = clf.predict_proba(self.test_attr)[:,1]
+
+            '''
+            EP NOTE: THIS IS WHERE THEY ACTUALLY GET-BLENT
+            - Here we form a new test-feature set from the combination
+              of outputs from the 5 classifiers. That makes sense.
+            - However, should we be weighting by the score for each classifier,
+              instead of taking the simple mean?
+            '''
+            dataset_blend_test[:, j] = dataset_blend_test_j.mean(1)
+
+        print
+        print "Blending."
+        clf = LogisticRegression()
+
+        # TODO use the k-fold cross-validate on this particular model
+        # bc it gave me a score of 0.00000, and that's no good
+
+        clf.fit(dataset_blend_train, self.train_target)
+        y_submission = clf.predict(dataset_blend_test)
+        self.write_submission(y_submission, self.csv_named('blent'))
+
 
 if __name__ == '__main__':
     Titanic(model=LogisticRegression(), out_name='log_reg')
 
     # TODO figure out what to put for the parameters like
     # min_samples_split, min_samples_leaf
-    Titanic(model=GradientBoostingClassifier(max_features=3, min_samples_leaf=5, min_samples_split=5), out_name='grad_boost')
-    Titanic(model=RandomForestClassifier(n_estimators=300, n_jobs=-1), out_name='rand_forest')
-
-    # TODO use a blended trainer like in
-    #   https://github.com/emanuele/kaggle_pbr/blob/master/blend.py
-    #
+    # Titanic(model=GradientBoostingClassifier(max_features=3, min_samples_leaf=5, min_samples_split=5), out_name='grad_boost')
+    # Titanic(model=RandomForestClassifier(n_estimators=300, n_jobs=-1), out_name='rand_forest')
