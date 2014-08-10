@@ -6,12 +6,12 @@ load_data
 Full framework for testing different models for the Titanic Kaggle competition
 '''
 from sklearn import cross_validation
+from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-import pandas as pd, numpy as np, csv
+import pandas as pd, numpy as np, csv, os
 
 # go to this file's location
 # stackoverflow.com/questions/5137497
-import os
 os.chdir(os.path.dirname(os.path.realpath(__file__)))
 
 class Titanic(object):
@@ -65,11 +65,10 @@ class Titanic(object):
         :param test_cv: indices of training set used as test set
         :return: proportion of predictions that matched the true target
         '''
-        # TODO there /must/ be some function that does this already
-        c = 0
-        for i in range(len(predictions)):
-            c += 1 if abs(self.train_target[test_cv][i] - predictions[i]) > 0 else 0
-        return float(c) / len(predictions)
+        target_arr = self.train_target[test_cv]
+        num_incorrect = sum([i != j for i, j in zip(target_arr, predictions)])
+        prop_incorrect = float(num_incorrect) / len(predictions)
+        return 1 - prop_incorrect
 
     def k_fold_cross_validate(self, k=5):
         ''' get results of using the provided model on each cv-segment '''
@@ -79,21 +78,27 @@ class Titanic(object):
             predictions = fitted.predict(self.train_attr[test_cv])
             self.results.append(self.prop_correct(predictions, test_cv))
 
+    def model_name(self):
+        full_str = str(type(self.model))
+        left = full_str.rfind('.')+1
+        right = full_str.rfind("'")
+        return full_str[left:right]
+
     def __init__(self,
                  train_loc='data/train.csv',
                  test_loc='data/test.csv',
-                 out_loc='data/output/myOutput.csv',
-                 model=LogisticRegression()):
+                 out_loc='data/output',
+                 out_name='logReg',
+                 model=None):
         '''
         1. read data
         2. preprocess data
         3. print cross-validation scores for model on data
         4. save csv of predictions for test-set
         '''
-        self.out_loc = out_loc
-        self.model = model
-
-        print 'Loading and preprocessing data...'
+        self.out_file = out_loc+'/'+out_name+'.csv'
+        self.model = model if model is not None else LogisticRegression()
+        print 'Model: %s' % self.model_name()
         self.raw_train_df = pd.read_csv(train_loc, header=0)
         self.raw_test_df = pd.read_csv(test_loc, header=0)
 
@@ -116,20 +121,19 @@ class Titanic(object):
         # cross-validate
         self.results = []
         self.k_fold_cross_validate()
-        print
-        print "Mean cross-validated result: " + str( np.array(self.results).mean() )
-        print "Cross-validated result: " + str( np.array(self.results) )
-        print
-        print 'Writing csv for submission...'
+        print "Mean cross-validated result: %s\n" % str( np.array(self.results).mean() )
+        # print "All cross-validated results: %s\n" % str( np.array(self.results) )
         self.fitted_model = self.model.fit(self.train_attr, self.train_target)
         self.survival_predictions = self.fitted_model.predict(self.test_arr).astype(int)
         self.write_submission()
-        print 'Done.'
 
     def write_submission(self):
-        with open(self.out_loc, 'wb') as predictions_file:
+        with open(self.out_file, 'wb') as predictions_file:
             csv_writer = csv.writer(predictions_file)
             csv_writer.writerow(['PassengerId', 'Survived'])
             csv_writer.writerows(zip(self.ids, self.survival_predictions))
 
-Titanic()
+if __name__ == '__main__':
+    Titanic(model=LogisticRegression(), out_name='log_reg')
+    Titanic(model=GradientBoostingClassifier(), out_name='grad_boost')
+    Titanic(model=RandomForestClassifier(), out_name='rand_forest')
