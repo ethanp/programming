@@ -70,9 +70,9 @@ class Titanic(object):
         prop_incorrect = float(num_incorrect) / len(predictions)
         return 1 - prop_incorrect
 
-    def k_fold_cross_validate(self, k=5):
+    def k_fold_cross_validate(self, k=8):
         ''' get results of using the provided model on each cv-segment '''
-        cv = cross_validation.KFold(len(self.train_arr), n_folds=5, indices=False)
+        cv = cross_validation.KFold(len(self.train_arr), n_folds=k, indices=False)
         for train_cv, test_cv in cv:
             fitted = self.model.fit(self.train_attr[train_cv], self.train_target[train_cv])
             predictions = fitted.predict(self.train_attr[test_cv])
@@ -121,8 +121,7 @@ class Titanic(object):
         # cross-validate
         self.results = []
         self.k_fold_cross_validate()
-        print "Mean cross-validated result: %s\n" % str( np.array(self.results).mean() )
-        # print "All cross-validated results: %s\n" % str( np.array(self.results) )
+        print "Mean CV result: %.3f\n" % float( np.array(self.results).mean() )
         self.fitted_model = self.model.fit(self.train_attr, self.train_target)
         self.survival_predictions = self.fitted_model.predict(self.test_arr).astype(int)
         self.write_submission()
@@ -135,5 +134,12 @@ class Titanic(object):
 
 if __name__ == '__main__':
     Titanic(model=LogisticRegression(), out_name='log_reg')
-    Titanic(model=GradientBoostingClassifier(), out_name='grad_boost')
-    Titanic(model=RandomForestClassifier(), out_name='rand_forest')
+
+    # TODO figure out what to put for the parameters like
+    # min_samples_split, min_samples_leaf
+    Titanic(model=GradientBoostingClassifier(max_features=3, min_samples_leaf=5, min_samples_split=5), out_name='grad_boost')
+    Titanic(model=RandomForestClassifier(n_estimators=300, n_jobs=-1), out_name='rand_forest')
+
+    # TODO use a blended trainer like in
+    #   https://github.com/emanuele/kaggle_pbr/blob/master/blend.py
+    #
