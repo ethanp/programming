@@ -10,7 +10,7 @@ from sklearn import cross_validation
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier
 from sklearn.linear_model import LogisticRegression
-import pandas as pd, numpy as np, csv, os
+import pandas as pd, numpy as np, csv, os, copy
 
 # go to this file's location
 # stackoverflow.com/questions/5137497
@@ -86,7 +86,8 @@ class Titanic(object):
                  test_loc='data/test.csv',
                  out_loc='data/output',
                  out_name='logReg',
-                 model=None):
+                 model=None,
+                 pipeline=False):
         '''
         1. read data
         2. preprocess data
@@ -116,14 +117,15 @@ class Titanic(object):
         self.train_attr = self.train_arr[:,1:]
         self.train_target = self.train_arr[:,0]
 
+        self.pipeline_ensemble() if pipeline else self.use_given_model()
+
+    def use_given_model(self):
         # cross-validate
         print 'Mean CV result: %.3f\n' % self.mean_k_fold_cross_validate()
         self.fitted_model = self.model.fit(self.train_attr, self.train_target)
         self.survival_predictions = self.fitted_model.predict(self.test_attr).astype(int)
         self.write_submission(self.survival_predictions, self.out_file)
 
-        # ensemble
-        self.pipeline_ensemble()
 
     def write_submission(self, predictions, name):
         with open(name, 'wb') as predictions_file:
@@ -139,11 +141,32 @@ class Titanic(object):
         skf = list(StratifiedKFold(self.train_target, n_folds = 10))
 
         n_est = 100
-        classifiers = [RandomForestClassifier(n_estimators=n_est, n_jobs=-1, criterion='gini'),
-                       RandomForestClassifier(n_estimators=n_est, n_jobs=-1, criterion='entropy'),
-                       ExtraTreesClassifier(n_estimators=n_est, n_jobs=-1, criterion='gini'),
-                       ExtraTreesClassifier(n_estimators=n_est, n_jobs=-1, criterion='entropy'),
-                       GradientBoostingClassifier(learning_rate=0.05, subsample=0.5, max_depth=6, n_estimators=50)]
+
+        gini_opts = {
+            'n_estimators'      : n_est,
+            'n_jobs'            : -1,
+            'criterion'         : 'gini',
+            'max_depth'         : 4,
+            'min_samples_leaf'  : 4,
+            'min_samples_split' : 4
+        }
+
+        entropy_opts = copy.deepcopy(gini_opts)
+        entropy_opts['criterion'] = 'entropy'
+
+        boost_opts = copy.deepcopy(gini_opts)
+        del boost_opts['criterion']
+        del boost_opts['n_jobs']
+        boost_opts.update({
+            'learning_rate' : 0.02,
+            'subsample'     : 0.8
+        })
+
+        classifiers = [RandomForestClassifier(**gini_opts),
+                       RandomForestClassifier(**entropy_opts),
+                       ExtraTreesClassifier(**gini_opts),
+                       ExtraTreesClassifier(**entropy_opts),
+                       GradientBoostingClassifier(**boost_opts)]
 
         # This is a new feature-set we are creating as training data
         # by running the training data through classifiers.
@@ -159,19 +182,24 @@ class Titanic(object):
         for j, clf in enumerate(classifiers):
             print j, clf
             dataset_blend_test_j = np.zeros((self.test_attr.shape[0], len(skf)))
-            for i, (train, test) in enumerate(skf):
+            for i, (train_idx, validation_idx) in enumerate(skf):
                 print "Fold", i
-                X_train = self.train_attr[train]
-                y_train = self.train_target[train]
-                X_test = self.train_attr[test]
-                y_test = self.train_target[test]  # not used
+                X_train = self.train_attr[train_idx]
+                y_train = self.train_target[train_idx]
+                X_validation = self.train_attr[validation_idx]
+                y_validation = self.train_target[validation_idx]  # not used
+
+                # train "this" classifier on "this" train/validate split
                 clf.fit(X_train, y_train)
-                y_submission = clf.predict_proba(X_test)[:,1] # col 1 is P(0), 2 is P(1)
-                dataset_blend_train[test, j] = y_submission
+
+                # run trained classifier on the validation set
+                y_submission = clf.predict_proba(X_validation)[:,1] # col 1 is P(0), 2 is P(1)
+
+                # 
+                dataset_blend_train[validation_idx, j] = y_submission
                 dataset_blend_test_j[:, i] = clf.predict_proba(self.test_attr)[:,1]
 
             '''
-            EP NOTE: THIS IS WHERE THEY ACTUALLY GET-BLENT
             - Here we form a new test-feature set from the combination
               of outputs from the 5 classifiers. That makes sense.
             - However, should we be weighting by the score for each classifier,
@@ -180,21 +208,15 @@ class Titanic(object):
             dataset_blend_test[:, j] = dataset_blend_test_j.mean(1)
 
         print
-        print 'Blending.'
         clf = LogisticRegression()
-
-        # it gives good CV results but score of 0.000, not sure what's going on!
-        print 'Mean CV result: %.3f\n' % self.mean_k_fold_cross_validate(attr=dataset_blend_train, model=clf)
-
+        print 'Mean Blent CV result: %.3f' % self.mean_k_fold_cross_validate(attr=dataset_blend_train, model=clf)
         clf.fit(dataset_blend_train, self.train_target)
         y_submission = clf.predict(dataset_blend_test)
-        similarity = 1 - distance.cityblock(y_submission, self.survival_predictions) / len(y_submission)
-        print 'similarity:', similarity
         self.write_submission(y_submission, self.csv_named('blent'))
 
 
 if __name__ == '__main__':
-    Titanic(model=LogisticRegression(), out_name='log_reg')
+    Titanic(model=LogisticRegression(), out_name='log_reg', pipeline=True)
 
     # TODO figure out what to put for the parameters like
     # min_samples_split, min_samples_leaf
