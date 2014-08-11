@@ -5,6 +5,7 @@ load_data
 
 Full framework for testing different models for the Titanic Kaggle competition
 '''
+from scipy.spatial import distance
 from sklearn import cross_validation
 from sklearn.cross_validation import StratifiedKFold
 from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier, ExtraTreesClassifier
@@ -28,12 +29,12 @@ class Titanic(object):
         if len(df.Embarked[ df.Embarked.isnull() ]) > 0:
             # all rows with null values, should instead receive the mode value
             df.Embarked[ df.Embarked.isnull() ] = df.Embarked.dropna().mode().values
-        """
+        '''
         * Instead of translating categories to numbers, make dummy-variable columns
                 and then remove the redundant one
         * Specifically, we will go
                 from Categorical(['C', 'Q', 'S']), =-> to Indicator('C'), Indicator('Q')
-        """
+        '''
         df = pd.concat([df,pd.get_dummies(df.Embarked)], axis=1).drop(['S'], axis=1)
         # All the ages with no data -> make the median of all Ages
         median_age = df.Age.dropna().median()
@@ -58,26 +59,18 @@ class Titanic(object):
                 df.loc[ (df.Fare.isnull()) & (df.Pclass == f+1 ), 'Fare'] = median_fare[f]
         return df
 
-    def prop_correct(self, predictions, test_cv):
-        '''
-        everything mentioned is in reference to /this/ round of cross-validation
-
-        :param predictions: test set predictions
-        :param test_cv: indices of training set used as test set
-        :return: proportion of predictions that matched the true target
-        '''
-        target_arr = self.train_target[test_cv]
-        num_incorrect = sum([i != j for i, j in zip(target_arr, predictions)])
-        prop_incorrect = float(num_incorrect) / len(predictions)
-        return 1 - prop_incorrect
-
-    def k_fold_cross_validate(self, k=8):
+    def mean_k_fold_cross_validate(self, attr=None, target=None, model=None, k=8):
         ''' get results of using the provided model on each cv-segment '''
-        cv = cross_validation.KFold(len(self.train_arr), n_folds=k, indices=False)
-        for train_cv, test_cv in cv:
-            fitted = self.model.fit(self.train_attr[train_cv], self.train_target[train_cv])
-            predictions = fitted.predict(self.train_attr[test_cv])
-            self.results.append(self.prop_correct(predictions, test_cv))
+        if attr is None:   attr   = self.train_attr
+        if target is None: target = self.train_target
+        if model is None:  model  = self.model
+        results = np.zeros(k)
+        cv = cross_validation.KFold(len(attr), n_folds=k, indices=False)
+        for i, (train_cv, test_cv) in enumerate(cv):
+            fitted = model.fit(attr[train_cv], target[train_cv])
+            predictions = fitted.predict(attr[test_cv])
+            results[i] = 1 - distance.cityblock(self.train_target[test_cv], predictions) / len(predictions)
+        return results.mean()
 
     def model_name(self):
         full_str = str(type(self.model))
@@ -124,9 +117,7 @@ class Titanic(object):
         self.train_target = self.train_arr[:,0]
 
         # cross-validate
-        self.results = []
-        self.k_fold_cross_validate()
-        print "Mean CV result: %.3f\n" % float( np.array(self.results).mean() )
+        print 'Mean CV result: %.3f\n' % self.mean_k_fold_cross_validate()
         self.fitted_model = self.model.fit(self.train_attr, self.train_target)
         self.survival_predictions = self.fitted_model.predict(self.test_attr).astype(int)
         self.write_submission(self.survival_predictions, self.out_file)
@@ -138,7 +129,7 @@ class Titanic(object):
         with open(name, 'wb') as predictions_file:
             csv_writer = csv.writer(predictions_file)
             csv_writer.writerow(['PassengerId', 'Survived'])
-            csv_writer.writerows(zip(self.ids, predictions))
+            csv_writer.writerows(zip(self.ids, map(int, predictions)))
 
     def pipeline_ensemble(self):
         '''
@@ -147,10 +138,11 @@ class Titanic(object):
         '''
         skf = list(StratifiedKFold(self.train_target, n_folds = 10))
 
-        classifiers = [RandomForestClassifier(n_estimators=100, n_jobs=-1, criterion='gini'),
-                       RandomForestClassifier(n_estimators=100, n_jobs=-1, criterion='entropy'),
-                       ExtraTreesClassifier(n_estimators=100, n_jobs=-1, criterion='gini'),
-                       ExtraTreesClassifier(n_estimators=100, n_jobs=-1, criterion='entropy'),
+        n_est = 100
+        classifiers = [RandomForestClassifier(n_estimators=n_est, n_jobs=-1, criterion='gini'),
+                       RandomForestClassifier(n_estimators=n_est, n_jobs=-1, criterion='entropy'),
+                       ExtraTreesClassifier(n_estimators=n_est, n_jobs=-1, criterion='gini'),
+                       ExtraTreesClassifier(n_estimators=n_est, n_jobs=-1, criterion='entropy'),
                        GradientBoostingClassifier(learning_rate=0.05, subsample=0.5, max_depth=6, n_estimators=50)]
 
         # This is a new feature-set we are creating as training data
@@ -188,14 +180,16 @@ class Titanic(object):
             dataset_blend_test[:, j] = dataset_blend_test_j.mean(1)
 
         print
-        print "Blending."
+        print 'Blending.'
         clf = LogisticRegression()
 
-        # TODO use the k-fold cross-validate on this particular model
-        # bc it gave me a score of 0.00000, and that's no good
+        # it gives good CV results but score of 0.000, not sure what's going on!
+        print 'Mean CV result: %.3f\n' % self.mean_k_fold_cross_validate(attr=dataset_blend_train, model=clf)
 
         clf.fit(dataset_blend_train, self.train_target)
         y_submission = clf.predict(dataset_blend_test)
+        similarity = 1 - distance.cityblock(y_submission, self.survival_predictions) / len(y_submission)
+        print 'similarity:', similarity
         self.write_submission(y_submission, self.csv_named('blent'))
 
 
