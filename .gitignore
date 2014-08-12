@@ -67,3 +67,6 @@ Educational/Matlab/Coursera/Machine Learning/mlclass-ex5-006/mlclass-ex5/ex5data
 Educational/Matlab/Coursera/Machine Learning/mlclass-ex5-006/mlclass-ex5/submit.m
 Educational/Matlab/Coursera/Machine Learning/mlclass-ex5-006/mlclass-ex5/submitWeb.m
 octave-workspace
+*.pdf
+*submitWeb.m
+*submit.m
