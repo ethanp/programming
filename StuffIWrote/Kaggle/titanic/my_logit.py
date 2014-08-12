@@ -38,7 +38,7 @@ def preprocess(df):
         df.Embarked[ df.Embarked.isnull() ] = df.Embarked.dropna().mode().values
 
     """
-    instead of trainslating categories to numbers, I'm making dummy cols
+    instead of translating categories to numbers, I'm making dummy cols
             and then removing the redundant one
     Specifically, we will go
             from Categorical(['C', 'Q', 'S']),
@@ -73,7 +73,9 @@ if len(test_df.Fare[ test_df.Fare.isnull() ]) > 0:
     median_fare = np.zeros(3) # => array([ 0.,  0.,  0.])
     for f in range(0,3):
         median_fare[f] = test_df[ test_df.Pclass == f+1 ]['Fare'].dropna().median()
-    for f in range(0,3):
+
+    for f in range(0,3): # I don't think this line is necessary for anything
+
         test_df.loc[ (test_df.Fare.isnull()) & (test_df.Pclass == f+1 ), 'Fare'] = median_fare[f]
 
 # Convert dataframes back to numpy arrays
