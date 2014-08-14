@@ -39,7 +39,10 @@ class Titanic(object):
         median_age = df.Age.dropna().median()
         if len(df.Age[ df.Age.isnull() ]) > 0:
             df.loc[ df.Age.isnull(), 'Age' ] = median_age
-        df = df.drop(['Name', 'Ticket', 'Cabin', 'Embarked', 'PassengerId'], axis=1)
+
+        df.Cabin = df.Cabin.isnull()
+        # this used to have 'Cabin', but I changed it just above
+        df = df.drop(['Name', 'Ticket', 'Embarked', 'PassengerId'], axis=1)
         return df
 
     @staticmethod
@@ -230,7 +233,9 @@ class Titanic(object):
 
 
 if __name__ == '__main__':
-    Titanic(model=LogisticRegression(), out_name='log_reg', pipeline=True)
+    Titanic(model=LogisticRegression(), out_name='log_reg', pipeline=False)
+
+    # TODO why are my CV results always 1.000 now??
 
     # Titanic(model=GradientBoostingClassifier(max_features=3, min_samples_leaf=5, min_samples_split=5), out_name='grad_boost')
-    # Titanic(model=RandomForestClassifier(n_estimators=300, n_jobs=-1), out_name='rand_forest')
+    # Titanic(model=RandomForestClassifier(n_estimators=120, n_jobs=-1), out_name='rand_forest')
