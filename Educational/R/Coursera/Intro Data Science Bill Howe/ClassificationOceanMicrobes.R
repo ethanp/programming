@@ -45,18 +45,54 @@ ggplot(dataTrain, aes(pe, chl_small, color=pop)) + geom_point()
 fol <- formula(pop ~ fsc_small + fsc_perp + fsc_big + pe + chl_big + chl_small)
 
 # "Recursive Partitioning and Regression Trees", this method "fits" the model
-model <- rpart(fol, method="class", data=dataTrain)
-
-print(model)
+model_rpart <- rpart(fol, method="class", data=dataTrain)
+print(model_rpart)
 
 
 ########################
 # Step 5 (evaluate Decision Tree on test data)
-preds <- predict(model, newdata=dataTest, type="class")
-ab <- preds == dataTest$pop
-accuracy <- sum(ab) / length(ab)
+preds_rpart <- predict(model_rpart, newdata=dataTest, type="class")
+ab <- preds_rpart == dataTest$pop
+accuracy_rpart <- sum(ab) / length(ab)
 
 
 ########################
 # Step 6 (Random Forest)
-# TDOOD
+
+# build random forest
+model_rf <- randomForest(fol, data=dataTrain)
+preds_rf <- predict(model_rf, newdata=dataTest, type="class")
+ab <- preds_rf == dataTest$pop
+accuracy_rf <- sum(ab) / length(ab)
+# print importance of each variable in the trained model
+importance(model_rf)
+
+
+########################
+# Step 7 (Support Vector Machine)
+
+model_svm <- svm(fol, data=dataTrain)
+preds_svm <- predict(model_svm, newdata=dataTest, type="class")
+ab <- preds_svm == dataTest$pop
+accuracy_svm <- sum(ab) / length(ab)
+
+
+########################
+# Step 8.a. (confusion matrices)
+
+confusion_rpart <- table(rpart=preds_rpart, true = dataTest$pop)
+confusion_rf <- table(rf=preds_rf, true = dataTest$pop)
+confusion_svm <- table(svm=preds_svm, true = dataTest$pop)
+
+########################
+# Step 8.b. (remove file_id 208, and retrain SVM)
+
+data_clean <- data[data$file_id != 208,]
+trainIndices_clean <- createDataPartition(data_clean$file_id, p=.8, list=FALSE, times=1)
+dataTrain_clean <- data[ trainIndices_clean,]
+dataTest_clean  <- data[-trainIndices_clean,]
+
+model_svm_clean <- svm(fol, data=dataTrain_clean)
+preds_svm_clean <- predict(model_svm_clean, newdata=dataTest_clean, type="class")
+ab <- preds_svm_clean == dataTest_clean$pop
+accuracy_svm_clean <- sum(ab) / length(ab)
