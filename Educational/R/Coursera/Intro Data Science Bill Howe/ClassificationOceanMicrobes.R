@@ -87,12 +87,17 @@ confusion_svm <- table(svm=preds_svm, true = dataTest$pop)
 ########################
 # Step 8.b. (remove file_id 208, and retrain SVM)
 
+ggplot(data, aes(x = time, y = chl_big, colour = pop)) + geom_point()
+
 data_clean <- data[data$file_id != 208,]
 trainIndices_clean <- createDataPartition(data_clean$file_id, p=.8, list=FALSE, times=1)
-dataTrain_clean <- data[ trainIndices_clean,]
-dataTest_clean  <- data[-trainIndices_clean,]
+dataTrain_clean <- data_clean[ trainIndices_clean,]
+dataTest_clean  <- data_clean[-trainIndices_clean,]
 
 model_svm_clean <- svm(fol, data=dataTrain_clean)
 preds_svm_clean <- predict(model_svm_clean, newdata=dataTest_clean, type="class")
 ab <- preds_svm_clean == dataTest_clean$pop
 accuracy_svm_clean <- sum(ab) / length(ab)
+
+improvement <- accuracy_svm_clean - accuracy_svm
+improvement
