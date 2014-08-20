@@ -16,6 +16,36 @@ This document requires MathJax (and possibly [`MultiMarkdown`](http://fletcherpe
 
 # Statistics #
 
+## Covariance Matrix ##
+### How to Compute It ###
+
+\\[X^TX\\]
+
+### Why It Matters ###
+
+Used in **Principal Component Analysis** (PCA), a technique described in Andrew Ng's *Machine Learning* course on Coursera, for reducing the *dimensionality* of a *dataset*. One might want to do this for 2 reasons:
+
+1. As a form of *lossy compression*
+2. To produce *visualizations* of the data in 1, 2, or 3D
+3. To *reduce computation time*
+
+### Covariance ###
+
+"A measure of how much two random variables change together."
+[[Wikipedia][WCov]]
+
+\\[\sigma_{XY}=cov(X,Y)=E[(X-\mu_X)(Y-\mu_Y)]\\]
+\\[=E[XY]-\mu_X\mu_Y\\]
+\\[=E[XY]-E[X]E[Y]\\]
+\\[=\sum_{i=1}^{N}{\frac{(x_i-\bar{x})(y_i-\bar{y})}{N}}\\]
+
+Note
+\\[cov(X,X)=E[X^2]-E[X]^2=\sigma_x^2\\]
+At first glance, it behaves like the slope line of a linear regression: two positively correlated variables have a positive covariance, and same for negative. However, the *magnitude* of the covariance is different, "Notably, correlation is dimensionless while covariance is in units obtained by multiplying the units of the two variables" (Wiki).
+
+**TODO...heh**
+
+[WCov]: http://en.wikipedia.org/wiki/Covariance
 
 ## Ordinary Least Squares ##
 
