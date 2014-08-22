@@ -1,0 +1,34 @@
+!!!
+html
+  head
+    title App
+    link(href="/assets/stylesheets/main.css", rel='stylesheet', type='text/css')
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+
+  body
+    #wrap
+      .container
+        .navbar.navbar-default.navbar-fixed-top
+          .navbar-header
+            a(href='/').navbar-brand Brand
+          .collapse.navbar-collapse
+            ul.nav.navbar-nav
+              li
+                a(href='/') Home
+              li
+                a(href='/about') About
+              li
+                a(href='/account') Account                
+      
+        //- yield content
+        block content
+        
+    #footer
+      .container.l_footer-container.s_footer-container
+        p &copy;2014 Abraham Lincoln: Web Developer
+
+    //- js: Single file in production, otherwise load requirejs
+    if process.env.ENV == 'production'
+      script(src='/assets/js/main.js')
+    else
+      script(data-main='/assets/js/main.js', src='/assets/js/vendor/require.js')
