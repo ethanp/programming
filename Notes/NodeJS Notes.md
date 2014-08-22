@@ -65,7 +65,7 @@ app instances.
 
     This says,
     
-     1. "Route any HTTP `GET` requests to e.g.
+     1. Route any HTTP `GET` requests to e.g.
   
          * `/ab`
          * `/ab/`
@@ -74,21 +74,35 @@ app instances.
      
         to the provided function.
      2. Set the `Content-Type` header to `'text/plain'`
-     3. `end` the response by putting
+     3. `end` the `response` by putting
         the given text through the wire over TCP
 2. `app.use` adds *"middleware"* to Express
 3. In Express, the order in which routes and middleware are added is significant.
     * Specifically, if we put the `404` handler above the `routes`,
       the `home` page and `About` page would stop working: instead,
       those URLs would result in a `404`.
- 
+4. To set the route to render a template rather than sending plaintext, we have
+
+        router.get('/', function(req, res) {
+          res.render('index', { title: 'Express' });
+        });
+    which also sets the value of the variable `title` for use inside the view
+5. The static middleware has the same effect as creating a route for
+   each static file you want to deliver that renders a file and returns
+   it to the client.
+    * E.g., now we can simply reference `"/img/logo.png"` (do not specify
+      public), and the static middleware will serve that file, setting
+      the content type appropriately.
+
+            app.use(express.static(path.join(__dirname, 'public')));
+
 # npm
 
 ## What is npm
 
-1. Node's amazing ubiquitous package managewr
+1. Node's amazing ubiquitous package manager
 2. Stands for "npm is not an acronym" (??)
-3. Allows you to switch "environments", so different projects can
+3. Allows you to switch *"environments"*, so different projects can
    use different versions of the same packages
 
 ## How To
@@ -97,6 +111,6 @@ app instances.
 
         npm install -g grunt-cli
         
-2. Save the package(s) in `node_modules/` *&* update the `package.json` file
+2. Save the package(s) in `node_modules/` *and* update the `package.json` file
 
         npm install --save express

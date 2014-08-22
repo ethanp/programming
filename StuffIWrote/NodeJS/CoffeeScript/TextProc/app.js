@@ -31,6 +31,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser());
 app.use(require('stylus').middleware(path.join(__dirname, 'public')));
+
+/* The static middleware has the same effect as creating a route for
+   each static file you want to deliver that renders a file and returns
+   it to the client.
+
+   E.g., now we can simply reference "/img/logo.png" (do not specify
+   public), and the static middleware will serve that file, setting
+   the content type appropriately. */
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
