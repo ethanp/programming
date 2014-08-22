@@ -3,3 +3,15 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+
+  #datStuff
+
+  //- ask server to download the text of Alice in Wonderland
+  //- from project Gutenberg
+  script(type='text/javascript').
+    $.ajax('/alice', {
+      success: function (data) {
+        $('#datStuff').html(data);
+      }
+    });
+    console.log(55)
