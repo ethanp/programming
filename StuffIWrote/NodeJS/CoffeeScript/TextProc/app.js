@@ -1,17 +1,28 @@
 var express = require('express');
+
+// Nice API for dealing with file paths (e.g. `path.join(a,b)`)
 var path = require('path');
 var favicon = require('static-favicon');
+
+// http request logger middleware for node.js
+// doesn't seem to be in use anywhere at this point
+// it belongs to expressjs
 var logger = require('morgan');
+
+// these are pieces of the expressjs framework
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 
+// instantiate an ExpressJS application
 var app = express();
 
-// view engine setup
+// set location of views
 app.set('views', path.join(__dirname, 'views'));
+
+// inform app of templating engine type
 app.set('view engine', 'jade');
 
 app.use(favicon());
@@ -56,5 +67,6 @@ app.use(function(err, req, res, next) {
     });
 });
 
+console.log('Server started on localhost:3000; press Ctrl-C to terminate....');
 
 module.exports = app;

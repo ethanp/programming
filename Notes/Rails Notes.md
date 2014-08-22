@@ -3,7 +3,7 @@ Title:              Rails Notes
 Author:             Ethan C. Petuchowski
 Base Header Level:  1
 latex mode:         memoir
-Keywords:           Math, DSP, Digital Signal Processing, Fourier Transform
+Keywords:           Rails, Ruby, Ruby on Rails, Web, Web Framework
 CSS:                http://fletcherpenney.net/css/document.css
 xhtml header:       <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 Copyright:          2014 Ethan Petuchowski
