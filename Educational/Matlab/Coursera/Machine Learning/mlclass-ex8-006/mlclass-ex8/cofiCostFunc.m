@@ -40,7 +40,46 @@ Theta_grad = zeros(size(Theta));
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+% J -- the cost function
+comb = X*Theta'.*R;
+diffs = comb - Y.*R;
+J = sum(diffs(:).^2) / 2;
 
+% regularization of J
+first_reg = lambda * sum(sum(Theta.^2)) / 2;
+second_reg = lambda * sum(sum(X.^2)) / 2;
+J = J + first_reg + second_reg;
+
+% X_grad & Theta_grad (naive)
+% for i = 1:num_movies
+%   for j = 1:num_users
+%     if R(i,j) == 1
+%       amt = Theta(j,:)*X(i,:)' - Y(i,j);
+%       for k = 1:num_features
+%         X_grad(i,k) += amt*Theta(j,k);
+%         Theta_grad(j,k) += amt*X(i,k);
+%       end
+%     end
+%   end
+% end
+
+% (not-so-naive)
+% look at what this has become!!
+X_grad = diffs*Theta;
+Theta_grad = diffs'*X;
+
+
+%% Regularize the gradients
+
+% for i = 1:num_movies
+%   X_grad(i,:) += lambda*X(i,:);
+% end
+% for j = 1:num_users
+%   Theta_grad(j,:) += lambda*Theta(j,:);
+% end
+
+X_grad += lambda*X;
+Theta_grad += lambda*Theta;
 
 % =============================================================
 

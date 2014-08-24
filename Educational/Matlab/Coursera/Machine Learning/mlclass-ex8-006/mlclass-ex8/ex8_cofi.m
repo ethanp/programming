@@ -18,13 +18,13 @@
 %% =============== Part 1: Loading movie ratings dataset ================
 %  You will start by loading the movie ratings dataset to understand the
 %  structure of the data.
-%  
+%
 fprintf('Loading movie ratings dataset.\n\n');
 
 %  Load data
 load ('ex8_movies.mat');
 
-%  Y is a 1682x943 matrix, containing ratings (1-5) of 1682 movies on 
+%  Y is a 1682x943 matrix, containing ratings (1-5) of 1682 movies on
 %  943 users
 %
 %  R is a 1682x943 matrix, where R(i,j) = 1 if and only if user j gave a
@@ -45,7 +45,7 @@ pause;
 %% ============ Part 2: Collaborative Filtering Cost Function ===========
 %  You will now implement the cost function for collaborative filtering.
 %  To help you debug your cost function, we have included set of weights
-%  that we trained on that. Specifically, you should complete the code in 
+%  that we trained on that. Specifically, you should complete the code in
 %  cofiCostFunc.m to return J.
 
 %  Load pre-trained weights (X, Theta, num_users, num_movies, num_features)
@@ -61,7 +61,7 @@ R = R(1:num_movies, 1:num_users);
 %  Evaluate cost function
 J = cofiCostFunc([X(:) ; Theta(:)], Y, R, num_users, num_movies, ...
                num_features, 0);
-           
+
 fprintf(['Cost at loaded parameters: %f '...
          '\n(this value should be about 22.22)\n'], J);
 
@@ -70,10 +70,10 @@ pause;
 
 
 %% ============== Part 3: Collaborative Filtering Gradient ==============
-%  Once your cost function matches up with ours, you should now implement 
-%  the collaborative filtering gradient function. Specifically, you should 
+%  Once your cost function matches up with ours, you should now implement
+%  the collaborative filtering gradient function. Specifically, you should
 %  complete the code in cofiCostFunc.m to return the grad argument.
-%  
+%
 fprintf('\nChecking Gradients (without regularization) ... \n');
 
 %  Check gradients by running checkNNGradients
@@ -84,15 +84,15 @@ pause;
 
 
 %% ========= Part 4: Collaborative Filtering Cost Regularization ========
-%  Now, you should implement regularization for the cost function for 
+%  Now, you should implement regularization for the cost function for
 %  collaborative filtering. You can implement it by adding the cost of
 %  regularization to the original cost computation.
-%  
+%
 
 %  Evaluate cost function
 J = cofiCostFunc([X(:) ; Theta(:)], Y, R, num_users, num_movies, ...
                num_features, 1.5);
-           
+
 fprintf(['Cost at loaded parameters (lambda = 1.5): %f '...
          '\n(this value should be about 31.34)\n'], J);
 
@@ -101,11 +101,11 @@ pause;
 
 
 %% ======= Part 5: Collaborative Filtering Gradient Regularization ======
-%  Once your cost matches up with ours, you should proceed to implement 
-%  regularization for the gradient. 
+%  Once your cost matches up with ours, you should proceed to implement
+%  regularization for the gradient.
 %
 
-%  
+%
 fprintf('\nChecking Gradients (with regularization) ... \n');
 
 %  Check gradients by running checkNNGradients
@@ -147,7 +147,7 @@ my_ratings(355)= 5;
 
 fprintf('\n\nNew user ratings:\n');
 for i = 1:length(my_ratings)
-    if my_ratings(i) > 0 
+    if my_ratings(i) > 0
         fprintf('Rated %d for %s\n', my_ratings(i), ...
                  movieList{i});
     end
@@ -158,7 +158,7 @@ pause;
 
 
 %% ================== Part 7: Learning Movie Ratings ====================
-%  Now, you will train the collaborative filtering model on a movie rating 
+%  Now, you will train the collaborative filtering model on a movie rating
 %  dataset of 1682 movies and 943 users
 %
 
@@ -167,7 +167,7 @@ fprintf('\nTraining collaborative filtering...\n');
 %  Load data
 load('ex8_movies.mat');
 
-%  Y is a 1682x943 matrix, containing ratings (1-5) of 1682 movies by 
+%  Y is a 1682x943 matrix, containing ratings (1-5) of 1682 movies by
 %  943 users
 %
 %  R is a 1682x943 matrix, where R(i,j) = 1 if and only if user j gave a
@@ -230,7 +230,7 @@ end
 
 fprintf('\n\nOriginal ratings provided:\n');
 for i = 1:length(my_ratings)
-    if my_ratings(i) > 0 
+    if my_ratings(i) > 0
         fprintf('Rated %d for %s\n', my_ratings(i), ...
                  movieList{i});
     end
