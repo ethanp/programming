@@ -24,6 +24,47 @@ latex footer:		mmd-memoir-footer
     * E.g. to get **all rows of column 1**
     
             myMatrix(:, 1)
+3. Matrices are *also* indexed by `(i/rows,i%rows)` e.g.
+
+        > a = [ 1 2 3 ; 4 5 6 ]
+
+          a =
+             1   2   3
+             4   5   6
+
+        > a(4)  % => 5
+        > a(5)  % => 3
+        > a(6)  % => 6
+
+        > a(:)
+        
+          ans =
+               1
+               4
+               2
+               5
+               3
+               6
+4. You can also index a matrix with a **boolean condition** (like in `R` and `pandas`)
+
+        > a = [ 1 2 3 ; 4 5 6 ]
+
+          a =
+             1   2   3
+             4   5   6
+
+        > b = [ 1 0 1 ; 0 1 0 ]
+
+          b =            
+             1   0   1
+             0   1   0
+
+        > a(b == 1)
+
+          ans =
+               1
+               5
+               3
 
 ### Functions
 
@@ -46,21 +87,21 @@ Create a Hilbert matrix using nested for loops:
     hilbert = zeros(k,k);      % Preallocate matrix
     
     for m = 1:k
-        for n = 1:k
-            hilbert(m,n) = 1/(m+n -1);
-        end
+      for n = 1:k
+        hilbert(m,n) = 1/(m+n -1);
+      end
     end
      
 Step by increments of -0.1, and display the step values:
 
     for s = 1.0: -0.1: 0.0
-       disp(s)
+      disp(s)
     end
  
 Execute statements for a defined set of index values:
 
     for s = [1,5,8,17]
-       disp(s)
+      disp(s)
     end
  
 Successively set e to unit vectors:
