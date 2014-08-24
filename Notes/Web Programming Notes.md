@@ -11,6 +11,19 @@ latex input:		 mmd-natbib-plain
 latex input:		 mmd-article-begin-doc
 latex footer:	 mmd-memoir-footer
 
+
+## Session
+#### 8/23/14
+
+**Name of the abstraction of keeping state during a user's interaction with your site.**
+
+1. There's no *specific* way this abstraction must be implemented, but one may use
+    * Local/Session Storage database in the browser
+    * Cookies
+2. Sessions are useful for saving user preferences that apply across pages
+    1. User logs in -> session is created
+    2. Remembering how user has sorted a table, and their preferred date format, etc.
+
 PUT
 ---
 #### 6/20/14

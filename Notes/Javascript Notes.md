@@ -1,3 +1,41 @@
+latex input:        mmd-article-header
+Title:              JavaScript Notes
+Author:             Ethan C. Petuchowski
+Base Header Level:  1
+latex mode:         memoir
+Keywords:           web programming, syntax, language, javascript
+CSS:                http://fletcherpenney.net/css/document.css
+xhtml header:       <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+Copyright:          2014 Ethan Petuchowski
+latex input:        mmd-natbib-plain
+latex input:        mmd-article-begin-doc
+latex footer:       mmd-memoir-footer
+
+
+## Array.prototype.splice()
+
+Changes the contents of an existing array (in place!), adding and removing
+elements at the same time. This method is too confusing to use, in my
+opinion, but I've been seeing it quite a bit, so I'm guessing it's actually
+pretty common among JavaScript programmers.
+
+    array.splice(index , howMany[, element1[, ...[, elementN]]])
+    
+1. **index** is the starting index in the `array`
+2. **howMany** says how many elements to ***remove*** from the `array`
+   (starting at `index`)
+3. the **element list** specifies which elements to add to the array
+   (after removing `howMany`, starting at `index`)
+4. **returns an array** containing all the removed elements (empty
+   array if `0`, one-element array if `1`, etc.)
+
+### Use cases
+
+1. **Remove an element from an array**
+
+        array.splice(idxToRemove, 1);
+
+
 ## ready callback
 **Called when the entire page has loaded** (or something like that)
 #### 7/22/14
@@ -45,6 +83,7 @@ Examples:
 
 Deleting inherited properties has no effect, though returns `true`
 
+
 ## this keyword
 
 #### 4/14/14
@@ -54,8 +93,8 @@ Deleting inherited properties has no effect, though returns `true`
 
 (When the code is executing in the browser...) **All global variables and functions are defined on the `window` object**. Therefore, `this` in a global function refers to the global `window` object (not in `strict` mode though).
 
-bind(), call(), apply()
------------------------
+
+## bind(), call(), apply()
 
 #### 4/14/14
 
@@ -89,8 +128,8 @@ become attributes of `object2`.
 `Objects` don't have useful native methods. If we have an *"array-like object"*,
 we can borrow Array methods and use them on objects that are array-like.
 
-An **array-like object** is an `object` that has its *keys defined as
-non-negative integers*. It is best to *specifically add a length property*.
+An **array-like object** is an `object` that has its **keys defined as
+non-negative integers**. It is best to *specifically add a length property*.
 
 For example:
 
@@ -112,21 +151,27 @@ Gaze in astonishment as we utilize its *array-like-ness* to its fullest
 
 Note that the `arguments` variable inside any function containing everything
 passed to the function as parameters is also an *"array-like object"* upon
-which we may call `Array.prototype.slice.call (arguments);` and all the other
-`Array` methods, like `indexOf()` and so on. We never made a full *copy* of
-the method, we only created some sort of *pointer* to it (conceptually at least).
+which we may call
 
-As expected, if we change the original method, and the method has been set as
-a method on another object, the changes are reflected in the borrowed instances.
+    Array.prototype.slice.call(arguments);
+and all the other `Array` methods, like `indexOf()` and so on.
+
+* We never made a full *copy* of the method, we only created some sort
+  of *pointer* to it (conceptually at least).
+
+* *Note:* If we change the original method, and the method has been set as
+  a method on another object, the changes are reflected in the borrowed instances.
 
 #### Variable-arity / Variadic functions
 
-* **Think `printf(str, args...)`**
-* `Math.max(1,2,3,5,6,7) // => 7` takes any number of arguments.
-* We are *not allowed* to pass it a list instead `Math.max([1,2,3,5,6,7])`
-* But we *can* `apply()` that list to it `Math.max.apply(null, [1,2,3,5,6,7])`
-	* Recall that the first argument sets the `this`, which we don't need
-	  in this case.
+* It's like `printf(str, args...)` in Java
+* E.g.`Math.max(1,2,3,5,6,7) // => 7` (look ma, it takes any number of arguments)
+* We are ***not allowed*** to pass it a *list* instead, e.g. `Math.max([1,2,3,5,6,7])`
+* But (the reason this JS feature is in this part of the document) we *can*
+  `apply()` that list to it
+      
+        Math.max.apply(null, [1,2,3,5,6,7])
+	* Recall that the first argument sets the `this`, which we don't need here
 
 
 
@@ -134,7 +179,7 @@ a method on another object, the changes are reflected in the borrowed instances.
 
 Quite similar to `.apply()`. In fact doing
 
-	instance.method.ca(object2, param1, param2)
+	instance.method.call(object2, param1, param2)
 
 does exactly what it would do if we replaced `call()` with `apply()` (see above
 for what it does actually do), only we've replaced the `array` containing parameters,
@@ -150,11 +195,20 @@ to the `user` object, we must `bind` it.
 
 So instead if we do
 
-	$('button').click(**user.clickHandler.bind(user)**);
+	$('button').click(  user.clickHandler.bind(user)  );
 
 and now it'll manipulate our `user` object as we wanted.
 
 ##### .bind() also facilitates currying
+
+In this example, we *essentially* pass
+
+    takes3( this = null, a = true, b = 45, c = ¿unapplied? )
+
+via `bind`. This returns us a *curried* function that is still waiting to receive a `c`,
+so that's why we pass `c` to that function and it gets used, along with the *values of
+variables that we had previously set in* `bind`.
+
 
 	function takes3(a, b, c) {
 		var s = a ? 'g' : 'f';
@@ -165,8 +219,8 @@ and now it'll manipulate our `user` object as we wanted.
 	var gAboveB = takes3.bind(null, true, 45);
 	gAboveB("asdf"); // => "asdfg" (fills in the last parameter from the original function)
 
-event.which
------------
+
+## event.which
 
 **Indicates which key was pressed, via its *unicode* value.**
 
@@ -177,14 +231,15 @@ Doesn't seem to do anything for non-alphanumeric-character keys.
 ### To check what a character key's value is
 
 **How about entering the following in to the interpreter, then going back to
-the browser and hitting the key you want the value of?**
+the browser and hitting the key you want the value of?** (This may ruin any existing
+`document.onkeypress` handlers.)
 
     document.onkeypress = function(myEvent) { // note: event needn't be called "e"
         console.log(myEvent.which);
     };
 
-Navigator
----------
+
+## Navigator
 
 **contains information about the visitor's browser.**
 

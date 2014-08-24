@@ -46,6 +46,125 @@ app instances.
     * It’s a good idea to use this handy global whenever possible.
       Failing to do so can cause hard-to-diagnose errors if you run
       your app from a different directory.
+3. Requiring files
+    * To look among `npm` packages (`global` or in `'./node_modules'`)
+    
+            var express = require('express')
+    * To look in current directory
+    
+            var fortune = require('./lib/fortune.js')
+4. [`module.exports`][modexp] is the object that's actually returned as the result of
+   a `require` call. ([StOve][stove modexp])
+    * x.js:
+        
+            setTimeout(function() {
+              module.exports = { a: "hello" };
+            }, 0);
+    * y.js:
+            
+            var x = require('./x');
+            console.log(x.a);
+   
+[modexp]: http://nodejs.org/api/modules.html#modules_module_exports
+[stove modexp]: http://stackoverflow.com/questions/5311334
+
+### Request Object
+
+1. **Parameters** can come from
+    1. querystring
+    2. session (cookies)
+    3. request body (POST)
+    4. named routing parameters (`'/:name'`)
+   
+   and the `req.param` method of the request object munges all of these
+   parameters together. For this reason, one should avoid it, and instead
+   use dedicated properties that hold the various types of parameters
+   added by Express.
+
+### App Clusters
+
+1. A simple single-server form of "scaling-out" (having multiple app instances)
+2. You can create an independent server for each core on your system
+3. This is both faster, and allows you to test your app under parallel conditions
+
+
+#### How to
+
+Change the `app.js` file to have
+
+    function startServer() {
+      http.createServer(app)
+        .listen(app.get('port'), function() {
+          console.log('Express started in ' + app.get('env') +
+            ' mode on http:// localhost:' + app.get('port') +
+            '; press Ctrl-C to terminate.');
+        });
+    }
+    if (require.main === module) {
+      // application run directly; start app server
+      startServer();
+    } else {
+      // application imported as a module via "require":
+      // export function to create server
+      module.exports = startServer;
+    }
+
+and create a new script `app_cluster.js`
+    
+    var cluster = require('cluster');
+    
+    function startWorker() {
+      var worker = cluster.fork();
+      console.log('CLUSTER: Worker %d started', worker.id);
+    }
+    if (cluster.isMaster) {
+      require('os')
+        .cpus()
+        .forEach(function() {
+          startWorker();
+        });
+      // log any workers that disconnect; if a worker disconnects, it
+      // should then exit, so we'll wait for the exit event to spawn
+      // a new worker to replace it 
+      cluster.on('disconnect', function(worker) {
+        console.log(
+          'CLUSTER: Worker %d disconnected from the cluster.',
+          worker.id);
+      });      
+      // when a worker dies (exits), create a worker to replace it 
+      cluster.on('exit', function(worker, code, signal) {
+        console.log('CLUSTER: Worker %d died with exit code %d (%s)',
+          worker.id, code, signal);
+        startWorker();
+      });
+    } else {
+      // start our app on worker; see app.js 
+      require('./app.js')();
+    }
+
+Now start up your new clustered server:
+
+    node meadowlark_cluster.js
+
+If you want to see evidence of different workers handling different
+requests, add the following middleware before your routes:
+
+    app.use(function(req, res, next) {
+      var cluster = require('cluster');
+      if (cluster.isWorker) {
+        console.log('Worker %d received request', cluster.worker.id);
+      }
+    }); 
+    
+Now you can connect to your application with a browser. Reload a
+few times, and see how you can get a different worker out of the
+pool on each request.
+
+## Hooking in MongoDB
+
+1. "While there’s a low-level driver available for MongoDB , you’ll
+   probably want to use an **'object document mapper' (ODM)**. The officially
+   supported ODM for MongoDB is **`Mongoose`**."
 
 # ExpressJS
 
@@ -95,6 +214,59 @@ app instances.
       the content type appropriately.
 
             app.use(express.static(path.join(__dirname, 'public')));
+5. By default, Express looks for *views* in the `views/` directory
+    * And *layouts* in `views/layouts/`
+6. 
+
+
+### Request/Response object
+
+1. Requests start as one of Node's `http.IncomingMessage` objects, but a bunch of methods are added
+2. Similarly, responses start as one of Node's `http.ServerResponse` objects.
+3. `res.send(body)`, `res.send(status, body)`
+    1. defaults to a content type of `text/html` so if you want to change it,
+       call `res.set('Content-Type', 'text/plain')` or `res.type('txt')`
+       before `res.send`
+    2. If `body` is an `object` or `array`, the response is sent as `JSON`
+        * Though you *should **explicitly*** send `JSON` using `res.json(json)`
+4. Use `res.query` to get querystring values, `req.session` to get session
+   values, or `req.cookie`/`req.signedCookies` to get cookies.
+5. Use `res.render` to render a view within a layout
+
+
+### Middleware
+
+1. Middleware is a function that takes three arguments:
+    1. Request object
+    2. Response object
+    3. "Next" function
+2. Executed in a *pipeline*
+    1. Order matters
+    2. Things added by one middleware are available to everyone downstream
+3. Insert middleware into the pipeline with `app.use`
+4. Call the `next()` function to invoke the next function in the pipeline,
+   otherwise the request will terminate
+   
+        app.use(function(req, res, next) { 
+          console.log('processing request for "' + req.url + '"....');
+          next();
+        });
+        
+        
+        // you probably don't want to (accidentally) do the following
+        app.use(function(req, res, next) {
+          console.log('terminating request');
+          res.send('thanks for playing!');
+          // note that we do NOT call next() here...
+          // this terminates the request
+        });
+5. You could add middleware on specific requests using `app.VERB`
+
+        app.get('/b', function(req, res, next) {
+          console.log('/b: route not terminated');
+          next();
+        });
+
 
 # npm
 
@@ -114,3 +286,8 @@ app instances.
 2. Save the package(s) in `node_modules/` *and* update the `package.json` file
 
         npm install --save express
+        
+3. Save put the package in `devDependencies` instead of `dependencies` to
+   reduce dependencies required to deploy (e.g. for modules related to *testing*)
+   
+        npm install --save-dev mocha

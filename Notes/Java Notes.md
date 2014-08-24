@@ -41,26 +41,6 @@ From the [Github Wiki & Tutorial][]
 [Github Wiki & Tutorial]: https://github.com/junit-team/junit/wiki
 
 
-Gson
-----
-**5/20/14**
-
-[Gson Wiki][],
-[On Google Code][]
-
-* Open source Google library for de/serializing Java objects to/from JSON using `toJson()` and `fromJson()`
-* Can work with arbitrary Java objects including pre-existing objects that you do not have source-code of
-* Support for Java Generics
-* Support "arbitrarily complex objects"
-* Fields present in the JSON but not the object to be deserialized to are *ignored* 
-	* This is a "feature" because it makes things more flexible
-* In general, this looks like a simple and useful tool
-* You use `GsonBuilder()` instead of `Gson()` to allow more customization
-
-[Gson Wiki]: http://en.wikipedia.org/wiki/Gson
-[On Google Code]: https://code.google.com/p/google-gson/
-
-
 Collections
 ===========
 
@@ -82,13 +62,13 @@ Maps
 	* `lowerKey`, ..., `=> K`
 * Can be traversed in ascending *or* descending order
 
-* Iterates/sorted **according to `compareTo()`** (or supplied `Comparator`)
-* Requires `O(log(n))` `containsKey`, `get`, `put`, and `remove`
+* Iterates/sorted according to `compareTo()` (or supplied `Comparator`)
+* Requires `O(log(n))` for `containsKey`, `get`, `put`, and `remove`
 * It's a Red-Black tree based `NavigableMap`
 
 ### LinkedHashMap
 
-* **iterates in order of insertion**
+* **Iterates in order of insertion**
 * Contains both a hashmap *and* a **double-linked-list** in ordered by *insertion-order*
 	* In other words, when you call `map.entrySet()` the *first* one out is
      the *first* one you *inserted*
@@ -178,13 +158,22 @@ E.g.
 	
 GSON
 ----
+**5/20/14**
 
-[On Google Code](https://code.google.com/p/google-gson/)
+[Source hosted on Google Code](https://code.google.com/p/google-gson/)
 
-* A library that can convert Java Objects into their JSON representation, and back.
-* Gson can work with arbitrary Java objects including pre-existing objects that you
-  do not have source-code of.
 * Provides simple `toJson()` and `fromJson()` methods to convert Java objects to JSON and vice-versa
+* Works on "arbitrarily complex" Java objects including pre-existing objects that you don't have source-code for
+* Support for generics
+* Fields present in the JSON but not the object to be deserialized to are *ignored* 
+	* This is a "feature" because it makes things more flexible
+* In general, this looks like a simple and useful tool
+* You use `GsonBuilder()` instead of `Gson()` to allow more customization
+
+[Gson Wiki]: http://en.wikipedia.org/wiki/Gson
+[On Google Code]: https://code.google.com/p/google-gson/
+
+
 
 Java concurrency
 ================
@@ -414,6 +403,8 @@ E.g.
 This means we'll allow anything that extends `HasWord`, plus `null`, but we don't
 care to name the type because we'll just be calling methods that are specified by
 `HasWord`.
+
+1. Wait, but then couldn't we just say `List<HasWord>` and get the *exact* same effect?
 
 
 Useful interfaces/abstract classes

@@ -294,22 +294,26 @@ HTTPS
 #### HTTP Secure
 
 * [Wiki](http://en.wikipedia.org/wiki/HTTP_Secure)
-* [Security Stack Exchange](http://security.stackexchange.com/questions/19616/why-is-it-possible-to-sniff-an-https-ssl-request)
+* [Security Stack Exchange](http://security.stackexchange.com/questions/19616)
+
+**The first step in providing secure services is using HTTP Secure (HTTPS). The nature of the Internet makes it possible for a third party to intercept packets being transmitted between clients and servers. HTTPS encrypts those packets, making it extremely difficult for an attacker to get access to the information being transmitted.** -- *Web Development with Node and Express (65% through)*
 
 In short *https* sessions work this way:
 
 1. Client and server exchange some initial information
-2. Using this information the client is able to authenticate the server, making sure it is trust worth
-3. The client uses the server's public key to send him an encrypted secret
-4. The server decrypts this secret using his private key (only the authenticated server can do that!)
+    1. Namely, the server sends an *SSL certificate* in a `.crt` file
+    2. If you want an SSL certificate that common browsers are going to trust,
+       you're going to have to pay up ($10-$300)
+2. Using this info, the client authenticates the server, ensuring it is trustworthy
+3. Client uses the server's public key to send him an encrypted secret
+4. Server decrypts this secret using his *private* key (which *only* the authenticated server can do!)
 5. Both the client and the server use the secret to locally generate the session symmetric key
 6. Now the can talk to each other safely because no one else knows their session symmetric key
-
-If some how along the way a third party is able to get access to the shared
-secret he will also be able to generate the session symmetric key and decrypt
-the communication.
+    * However, if somehow along the way a third party is able to get access to the shared
+      secret he will also be able to generate the session symmetric key and decrypt
+      the communication.
 
 The problem is that step 2 (authenticating the server) is hard.  SSL is only as
 strong as your certificate validation. It all comes down to: Do you accept the
-MitM's certificate as valid. The logic of out current browsers is: Accept if
-it's signed by a trusted CA or if the user decides to override
+certificate as valid? The logic of out current browsers is: Accept if it's signed
+by a trusted Certificate Authority (CA) or if the user overrides (clicks "Accept").
