@@ -204,4 +204,36 @@ it is pretty cool.
 
 ## Concepts
 
+### Pointer vs Array
 
+##### 8/24/14
+
+This is copied directly from [StOve][SO PvA].
+
+It's a subtle difference. Essentially, the former:
+
+    char amessage[] = "now is the time";
+
+Defines an array whose members live in the current scope's stack
+space, whereas:
+
+    char *pmessage = "now is the time";
+
+Defines a pointer that lives in the current scope's stack space,
+but that references memory elsewhere (in this one, "now is the
+time" is stored elsewhere in memory, commonly a string table).
+
+Also, note that because the data belonging to the second definition
+(the explicit pointer) is not stored in the current scope's stack
+space, it is unspecified exactly where it will be stored and should
+not be modified. *(I.e. beware the segfault, I guess.)*
+
+Edit: As pointed out by Mark, GMan, and Pavel, there is also a
+difference when the address-of operator is used on either of these
+variables. For instance, &pmessage returns a pointer of type char\*\*,
+or a pointer to a pointer to chars, whereas &amessage returns a
+pointer of type char(\*)[16], or a pointer to an array of 16 chars
+(which, like a char\*\*, needs to be dereferenced twice as litb
+points out).
+
+[SO PvA]: http://stackoverflow.com/questions/1335786
