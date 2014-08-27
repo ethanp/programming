@@ -17,7 +17,9 @@ Many notes are from *C++ the Core Language*, by Gregory Satir & Doug Brown.
 
 ### Overloading
 
-C++ allows more than one function with the same name as long as their signatures [set of parameters in the definition] differ. **This is unlike C**.
+* C++ allows more than one function with the same name as long as their signatures [set of parameters in the definition] differ
+* **This is unlike C**.
+* They *can**not*** *just* differ in their **return** types
 
 ### I/O
 
@@ -29,6 +31,9 @@ C++ allows more than one function with the same name as long as their signatures
     cout << myFloat;
     cout << "a string\n";
     cout << "sqrt: " << sqrt(myInt) << '\n';
+    
+    // print to standard error
+    cerr << "negative number passed\n";
     
 ### Default parameters
 
@@ -77,7 +82,37 @@ Declaration
     plus_5(&n);
     
     // C++
-    int n = 3;    plus_5(n);  // no &amp
+    int n = 3;    plus_5(n);  // no &amp### Const
+**Makes a value/pointer un-modify-able** (to help you reason about it)
+### Casting
+* You can cast type anything to type anything
+* Some types are implicitly casted to other types (e.g. `int -> long`)
+* Like C, you can *implicitly* cast **to** a `void *`
+
+        void *v;
+        Foo *f;
+        v = f;
+
+* **Unlike C**, you must *explictly* cast **from** a `void *`
+
+        void *v;
+        Foo *f;
+        f = (Foo *)v;
+
+
+### Globals
+
+* **Unlike C**, you *can* use a *dynamic* expression to initialize a
+  *global* variable
+    
+        int global1 = my_func();
+        int global2 = 2 * global 1;
+    
+        main() { ... }
+
+* These are dynamically **initialized *before* `main()` is entered**.
+* This can lead to nasty bugs when linking against other files, so
+  be keahfo.
 
 ## Classes
 
@@ -138,14 +173,18 @@ They can be defined *inside* or *outside* the class definition
 #### public & private
 
 * **public** --- can be accessed by any code
-* **private** --- can be accessed by the class’s own member functions (and *"friends"*) only
-* One object ***can*** access the `private` members of another object from the same `class`, but **can*not*** access `private` members of the `class` it subclasses.
+* **private** --- can be accessed by the class’s own member functions
+  (and *"friends"*) only
+* One object ***can*** access the `private` members of another object
+  from the same `class`, but **can*not*** access `private` members of
+  the `class` it subclasses.
 
 #### Member variables
 
 ##### `static`
 
-Only one copy of the data is maintained for all objects of the class (just like Java)
+Only one copy of the data is maintained for all objects of the class
+(just like Java)
 
 
 ### Inheritance ("derived classes")
@@ -164,16 +203,16 @@ Only one copy of the data is maintained for all objects of the class (just like 
 
 * E.g. the `assignment operator`
 
-        // in class decl
+        // in class declaration
         void operator=(ABC &other); 
         
-        // then we do        void ABC::operator=(ABC &other) { /* code */ }### Virtual Functions
+        // then we define        void ABC::operator=(ABC &other) { /* code */ }### Virtual Functions
 * **Virtual functions** behave according to the *run-time* type of
   the object they are called on
     1. Declare a pointer to the *base* class `ABC`
     2. Point it to an instance of the *derived* class `DEF`
     3. Call the *virtual* function, it will call the version as defined
-       on the *derived* class `DEF::virtualFunction()
+       on the *derived* class `DEF::virtualFunction()`
 * **Non-virtual functions** behave according to the *static* type
   of the object they are called on
 * The **syntax** is like so
