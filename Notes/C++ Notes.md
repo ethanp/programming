@@ -114,6 +114,16 @@ Declaration
 * This can lead to nasty bugs when linking against other files, so
   be keahfo.
 
+### Some keywords
+
+* **volatile** --- does less optimizations, for when a variable might
+  be used by another thread or a memory-mapped device or something. (I
+  don't actually understand this)
+* **inline** --- *hint* to the compiler that the function should be
+  expanded in-place like a macro
+    * More powerful than macros because inlining is performed by the
+      compiler rather than the preprocessor
+
 ## Classes
 
 ### Basic Class Example
@@ -146,7 +156,7 @@ Declaration
 
 Allows you to say (not sure this is correct)
 
-    ABC a2 = new ABC;
+    ABC a2;
     ABC a1 = a2;
 
 ### "Member functions" (i.e. methods)

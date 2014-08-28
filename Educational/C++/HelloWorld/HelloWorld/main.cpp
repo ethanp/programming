@@ -3,7 +3,6 @@
 //  HelloWorld
 //
 //  Created by Ethan Petuchowski on 8/26/14.
-//  Copyright (c) 2014 Ethan Petuchowski. All rights reserved.
 //
 
 #include <iostream>
@@ -43,9 +42,13 @@ int main(int argc, const char * argv[])
 {
     std::cout << "Hello, World!\n";
     
-    Something *a = new Something;
-    a->setLen(3);
-    std::cout << a->getLen() << '\n';
+    /* if we declare like this (no new!?) we don't need the *
+     * stars or the arrows.                                 *
+     * I don't yet understand how this all works.           *
+     * I also don't know yet /which is better/.             */
+    Something a;
+    a.setLen(3);
+    std::cout << a.getLen() << '\n';
     
     SomethingElse *b = new SomethingElse;
     b->setLen(4);
