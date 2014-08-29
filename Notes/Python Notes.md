@@ -11,6 +11,26 @@ latex input:        mmd-natbib-plain
 latex input:        mmd-article-begin-doc
 latex footer:       mmd-memoir-footer
 
+## Special Class Methods
+
+### \_\_getitem__(self, key)
+
+**Allows you to use the `bracket[notation]`**
+
+    class A(object):
+        def __init__(self):
+            self.a = [1, 2, 3, 4]
+        def __getitem__(self, key):
+            return self.a[key]
+  
+    >>> a = A()
+    >>> a[2]
+    3
+
+#### \_\_setitem__(self, key, value)
+
+**See `__getitem__(self, key)` above**
+
 ## Data libraries
 
 ### File I/O
