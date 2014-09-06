@@ -14,12 +14,13 @@
 alias h='cd ~'
 alias gohome='cd ~'
 alias ls='ls -AFG'
-alias rm='rm -i'
+alias rm='rm -i'   # a safety precaution
 alias grep='grep --color'
+alias egrep='egrep --color'
 alias ll='ls -lh'  # longform, human-readable sizes (as opposed to machine-readable)
 alias lg='ls | grep'
-alias llg='ls -l | grep'
-alias hisg='history | grep'
+alias llg='ls -lh | grep'
+alias hisg='history | grep' # (hg is taken by mercurial)
 alias bug='brew update && brew upgrade'
 alias vimrc='sb ~/.vimrc'
 alias bprof='sb ~/.bash_profile'
@@ -64,6 +65,7 @@ export LESS=-RFX
 # render manpage as postscript in Preview
 function pman { man -t $1 | open -fa /Applications/Preview.app ; }
 
+# run the "Really Barebones Minco" iCal interface I made
 function minco { python $PROGRAMMINGGIT/StuffIWrote/Python/rbm/rbm.py $@ ; }
 
 # ssh -X into specified CS Server
@@ -74,9 +76,8 @@ function uts { scp "$1" ethanp@almond-joy.cs.utexas.edu: ; }
 
 # download movie to Movies dir
 function dlmov { cd ~/Desktop/Movies/ && youtube-dl -t $1  && cd - ; }
-function qdlmov { cd ~/Desktop/Movies/ && youtube-dl -tq $1  && cd - & }
 
-# pretty-print raw JSON
+# pretty-print a raw JSON input file
 function json { cat $1 | python -mjson.tool | less; }
 
 # change & show
@@ -86,7 +87,9 @@ function cs { cd "$1"; ls; }
 function ddh { ls "$1" | grep -i "$2"; }
 
 # supposed to enable autocomplete for rbenv
-if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+if which rbenv > /dev/null; then
+    eval "$(rbenv init -)"
+fi
 
 # 5/27/14
 # open mmd as pdf
@@ -94,12 +97,10 @@ function mtx {
     TEX_NAME=$(basename "$1" | sed s'|.md|.tex|')
     PDF_NAME=$(basename "$1" | sed s'|.md|.pdf|')
     LATEX_DIR=~/Desktop/Latex
-    # mkdir -p "$LATEX_DIR"
     TEX_LOC=$LATEX_DIR/"$TEX_NAME"
     multimarkdown -t latex "$1" > "$TEX_LOC"
     pdflatex --output-directory "$LATEX_DIR" "$TEX_LOC" > /dev/null
     open -a /Applications/Preview.app "$LATEX_DIR"/"$PDF_NAME"
-    # rm -rf "$LATEX_DIR"
 }
 
 # remove the first 49 lines of each *.[mh] file in this- & sub-directories
@@ -122,8 +123,7 @@ function decrust {
     # because with bash you never know what sort of crap is going to get to
     # your else statement
     else
-        echo "currently in dry mode, use ..decrust doit.. to actually run it"
-        echo
+        echo -e "\ndecrust is currently in dry mode, use \n\n\t$ decrust doit\n\nto actually run it\n"
     fi
 }
 
@@ -150,6 +150,7 @@ function dedir {
 # Compile C programs with useful gcc flags
 # ----------------------------------------
 # TODO this could probably be upgraded using stuff from "Learn C the Hard Way"
+#       or stuff from the makefiles set up by Dr. Downing in "CS371p Object Oriented Programming"
 #
 # I've removed -O2 & -ffast-math optimization because I figure there are going
 # to be more situations where I don't want something optimized out than where

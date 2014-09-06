@@ -5,11 +5,34 @@ Base Header Level:		2
 latex mode:		memoir
 Keywords:			REST protocol, protocols, sockets, TCP/IP
 CSS:				http://fletcherpenney.net/css/document.css
-xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
-copyright:		2014 Ethan C. Petuchowski
-latex input:		mmd-natbib-plain
-latex input:		mmd-article-begin-doc
-latex footer:		mmd-memoir-footer
+xhtml header:	<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+copyright:      2014 Ethan C. Petuchowski
+latex input:    mmd-natbib-plain
+latex input:    mmd-article-begin-doc
+latex footer:   mmd-memoir-footer
+
+## TCP
+**9/5/14**
+
+* This is the **transport layer** of the **TCP/IP suite**
+* TCP is an intermediary between the application and Internet Protocol (IP)
+    * Instead of the app breaking the data into packets and issuing a bunch
+      of IP requests, it just issues a *single* TCP request, and TCP handles
+      the details.
+* IP exchanges **packets** --- which have a **header** and a **body**
+    * Packet **header** --- source, destination, control information
+    * Packet **body** --- the data to be transmitted
+* IP packets can be lost, duplicated, or delivered out of order
+    * TCP handles all this
+        * Specifically, it *guarantees* that all bytes are perfectly received
+          in the correct order
+* TCP uses *positive acknowledgement with retransmission* as the basis of
+  its algorithm
+    * Sender keeps a record of each packet it sends
+    * Sender maintains a timer from when each packet was sent
+        * Sender retransmits if no ACK is received before *timeout* (due to
+          loss or data corruption)
+    * Receiver responds with an ACK message as it receives the packet
 
 ## Socket
 
