@@ -26,7 +26,7 @@ alias vimrc='sb ~/.vimrc'
 alias bprof='sb ~/.bash_profile'
 alias this='export PATH="${PATH}:."'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n $@'
-alias ut='ssh -o ServerAliveInterval=30 ethanp@almond-joy.cs.utexas.edu'
+alias ut='ssh -o ServerAliveInterval=10 ethanp@almond-joy.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
 alias tracker='cs ~/Dropbox/CSyStuff/TTRails/tracker'
 alias trracker='cs ~/Dropbox/CSyStuff/TTRails/trracker'
@@ -61,6 +61,11 @@ export LESS=-RFX
 ########################
 #  Terminal Functions  #
 ########################
+
+# print the length of the input (input needn't be quoted and can have spaces)
+# but if the input has \" in it, this will not work; in that case use python
+# or something
+function len { echo -n "$@" | wc -c; }
 
 # render manpage as postscript in Preview
 function pman { man -t $1 | open -fa /Applications/Preview.app ; }
