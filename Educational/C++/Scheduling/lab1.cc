@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <time.h>       /* time_t, struct tm, difftime, time, mktime */
 
 #define FOUR_KB 1 << 12
 
@@ -14,7 +15,7 @@ int main() {
     char *buffer_to_hash = (char*)malloc(FOUR_KB);
     if (buffer_to_hash == NULL)
     {
-        printf("Unable to allocate space for buffer_to_hash.\n");
+        printf("Unable to allocate space for buffer-to-hash.\n");
         return -1;
     }
 
@@ -22,14 +23,28 @@ int main() {
     if (!urandom_file.is_open())
     {
         printf("Unable to open urandom\n");
+        return -1;
     }
 
     urandom_file.read(reinterpret_cast<char*>(buffer_to_hash), FOUR_KB);
+    uint128 a;
 
-    // uint128 CityHash128(const char *s, size_t len)
-    char s[] = "asdf";
-    uint128 a = CityHash128(buffer_to_hash, FOUR_KB);
+    time_t start, stop;
+    double seconds;
+    time(&start);
+
+    int REPEATS = 550000; // 550,000
+    for (int i = 0; i < REPEATS; i++)
+    {
+        // uint128 CityHash128(const char *s, size_t len)
+        a = CityHash128(buffer_to_hash, FOUR_KB);
+    }
+
+    time(&stop);
+    seconds = difftime(stop, start);
+
+    printf("%.f seconds elapsed doing %d hashes\n", seconds, REPEATS);
+
     cout << a.first << a.second << endl;
-
     return 0;
 }
