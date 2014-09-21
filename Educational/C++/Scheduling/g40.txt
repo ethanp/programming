@@ -1,0 +1,8 @@
+5251 CPU milliseconds elapsed in 14665
+5256 WALL milliseconds elapsed in 14665
+5251 CPU milliseconds elapsed in 14666
+5256 WALL milliseconds elapsed in 14666
+5256 CPU milliseconds elapsed in 14668
+5261 WALL milliseconds elapsed in 14668
+5257 CPU milliseconds elapsed in 14667
+5262 WALL milliseconds elapsed in 14667

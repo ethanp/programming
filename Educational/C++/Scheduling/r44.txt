@@ -1,0 +1,21 @@
+Beginning...
+4 procs requested
+using 4 bg procs
+collecting hash proc 14674
+hash-go
+hash-go
+hash-go
+hash-go
+6799 CPU milliseconds elapsed in 14674
+6806 WALL milliseconds elapsed in 14674
+collecting hash proc 14675
+6800 CPU milliseconds elapsed in 14677
+6807 WALL milliseconds elapsed in 14677
+8350 CPU milliseconds elapsed in 14676
+8365 WALL milliseconds elapsed in 14676
+8401 CPU milliseconds elapsed in 14675
+8413 WALL milliseconds elapsed in 14675
+collecting hash proc 14676
+collecting hash proc 14677
+stopping bg procs
+terminating
