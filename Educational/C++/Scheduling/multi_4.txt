@@ -1,0 +1,16 @@
+Something
+4 procs requested
+collecting hash proc 13724
+hash-go
+hash-go
+hash-go
+hash-go
+6812912 milliseconds elapsed
+6858696 milliseconds elapsed
+8304926 milliseconds elapsed
+8355644 milliseconds elapsed
+collecting hash proc 13725
+collecting hash proc 13726
+collecting hash proc 13727
+stopping bg procs
+terminating

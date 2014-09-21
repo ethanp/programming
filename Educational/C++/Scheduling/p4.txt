@@ -1,0 +1,4 @@
+7210753 milliseconds elapsed
+7005594 milliseconds elapsed
+7102942 milliseconds elapsed
+7124828 milliseconds elapsed

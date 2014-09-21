@@ -69,7 +69,7 @@ int main(int argc, char const *argv[])
     urandom_file.read(reinterpret_cast<char*>(buffer_to_hash), FOUR_KB);
     char *stacks[hash_procs];
     pid_t pids[hash_procs];
-    start(hash_procs);  // start bg procs
+    start(hash_procs+1);  // start bg procs + 1
     ready = 0; // don't let hashing start yet
 
     // create clones for hashing
