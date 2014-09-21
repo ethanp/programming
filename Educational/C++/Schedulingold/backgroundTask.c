@@ -1,8 +1,6 @@
 #include<stdio.h>
 #include<signal.h>
 #include<stdlib.h>
-#include<unistd.h>
-#include "bg.h"
 
 static int NUMPROCESSES;
 static pid_t *processIds;
@@ -23,7 +21,7 @@ int start(int numProcesses)
     NUMPROCESSES = numProcesses;
 
     // allocate space on heap for enough pids for each process
-    processIds = (pid_t*) malloc(NUMPROCESSES * sizeof(pid_t));
+    processIds = malloc(NUMPROCESSES * sizeof(pid_t));
     if(processIds == NULL)
     {
         printf("Unable to allocate space for processId array.\n");
@@ -53,7 +51,6 @@ int start(int numProcesses)
         // if child, spin forever
         if(((int)retValue) == 0)
         {
-            printf("bg proc created\n");
             while(1);
         }
 
@@ -70,7 +67,6 @@ int start(int numProcesses)
 int stop()
 {
     int i;
-    printf("stopping bg procs\n");
     for(i = 0; i < NUMPROCESSES; i++)
     {
         if(kill(processIds[i], SIGINT) < 0)

@@ -237,3 +237,7 @@ pointer of type char(\*)[16], or a pointer to an array of 16 chars
 points out).
 
 [SO PvA]: http://stackoverflow.com/questions/1335786
+
+## Misc
+* In C, function names are pointers to functions
+    * So if you need to pass a pointer to a function, you can just pass a function name (idnat special?)

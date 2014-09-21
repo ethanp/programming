@@ -1,4 +1,4 @@
-#include "city.h"
+#include <city.h>
 #include <stdio.h>
 #include <iostream>
 #include <fstream>
@@ -33,7 +33,7 @@ int main() {
     double seconds;
     time(&start);
 
-    int REPEATS = 800000; // 550,000
+    int REPEATS = 550000; // 550,000
     for (int i = 0; i < REPEATS; i++)
     {
         // uint128 CityHash128(const char *s, size_t len)
