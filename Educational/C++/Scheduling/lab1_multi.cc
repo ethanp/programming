@@ -3,7 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <time.h>       /* time_t, struct tm, difftime, time, mktime */
+#include <sys/time.h>
+#include <sys/types.h>
 #include <stdlib.h>     /* atoi */
 #include <sys/wait.h>
 #include <sched.h>
@@ -19,23 +20,45 @@ static volatile int ready; // don't optimize single-use in fctn to constant
 
 int hash_stuff(void *buffer_loc)
 {
-    uint128  a;
-    clock_t  start;
-    double   seconds, diff_ms;
-    int      REPEATS = 800000;
-    char*    buffer_to_hash = (char*)buffer_loc;
+    uint128         a;
+    struct timeval  tp;
+    double          sec, usec, start, end, cpu_start, cpu_ms, wall_ms;
+    int             REPEATS = 8E5;
+    char*           buffer_to_hash = (char*)buffer_loc;
+    clock_t         wall_start;
 
     while (!ready); // wait till all threads have been created
     printf("hash-go\n");
 
-    // ------- HASH LOOP ---------- //
-    start = clock();
+    // ========== HASH LOOP ============= //
+
+    // start wall & cpu timers
+    cpu_start = clock();
+
+    gettimeofday(&tp, 0);
+    sec = static_cast<double>(tp.tv_sec)   * 1E3;
+    usec = static_cast<double>(tp.tv_usec) / 1E3;
+    start = sec + usec;
+
+
+    // compute hashes
     for (int i = 0; i < REPEATS; i++)
         a = CityHash128(buffer_to_hash, FOUR_KB);
-    diff_ms = clock() - start / (double)(CLOCKS_PER_SEC / 1000);
-    // ---------------------------- //
 
-    printf("%.f milliseconds elapsed\n", diff_ms);
+
+    // stop wall & cpu timers
+    cpu_ms = (clock() - cpu_start) / (CLOCKS_PER_SEC / 1E3);
+
+    gettimeofday(&tp, 0);
+    sec = static_cast<double>(tp.tv_sec)   * 1E3;
+    usec = static_cast<double>(tp.tv_usec) / 1E3;
+    end = sec + usec;
+    wall_ms = end - start;
+
+    // ================================== //
+
+    printf("%.f CPU milliseconds elapsed in %d\n", cpu_ms, getpid());
+    printf("%.f WALL milliseconds elapsed in %d\n", wall_ms, getpid());
     return EXIT_SUCCESS;
 }
 
@@ -43,7 +66,8 @@ int hash_stuff(void *buffer_loc)
 
 int main(int argc, char const *argv[])
 {
-    printf("Something\n");
+    /* get desired number of hash procs */
+    printf("Beginning...\n");
     int hash_procs = 0;
     if (argc >= 2) {
         hash_procs = atoi(argv[1]);
@@ -56,6 +80,18 @@ int main(int argc, char const *argv[])
         exit(EXIT_FAILURE);
     }
     printf("%d procs requested\n", hash_procs);
+
+    /* get desired number of bg procs */
+    int bg_procs = 0;
+    if (argc >= 3) {
+        bg_procs = atoi(argv[2]);
+        printf("using %d bg procs\n", bg_procs);
+    } else {
+        printf("defaulting to 0 bg procs\n");
+        bg_procs = 0;
+    }
+
+    /* use urandom to initialize buffer to hash */
     void *buffer_to_hash = malloc(FOUR_KB);
     if (buffer_to_hash == NULL) {
         printf("Unable to allocate space for buffer-to-hash.\n");
@@ -67,12 +103,15 @@ int main(int argc, char const *argv[])
         return -1;
     }
     urandom_file.read(reinterpret_cast<char*>(buffer_to_hash), FOUR_KB);
+
+    /* prep for hash procs */
     char *stacks[hash_procs];
     pid_t pids[hash_procs];
-    start(hash_procs);  // start bg procs
     ready = 0; // don't let hashing start yet
+    if (bg_procs > 0)
+        start(bg_procs);  // start bg procs
 
-    // create clones for hashing
+    /* create clone procs for hashing */
     for (int proc = 0; proc < hash_procs; proc++) {
         stacks[proc] = (char*) malloc(STACK_SIZE);
         if (stacks[proc] == NULL) {
@@ -81,7 +120,15 @@ int main(int argc, char const *argv[])
         }
         pids[proc] = clone(hash_stuff, stacks[proc]+STACK_SIZE, CLONE_VM, buffer_to_hash);
     }
+
+    // start global timer
+    clock_t  start;
+    double   seconds, diff_ms;
+    start = clock();
+    
     ready = 1; // hashing should start now
+
+    /* don't stop the bg procs until all the hashing procs have been reaped */
     int status;
     for (int proc = 0; proc < hash_procs; proc++) {
         printf("collecting hash proc %d\n", pids[proc]);
@@ -90,7 +137,9 @@ int main(int argc, char const *argv[])
             printf("problem with hash thread occurred\n");
         }
     }
-    stop();  // stop the bg procs
+
+    if (bg_procs > 0)
+        stop();  // stop the bg procs
     printf("terminating\n");
     exit(EXIT_SUCCESS);
 }
