@@ -1,12 +1,3 @@
-*.svn-base
-all-wcprops
-*.v1_indexcache
-Python/.metadata
-*.prefs
-*.zip
-*.tsv
-
-
 # Default for Rails apps
 # Ignore bundler config
 /.bundle
@@ -17,40 +8,53 @@ Python/.metadata
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
-Patents/.idea
-Java/TryGuava/.idea
+
+# filetypes to ignore
+*.svn-base
+*.v1_indexcache
+*.prefs
+*.zip
+*.tsv
 *.iml
 *.xlsx
-Java/Minco_XL/.idea
 *.xlsm
 *.csv
 *.ini
 *.dat
 *.xmi
-Educational/C/CtHW/.metadata
 *.swp
+*.sublime-workspace
+*.sublime-project
+*.xcbkptlist
+*.rkt#1#
+*.rkt#2#
+*.p
+*.pdf
+*submitWeb.m
+*submit.m
+*.swo
+*.swn
+
+# files and directories I happen to be ignoring for convenience
+Patents/.idea
+Java/TryGuava/.idea
+Java/Minco_XL/.idea
+Educational/C/CtHW/.metadata
 Educational/Python/.metadata
 Educational/Python/CodingPractice/.idea
 Educational/Java/CodingPractice/.idea
 a.out
 Educational/Django/tutorial/env
 database.sql
-*.sublime-workspace
-*.sublime-project
-*.xcbkptlist
 StuffIWrote/Python/GrammarBrain/GrammarBrain/pickles
 StuffIWrote/Python/GrammarBrain/GrammarBrain/wiki_data/wiki_pickles
 StuffIWrote/Python/GrammarBrain/GrammarBrain/brown_data/experiment_results/First Real Experiment
 application.conf
-*.rkt#1#
-*.rkt#2#
 .name
 .classpath
 .idea
-
-# These ones could potentially be problematic
-# 5/3/14
-*.p
+all-wcprops
+Python/.metadata
 target
 project
 .Rhistory
@@ -67,9 +71,6 @@ Educational/Matlab/Coursera/Machine Learning/mlclass-ex5-006/mlclass-ex5/ex5data
 Educational/Matlab/Coursera/Machine Learning/mlclass-ex5-006/mlclass-ex5/submit.m
 Educational/Matlab/Coursera/Machine Learning/mlclass-ex5-006/mlclass-ex5/submitWeb.m
 octave-workspace
-*.pdf
-*submitWeb.m
-*submit.m
 Educational/Matlab/Coursera/Machine Learning/mlclass-ex7-006/mlclass-ex7/computed after initial finding of closest centroids: n')
 Educational/Matlab/Coursera/Machine Learning/mlclass-ex7-006/mlclass-ex7/should ben');
 server.js
@@ -86,6 +87,4 @@ Educational/C++/Scheduling/multi
 multi_plus
 aff_multi
 locate
-*.swo
-*.swn
 cgrp_multi
