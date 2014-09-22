@@ -1,0 +1,32 @@
+Beginning...
+8 available logical processors found
+using 0 bg procs
+hash-go
+hash-go
+15105
+hash-go
+hash-go
+8361 CPU milliseconds elapsed in 15107
+8370 WALL milliseconds elapsed in 15107
+8361 CPU milliseconds elapsed in 15106
+8370 WALL milliseconds elapsed in 15106
+8361 CPU milliseconds elapsed in 15108
+8370 WALL milliseconds elapsed in 15108
+8362 CPU milliseconds elapsed in 15105
+8371 WALL milliseconds elapsed in 15105
+collecting hash proc 15106
+collecting hash proc 15107
+collecting hash proc 15108
+collecting hash proc 15109
+8412 CPU milliseconds elapsed in 15112
+8420 WALL milliseconds elapsed in 15112
+8412 CPU milliseconds elapsed in 15111
+8421 WALL milliseconds elapsed in 15111
+8412 CPU milliseconds elapsed in 15110
+8421 WALL milliseconds elapsed in 15110
+8412 CPU milliseconds elapsed in 15109
+8421 WALL milliseconds elapsed in 15109
+collecting hash proc 15110
+collecting hash proc 15111
+collecting hash proc 15112
+terminating

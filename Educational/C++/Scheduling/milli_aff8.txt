@@ -1,0 +1,16 @@
+7432 CPU milliseconds elapsed in 15123
+13899 WALL milliseconds elapsed in 15123
+7460 CPU milliseconds elapsed in 15127
+14042 WALL milliseconds elapsed in 15127
+7359 CPU milliseconds elapsed in 15124
+14456 WALL milliseconds elapsed in 15124
+7386 CPU milliseconds elapsed in 15128
+14596 WALL milliseconds elapsed in 15128
+7421 CPU milliseconds elapsed in 15125
+14665 WALL milliseconds elapsed in 15125
+7452 CPU milliseconds elapsed in 15129
+14916 WALL milliseconds elapsed in 15129
+7600 CPU milliseconds elapsed in 15130
+15037 WALL milliseconds elapsed in 15130
+7566 CPU milliseconds elapsed in 15126
+15063 WALL milliseconds elapsed in 15126

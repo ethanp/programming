@@ -85,3 +85,7 @@ Educational/C++/Scheduling/single
 Educational/C++/Scheduling/multi
 multi_plus
 aff_multi
+locate
+*.swo
+*.swn
+cgrp_multi

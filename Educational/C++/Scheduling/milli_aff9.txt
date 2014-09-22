@@ -1,0 +1,16 @@
+7554 CPU milliseconds elapsed in 15190
+14365 WALL milliseconds elapsed in 15190
+7374 CPU milliseconds elapsed in 15185
+14501 WALL milliseconds elapsed in 15185
+7469 CPU milliseconds elapsed in 15191
+15240 WALL milliseconds elapsed in 15191
+7438 CPU milliseconds elapsed in 15187
+15308 WALL milliseconds elapsed in 15187
+7496 CPU milliseconds elapsed in 15188
+15554 WALL milliseconds elapsed in 15188
+7522 CPU milliseconds elapsed in 15192
+15587 WALL milliseconds elapsed in 15192
+7520 CPU milliseconds elapsed in 15186
+15778 WALL milliseconds elapsed in 15186
+7402 CPU milliseconds elapsed in 15189
+15826 WALL milliseconds elapsed in 15189

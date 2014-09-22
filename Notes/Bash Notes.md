@@ -108,8 +108,8 @@ The same operation as above but replacing the address with parameters:
 
 # Other
 
-File Descriptors
-----------------
+## File Descriptors
+
 #### 3/24/14
 
 * **0** -- `stdin`
@@ -124,7 +124,52 @@ We can think of **`2>&1`** as **"point `STDERR` to where `STDOUT` points"**
 
 And then of course `| tee file` means "and also print it to the log-file"
 
+## State Variables
+
+### $!
+#### 9/22/14
+PID of the most recent background command
+
+    ~$ echo hello &
+    [1] 3846
+    hello
+    ~$ echo $!
+    3846
+    [1]+  Done                    echo hello
+    ~$ 
+
+### $$
+#### 9/22/14
+The process ID that the (current) script file is running under
+
+    ~$ ps
+      PID TTY          TIME CMD
+     3699 pts/13   00:00:00 bash
+     3847 pts/13   00:00:00 ps
+    ~$ echo $$
+    3699
+    ~$
+
+### $?
+#### 9/22/14
+Most recent foreground pipeline exit status
+
+    ~$ echo $0   # name of current shell
+    -bash
+    ~$ $?
+    0: command not found
+    ~$ echo $?
+    127
+    ~$
+
 # Commands to Command
+
+## 9/22/14
+
+### locate -- find location of <header> file on file system
+
+It's just like `find` only *way* faster and less thorough and has less features.
+For simple things it ought to suffice.
 
 ## 7/24/14
 ### ack -- better than grep
