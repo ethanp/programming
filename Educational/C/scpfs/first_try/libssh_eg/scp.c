@@ -28,15 +28,68 @@ unsigned long hostaddr;
 const char *username = "ethanp";
 const char *password = "nuh-uh";
 const char *scppath = "/u/ethanp/ech";
+const char *local_file_path = "./ech";
+const char *newpath = "/u/ethanp/ech2";
 struct stat fileinfo;
 int rc;
+size_t nread;
+char *ptr;
+FILE *local;
+int rc;
+char mem[1024];
+size_t nread;
+char *ptr;
 
-int retrieve(const char *path) {
-
+int scp_send(const char *local_path, const char *remote_path) {
+    /* Send a file via scp. The mode parameter must only have permissions */ 
+    local = fopen(local_path, "rb");
+    if (!local) {
+        fprintf(stderr, "Can't local file %s\n", local_path);
+        return -1;
+    } 
+    stat(local_path, &fileinfo);
+    printf("sending: %s, of size %d to: %s\n",
+            local_path, (int)fileinfo.st_size, remote_path);
+    channel = libssh2_scp_send(session, remote_path, fileinfo.st_mode & 0777, 
+                               (unsigned long)fileinfo.st_size); 
+    if (!channel) {
+        char *errmsg;
+        int errlen;
+        int err = libssh2_session_last_error(session, &errmsg, &errlen, 0); 
+        fprintf(stderr, "Unable to open a session: (%d) %s\n", err, errmsg);
+        scp_shutdown();
+    } 
+    fprintf(stderr, "SCP session waiting to send file\n");
+    do {
+        nread = fread(mem, 1, sizeof(mem), local);
+        if (nread <= 0) {
+            /* end of file */ 
+            break;
+        }
+        ptr = mem; 
+        do { /* write the same data over and over, until error or completion */ 
+            rc = libssh2_channel_write(channel, ptr, nread); 
+            if (rc < 0) {
+                fprintf(stderr, "ERROR %d\n", rc);
+                break;
+            }
+            else { /* rc indicates how many bytes were written this time */ 
+                ptr += rc;
+                nread -= rc;
+            }
+        } while (nread); 
+    } while (1);
+    fprintf(stderr, "File sent, sending EOF\n");
+    libssh2_channel_send_eof(channel);
+    fprintf(stderr, "Waiting for EOF\n");
+    libssh2_channel_wait_eof(channel);
+    fprintf(stderr, "Waiting for channel to close\n");
+    libssh2_channel_wait_closed(channel);
+    libssh2_channel_free(channel);
+    channel = NULL;
 }
 
-int get(const char *path) {
-    /* Request a file via SCP */ 
+int scp_retrieve(const char *path) { // path is the remote filename
     off_t got = 0;
     printf("requesting: %s\n", path);
     channel = libssh2_scp_recv(session, path, &fileinfo);
@@ -51,7 +104,9 @@ int get(const char *path) {
     while(got < fileinfo.st_size) {
         char mem[1024];
         int amount=sizeof(mem); 
-        if((fileinfo.st_size - got) < amount) { amount = fileinfo.st_size - got; } 
+        if((fileinfo.st_size - got) < amount) {
+            amount = fileinfo.st_size - got;
+        } 
         rc = libssh2_channel_read(channel, mem, amount); 
         if(rc > 0) { write(1, mem, rc); }
         else if(rc < 0) {
@@ -119,7 +174,8 @@ int main(int argc, char *argv[]) {
             scp_shutdown();
         }
     } 
-    get(scppath);
+    scp_send(local_file_path, newpath);
+    scp_retrieve(newpath);
     scp_shutdown();
     return 0;
 }
