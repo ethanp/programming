@@ -30,9 +30,38 @@ const char *password = "nuh-uh";
 const char *scppath = "/u/ethanp/ech";
 struct stat fileinfo;
 int rc;
-off_t got = 0;
+
+int retrieve(const char *path) {
+
+}
 
 int get(const char *path) {
+    /* Request a file via SCP */ 
+    off_t got = 0;
+    printf("requesting: %s\n", path);
+    channel = libssh2_scp_recv(session, path, &fileinfo);
+    if (!channel) {
+        fprintf(stderr, "Unable to open a session: %d\n",
+                libssh2_session_last_errno(session));
+        char *err_msg;
+        libssh2_session_last_error(session, &err_msg, NULL, 0);
+        fprintf(stderr, "Error info: %s\n", err_msg); 
+        scp_shutdown();
+    } 
+    while(got < fileinfo.st_size) {
+        char mem[1024];
+        int amount=sizeof(mem); 
+        if((fileinfo.st_size - got) < amount) { amount = fileinfo.st_size - got; } 
+        rc = libssh2_channel_read(channel, mem, amount); 
+        if(rc > 0) { write(1, mem, rc); }
+        else if(rc < 0) {
+            fprintf(stderr, "libssh2_channel_read() failed: %d\n", rc); 
+            break;
+        }
+        got += rc;
+    } 
+    libssh2_channel_free(channel); 
+    channel = NULL; 
     
 }
 
@@ -79,7 +108,7 @@ int main(int argc, char *argv[]) {
     if (auth_pw) {  /* We could authenticate via password */ 
         if (libssh2_userauth_password(session, username, password)) { 
             fprintf(stderr, "Authentication by password failed.\n");
-            goto shutdown;
+            scp_shutdown();
         }
     } else {        /* Or by public key */ 
         if (libssh2_userauth_publickey_fromfile(session, username, 
@@ -87,38 +116,19 @@ int main(int argc, char *argv[]) {
                             "/home/ethan/.ssh/id_rsa",
                             password)) {
             fprintf(stderr, "\tAuthentication by public key failed\n");
-            goto shutdown;
+            scp_shutdown();
         }
     } 
-    /* Request a file via SCP */ 
-    channel = libssh2_scp_recv(session, scppath, &fileinfo);
-    if (!channel) {
-        fprintf(stderr, "Unable to open a session: %d\n",
-                libssh2_session_last_errno(session));
-        char *err_msg;
-        libssh2_session_last_error(session, &err_msg, NULL, 0);
-        fprintf(stderr, "Error info: %s\n", err_msg); 
-        goto shutdown;
-    } 
-    while(got < fileinfo.st_size) {
-        char mem[1024];
-        int amount=sizeof(mem); 
-        if((fileinfo.st_size - got) < amount) { amount = fileinfo.st_size - got; } 
-        rc = libssh2_channel_read(channel, mem, amount); 
-        if(rc > 0) { write(1, mem, rc); }
-        else if(rc < 0) {
-            fprintf(stderr, "libssh2_channel_read() failed: %d\n", rc); 
-            break;
-        }
-        got += rc;
-    } 
-    libssh2_channel_free(channel); 
-    channel = NULL; 
- shutdown: 
+    get(scppath);
+    scp_shutdown();
+    return 0;
+}
+
+ void scp_shutdown() {
     libssh2_session_disconnect(session, "Normal Shutdown, Thank you for playing"); 
     libssh2_session_free(session); 
     close(sock); 
-    fprintf(stderr, "connection shutdown\n"); 
+    fprintf(stderr, "connection scp_shutdown\n"); 
     libssh2_exit(); 
-    return 0;
+    exit(0);
 }
