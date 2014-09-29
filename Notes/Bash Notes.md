@@ -164,6 +164,44 @@ Most recent foreground pipeline exit status
 
 # Commands to Command
 
+## 9/28/14
+
+### pkg-config -- determine C compiler flags
+
+#### Examples
+
+    $ pkg-config fuse --cflags
+    
+    -D_FILE_OFFSET_BITS=64 -D_DARWIN_USE_64_BIT_INODE -I/usr/local/Cellar/osxfuse/2.7.1/include/osxfuse/fuse 
+
+says to use pkg-config to determine what C compiler flags are necessary to compile a source file that makes use of FUSE.
+
+    $ pkg-config fuse --libs
+    
+    -L/usr/local/Cellar/osxfuse/2.7.1/lib -losxfuse -pthread -liconv
+    
+does the same for the libs to link with.
+
+So you might use it in a Makefile like this
+
+    bbfs : bbfs.o log.o
+            gcc -g -o bbfs bbfs.o log.o `pkg-config fuse --libs`
+    
+    bbfs.o : bbfs.c log.h params.h
+            gcc -g -Wall `pkg-config fuse --cflags` -c bbfs.c
+    
+    log.o : log.c log.h params.h
+            gcc -g -Wall `pkg-config fuse --cflags` -c log.c
+
+
+### tail -- last part of file
+
+#### Options
+
+* **-F** --- if a log file is currently getting written to, `tail` will
+  keep the connection to `stdout` open so that all live input into the
+  log file gets written out to the terminal
+
 ## 9/22/14
 
 ### locate -- find location of <header> file on file system

@@ -1,5 +1,43 @@
 ## Language
 
+### Linux syscalls
+
+##### 9/28/14
+
+#### pread
+
+    #include <unistd.h>
+    ssize_t pread(int fd, void *buf, size_t count, off_t offset);
+    
+Reads up to `count` bytes from file descriptor `fd` at offset `offset` (from the start of the file) into the buffer starting at `buf`. The file offset (held by the OS) is not changed. On success, the number of bytes read or written is returned, or -1 on error, in which case errno is set to indicate the error.
+
+The atomicity of pread enables processes or threads that share file
+descriptors to read from a shared file at a particular offset
+without using a locking mechanism that would be necessary to
+achieve the same result in separate lseek and read system calls.
+
+#### fopen
+
+    #include <stdio.h>
+    FILE *fopen(const char *path, const char *mode);
+
+Opens the file whose name is the string pointed to by path and associates a *stream* with it.
+
+Modes
+
+1. **r** --- read
+2. **r+** --- read and write, starting at beginning of file
+3. **w** --- erase file and enter write mode
+4. **w+** --- read and write, clear file, start at beginning
+5. **a** --- append, start at end of file
+6. **a+** --- read and append, read from start, write from end
+
+##### Differences from open()
+
+1. `open()` is Unix-specific, while `fopen()` is ANSI C
+2. `fopen()` is *buffered*, meaning it's *faster*, though you have to
+   call `fclose()` and `fflush()` at the appropriate times
+
 ### Types
 
 ##### 5/19/14
@@ -63,6 +101,22 @@ By experiment here is what I know:
 * **returns:** `str` (possibly so that you can chain calls to different functions together)
 
 ### MACROS
+
+#### Variable stringification in macro
+
+[Reference (GNU)](https://gcc.gnu.org/onlinedocs/cpp/Stringification.html)
+
+    //  macro to log fields in structs.
+    #define log_struct(st, field, format, typecast) \
+      log_msg("    " #field " = " #format "\n", typecast st->field)
+      
+* When a macro parameter is used with a leading ‘#’, the preprocessor
+  replaces it with the literal text of the actual argument, converted
+  to a string constant.
+* So you write a series of adjacent string constants and "stringified"
+  arguments, the preprocessor will replace the stringified arguments
+  with string constants. Then the C compiler will combine all the
+  adjacent string constants into one long string.
 
 #### Newline in macro
 
