@@ -1,4 +1,5 @@
 #include "scp.h"
+#include <string.h>
 
 // connection
 const char *username = "ethanp";
@@ -13,6 +14,7 @@ unsigned long hostaddr;
 const char *newpath = "/u/ethanp/ech2";
 const char *scppath = "/u/ethanp/ech";
 const char *utexas_dir = "/u/ethanp/libssh_eg";
+const char *local_dir = "/tmp";
 const char *local_file_path = "./ech";
 LIBSSH2_CHANNEL *channel;
 struct stat fileinfo;
@@ -75,11 +77,12 @@ int scp_send(const char *path) {
     return 0;
 }
 
-int scp_retrieve(const char *path) { // path is the LOCAL filename
+int scp_retrieve(const char *path, char *buf) { // path is the LOCAL filename
     char remote_path[80];
+    char local_path[80];
     sprintf(remote_path, "%s/%s", utexas_dir, path);
+    sprintf(local_path, "%s/%s", local_dir, path);
     off_t got = 0;
-    printf("requesting: %s\n", remote_path);
     channel = libssh2_scp_recv(session, remote_path, &fileinfo);
     if (!channel) {
         fprintf(stderr, "Unable to open a session: %d\n",
@@ -91,12 +94,20 @@ int scp_retrieve(const char *path) { // path is the LOCAL filename
     }
     while(got < fileinfo.st_size) {
         char mem[1024];
+
         int amount=sizeof(mem);
         if((fileinfo.st_size - got) < amount) {
             amount = fileinfo.st_size - got;
         }
         rc = libssh2_channel_read(channel, mem, amount);
-        if(rc > 0) { write(1, mem, rc); }
+
+        if(rc > 0) {
+            // TODO this is where we're writing to standard-out, so this is going to need to change
+            // handle, buffer, nbyte
+            write(1, mem, rc);
+
+            strcat(buf, mem);
+        }
         else if(rc < 0) {
             fprintf(stderr, "libssh2_channel_read() failed: %d\n", rc);
             break;
@@ -105,7 +116,7 @@ int scp_retrieve(const char *path) { // path is the LOCAL filename
     }
     libssh2_channel_free(channel);
     channel = NULL;
-    return 0;
+    return got;
 }
 
 int scp_init(int argc, char *argv[]) {

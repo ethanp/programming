@@ -367,9 +367,13 @@ int ot_utime(const char *path, struct utimbuf *ubuf)
 
     log_msg("\not_open(path\"%s\", fi=0x%08x)\n",
        path, fi);
+
     ot_fullpath(fpath, path);
 
     // TODO first we need to get the file via SCP
+    char buf[3000];
+    int got = scp_retrieve(path, buf);
+    log_msg("\ngot (%d) bytes: %s\n", got, buf);
 
     /* EP: in the end, we just call the system's open() function
 
@@ -959,6 +963,10 @@ struct fuse_operations ot_oper = {
   .getattr = ot_getattr,
   .open = ot_open,
   .read = ot_read,
+  .write = ot_write,
+  .release = ot_release,
+  .flush = ot_flush,
+
 
   // these are logged but it still works without them being there
   // .readdir = ot_readdir,
@@ -966,11 +974,8 @@ struct fuse_operations ot_oper = {
   // .init = ot_init,
   // .access = ot_access,
   // .releasedir = ot_releasedir,
-  // .release = ot_release,
 
 
-  // .write = ot_write,
-  // .flush = ot_flush,
   // .fgetattr = ot_fgetattr,
   // .readlink = ot_readlink,
   // // no .getdir -- that's deprecated
@@ -1027,6 +1032,8 @@ int main(int argc, char *argv[])
         fprintf(stderr, "scp_init failed\n");
         return 1;
     }
+
+    // scp_retrieve(".");
 
     // Perform some sanity checking on the command line
     if ((argc < 3) || (argv[argc-2][0] == '-') || (argv[argc-1][0] == '-'))

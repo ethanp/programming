@@ -15,7 +15,7 @@
 #include <ctype.h>
 
 int scp_send(const char *path);
-int scp_retrieve(const char *path); // path is the LOCAL filename
+int scp_retrieve(const char *path, char *buf); // path is the LOCAL filename
 void scp_shutdown();
 int scp_init(int argc, char *argv[]);
 
