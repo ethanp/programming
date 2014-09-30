@@ -1035,8 +1035,8 @@ int main(int argc, char *argv[])
     const char *scppath = "/u/ethanp/ech";
     const char *local_file_path = "libssh_eg/ech";
 
-    scp_send(local_file_path, newpath);
-    scp_retrieve(newpath);
+    scp_send(local_file_path);
+    scp_retrieve(local_file_path);
 
     // Perform some sanity checking on the command line:  make sure
     // there are enough arguments, and that neither of the last two

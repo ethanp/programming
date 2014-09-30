@@ -12,6 +12,7 @@ unsigned long hostaddr;
 // file transfer
 const char *newpath = "/u/ethanp/ech2";
 const char *scppath = "/u/ethanp/ech";
+const char *utexas_dir = "/u/ethanp";
 const char *local_file_path = "./ech";
 LIBSSH2_CHANNEL *channel;
 struct stat fileinfo;
@@ -21,16 +22,19 @@ FILE *local;
 char *ptr;
 int rc;
 
-int scp_send(const char *local_path, const char *remote_path) {
-    /* Send a file via scp. The mode parameter must only have permissions */
-    local = fopen(local_path, "rb");
+int scp_send(const char *path) {
+    char remote_path[80];
+    sprintf(remote_path, "%s/%s", utexas_dir, path);
+    local = fopen(path, "rb");
     if (!local) {
-        fprintf(stderr, "Can't local file %s\n", local_path);
+        fprintf(stderr, "Can't local file %s\n", path);
         return -1;
     }
-    stat(local_path, &fileinfo);
+    stat(path, &fileinfo);
     printf("sending: %s, of size %d to: %s\n",
-            local_path, (int)fileinfo.st_size, remote_path);
+            path, (int)fileinfo.st_size, remote_path);
+
+    /* The mode parameter must only have permissions */
     channel = libssh2_scp_send(session, remote_path, fileinfo.st_mode & 0777,
                                (unsigned long)fileinfo.st_size);
     if (!channel) {
@@ -71,10 +75,12 @@ int scp_send(const char *local_path, const char *remote_path) {
     return 0;
 }
 
-int scp_retrieve(const char *path) { // path is the remote filename
+int scp_retrieve(const char *path) { // path is the LOCAL filename
+    char remote_path[80];
+    sprintf(remote_path, "%s/%s", utexas_dir, path);
     off_t got = 0;
-    printf("requesting: %s\n", path);
-    channel = libssh2_scp_recv(session, path, &fileinfo);
+    printf("requesting: %s\n", remote_path);
+    channel = libssh2_scp_recv(session, remote_path, &fileinfo);
     if (!channel) {
         fprintf(stderr, "Unable to open a session: %d\n",
                 libssh2_session_last_errno(session));
@@ -149,9 +155,9 @@ int scp_init(int argc, char *argv[]) {
         }
     } else {        /* Or by public key */
         if (libssh2_userauth_publickey_fromfile(session, username,
-                            "/home/ethan/.ssh/id_rsa.pub",
-                            "/home/ethan/.ssh/id_rsa",
-                            password)) {
+                                                "/home/ethan/.ssh/id_rsa.pub",
+                                                "/home/ethan/.ssh/id_rsa",
+                                                password)) {
             fprintf(stderr, "\tAuthentication by public key failed\n");
             scp_shutdown();
         }
