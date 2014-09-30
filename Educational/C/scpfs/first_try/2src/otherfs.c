@@ -17,8 +17,6 @@
 */
 
 #include "params.h"
-
-// for FUSE
 #include <ctype.h>
 #include <dirent.h>
 #include <errno.h>
@@ -34,11 +32,6 @@
 #include "scp.h"
 #include "log.h"
 
-// I believe this is unnecessary
-// #ifdef HAVE_SYS_XATTR_H
-// #include <sys/xattr.h>
-// #endif
-
 // Report errors to logfile and give -errno to caller
 static int ot_error(char *str)
 {
@@ -47,25 +40,18 @@ static int ot_error(char *str)
     return ret;
 }
 
-//  All the paths I see are relative to the root of the mounted
-//  filesystem.  In order to get to the underlying filesystem, I need to
-//  have the mountpoint.  I'll save it away early on in main(), and then
-//  whenever I need a path for something I'll call this to construct
-//  it.
+/** All the paths I see are relative to the root of the mounted filesystem. **/
 static void ot_fullpath(char fpath[PATH_MAX], const char *path)
 {
     strcpy(fpath, OT_DATA->rootdir);
     strncat(fpath, path, PATH_MAX); // ridiculously long paths will break here
     log_msg("    ot_fullpath:  rootdir = \"%s\", path = \"%s\", fpath = \"%s\"\n",
-       OT_DATA->rootdir, path, fpath);
+            OT_DATA->rootdir, path, fpath);
 }
 
-///////////////////////////////////////////////////////////
+/////////////////(((( OTHER FILE SYSTEM ))))//////////////////////////////
 //
-// Prototypes for all these functions, and the C-style comments,
-// come indirectly from /usr/include/fuse.h
-//
-// EP Says: "This is a good note"
+// Prototypes & comments for these functions come from /usr/include/fuse.h
 //
 /** Get file attributes.
  * Similar to stat().  The 'st_dev' and 'st_blksize' fields are
@@ -103,7 +89,7 @@ int ot_getattr(const char *path, struct stat *statbuf)
     char fpath[PATH_MAX];
 
     log_msg("ot_readlink(path=\"%s\", link=\"%s\", size=%d)\n",
-                         path,        link,        size);
+            path, link, size);
     ot_fullpath(fpath, path);
 
     retstat = readlink(fpath, link, size - 1);
@@ -193,7 +179,7 @@ int ot_link(const char *path, const char *newpath)
     // retrieve the file IF it doesn't already exist
     if( access( path, F_OK ) != -1 ) { // file exists
     } else { // file doesn't exist
-        const char *file_contents = scp_retrieve(path);
+        char *file_contents = scp_retrieve(path);
         log_msg("\nretrieved file: %s\n", file_contents);
         //
         free(file_contents);
@@ -227,12 +213,7 @@ int ot_link(const char *path, const char *newpath)
  *
  * Read should return exactly the number of bytes requested except
  * on EOF or error, otherwise the rest of the data will be
- * substituted with zeroes.  An exception to this is when the
- * 'direct_io' mount option is specified, in which case the return
- * value of the read system call will reflect the return value of
- * this operation.
- *
- * Changed in version 2.2
+ * substituted with zeroes.
  */
 // I don't fully understand the documentation above -- it doesn't
 // match the documentation for the read() system call which says it
@@ -244,7 +225,8 @@ int ot_link(const char *path, const char *newpath)
     int retstat = 0;
 
     log_msg("\not_read(path=\"%s\", buf=0x%08x, size=%d, offset=%lld, fi=0x%08x)\n",
-       path, buf, size, offset, fi);
+            path, buf, size, offset, fi);
+
     // no need to get fpath on this one, since I work from fi->fh not the path
     log_fi(fi);
 
@@ -259,6 +241,7 @@ int ot_link(const char *path, const char *newpath)
      *     On success, the number of bytes read or written is returned.
      */
     retstat = pread(fi->fh, buf, size, offset);
+
     if (retstat < 0)
        retstat = ot_error("ot_read read");
 
@@ -272,8 +255,11 @@ int ot_link(const char *path, const char *newpath)
  */
 // As with read(), the documentation above is inconsistent with the
 // documentation for the write() system call.
- int ot_write(const char *path, const char *buf, size_t size, off_t offset,
-  struct fuse_file_info *fi)
+int ot_write(const char *             path,
+             const char *             buf,
+             size_t                   size,
+             off_t                    offset,
+             struct fuse_file_info   *fi)
  {
     int retstat = 0;
     log_msg("\not_write(path=\"%s\", buf=0x%08x, size=%d, offset=%lld, fi=0x%08x)\n",
@@ -296,8 +282,8 @@ int ot_link(const char *path, const char *newpath)
  * and return any errors.  Since many applications ignore close()
  * errors this is not always useful.
  */
- int ot_flush(const char *path, struct fuse_file_info *fi)
- {
+int ot_flush(const char *path, struct fuse_file_info *fi)
+{
     int retstat = 0;
 
     log_msg("\not_flush(path=\"%s\", fi=0x%08x)\n", path, fi);
