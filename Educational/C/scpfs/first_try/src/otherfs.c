@@ -50,9 +50,6 @@
     return ret;
 }
 
-// EP: where did this function go?
-// Check whether the given user is permitted to perform the given operation on the given
-
 //  All the paths I see are relative to the root of the mounted
 //  filesystem.  In order to get to the underlying filesystem, I need to
 //  have the mountpoint.  I'll save it away early on in main(), and then
@@ -113,23 +110,23 @@ static void ot_fullpath(char fpath[PATH_MAX], const char *path)
 // less than the size passed to ot_readlink()
 // ot_readlink() code by Bernardo F Costa (thanks!)
  int ot_readlink(const char *path, char *link, size_t size)
- {
+{
     int retstat = 0;
     char fpath[PATH_MAX];
 
     log_msg("ot_readlink(path=\"%s\", link=\"%s\", size=%d)\n",
-     path, link, size);
+        path, link, size);
     ot_fullpath(fpath, path);
 
     retstat = readlink(fpath, link, size - 1);
-    if (retstat < 0)
-       retstat = ot_error("ot_readlink readlink");
-   else  {
-       link[retstat] = '\0';
-       retstat = 0;
-   }
+    if (retstat < 0) {
+        retstat = ot_error("ot_readlink readlink");
+    } else {
+        link[retstat] = '\0';
+        retstat = 0;
+    }
 
-   return retstat;
+    return retstat;
 }
 
 /** Create a file node
@@ -957,47 +954,52 @@ int ot_removexattr(const char *path, const char *name)
     * this thing is going to be passed to fuse_main(), to tell the fuse
       system what the names of all the functions are  */
 struct fuse_operations ot_oper = {
+
+  // these seem to make up the minimal set
   .getattr = ot_getattr,
-  .readlink = ot_readlink,
-  // no .getdir -- that's deprecated
-  .getdir = NULL,
-  .mknod = ot_mknod,
-  .mkdir = ot_mkdir,
-  .unlink = ot_unlink,
-  .rmdir = ot_rmdir,
-  .symlink = ot_symlink,
-  .rename = ot_rename,
-  .link = ot_link,
-  .chmod = ot_chmod,
-  .chown = ot_chown,
-  .truncate = ot_truncate,
-  .utime = ot_utime,
   .open = ot_open,
   .read = ot_read,
-  .write = ot_write,
-  /** Just a placeholder, don't set */
-  .statfs = ot_statfs,
-  .flush = ot_flush,
-  .release = ot_release,
-  .fsync = ot_fsync,
 
-#ifdef HAVE_SYS_XATTR_H
-  .setxattr = ot_setxattr,
-  .getxattr = ot_getxattr,
-  .listxattr = ot_listxattr,
-  .removexattr = ot_removexattr,
-#endif
+  // these are logged but it still works without them being there
+  // .readdir = ot_readdir,
+  // .opendir = ot_opendir,
+  // .init = ot_init,
+  // .access = ot_access,
+  // .releasedir = ot_releasedir,
+  // .release = ot_release,
 
-  .opendir = ot_opendir,
-  .readdir = ot_readdir,
-  .releasedir = ot_releasedir,
-  .fsyncdir = ot_fsyncdir,
-  .init = ot_init,
-  .destroy = ot_destroy,
-  .access = ot_access,
-  .create = ot_create,
-  .ftruncate = ot_ftruncate,
-  .fgetattr = ot_fgetattr
+
+  // .write = ot_write,
+  // .flush = ot_flush,
+  // .fgetattr = ot_fgetattr,
+  // .readlink = ot_readlink,
+  // // no .getdir -- that's deprecated
+  // .getdir = NULL,
+  // .mknod = ot_mknod,
+  // .mkdir = ot_mkdir,
+  // .unlink = ot_unlink,
+  // .rmdir = ot_rmdir,
+  // .symlink = ot_symlink,
+  // .rename = ot_rename,
+  // .link = ot_link,
+  // .chmod = ot_chmod,
+  // .chown = ot_chown,
+  // .truncate = ot_truncate,
+  // .utime = ot_utime,
+  // /** Just a placeholder, don't set */
+  // .statfs = ot_statfs,
+  // .fsync = ot_fsync,
+  // .fsyncdir = ot_fsyncdir,
+  // .create = ot_create,
+  // .destroy = ot_destroy,
+  // .ftruncate = ot_ftruncate,
+
+// #ifdef HAVE_SYS_XATTR_H
+//   .setxattr = ot_setxattr,
+//   .getxattr = ot_getxattr,
+//   .listxattr = ot_listxattr,
+//   .removexattr = ot_removexattr,
+// #endif
 };
 
 void ot_usage()
@@ -1011,14 +1013,9 @@ int main(int argc, char *argv[])
     int fuse_stat;
     struct ot_state *ot_data;
 
-    // bbfs doesn't do any access checking on its own (the comment
-    // blocks in fuse.h mention some of the functions that need
-    // accesses checked -- but note there are other functions, like
-    // chown(), that also need checking!).  Since running bbfs as root
-    // will therefore open Metrodome-sized holes in the system
-    // security, we'll check if root is trying to mount the filesystem
-    // and refuse if it is.  The somewhat smaller hole of an ordinary
-    // user doing it with the allow_other flag is still there because
+    // since access checking is incomplete, it's easier to just refuse users
+    // trying to run the file system as root. The somewhat smaller hole of an
+    // ordinary user doing it with the allow_other flag is still there because
     // I don't want to parse the options string.
     if ((getuid() == 0) || (geteuid() == 0)) {
         fprintf(stderr, "Running as root opens unnacceptable security holes\n");
@@ -1031,39 +1028,24 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    const char *newpath = "/u/ethanp/ech2";
-    const char *scppath = "/u/ethanp/ech";
-    const char *local_file_path = "libssh_eg/ech";
-
-    scp_send(local_file_path);
-    scp_retrieve(local_file_path);
-
-    // Perform some sanity checking on the command line:  make sure
-    // there are enough arguments, and that neither of the last two
-    // start with a hyphen (this will break if you actually have a
-    // rootpoint or mountpoint whose name starts with a hyphen, but so
-    // will a zillion other programs)
+    // Perform some sanity checking on the command line
     if ((argc < 3) || (argv[argc-2][0] == '-') || (argv[argc-1][0] == '-'))
         ot_usage();
 
-    // EP: C will happily perform the cast implied here
-    //       (void*)->(struct bbstate*)
     ot_data = malloc(sizeof(struct ot_state));
+
     if (ot_data == NULL) {
         perror("main calloc");
         abort();
     }
 
-    // Pull the rootdir out of the argument list and save it in my
-    // internal data
-
     // TODO: this should save remote server info or something
     ot_data->rootdir = realpath(argv[argc-2], NULL);
+    printf("saved rootdir: %s\n", ot_data->rootdir);
 
-    // EP: this is for the call to fuse_main
+    // EP: this is required to adjust the args for the call to fuse_main
     argv[argc-2] = argv[argc-1];
-    argv[argc-1] = NULL;
-    argc--;
+    argv[--argc] = NULL;
 
     ot_data->logfile = log_open();
 
