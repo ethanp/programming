@@ -959,6 +959,8 @@ struct fuse_operations ot_oper = {
   .getattr = ot_getattr,
   .open = ot_open,
   .read = ot_read,
+  .write = ot_write,
+
 
   // these are logged but it still works without them being there
   // .readdir = ot_readdir,
@@ -969,7 +971,6 @@ struct fuse_operations ot_oper = {
   // .release = ot_release,
 
 
-  // .write = ot_write,
   // .flush = ot_flush,
   // .fgetattr = ot_fgetattr,
   // .readlink = ot_readlink,

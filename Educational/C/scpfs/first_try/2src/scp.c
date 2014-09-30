@@ -12,7 +12,7 @@ unsigned long hostaddr;
 // file transfer
 const char *newpath = "/u/ethanp/ech2";
 const char *scppath = "/u/ethanp/ech";
-const char *utexas_dir = "/u/ethanp";
+const char *utexas_dir = "/u/ethanp/libssh_eg";
 const char *local_file_path = "./ech";
 LIBSSH2_CHANNEL *channel;
 struct stat fileinfo;
