@@ -77,7 +77,7 @@ int scp_send(const char *path) {
     return 0;
 }
 
-int scp_retrieve(const char *path, char *buf) { // path is the LOCAL filename
+char *scp_retrieve(const char *path) {
     char remote_path[80];
     char local_path[80];
     sprintf(remote_path, "%s/%s", utexas_dir, path);
@@ -92,6 +92,8 @@ int scp_retrieve(const char *path, char *buf) { // path is the LOCAL filename
         fprintf(stderr, "Error info: %s\n", err_msg);
         scp_shutdown();
     }
+    char *retrieved_file_contents = malloc(fileinfo.st_size);
+
     while(got < fileinfo.st_size) {
         char mem[1024];
 
@@ -106,7 +108,7 @@ int scp_retrieve(const char *path, char *buf) { // path is the LOCAL filename
             // handle, buffer, nbyte
             write(1, mem, rc);
 
-            strcat(buf, mem);
+            strcat(retrieved_file_contents, mem);
         }
         else if(rc < 0) {
             fprintf(stderr, "libssh2_channel_read() failed: %d\n", rc);
@@ -116,7 +118,7 @@ int scp_retrieve(const char *path, char *buf) { // path is the LOCAL filename
     }
     libssh2_channel_free(channel);
     channel = NULL;
-    return got;
+    return retrieved_file_contents;
 }
 
 int scp_init(int argc, char *argv[]) {

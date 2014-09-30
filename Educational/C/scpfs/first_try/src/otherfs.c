@@ -960,6 +960,8 @@ struct fuse_operations ot_oper = {
   .open = ot_open,
   .read = ot_read,
   .write = ot_write,
+  .flush = ot_flush,
+  .release = ot_release,
 
 
   // these are logged but it still works without them being there
@@ -968,10 +970,8 @@ struct fuse_operations ot_oper = {
   // .init = ot_init,
   // .access = ot_access,
   // .releasedir = ot_releasedir,
-  // .release = ot_release,
 
 
-  // .flush = ot_flush,
   // .fgetattr = ot_fgetattr,
   // .readlink = ot_readlink,
   // // no .getdir -- that's deprecated
