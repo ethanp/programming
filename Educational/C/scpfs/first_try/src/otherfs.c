@@ -13,7 +13,7 @@
   His code is licensed under the LGPLv2.
   A copy of that code is included in the file fuse.h
 
-  gcc -Wall `pkg-config fuse --cflags --libs` -lssh2 -o otfs otherfs.c scp.c
+  gcc -Wall -o hello otherfs.c log.c scp.c -lssh2 `pkg-config fuse --cflags --libs`
 */
 
 #include "params.h"
@@ -1030,6 +1030,13 @@ int main(int argc, char *argv[])
         fprintf(stderr, "scp_init failed\n");
         return 1;
     }
+
+    const char *newpath = "/u/ethanp/ech2";
+    const char *scppath = "/u/ethanp/ech";
+    const char *local_file_path = "libssh_eg/ech";
+
+    scp_send(local_file_path, newpath);
+    scp_retrieve(newpath);
 
     // Perform some sanity checking on the command line:  make sure
     // there are enough arguments, and that neither of the last two
