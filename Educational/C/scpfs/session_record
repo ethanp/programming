@@ -1,0 +1,49 @@
+Script started on Sat 27 Sep 2014 05:56:57 PM CDT
+]0;ethan@empat: ~/Desktop/2labethan@empat:~/Desktop/2lab$ strace cat - > new_file
+execve("/bin/cat", ["cat", "-"], [/* 20 vars */]) = 0
+brk(0)                                  = 0x249b000
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f7fbaa5e000
+access("/etc/ld.so.preload", R_OK)      = -1 ENOENT (No such file or directory)
+open("/etc/ld.so.cache", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=100295, ...}) = 0
+mmap(NULL, 100295, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f7fbaa45000
+close(3)                                = 0
+access("/etc/ld.so.nohwcap", F_OK)      = -1 ENOENT (No such file or directory)
+open("/lib/x86_64-linux-gnu/libc.so.6", O_RDONLY|O_CLOEXEC) = 3
+read(3, "\177ELF\2\1\1\0\0\0\0\0\0\0\0\0\3\0>\0\1\0\0\0\320\37\2\0\0\0\0\0"..., 832) = 832
+fstat(3, {st_mode=S_IFREG|0755, st_size=1845024, ...}) = 0
+mmap(NULL, 3953344, PROT_READ|PROT_EXEC, MAP_PRIVATE|MAP_DENYWRITE, 3, 0) = 0x7f7fba478000
+mprotect(0x7f7fba633000, 2097152, PROT_NONE) = 0
+mmap(0x7f7fba833000, 24576, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_DENYWRITE, 3, 0x1bb000) = 0x7f7fba833000
+mmap(0x7f7fba839000, 17088, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x7f7fba839000
+close(3)                                = 0
+mmap(NULL, 4096, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f7fbaa44000
+mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f7fbaa42000
+arch_prctl(ARCH_SET_FS, 0x7f7fbaa42740) = 0
+mprotect(0x7f7fba833000, 16384, PROT_READ) = 0
+mprotect(0x60a000, 4096, PROT_READ)     = 0
+mprotect(0x7f7fbaa60000, 4096, PROT_READ) = 0
+munmap(0x7f7fbaa45000, 100295)          = 0
+brk(0)                                  = 0x249b000
+brk(0x24bc000)                          = 0x24bc000
+open("/usr/lib/locale/locale-archive", O_RDONLY|O_CLOEXEC) = 3
+fstat(3, {st_mode=S_IFREG|0644, st_size=7216688, ...}) = 0
+mmap(NULL, 7216688, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f7fb9d96000
+close(3)                                = 0
+fstat(1, {st_mode=S_IFREG|0664, st_size=0, ...}) = 0
+fstat(0, {st_mode=S_IFCHR|0620, st_rdev=makedev(136, 14), ...}) = 0
+fadvise64(0, 0, 0, POSIX_FADV_SEQUENTIAL) = 0
+read(0, hi mom
+"hi mom\n", 65536)              = 7
+write(1, "hi mom\n", 7)                 = 7
+read(0, "", 65536)                      = 0
+close(0)                                = 0
+close(1)                                = 0
+close(2)                                = 0
+exit_group(0)                           = ?
++++ exited with 0 +++
+]0;ethan@empat: ~/Desktop/2labethan@empat:~/Desktop/2lab$ exit
+exit
+
+Script done on Sat 27 Sep 2014 05:57:17 PM CDT

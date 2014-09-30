@@ -1,14 +1,4 @@
-#include <libssh2.h>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/time.h>
-#include <netinet/in.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <stdio.h>
-#include <ctype.h>
+#include "scp.h"
 
 // connection
 const char *username = "ethanp";
@@ -78,6 +68,7 @@ int scp_send(const char *local_path, const char *remote_path) {
     libssh2_channel_wait_closed(channel);
     libssh2_channel_free(channel);
     channel = NULL;
+    return 0;
 }
 
 int scp_retrieve(const char *path) { // path is the remote filename
@@ -108,10 +99,10 @@ int scp_retrieve(const char *path) { // path is the remote filename
     }
     libssh2_channel_free(channel);
     channel = NULL;
-
+    return 0;
 }
 
-int init(int argc, char *argv[]) {
+int scp_init(int argc, char *argv[]) {
     hostaddr = inet_addr("128.83.120.177");
     if (argc > 1) { password = argv[1]; }
     if (argc > 2) { username = argv[2]; }

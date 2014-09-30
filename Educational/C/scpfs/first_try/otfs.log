@@ -1,0 +1,664 @@
+
+ot_init()
+    context:
+    fuse = 0205e510
+    uid = 0
+    gid = 0
+    pid = 0
+    private_data = 0205d010
+    logfile = 0205e040
+    rootdir = /home/ethan/Desktop/2lab/first_try/a
+    umask = 00000
+
+ot_getattr(path="/", statbuf=0xbaec9bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_access(path="/", mask=01)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+
+ot_getattr(path="/", statbuf=0xbaec9bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_opendir(path="/", fi=0xba6c8c50)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    fi:
+    flags = 0x00018800
+    fh_old = 0x00000000
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x00007f40ac000b20
+    lock_owner = 0x0000000000000000
+
+ot_readdir(path="/", buf=0xac000990, filler=0xbb6bc530, offset=0, fi=0xbaec9c50)
+calling filler with name txt
+calling filler with name a.out
+calling filler with name foo
+calling filler with name .
+calling filler with name ..
+    fi:
+    flags = 0x00000000
+    fh_old = 0x7f40ac000b20
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x00007f40ac000b20
+    lock_owner = 0x0000000000000000
+
+ot_getattr(path="/", statbuf=0xba6c8bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/a.out", statbuf=0xbaec9c20)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/a.out", fpath = "/home/ethan/Desktop/2lab/first_try/a/a.out"
+    si:
+    st_dev = 2049
+    st_ino = 7212477
+    st_mode = 0100775
+    st_nlink = 1
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 8886
+    st_blksize = 4096
+    st_blocks = 24
+    st_atime = 0x5429877f
+    st_mtime = 0x54298743
+    st_ctime = 0x5429874c
+
+ot_access(path="/a.out", mask=01)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/a.out", fpath = "/home/ethan/Desktop/2lab/first_try/a/a.out"
+
+ot_access(path="/a.out", mask=04)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/a.out", fpath = "/home/ethan/Desktop/2lab/first_try/a/a.out"
+
+ot_releasedir(path="/", fi=0xbaec9c60)
+    fi:
+    flags = 0x00000000
+    fh_old = 0x7f40ac000b20
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x00007f40ac000b20
+    lock_owner = 0x0000000000000000
+
+ot_getattr(path="/", statbuf=0xbaec9bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/a.out", statbuf=0xb9ec7c20)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/a.out", fpath = "/home/ethan/Desktop/2lab/first_try/a/a.out"
+    si:
+    st_dev = 2049
+    st_ino = 7212477
+    st_mode = 0100775
+    st_nlink = 1
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 8886
+    st_blksize = 4096
+    st_blocks = 24
+    st_atime = 0x5429877f
+    st_mtime = 0x54298743
+    st_ctime = 0x5429874c
+
+ot_open(path"/a.out", fi=0xbaec9d10)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/a.out", fpath = "/home/ethan/Desktop/2lab/first_try/a/a.out"
+    fi:
+    flags = 0x00008020
+    fh_old = 0x00000000
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000005
+    lock_owner = 0x0000000000000000
+
+ot_read(path="/a.out", buf=0xac000b70, size=12288, offset=0, fi=0xba6c8d10)
+    fi:
+    flags = 0x00008020
+    fh_old = 0x00000005
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000005
+    lock_owner = 0x0000000000000000
+
+ot_getattr(path="/foo", statbuf=0xb9ec7c20)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/foo", fpath = "/home/ethan/Desktop/2lab/first_try/a/foo"
+    si:
+    st_dev = 2049
+    st_ino = 7213035
+    st_mode = 0100664
+    st_nlink = 1
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 5
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875c
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_open(path"/foo", fi=0xbaec9d10)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/foo", fpath = "/home/ethan/Desktop/2lab/first_try/a/foo"
+    fi:
+    flags = 0x00008002
+    fh_old = 0x00000000
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000006
+    lock_owner = 0x0000000000000000
+
+ot_open(path"/foo", fi=0xba6c8d10)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/foo", fpath = "/home/ethan/Desktop/2lab/first_try/a/foo"
+    fi:
+    flags = 0x00008000
+    fh_old = 0x00000000
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000007
+    lock_owner = 0x0000000000000000
+
+ot_write(path="/foo", buf=0xbbacf060, size=100, offset=0, fi=0xbaec9d80)
+    fi:
+    flags = 0x00008002
+    fh_old = 0x00000006
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000006
+    lock_owner = 0x0000000000000000
+
+ot_flush(path="/foo", fi=0xba6c8d10)
+    fi:
+    flags = 0x00000000
+    fh_old = 0x00000006
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000006
+    lock_owner = 0xe8efdb493089eaa6
+
+ot_release(path="/foo", fi=0xb9ec7d10)
+    fi:
+    flags = 0x00008002
+    fh_old = 0x00000006
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000006
+    lock_owner = 0x0000000000000000
+
+ot_read(path="/foo", buf=0xb4000db0, size=4096, offset=0, fi=0xbaec9d10)
+    fi:
+    flags = 0x00008000
+    fh_old = 0x00000007
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000007
+    lock_owner = 0x0000000000000000
+
+ot_flush(path="/foo", fi=0xba6c8d10)
+    fi:
+    flags = 0x00000000
+    fh_old = 0x00000007
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000007
+    lock_owner = 0xe8efdb493089eaa6
+
+ot_release(path="/foo", fi=0xb9ec7d10)
+    fi:
+    flags = 0x00008000
+    fh_old = 0x00000007
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000007
+    lock_owner = 0x0000000000000000
+
+ot_release(path="/a.out", fi=0xbaec9d10)
+    fi:
+    flags = 0x00008020
+    fh_old = 0x00000005
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x0000000000000005
+    lock_owner = 0x0000000000000000
+
+ot_getattr(path="/", statbuf=0xba6c8bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xb9ec7bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xbaec9bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xba6c8bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xb9ec7bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xbaec9bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xba6c8bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xb9ec7bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xbaec9bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xba6c8bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xb9ec7bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xbaec9bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xba6c8bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xb9ec7bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xbaec9bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xba6c8bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_getattr(path="/", statbuf=0xb9ec7bf0)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    si:
+    st_dev = 2049
+    st_ino = 7212474
+    st_mode = 040775
+    st_nlink = 2
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 4096
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x5429875e
+    st_mtime = 0x5429875c
+    st_ctime = 0x5429875c
+
+ot_opendir(path="/", fi=0xbaec9c50)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/", fpath = "/home/ethan/Desktop/2lab/first_try/a/"
+    fi:
+    flags = 0x00018800
+    fh_old = 0x00000000
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x00007f40b4000e30
+    lock_owner = 0x0000000000000000
+
+ot_readdir(path="/", buf=0xb4000ca0, filler=0xbb6bc530, offset=0, fi=0xba6c8c50)
+calling filler with name txt
+calling filler with name a.out
+calling filler with name foo
+calling filler with name .
+calling filler with name ..
+    fi:
+    flags = 0x00000000
+    fh_old = 0x7f40b4000e30
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x00007f40b4000e30
+    lock_owner = 0x0000000000000000
+
+ot_getattr(path="/txt", statbuf=0xb9ec7c20)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/txt", fpath = "/home/ethan/Desktop/2lab/first_try/a/txt"
+    si:
+    st_dev = 2049
+    st_ino = 7212476
+    st_mode = 0100664
+    st_nlink = 1
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 10
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x54289b59
+    st_mtime = 0x54289b77
+    st_ctime = 0x54289b77
+
+ot_getattr(path="/a.out", statbuf=0xbaec9c20)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/a.out", fpath = "/home/ethan/Desktop/2lab/first_try/a/a.out"
+    si:
+    st_dev = 2049
+    st_ino = 7212477
+    st_mode = 0100775
+    st_nlink = 1
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 8886
+    st_blksize = 4096
+    st_blocks = 24
+    st_atime = 0x5429877f
+    st_mtime = 0x54298743
+    st_ctime = 0x5429874c
+
+ot_getattr(path="/foo", statbuf=0xba6c8c20)
+    ot_fullpath:  rootdir = "/home/ethan/Desktop/2lab/first_try/a", path = "/foo", fpath = "/home/ethan/Desktop/2lab/first_try/a/foo"
+    si:
+    st_dev = 2049
+    st_ino = 7213035
+    st_mode = 0100664
+    st_nlink = 1
+    st_uid = 1002
+    st_gid = 1002
+    st_rdev = 0
+    st_size = 100
+    st_blksize = 4096
+    st_blocks = 8
+    st_atime = 0x54298821
+    st_mtime = 0x54298821
+    st_ctime = 0x54298821
+
+ot_releasedir(path="/", fi=0xbaec9c60)
+    fi:
+    flags = 0x00000000
+    fh_old = 0x7f40b4000e30
+    writepage = 0
+    direct_io = 0
+    keep_cache = 0
+    fh = 0x00007f40b4000e30
+    lock_owner = 0x0000000000000000

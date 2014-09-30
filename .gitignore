@@ -89,3 +89,12 @@ aff_multi
 locate
 cgrp_multi
 fair_multi
+dev_lsof
+hello
+Educational/C/scpfs/new_file
+Educational/C/scpfs/packetfile
+tcpdump.out
+Educational/C/scpfs/first_try/a/foo
+Educational/C/scpfs/first_try/a/txt
+Educational/C/scpfs/first_try/b/foo
+txt
