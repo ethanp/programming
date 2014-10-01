@@ -54,16 +54,17 @@ void get_file_stat_struct(const char *path, struct stat *buf)
     buf->st_mode = attrs.permissions;
 }
 
-int scp_send(const char *path) {
-    char remote_path[PATH_MAX];
-    sprintf(remote_path, "%s/%s", utexas_dir, path);
-    local = fopen(path, "rb");
-    if (!local) {
-        fprintf(stderr, "Can't local file %s\n", path);
+int scp_send(const char *path, int fd) {
+    if (fd == 0) {
+        fprintf(stderr, "File descriptor for %s was 0, don't do that\n", path);
         return -1;
     }
-    stat(path, &fileinfo);
-    printf("sending: %s, of size %d to: %s\n",
+    char remote_path[PATH_MAX];
+
+    // append "123" to make it simple to verify that it actually worked
+    sprintf(remote_path, "%s/%s123", utexas_dir, path);
+    fstat(fd, &fileinfo);
+    printf("sending file: %s, of size %d to: %s\n",
             path, (int)fileinfo.st_size, remote_path);
 
     /* The mode parameter must only have permissions */
@@ -78,12 +79,14 @@ int scp_send(const char *path) {
     }
     fprintf(stderr, "SCP session waiting to send file\n");
     do {
-        nread = fread(mem, 1, sizeof(mem), local);
+        // params: (file_descriptor, *buffer, count_bytes)
+        log_msg("sending (%d) bytes\n", (int)fileinfo.st_size);
+        nread = read(fd, mem, (unsigned int)fileinfo.st_size);
         if (nread <= 0) {
             /* end of file */
             break;
         }
-        ptr = mem;
+        ptr = mem; // use separate variable that we can advance independently
         do { /* write the same data over and over, until error or completion */
             rc = libssh2_channel_write(channel, ptr, nread);
             if (rc < 0) {
@@ -91,16 +94,15 @@ int scp_send(const char *path) {
                 break;
             }
             else { /* rc indicates how many bytes were written this time */
+                log_msg("(%d) bytes sent\n", rc);
                 ptr += rc;
                 nread -= rc;
             }
         } while (nread);
     } while (1);
-    fprintf(stderr, "File sent, sending EOF\n");
+    log_msg("File sent\n");
     libssh2_channel_send_eof(channel);
-    fprintf(stderr, "Waiting for EOF\n");
     libssh2_channel_wait_eof(channel);
-    fprintf(stderr, "Waiting for channel to close\n");
     libssh2_channel_wait_closed(channel);
     libssh2_channel_free(channel);
     channel = NULL;

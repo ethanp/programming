@@ -81,38 +81,6 @@ int ot_getattr(const char *path, struct stat *statbuf)
     return retstat;
 }
 
-/** Read the target of a symbolic link
- *
- * The buffer should be filled with a null terminated string.  The
- * buffer size argument includes the space for the terminating
- * null character.  If the linkname is too long to fit in the
- * buffer, it should be truncated.  The return value should be 0
- * for success.
- */
-// Note the system readlink() will truncate and lose the terminating
-// null.  So, the size passed to to the system readlink() must be one
-// less than the size passed to ot_readlink()
-// ot_readlink() code by Bernardo F Costa (thanks!)
- int ot_readlink(const char *path, char *link, size_t size)
-{
-    int retstat = 0;
-    char fpath[PATH_MAX];
-
-    log_msg("ot_readlink(path=\"%s\", link=\"%s\", size=%d)\n",
-            path, link, size);
-    ot_fullpath(fpath, path);
-
-    retstat = readlink(fpath, link, size - 1);
-    if (retstat < 0) {
-        retstat = ot_error("ot_readlink readlink");
-    } else {
-        link[retstat] = '\0';
-        retstat = 0;
-    }
-
-    return retstat;
-}
-
 /** Remove a file ("rm") */
 int ot_unlink(const char *path)
 {
@@ -124,47 +92,6 @@ int ot_unlink(const char *path)
     if (retstat < 0)
         retstat = ot_error("ot_unlink unlink");
    return retstat;
-}
-
-/** Create a symbolic link */
-// The parameters here are a little bit confusing, but do correspond
-// to the symlink() system call.  The 'path' is where the link points,
-// while the 'link' is the link itself.  So we need to leave the path
-// unaltered, but insert the link into the mounted directory.
-int ot_symlink(const char *path, const char *link)
-{
-   //  int retstat = 0;
-   //  char flink[PATH_MAX];
-
-   //  log_msg("\not_symlink(path=\"%s\", link=\"%s\")\n",
-   //     path, link);
-   //  ot_fullpath(flink, link);
-
-   //  retstat = symlink(path, flink);
-   //  if (retstat < 0)
-   //     retstat = ot_error("ot_symlink symlink");
-
-   // return retstat;
-    return 0;
-}
-
-/** Create a hard link to a file */
-int ot_link(const char *path, const char *newpath)
-{
-   //  int retstat = 0;
-   //  char fpath[PATH_MAX], fnewpath[PATH_MAX];
-
-   //  log_msg("\not_link(path=\"%s\", newpath=\"%s\")\n",
-   //     path, newpath);
-   //  ot_fullpath(fpath, path);
-   //  ot_fullpath(fnewpath, newpath);
-
-   //  retstat = link(fpath, fnewpath);
-   //  if (retstat < 0)
-   //     retstat = ot_error("ot_link link");
-
-   // return retstat;
-   return 0;
 }
 
 /** File open operation
@@ -283,10 +210,6 @@ int ot_write(const char *             path,
              off_t                    offset,
              struct fuse_file_info   *fi)
  {
-
-    // TODO write to the locally cached file
-    // no need to send it back now because that will happen on ot_flush()
-
     int retstat = 0;
     log_msg("\not_write(path=\"%s\", buf=0x%08x, size=%d, offset=%lld, fi=0x%08x)\n",
        path, buf, size, offset, fi);
@@ -310,13 +233,11 @@ int ot_write(const char *             path,
  */
 int ot_flush(const char *path, struct fuse_file_info *fi)
 {
-    // TODO scp_send the latest version of the file
-    // but don't necessarily delete it
+    // don't need to do anything here, see
     // https://piazza.com/class/hz22ixrz44t64u?cid=82
 
     int retstat = 0;
     log_msg("\not_flush(path=\"%s\", fi=0x%08x)\n", path, fi);
-    // no need to get fpath on this one, since I work from fi->fh not the path
     log_fi(fi);
 
     return retstat;
@@ -330,11 +251,15 @@ int ot_flush(const char *path, struct fuse_file_info *fi)
  */
  int ot_release(const char *path, struct fuse_file_info *fi)
  {
-    // TODO remove the locally cached file
-
     int retstat = 0;
     log_msg("\not_release(path=\"%s\", fi=0x%08x)\n", path, fi);
     log_fi(fi);
+
+    // TODO send the most recent version
+    // I can't go ahead and close the file, unless I keep track
+    // externally of whether anyone else is using it...which I'm not.
+    scp_send(path, fi->fh);
+
     // We need to close the file.  Had we allocated any resources
     // (buffers etc) we'd need to free them here as well.
     retstat = close(fi->fh);
@@ -365,8 +290,8 @@ int ot_readdir(const char *             path,
    //  DIR *dp;
    //  struct dirent *de;
 
-   //  log_msg("\not_readdir(path=\"%s\", buf=0x%08x, filler=0x%08x, offset=%lld, fi=0x%08x)\n",
-   //     path, buf, filler, offset, fi);
+    log_msg("\not_readdir(path=\"%s\", buf=0x%08x, filler=0x%08x, offset=%lld, fi=0x%08x)\n",
+       path, buf, filler, offset, fi);
    //  // once again, no need for fullpath -- but note that I need to cast fi->fh
    //  dp = (DIR *) (uintptr_t) fi->fh;
 
@@ -425,7 +350,7 @@ int ot_access(const char *path, int mask)
 {
     // int retstat = 0;
     // char fpath[PATH_MAX];
-    // log_msg("\not_access(path=\"%s\", mask=0%o)\n", path, mask);
+    log_msg("\not_access(path=\"%s\", mask=0%o)\n", path, mask);
     // ot_fullpath(fpath, path);
     // retstat = access(fpath, mask);
     // if (retstat < 0)
