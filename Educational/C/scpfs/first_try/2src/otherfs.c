@@ -343,25 +343,6 @@ void *ot_init(struct fuse_conn_info *conn)
     return OT_DATA;
 }
 
-/**
- * Check file access permissions
- * This will be called for the access() system call.  If the
- * 'default_permissions' mount option is given, this method is not
- * called.
- */
-int ot_access(const char *path, int mask)
-{
-    // int retstat = 0;
-    // char fpath[PATH_MAX];
-    log_msg("\not_access(path=\"%s\", mask=0%o)\n", path, mask);
-    // ot_fullpath(fpath, path);
-    // retstat = access(fpath, mask);
-    // if (retstat < 0)
-    //     retstat = ot_error("ot_access access");
-    // return retstat;
-    return 0;
-}
-
 /* EP: oh I see, he's not defining a struct type, he's initializing a struct of
    an existing type. Then this thing is going to be passed to fuse_main(), to
    tell the fuse system what the names of all the functions are */
@@ -376,9 +357,10 @@ struct fuse_operations ot_oper = {
 
     // these are optional
     .init = ot_init,
+    .flush = ot_flush,
+
 
     /* these are recommended to be implemented as well
-    .flush = ot_flush,
     .readdir = ot_readdir,  // for "ls"
     .unlink = ot_unlink,    // for "rm"
     */
@@ -426,7 +408,7 @@ int main(int argc, char *argv[])
     }
 
     // disallow mount options
-    if ((argc != 2) || (argv[argc-1][0] == '-'))
+    if ((argc < 2) || (argv[argc-1][0] == '-'))
         ot_usage();
 
     ot_data = malloc(sizeof(struct ot_state));

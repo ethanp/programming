@@ -4,6 +4,12 @@
 #include <unistd.h>
 #include <stdio.h>
 
+// "number" was created on the
+// server’s file-system using
+// $ echo '0' > number
+// $ wc -c number
+// # => 2 number (2 Bytes)
+
 int main() {
     int buf[0];
     int i;
@@ -17,4 +23,3 @@ int main() {
     }
     return 0;
 }
-

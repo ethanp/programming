@@ -7,7 +7,7 @@
 // "huge" was created on the server’s
 // file-system like this
 // $ head -n 100000 /dev/urandom > huge
-// $ wc -c huge   
+// $ wc -c huge
 // # => 25591417 huge (25.6 MB)
 
 int main() {
@@ -23,4 +23,3 @@ int main() {
     }
     return 0;
 }
-

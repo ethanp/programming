@@ -1,24 +1,24 @@
-#include "scp.h"
 #include <string.h>
-#include "log.h"
 #include "params.h"
+#include "scp.h"
+#include "log.h"
 
 // connection
 const char *username = "ethanp";
 const char *password = "nuh-uh";
+LIBSSH2_SFTP *sftp_session;
+struct sockaddr_in sock_in;
 int sock, i, auth_pw = 0;
 LIBSSH2_SESSION *session;
-LIBSSH2_SFTP *sftp_session;
 const char *fingerprint;
-struct sockaddr_in sock_in;
 unsigned long hostaddr;
 
 // file transfer
+const char *utexas_dir = "/u/ethanp/libssh_eg";
 const char *newpath = "/u/ethanp/ech2";
 const char *scppath = "/u/ethanp/ech";
-const char *utexas_dir = "/u/ethanp/libssh_eg";
-const char *local_dir = "/tmp";
 const char *local_file_path = "./ech";
+const char *local_dir = "/tmp";
 LIBSSH2_CHANNEL *channel;
 struct stat fileinfo;
 char mem[10000];
@@ -65,9 +65,6 @@ int scp_send(const char *path, int fd) {
     }
     char remote_path[PATH_MAX];
 
-    // trying this because the `mem` var didn't work
-    char *buff = malloc(10000);
-
     // append "123" to make it simple to verify that it actually worked
     sprintf(remote_path, "%s%s123", utexas_dir, path);
     fstat(fd, &fileinfo);
@@ -86,10 +83,14 @@ int scp_send(const char *path, int fd) {
         scp_shutdown();
     }
     lseek(fd, 0, 0);
+    char *buff = malloc(fileinfo.st_size);
+    nread = read(fd, buff, (size_t)fileinfo.st_size);
+    log_msg("nread 1st try: %d\n", nread);
+    lseek(fd, 0, 0);
     log_msg("SCP session sending (%d)-byte file\n", (int)fileinfo.st_size);
     do {
         // params: (file_descriptor, *buffer, count_bytes)
-        nread = read(fd, buff, (size_t)fileinfo.st_size);
+        nread = read(fd, buff, 1000);
         if (nread <= 0) {
             log_msg("transfer complete.\n");
             /* end of file */
@@ -190,6 +191,10 @@ int scp_init(int argc, char *argv[]) {
         fprintf(stderr, "couldn't create a libssh2_session\n");
         return -1;
     }
+
+    /* Tell libssh2 we are blocking */
+    libssh2_session_set_blocking(session, 1);
+
     /* ... start it up. This will trade welcome banners, exchange keys,
      * and setup crypto, compression, and MAC layers */
     rc = libssh2_session_handshake(session, sock);
