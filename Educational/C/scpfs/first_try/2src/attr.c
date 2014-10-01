@@ -1,7 +1,6 @@
 /* Based on libssh2's sample showing how to do SFTP transfers. */
 
 #include <libssh2.h>
-#include <libssh2_sftp.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
@@ -38,32 +37,20 @@ int get_file_stat_struct()
     res = libssh2_sftp_stat(sftp_session, sftppath, &attrs);
     do {
         if (res < 0 && res != LIBSSH2_ERROR_EAGAIN) {
-            // there is an errno in here and stuff
-            // I'll get to that if there's time or something
+            // there /is/ an errno in here and stuff
             fprintf(stderr, "sftp_stat failed 2\n");
             exit(1);
         }
     } while (res == LIBSSH2_ERROR_EAGAIN);
 
-    printf("sftp_stat worked\n");
-
     buf->st_nlink = 1;
-    if ((attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) != 0) {
-        buf->st_uid = attrs.uid;
-        buf->st_gid = attrs.gid;
-    }
-    if ((attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) != 0) {
-        buf->st_atime = attrs.atime;
-        buf->st_mtime = attrs.mtime;
-        buf->st_ctime = attrs.mtime;
-    }
-    if ((attrs.flags & LIBSSH2_SFTP_ATTR_SIZE) != 0) {
-        buf->st_size = attrs.filesize;
-    }
-    if ((attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) != 0) {
-        buf->st_mode = attrs.permissions;
-    }
-
+    buf->st_uid = attrs.uid;
+    buf->st_gid = attrs.gid;
+    buf->st_atime = attrs.atime;
+    buf->st_mtime = attrs.mtime;
+    buf->st_ctime = attrs.mtime;
+    buf->st_size = attrs.filesize;
+    buf->st_mode = attrs.permissions;
     return 0;
 }
 

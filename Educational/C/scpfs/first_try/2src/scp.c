@@ -8,6 +8,7 @@ const char *username = "ethanp";
 const char *password = "nuh-uh";
 int sock, i, auth_pw = 0;
 LIBSSH2_SESSION *session;
+LIBSSH2_SFTP *sftp_session;
 const char *fingerprint;
 struct sockaddr_in sock_in;
 unsigned long hostaddr;
@@ -26,8 +27,35 @@ FILE *local;
 char *ptr;
 int rc;
 
+void get_file_stat_struct(const char *path, struct stat *buf)
+{
+    char remote_path[PATH_MAX];
+    sprintf(remote_path, "%s/%s", utexas_dir, path);
+    int res;
+    LIBSSH2_SFTP_ATTRIBUTES attrs;
+
+    res = libssh2_sftp_stat(sftp_session, remote_path, &attrs);
+
+    do {
+        if (res < 0 && res != LIBSSH2_ERROR_EAGAIN) {
+            // there /is/ an errno in here and stuff
+            fprintf(stderr, "sftp_stat failed 2\n");
+            exit(1);
+        }
+    } while (res == LIBSSH2_ERROR_EAGAIN);
+
+    buf->st_nlink = 1;
+    buf->st_uid = attrs.uid;
+    buf->st_gid = attrs.gid;
+    buf->st_atime = attrs.atime;
+    buf->st_mtime = attrs.mtime;
+    buf->st_ctime = attrs.mtime;
+    buf->st_size = attrs.filesize;
+    buf->st_mode = attrs.permissions;
+}
+
 int scp_send(const char *path) {
-    char remote_path[80];
+    char remote_path[PATH_MAX];
     sprintf(remote_path, "%s/%s", utexas_dir, path);
     local = fopen(path, "rb");
     if (!local) {
@@ -172,10 +200,16 @@ int scp_init(int argc, char *argv[]) {
             scp_shutdown();
         }
     }
+    sftp_session = libssh2_sftp_init(session);
+    if (!sftp_session) {
+        fprintf(stderr, "Unable to init SFTP session\n");
+        scp_shutdown();
+    }
     return 0;
 }
 
  void scp_shutdown() {
+    libssh2_sftp_shutdown(sftp_session);
     libssh2_session_disconnect(session, "Normal Shutdown, Thank you for playing");
     libssh2_session_free(session);
     close(sock);

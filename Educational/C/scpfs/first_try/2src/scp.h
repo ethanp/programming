@@ -13,7 +13,9 @@
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
+#include <libssh2_sftp.h>
 
+void get_file_stat_struct(const char *path, struct stat *buf);
 int scp_send(const char *path);
 int scp_retrieve(const char *path, int fd);
 void scp_shutdown();

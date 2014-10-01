@@ -60,10 +60,8 @@ static void ot_fullpath(char fpath[PATH_MAX], const char *path)
 int ot_getattr(const char *path, struct stat *statbuf)
 {
     int retstat = 0;
-    char fpath[PATH_MAX];
     log_msg("\not_getattr(path=\"%s\", statbuf=0x%08x)\n", path, statbuf);
-    ot_fullpath(fpath, path);
-    retstat = lstat(fpath, statbuf);
+    get_file_stat_struct(path, statbuf);
     if (retstat != 0)
         retstat = ot_error("ot_getattr lstat");
     log_stat(statbuf);
