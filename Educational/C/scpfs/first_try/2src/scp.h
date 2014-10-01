@@ -15,7 +15,7 @@
 #include <ctype.h>
 
 int scp_send(const char *path);
-char *scp_retrieve(const char *path);
+int scp_retrieve(const char *path, int fd);
 void scp_shutdown();
 int scp_init(int argc, char *argv[]);
 

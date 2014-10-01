@@ -1,5 +1,7 @@
 #include "scp.h"
 #include <string.h>
+#include "log.h"
+#include "params.h"
 
 // connection
 const char *username = "ethanp";
@@ -7,7 +9,7 @@ const char *password = "nuh-uh";
 int sock, i, auth_pw = 0;
 LIBSSH2_SESSION *session;
 const char *fingerprint;
-struct sockaddr_in sin;
+struct sockaddr_in sock_in;
 unsigned long hostaddr;
 
 // file transfer
@@ -77,13 +79,14 @@ int scp_send(const char *path) {
     return 0;
 }
 
-char *scp_retrieve(const char *path) {
-    char remote_path[80];
-    char local_path[80];
+int scp_retrieve(const char *path, int fd) {
+    char remote_path[PATH_MAX];
     sprintf(remote_path, "%s/%s", utexas_dir, path);
-    sprintf(local_path, "%s/%s", local_dir, path);
-    off_t got = 0;
+    off_t got = 0, file_size;
+
+    // open channel to file to download
     channel = libssh2_scp_recv(session, remote_path, &fileinfo);
+    file_size = fileinfo.st_size;
     if (!channel) {
         fprintf(stderr, "Unable to open a session: %d\n",
                 libssh2_session_last_errno(session));
@@ -92,41 +95,35 @@ char *scp_retrieve(const char *path) {
         fprintf(stderr, "Error info: %s\n", err_msg);
         scp_shutdown();
     }
-    char *retrieved_file_contents = malloc(fileinfo.st_size);
 
-    while(got < fileinfo.st_size) {
+    log_msg("\nfile contents: ");
+
+    // write the file to the given descriptor
+    while(got < file_size) {
         char mem[1024];
-
-        int amount=sizeof(mem);
-        if((fileinfo.st_size - got) < amount) {
-            amount = fileinfo.st_size - got;
+        int amount = sizeof(mem);
+        if ((file_size - got) < amount) {
+            amount = file_size - got;
         }
         rc = libssh2_channel_read(channel, mem, amount);
-
-        if(rc > 0) {
-            // TODO this is where we're writing to standard-out, so this is going to need to change
-            // handle, buffer, nbyte
-            write(1, mem, rc);
-
-            strcat(retrieved_file_contents, mem);
-        }
-        else if(rc < 0) {
+        if (rc > 0) {
+            write(fd, mem, rc); // params: file_descriptor, buffer, nbyte
+            log_msg(mem);
+        } else if (rc < 0) {
             fprintf(stderr, "libssh2_channel_read() failed: %d\n", rc);
             break;
         }
         got += rc;
     }
+
+    // close the channel
     libssh2_channel_free(channel);
     channel = NULL;
-    return retrieved_file_contents;
+    return file_size;
 }
 
 int scp_init(int argc, char *argv[]) {
     hostaddr = inet_addr("128.83.120.177");
-    if (argc > 1) { password = argv[1]; }
-    if (argc > 2) { username = argv[2]; }
-    if (argc > 3) { hostaddr = inet_addr(argv[3]); }
-    if (argc > 4) { scppath = argv[4]; }
     rc = libssh2_init(0);
     if (rc != 0) {
         fprintf (stderr, "libssh2 initialization failed (%d)\n", rc);
@@ -135,10 +132,10 @@ int scp_init(int argc, char *argv[]) {
     /* Ultra basic "connect to port 22 on localhost"
      * Your code must create the socket establishing the connection */
     sock = socket(AF_INET, SOCK_STREAM, 0);
-    sin.sin_family = AF_INET;
-    sin.sin_port = htons(22);
-    sin.sin_addr.s_addr = hostaddr;
-    if (connect(sock, (struct sockaddr*)(&sin),
+    sock_in.sin_family = AF_INET;
+    sock_in.sin_port = htons(22);
+    sock_in.sin_addr.s_addr = hostaddr;
+    if (connect(sock, (struct sockaddr*)(&sock_in),
             sizeof(struct sockaddr_in)) != 0) {
         fprintf(stderr, "failed to connect!\n");
         return -1;

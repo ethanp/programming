@@ -21,9 +21,8 @@
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
-#include <fuse.h>
+// #include <fuse.h>
 #include <libgen.h>
-#include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -123,36 +122,38 @@ int ot_unlink(const char *path)
 // unaltered, but insert the link into the mounted directory.
 int ot_symlink(const char *path, const char *link)
 {
-    int retstat = 0;
-    char flink[PATH_MAX];
+   //  int retstat = 0;
+   //  char flink[PATH_MAX];
 
-    log_msg("\not_symlink(path=\"%s\", link=\"%s\")\n",
-       path, link);
-    ot_fullpath(flink, link);
+   //  log_msg("\not_symlink(path=\"%s\", link=\"%s\")\n",
+   //     path, link);
+   //  ot_fullpath(flink, link);
 
-    retstat = symlink(path, flink);
-    if (retstat < 0)
-       retstat = ot_error("ot_symlink symlink");
+   //  retstat = symlink(path, flink);
+   //  if (retstat < 0)
+   //     retstat = ot_error("ot_symlink symlink");
 
-   return retstat;
+   // return retstat;
+    return 0;
 }
 
 /** Create a hard link to a file */
 int ot_link(const char *path, const char *newpath)
 {
-    int retstat = 0;
-    char fpath[PATH_MAX], fnewpath[PATH_MAX];
+   //  int retstat = 0;
+   //  char fpath[PATH_MAX], fnewpath[PATH_MAX];
 
-    log_msg("\not_link(path=\"%s\", newpath=\"%s\")\n",
-       path, newpath);
-    ot_fullpath(fpath, path);
-    ot_fullpath(fnewpath, newpath);
+   //  log_msg("\not_link(path=\"%s\", newpath=\"%s\")\n",
+   //     path, newpath);
+   //  ot_fullpath(fpath, path);
+   //  ot_fullpath(fnewpath, newpath);
 
-    retstat = link(fpath, fnewpath);
-    if (retstat < 0)
-       retstat = ot_error("ot_link link");
+   //  retstat = link(fpath, fnewpath);
+   //  if (retstat < 0)
+   //     retstat = ot_error("ot_link link");
 
-   return retstat;
+   // return retstat;
+   return 0;
 }
 
 /** File open operation
@@ -162,38 +163,29 @@ int ot_link(const char *path, const char *newpath)
  * is permitted for the given flags.  Optionally open may also
  * return an arbitrary filehandle in the fuse_file_info structure,
  * which will be passed to all file operations.
- *
- * Changed in version 2.2
  */
  int ot_open(const char *path, struct fuse_file_info *fi)
  {
+    /* The struct fuse_file_info thing is defined in <fuse_common.h>.
+     * It maintains info about open files.
+     * The fh-field is the holder for a "file-handle" (duh)
+     * The flags-field is the set of flags used in the user's call to open()
+     */
+
     int retstat = 0;
     int fd;
-    char fpath[PATH_MAX];
+    int file_len;
 
-    log_msg("\not_open(path\"%s\", fi=0x%08x)\n",
-       path, fi);
-
-    ot_fullpath(fpath, path);
+    log_msg("\not_open(path\"%s\", fi=0x%08x)\n", path, fi);
 
     // retrieve the file IF it doesn't already exist
     if( access( path, F_OK ) != -1 ) { // file exists
     } else { // file doesn't exist
-        char *file_contents = scp_retrieve(path);
-        log_msg("\nretrieved file: %s\n", file_contents);
-        //
-        free(file_contents);
+        fd = open(path, O_RDWR); // open in pwd (TODO move this to /tmp, I guess?)
+        file_len = scp_retrieve(path, fd);
+        log_msg("\nretrieved file of size (%s)\n", file_len);
     }
-
-
-    /* EP: in the end, we just call the system's open() function
-
-        * This struct fuse_file_info thing is defined in <fuse_common.h>.
-        * It maintains info about open files.
-        * The fh-field is the holder for a "file-handle" (duh)
-        * The flags-field is the set of flags used in the user's call to open()
-    */
-    fd = open(fpath, fi->flags);
+    fd = open(path, fi->flags);
     if (fd < 0)
        retstat = ot_error("ot_open open");
 
@@ -222,6 +214,10 @@ int ot_link(const char *path, const char *newpath)
 // returned by read.
  int ot_read(const char *path, char *buf, size_t size, off_t offset, struct fuse_file_info *fi)
  {
+
+    // TODO read from the cached file, this means I DO need to actually use
+    //                                           the `fuse_file_info` thing
+
     int retstat = 0;
 
     log_msg("\not_read(path=\"%s\", buf=0x%08x, size=%d, offset=%lld, fi=0x%08x)\n",
@@ -261,6 +257,10 @@ int ot_write(const char *             path,
              off_t                    offset,
              struct fuse_file_info   *fi)
  {
+
+    // TODO write to the locally cached file
+    // no need to send it back now because that will happen on ot_flush()
+
     int retstat = 0;
     log_msg("\not_write(path=\"%s\", buf=0x%08x, size=%d, offset=%lld, fi=0x%08x)\n",
        path, buf, size, offset, fi);
@@ -284,8 +284,11 @@ int ot_write(const char *             path,
  */
 int ot_flush(const char *path, struct fuse_file_info *fi)
 {
-    int retstat = 0;
+    // TODO scp_send the latest version of the file
+    // but don't necessarily delete it
+    // https://piazza.com/class/hz22ixrz44t64u?cid=82
 
+    int retstat = 0;
     log_msg("\not_flush(path=\"%s\", fi=0x%08x)\n", path, fi);
     // no need to get fpath on this one, since I work from fi->fh not the path
     log_fi(fi);
@@ -301,6 +304,8 @@ int ot_flush(const char *path, struct fuse_file_info *fi)
  */
  int ot_release(const char *path, struct fuse_file_info *fi)
  {
+    // TODO remove the locally cached file
+
     int retstat = 0;
     log_msg("\not_release(path=\"%s\", fi=0x%08x)\n", path, fi);
     log_fi(fi);
@@ -330,38 +335,37 @@ int ot_readdir(const char *             path,
                off_t                    offset,
                struct fuse_file_info *  fi)
 {
-    int retstat = 0;
-    DIR *dp;
-    struct dirent *de;
+   //  int retstat = 0;
+   //  DIR *dp;
+   //  struct dirent *de;
 
-    log_msg("\not_readdir(path=\"%s\", buf=0x%08x, filler=0x%08x, offset=%lld, fi=0x%08x)\n",
-       path, buf, filler, offset, fi);
-    // once again, no need for fullpath -- but note that I need to cast fi->fh
-    dp = (DIR *) (uintptr_t) fi->fh;
+   //  log_msg("\not_readdir(path=\"%s\", buf=0x%08x, filler=0x%08x, offset=%lld, fi=0x%08x)\n",
+   //     path, buf, filler, offset, fi);
+   //  // once again, no need for fullpath -- but note that I need to cast fi->fh
+   //  dp = (DIR *) (uintptr_t) fi->fh;
 
-    // Every directory contains at least two entries: . and ..  If my
-    // first call to the system readdir() returns NULL I've got an
-    // error; near as I can tell, that's the only condition under
-    // which I can get an error from readdir()
-    de = readdir(dp);
-    if (de == 0) {
-       retstat = ot_error("ot_readdir readdir");
-       return retstat;
-   }
+   //  // Every directory contains at least two entries: . and ..  If my
+   //  // first call to the system readdir() returns NULL I've got an error.
+   //  de = readdir(dp);
+   //  if (de == 0) {
+   //     retstat = ot_error("ot_readdir readdir");
+   //     return retstat;
+   // }
 
-    // This will copy the entire directory into the buffer.  The loop exits
-    // when either the system readdir() returns NULL, or filler()
-    // returns something non-zero.  The first case just means I've
-    // read the whole directory; the second means the buffer is full.
-   do {
-       log_msg("calling filler with name %s\n", de->d_name);
-       if (filler(buf, de->d_name, NULL, 0) != 0) {
-           log_msg("    ERROR ot_readdir filler:  buffer full");
-           return -ENOMEM;
-       }
-   } while ((de = readdir(dp)) != NULL);
-   log_fi(fi);
-   return retstat;
+   //  // This will copy the entire directory into the buffer.  The loop exits
+   //  // when either the system readdir() returns NULL, or filler()
+   //  // returns something non-zero.  The first case just means I've
+   //  // read the whole directory; the second means the buffer is full.
+   // do {
+   //     log_msg("calling filler with name %s\n", de->d_name);
+   //     if (filler(buf, de->d_name, NULL, 0) != 0) {
+   //         log_msg("    ERROR ot_readdir filler:  buffer full");
+   //         return -ENOMEM;
+   //     }
+   // } while ((de = readdir(dp)) != NULL);
+   // log_fi(fi);
+   // return retstat;
+    return 0;
 }
 
 /**
@@ -393,14 +397,15 @@ void *ot_init(struct fuse_conn_info *conn)
  */
 int ot_access(const char *path, int mask)
 {
-    int retstat = 0;
-    char fpath[PATH_MAX];
-    log_msg("\not_access(path=\"%s\", mask=0%o)\n", path, mask);
-    ot_fullpath(fpath, path);
-    retstat = access(fpath, mask);
-    if (retstat < 0)
-        retstat = ot_error("ot_access access");
-    return retstat;
+    // int retstat = 0;
+    // char fpath[PATH_MAX];
+    // log_msg("\not_access(path=\"%s\", mask=0%o)\n", path, mask);
+    // ot_fullpath(fpath, path);
+    // retstat = access(fpath, mask);
+    // if (retstat < 0)
+    //     retstat = ot_error("ot_access access");
+    // return retstat;
+    return 0;
 }
 
 /* EP: oh I see, he's not defining a struct type, he's initializing a struct of
@@ -441,7 +446,9 @@ struct fuse_operations ot_oper = {
 
 void ot_usage()
 {
-    fprintf(stderr, "usage:  bbfs [FUSE and mount options] rootDir mountPoint\n");
+    fprintf(stderr, "otfs always mounts to ethanp@almond-joy.cs.utexas.edu:libssh_eg\n");
+    fprintf(stderr, "it will mount to your specified local mountPoint\n");
+    fprintf(stderr, "usage:  otfs mountPoint\n");
     abort();
 }
 
@@ -450,21 +457,22 @@ int main(int argc, char *argv[])
     int fuse_stat;
     struct ot_state *ot_data;
 
-    // since access checking is incomplete, it's easier to just refuse users
-    // trying to run the file system as root.
+    // refuse users trying to run the file system as root.
     if ((getuid() == 0) || (geteuid() == 0)) {
         fprintf(stderr, "Running as root opens unnacceptable security holes\n");
         return 1;
     }
 
-    // establish an ssh connection with server@cs.utexas.edu
+    // establish an ssh connection with ethanp@almond-joy.cs.utexas.edu
     if (scp_init(0, NULL) != 0) {
         fprintf(stderr, "scp_init failed\n");
         return 1;
+    } else {
+        fprintf(stderr, "\nconnected to UTexas\n");
     }
 
-    // Perform some sanity checking on the command line
-    if ((argc < 3) || (argv[argc-2][0] == '-') || (argv[argc-1][0] == '-'))
+    // disallow mount options
+    if ((argc != 2) || (argv[argc-1][0] == '-'))
         ot_usage();
 
     ot_data = malloc(sizeof(struct ot_state));
@@ -473,20 +481,11 @@ int main(int argc, char *argv[])
         abort();
     }
 
-    // TODO: this should save remote server info or something
-    ot_data->rootdir = realpath(argv[argc-2], NULL);
-    printf("saved rootdir: %s\n", ot_data->rootdir);
-
-    // EP: this is required to adjust the args for the call to fuse_main
-    argv[argc-2] = argv[argc-1];
-    argv[--argc] = NULL;
-
     ot_data->logfile = log_open();
-
-    // turn over control to fuse
-    fprintf(stderr, "about to call fuse_main\n");
+    fprintf(stderr, "\nstarting fuse...\n\n");
 
     // EP: returns 0 on success, nonzero on failure
+    // turn over control to fuse
     fuse_stat = fuse_main(argc, argv, &ot_oper, ot_data);
     fprintf(stderr, "fuse_main returned %d\n", fuse_stat);
 

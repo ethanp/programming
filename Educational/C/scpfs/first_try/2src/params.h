@@ -17,6 +17,8 @@
 // setlinebuf() later in consequence.
 #define _XOPEN_SOURCE 500
 
+#include <limits.h> /* PATH_MAX */
+
 // maintain file system state in here
 #include <limits.h>
 #include <stdio.h>

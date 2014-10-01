@@ -3,7 +3,7 @@ cd 2src
 make clean hello
 cd ..
 fusermount -u b
-2src/hello a b
+2src/hello b
 cd a
 rm -f foo
 echo "asdf" > foo
