@@ -21,7 +21,7 @@ const char *local_dir = "/tmp";
 const char *local_file_path = "./ech";
 LIBSSH2_CHANNEL *channel;
 struct stat fileinfo;
-char mem[1024];
+char mem[10000];
 size_t nread;
 FILE *local;
 char *ptr;
@@ -33,7 +33,11 @@ void get_file_stat_struct(const char *path, struct stat *buf)
     sprintf(remote_path, "%s/%s", utexas_dir, path);
     int res;
     LIBSSH2_SFTP_ATTRIBUTES attrs;
-
+    sftp_session = libssh2_sftp_init(session);
+    if (!sftp_session) {
+        fprintf(stderr, "Unable to init SFTP session\n");
+        scp_shutdown();
+    }
     res = libssh2_sftp_stat(sftp_session, remote_path, &attrs);
 
     do {
@@ -43,7 +47,7 @@ void get_file_stat_struct(const char *path, struct stat *buf)
             exit(1);
         }
     } while (res == LIBSSH2_ERROR_EAGAIN);
-
+    libssh2_sftp_shutdown(sftp_session);
     buf->st_nlink = 1;
     buf->st_uid = attrs.uid;
     buf->st_gid = attrs.gid;
@@ -56,41 +60,47 @@ void get_file_stat_struct(const char *path, struct stat *buf)
 
 int scp_send(const char *path, int fd) {
     if (fd == 0) {
-        fprintf(stderr, "File descriptor for %s was 0, don't do that\n", path);
+        log_msg("File descriptor for %s was 0, don't do that\n", path);
         return -1;
     }
     char remote_path[PATH_MAX];
 
+    // trying this because the `mem` var didn't work
+    char *buff = malloc(10000);
+
     // append "123" to make it simple to verify that it actually worked
-    sprintf(remote_path, "%s/%s123", utexas_dir, path);
+    sprintf(remote_path, "%s%s123", utexas_dir, path);
     fstat(fd, &fileinfo);
-    printf("sending file: %s, of size %d to: %s\n",
+    log_msg("sending file: %s, of size %d to: %s\n",
             path, (int)fileinfo.st_size, remote_path);
 
     /* The mode parameter must only have permissions */
     channel = libssh2_scp_send(session, remote_path, fileinfo.st_mode & 0777,
                                (unsigned long)fileinfo.st_size);
+    log_msg("channel has value: (%ld)\n", (long int)channel);
     if (!channel) {
         char *errmsg;
         int errlen;
         int err = libssh2_session_last_error(session, &errmsg, &errlen, 0);
-        fprintf(stderr, "Unable to open a session: (%d) %s\n", err, errmsg);
+        log_msg("Unable to open a channel: (%d) %s\n", err, errmsg);
         scp_shutdown();
     }
-    fprintf(stderr, "SCP session waiting to send file\n");
+    lseek(fd, 0, 0);
+    log_msg("SCP session sending (%d)-byte file\n", (int)fileinfo.st_size);
     do {
         // params: (file_descriptor, *buffer, count_bytes)
-        log_msg("sending (%d) bytes\n", (int)fileinfo.st_size);
-        nread = read(fd, mem, (unsigned int)fileinfo.st_size);
+        nread = read(fd, buff, (size_t)fileinfo.st_size);
         if (nread <= 0) {
+            log_msg("transfer complete.\n");
             /* end of file */
             break;
         }
-        ptr = mem; // use separate variable that we can advance independently
+        log_msg("(%d)-byte chunk on its way out\n", nread);
+        ptr = buff; // use separate variable that we can advance independently
         do { /* write the same data over and over, until error or completion */
             rc = libssh2_channel_write(channel, ptr, nread);
             if (rc < 0) {
-                fprintf(stderr, "ERROR %d\n", rc);
+                log_msg("ERROR %d\n", rc);
                 break;
             }
             else { /* rc indicates how many bytes were written this time */
@@ -99,8 +109,10 @@ int scp_send(const char *path, int fd) {
                 nread -= rc;
             }
         } while (nread);
+        log_msg("chunk transfer done\n");
     } while (1);
-    log_msg("File sent\n");
+    log_msg("file sent\n");
+    free(buff);
     libssh2_channel_send_eof(channel);
     libssh2_channel_wait_eof(channel);
     libssh2_channel_wait_closed(channel);
@@ -118,11 +130,11 @@ int scp_retrieve(const char *path, int fd) {
     channel = libssh2_scp_recv(session, remote_path, &fileinfo);
     file_size = fileinfo.st_size;
     if (!channel) {
-        fprintf(stderr, "Unable to open a session: %d\n",
+        log_msg("Unable to open a session: %d\n",
                 libssh2_session_last_errno(session));
         char *err_msg;
         libssh2_session_last_error(session, &err_msg, NULL, 0);
-        fprintf(stderr, "Error info: %s\n", err_msg);
+        log_msg("Error info: %s\n", err_msg);
         scp_shutdown();
     }
 
@@ -204,16 +216,12 @@ int scp_init(int argc, char *argv[]) {
             scp_shutdown();
         }
     }
-    sftp_session = libssh2_sftp_init(session);
-    if (!sftp_session) {
-        fprintf(stderr, "Unable to init SFTP session\n");
-        scp_shutdown();
-    }
+
     return 0;
 }
 
  void scp_shutdown() {
-    libssh2_sftp_shutdown(sftp_session);
+    log_msg("shutting down ssh session\n");
     libssh2_session_disconnect(session, "Normal Shutdown, Thank you for playing");
     libssh2_session_free(session);
     close(sock);

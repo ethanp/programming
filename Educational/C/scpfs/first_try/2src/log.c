@@ -79,7 +79,7 @@ void log_fi (struct fuse_file_info *fi)
 
     /** Open flags.  Available in open() and release() */
     //	int flags;
-    log_struct(fi, flags, 0x%08x, );
+    log_struct(fi, flags, 0x%x, );
 
     /** Old file handle, don't use */
     //	unsigned long fh_old;
@@ -106,7 +106,7 @@ void log_fi (struct fuse_file_info *fi)
     /** File handle.  May be filled in by filesystem in open().
         Available in all other file operations */
     //	uint64_t fh;
-    log_struct(fi, fh, 0x%016llx,  );
+    log_struct(fi, fh, 0x%llx,  );
 
     /** Lock owner id.  Available in locking operations and flush */
     //  uint64_t lock_owner;

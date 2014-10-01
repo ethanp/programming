@@ -260,10 +260,12 @@ int ot_flush(const char *path, struct fuse_file_info *fi)
     // externally of whether anyone else is using it...which I'm not.
     scp_send(path, fi->fh);
 
+    log_msg("back in ot_release after sending file\n");
+
     // We need to close the file.  Had we allocated any resources
     // (buffers etc) we'd need to free them here as well.
     retstat = close(fi->fh);
-    return retstat;
+    return 0;
 }
 
 /** Read directory ("ls")
@@ -280,6 +282,7 @@ int ot_flush(const char *path, struct fuse_file_info *fi)
  * passes non-zero offset to the filler function.  When the buffer
  * is full (or an error happens) the filler function returns '1'.
  */
+// EP TODO: see http://www.libssh2.org/examples/sftpdir.html
 int ot_readdir(const char *             path,
                void *                   buf,
                fuse_fill_dir_t          filler,
@@ -370,12 +373,12 @@ struct fuse_operations ot_oper = {
     .read = ot_read,
     .write = ot_write,
     .release = ot_release,
-    .flush = ot_flush,
 
     // these are optional
     .init = ot_init,
 
     /* these are recommended to be implemented as well
+    .flush = ot_flush,
     .readdir = ot_readdir,  // for "ls"
     .unlink = ot_unlink,    // for "rm"
     */
