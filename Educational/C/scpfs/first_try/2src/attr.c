@@ -11,24 +11,67 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
+#include "log.h"
 
 const char *keyfile1="/home/ethan/ssh/id_rsa.pub";
 const char *keyfile2="/home/ethan/.ssh/id_rsa";
 const char *username="ethanp";
 const char *password="nuh-uh";
 const char *sftppath="/u/ethanp/ech";
+LIBSSH2_SESSION *session;
+LIBSSH2_SFTP *sftp_session;
+
+
+// in which we fill the stat struct of sftppath using sftp
+int get_file_stat_struct()
+{
+    int res;
+    struct stat *buf = malloc(sizeof(struct stat));
+
+    if (buf == NULL)
+        fprintf(stderr, "malloc'ing struct stat returned NULL\n");
+
+    LIBSSH2_SFTP_ATTRIBUTES attrs;
+    res = libssh2_sftp_stat(sftp_session, sftppath, &attrs);
+    do {
+        if (res < 0 && res != LIBSSH2_ERROR_EAGAIN) {
+            // there is an errno in here and stuff
+            // I'll get to that if there's time or something
+            fprintf(stderr, "sftp_stat failed 2\n");
+            exit(1);
+        }
+    } while (res == LIBSSH2_ERROR_EAGAIN);
+
+    printf("sftp_stat worked\n");
+
+    buf->st_nlink = 1;
+    if ((attrs.flags & LIBSSH2_SFTP_ATTR_UIDGID) != 0) {
+        buf->st_uid = attrs.uid;
+        buf->st_gid = attrs.gid;
+    }
+    if ((attrs.flags & LIBSSH2_SFTP_ATTR_ACMODTIME) != 0) {
+        buf->st_atime = attrs.atime;
+        buf->st_mtime = attrs.mtime;
+        buf->st_ctime = attrs.mtime;
+    }
+    if ((attrs.flags & LIBSSH2_SFTP_ATTR_SIZE) != 0) {
+        buf->st_size = attrs.filesize;
+    }
+    if ((attrs.flags & LIBSSH2_SFTP_ATTR_PERMISSIONS) != 0) {
+        buf->st_mode = attrs.permissions;
+    }
+
+    return 0;
+}
 
 int main(int argc, char *argv[])
 {
     unsigned long hostaddr = inet_addr("128.83.120.177");
-    int sock, i, auth_pw = 0;
+    int sock, rc;
     struct sockaddr_in sin;
-    const char *fingerprint;
-    char *userauthlist;
-    LIBSSH2_SESSION *session;
-    int rc;
-    LIBSSH2_SFTP *sftp_session;
     LIBSSH2_SFTP_HANDLE *sftp_handle;
     rc = libssh2_init (0);
     if (rc != 0) {
@@ -65,7 +108,7 @@ int main(int argc, char *argv[])
      * may have it hard coded, may go to a file, may present it to the
      * user, that's your call
      */
-    fingerprint = libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
+    libssh2_hostkey_hash(session, LIBSSH2_HOSTKEY_HASH_SHA1);
         if (libssh2_userauth_publickey_fromfile(session, username,
                                                 "/home/ethan/.ssh/id_rsa.pub",
                                                 "/home/ethan/.ssh/id_rsa",
@@ -87,6 +130,8 @@ int main(int argc, char *argv[])
     /* Request a file via SFTP */
     sftp_handle =
         libssh2_sftp_open(sftp_session, sftppath, LIBSSH2_FXF_READ, 0);
+
+    get_file_stat_struct();
 
     if (!sftp_handle) {
         fprintf(stderr, "Unable to open file with SFTP: %ld\n",
