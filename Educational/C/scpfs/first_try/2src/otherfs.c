@@ -31,6 +31,8 @@
 #include "scp.h"
 #include "log.h"
 
+char *hostdir = "/home/ethan/Desktop/2lab/first_try/hostdir";
+
 // Report errors to logfile and give -errno to caller
 static int ot_error(char *str)
 {
@@ -59,12 +61,23 @@ static void ot_fullpath(char fpath[PATH_MAX], const char *path)
  */
 int ot_getattr(const char *path, struct stat *statbuf)
 {
+    char local_path[PATH_MAX];
+    sprintf(local_path, "%s%s", hostdir, path);
     int retstat = 0;
     log_msg("\not_getattr(path=\"%s\", statbuf=0x%08x)\n", path, statbuf);
-    get_file_stat_struct(path, statbuf);
-    if (retstat != 0)
-        retstat = ot_error("ot_getattr lstat");
-    log_stat(statbuf);
+    if(access(local_path, F_OK) == -1) { // file doesn't exist
+        log_msg("\nfile doesn't exist\n");
+        get_file_stat_struct(path, statbuf);
+        if (retstat != 0)
+            retstat = ot_error("ot_getattr sftp_stat");
+    } else {
+        log_msg("\nfile exists\n");
+        retstat = lstat(local_path, statbuf);
+        if (retstat != 0)
+            retstat = ot_error("ot_getattr lstat");
+    }
+   log_stat(statbuf);
+
     return retstat;
 }
 
@@ -170,33 +183,48 @@ int ot_link(const char *path, const char *newpath)
      * The flags-field is the set of flags used in the user's call to open()
      */
 
-    int retstat = 0;
-    int fd;
-    int file_len;
+    int fd, retstat;
+    char local_path[PATH_MAX];
+    sprintf(local_path, "%s%s", hostdir, path);
 
     log_msg("\not_open(path\"%s\", fi=0x%08x)\n", path, fi);
 
     // retrieve the file IF it doesn't already exist
-    if( access( path, F_OK ) != -1 ) { // file exists
-    } else { // file doesn't exist
-        fd = open(path, O_RDWR); // open in pwd (TODO move this to /tmp, I guess?)
-        file_len = scp_retrieve(path, fd);
-        log_msg("\nretrieved file of size (%s)\n", file_len);
+    if(access(local_path, F_OK) == -1) { // file doesn't exist
+        fd = open(local_path, O_RDWR | O_CREAT); // open in pwd (TODO move this to /tmp, I guess?)
+        if (fd < 0) {
+            log_msg("\nfile can't be opened to download into: %s\n", strerror(errno));
+        } else {
+            log_msg("file (%d) open to download into\n", fd);
+        }
+        log_msg("downloading file to %s\n", local_path);
+        scp_retrieve(path, fd);
+        log_msg("retrieved file\n");
+        close(fd);
+        retstat = chmod(local_path, 00700);
+        if (retstat < 0)
+            retstat = ot_error("ot_open chmod");
+        fd = open(local_path, O_RDWR);
+        if (fd < 0) {
+            log_msg("preliminary open failed: %s\n", strerror(errno));
+        }
+        close(fd);
+    } else {
+        log_msg("\nfile seems to exist\n");
     }
-    fd = open(path, fi->flags);
-    if (fd < 0)
-       retstat = ot_error("ot_open open");
+    fd = open(local_path, fi->flags);
+    if (fd < 0) {
+        log_msg("\nopen failed: %s\n", strerror(errno));
+    }
+    fi->fh = fd;
+    log_fi(fi);
 
-   fi->fh = fd;
-   log_fi(fi);
-
-   /* EP: will be zero if open() succeeded,
+    /* EP: will be zero if open() succeeded,
           which is different from the original open()'s functionality.
 
         * This makes it so that FUSE will give the caller a file descriptor of
-          its own choosing, and perform the mapping using the `fi->fh = fd;`.
-    */
-   return retstat;
+          its own choosing, and perform the mapping using the `fi->fh = fd;`. */
+   return 0;
 }
 
 /** Read data from an open file
@@ -478,6 +506,8 @@ int main(int argc, char *argv[])
         perror("main calloc");
         abort();
     }
+
+    ot_data->rootdir = hostdir;
 
     ot_data->logfile = log_open();
     fprintf(stderr, "\nstarting fuse...\n\n");

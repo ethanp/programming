@@ -137,17 +137,19 @@ int scp_retrieve(const char *path, int fd) {
         if (rc > 0) {
             write(fd, mem, rc); // params: file_descriptor, buffer, nbyte
             log_msg(mem);
+            log_msg("\nchunk done\n");
         } else if (rc < 0) {
             fprintf(stderr, "libssh2_channel_read() failed: %d\n", rc);
             break;
         }
         got += rc;
     }
-
+    log_msg("\nfile transfer done\n");
     // close the channel
     libssh2_channel_free(channel);
+    log_msg("\nchannel closed\n");
     channel = NULL;
-    return file_size;
+    return (int)file_size;
 }
 
 int scp_init(int argc, char *argv[]) {
