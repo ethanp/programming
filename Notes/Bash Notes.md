@@ -162,7 +162,45 @@ Most recent foreground pipeline exit status
     127
     ~$
 
+## Repeat a command *N* times
+
+From [Server Fault][bash repeat]
+
+There are two good options
+
+    # cleaner syntax
+    for i in {1..10}; do command; done
+    
+    # potentially more flexible
+    for i in `seq 10`; do command; done
+
+[bash repeat]: http://serverfault.com/questions/273238/how-to-run-a-command-multiple-times
+
 # Commands to Command
+
+## 10/2/14
+
+### seq -- create a sequence of numbers
+
+    seq [first [incr]] last
+
+* Numbers are floating point
+* `first` and `incr` both default to 1
+* **-s** --- set the separator
+    * `$ seq -s \\t 3  =>    1\t2\t3`
+* **-f** --- use printf style formatters
+    * `$ seq -f %.2f -s ' ' 1 .5 3`
+    * `=>  1.00 1.50 2.00 2.50 3.00`
+* **-t** --- add a terminator to the sequence
+* **-w** --- set width by padding with zeros
+
+### jot --- print sequential or random data
+
+* *Very* similar to `seq`
+* **-r** --- use random data
+* **-b** --- just print a given word repeatedly
+* Print some random ascii (this could be improved...)
+    * `jot -s '' -r -c 100 A`
 
 ## 9/28/14
 

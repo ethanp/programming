@@ -13,13 +13,14 @@
 int main() {
     int buf[0];
     int i;
+    int fd = open("number", O_RDWR);
     for (i = 0; i < 1E4; i++) {
-        int fd = open("number", O_RDWR);
-        read(fd, buf, sizeof(int));
+        read(fd, buf, 1);
         lseek(fd, 0, 0);
         buf[0]++;
         write(fd, buf, 1);
-        close(fd);
+        fsync(fd);
     }
+    close(fd);
     return 0;
 }
