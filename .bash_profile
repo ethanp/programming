@@ -207,6 +207,11 @@ PATH="/usr/local/lib/ruby:${PATH}"                # not sure here bc I have like
 PATH=$PATH:$HOME/.rvm/bin                         # allows for "rvm" command
 PATH="/Applications/Postgres93.app/Contents/MacOS/bin:$PATH:$PATH" # for use with Postgres.app
 
+# use homebrew's installations of bash and grep
+# http://lapwinglabs.com/blog/hacker-guide-to-setting-up-your-mac
+# I'm not clear that this is working though...
+PATH=/usr/local/Cellar/coreutils/8.23/libexec/gnubin:$PATH
+
 # accommodate directory-structure differences between two computers
 if [[ -d ~/code/fuzzycd ]]; then
     FUZZYCD=~/code/fuzzycd
@@ -217,6 +222,8 @@ PATH=$FUZZYCD:$PATH                               # add fuzzycd, may have to pre
 PATH="/usr/local/bin:${PATH}"                     # Homebrew comes last
 export PATH
 
+# install https://github.com/rupa/z cd utility
+. /Users/Ethan/code/personal_project_use/libraries_to_use/ShellUtil/z/z.sh
 
 ############
 #  CDPATH  #
