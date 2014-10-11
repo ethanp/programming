@@ -11,11 +11,9 @@ latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
 
-Useful external libraries and frameworks
-========================================
+# Useful external libraries and frameworks
 
-JUnit
------
+## JUnit
 **5/20/14**
 
 [JUnit Homepage][],
@@ -41,11 +39,9 @@ From the [Github Wiki & Tutorial][]
 [Github Wiki & Tutorial]: https://github.com/junit-team/junit/wiki
 
 
-Collections
-===========
+# Collections
 
-Maps
-----
+## Maps
 **5/12/14**
 
 [SO Maps][]
@@ -78,14 +74,12 @@ Maps
 [SO Maps]: http://stackoverflow.com/questions/2889777/difference-between-hashmap-linkedhashmap-and-sortedmap-in-java
 
 
-Java I/O
-========
+# Java I/O
 
 **5/12/14**
 [docs.oracle-tutorial](http://docs.oracle.com/javase/tutorial/essential/io/index.html)
 
-I/O Streams
------------
+## I/O Streams
 
 [Oracle's Java Tuts](http://docs.oracle.com/javase/tutorial/essential/io/streams.html)
 
@@ -156,8 +150,7 @@ E.g.
 	Object obj = in.readObject();
 	
 	
-GSON
-----
+## GSON
 **5/20/14**
 
 [Source hosted on Google Code](https://code.google.com/p/google-gson/)
@@ -175,8 +168,7 @@ GSON
 
 
 
-Java concurrency
-================
+# Java concurrency
 
 **5/12/14**
 [Wikipedia](http://en.wikipedia.org/wiki/Java_concurrency)
@@ -353,8 +345,7 @@ Other notes:
 	  are visible to another specific statement.
 
 
-Inheritance
-===========
+# Inheritance
 
 ### Private fields
 
@@ -407,11 +398,9 @@ care to name the type because we'll just be calling methods that are specified b
 1. Wait, but then couldn't we just say `List<HasWord>` and get the *exact* same effect?
 
 
-Useful interfaces/abstract classes
-==================================
+# Useful interfaces/abstract classes
 
-Comparable vs. Comparator
--------------------------
+## Comparable vs. Comparator
 
 Refs:
 [SO](http://stackoverflow.com/questions/4108604),
@@ -522,11 +511,39 @@ And then do this
 	Arrays.sort(fruits, Fruit.FruitNameComparator);  // works
 
 
-Miscellaneous language features
-===============================
+# Miscellaneous language features
 
-Reflection
-----------
+## Generic Methods
+**10/11/14**
+
+[Oracle Docs](http://docs.oracle.com/javase/tutorial/java/generics/methods.html)
+
+1. Introduces its own type parameters
+2. The type parameter's scope is limited to the method
+3. Method could be static or non-static or class constructor
+4. Syntax: appears inside angle brackets in the method declaration before the return type
+
+### Why?
+1. Say you have objects that have type parameters that must be comparable
+2. Now you want to write a static method that operates on them, using those type parameters
+3. So you want to note the type-constraint that the parameterized-types of the objects being passed in are Comparable
+4. So you'd do
+
+        public static <K extends Comparable<? super K>, V> boolean 
+                myMethod(MyType<K, V> a, MyType<K, V> b) 
+        {/*...*/}
+5. I believe this means that *only now* can you say
+
+        a.key.compareTo(b.key)
+6. You invoke this method with
+
+        StaticClass.<TypeK, TypeV>myMethod(obj1, obj2);
+
+An even better example demonstrating how these are used can be found at
+[Oracle Docs2](http://docs.oracle.com/javase/tutorial/extra/generics/methods.html),
+but basically it confirms the above to be a correct interpretation.
+
+## Reflection
 **5/21/14**
 
 This is all just a quote from [StOve](http://stackoverflow.com/questions/37628/what-is-reflection-and-why-is-it-useful/37638#37638)
@@ -576,8 +593,7 @@ You get this from the **`Class` object**, which you get from `Class class = MyOb
 * Allows you to access `private` fields and do unexpected side-effecting and break portability
 
 
-Annotations
------------
+## Annotations
 **5/21/14**
 
 [Oracle Tutorial](http://docs.oracle.com/javase/tutorial/java/annotations/)
@@ -654,11 +670,9 @@ When you run JUnit, it uses reflection to look through your classes for methods
 tagged with the `@Test` annotation, and then calls them when running the unit test.
 
 
-Other things one simply must know about
-=======================================
+# Other things one simply must know about
 
-Initialization
---------------
+## Initialization
 **5/24/14**
 
 [Javaworld description](http://www.javaworld.com/article/2076614/core-java/object-initialization-in-java.html)
@@ -668,8 +682,7 @@ Initialization
 **Local variables** are **not given initial values** and **must be initialized explicitly before they are used**.
 This is true for local object references too, not only primitive types.
 
-JAR
----
+## JAR
 **5/20/14**
 
 [JAR Wikipedia][]
@@ -690,8 +703,7 @@ JAR
 
 [JAR Wikipedia]: http://en.wikipedia.org/wiki/JAR_(file_format)
 
-Equals and HashCode
--------------------
+## Equals and HashCode
 **5/12/14**
 
 [SO](http://stackoverflow.com/questions/27581)
@@ -715,8 +727,7 @@ Rules
 
 * `a.equals(b) => a.hashCode() == b.hashCode()`
 
-Useful things for interview questions
-=====================================
+# Useful things for interview questions
 
 ## Copy raw array
 
@@ -735,8 +746,7 @@ Useful things for interview questions
 
     for (char c : charArr) { ... }
     
-Asides
-======
+# Asides
 **5/20/14**
 
 [`this` keyword](http://stackoverflow.com/questions/577575/using-the-keyword-this-in-java)

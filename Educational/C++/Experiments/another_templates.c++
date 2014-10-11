@@ -114,11 +114,7 @@ void my_reverse(I start, I end) {
         my_swap(*start++, *end);
 }
 
-/* Now I oughtta define my own type that can be stuffed into all these things
-   and stick it through (perhaps just a dynamic array or something)*/
-
-int main(int argc, char const *argv[])
-{
+void using_vector() {
     std::vector<int> a = {1, 2, 3, 4};
     std::vector<int> b(4, 0); // "my_fill" constructor
     int c = my_count(b.begin(), b.end(), 0);
@@ -137,5 +133,9 @@ int main(int argc, char const *argv[])
     my_reverse(a.begin(), new_end);
     std::vector<int> for_comp = {4, 1, 3};
     assert(my_equal(a.begin(), new_end, for_comp.begin()));
+}
+
+int main(int argc, char const *argv[]) {
+    using_vector();
     return 0;
 }
