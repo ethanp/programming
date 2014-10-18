@@ -1,3 +1,41 @@
+## GDB
+
+##### 10/17/14
+
+### Get it started
+
+#### Compile for use with GDB
+
+    $ gcc -g mySrc.c -o myExecutable
+
+#### Run in gdb
+
+    $ gdb myExecutable
+
+### Some basic commands
+
+Run these at the `(gdb)` prompt
+
+1. **lay src** --- view source
+1. **ctrl-x,o** --- switch between windows
+1. **ctrl-x,a** --- get back to the regular interface
+1. **bt** --- print stack trace
+1. **next or 'n'** --- continue next line
+1. **step or 's'** --- step into
+1. **stepi** --- step one instruction
+2. **file <file>** --- load executable's symbol table
+3. **break or 'b' <symbol>** --- set breakpoint on `<symbol>`
+4. **b <lineNo>** --- this works too
+3. **run** --- run to completion
+4. **continue [N]** --- run to breakpoint or completion, ignores `N-1` breakpoints along the way
+5. **print <varName>** --- print value of `<varName>`
+6. **set <varName>=<value>** --- idn't that special?
+7. **help <command>** --- print a very nice little *help* about the given GDB command
+8. **info registers** --- dump all registers
+9. **condition <bp-num> <exp>** --- break on breakpoint number `bp-num` if `exp`
+10. **info break** --- show current breakpoints
+11. **until <line>** --- continue till `line`
+
 ## Language
 
 ### Linux syscalls
@@ -7,7 +45,7 @@
 #### pread
 
     #include <unistd.h>
-    ssize_t pread(int fd, void *buf, size_t count, off_t offset);
+    ssize        _t pread(int fd, void *buf, size_t count, off_t offset);
     
 Reads up to `count` bytes from file descriptor `fd` at offset `offset` (from the start of the file) into the buffer starting at `buf`. The file offset (held by the OS) is not changed. On success, the number of bytes read or written is returned, or -1 on error, in which case errno is set to indicate the error.
 
