@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <unistd.h> /* sysconf(_SC_PAGESIZE) */
 
 /* void *mmap(
             void*   addr,
@@ -27,6 +28,10 @@ typedef char bool;
 /* I believe since this is a macro it will work an varargs too */
 #define print_failure(msg) \
     do { fprintf(stderr, msg); exit(EXIT_FAILURE); } while (0)
+
+/* http://linux.die.net/man/2/getpagesize */
+#define PAGE_ALIGN(strt) ((strt) & ~(sysconf(_SC_PAGESIZE)-1))
+
 
 int main(int argc, const char *argv[])
 {
@@ -69,10 +74,10 @@ int main(int argc, const char *argv[])
     /* mmap(the whole executable) */
     char* exec_addr;
     exec_addr = mmap(
-        (void*)0x800000, /* diff then where it's supposed to be (the pt) */
+        (void*)0x200000,/* just put it out of the way */
         filesize,       /* length of image */
         PROT_READ,      /* pages may be read but not written or exec'd */
-        MAP_PRIVATE | MAP_FIXED, /* COW (shouldn't matter => it's prot_read) */
+        MAP_PRIVATE, /* COW (shouldn't matter => it's prot_read) */
         fd,             /* the file opened above */
         0               /* start at the very beginning (good place to start) */
     );
@@ -92,6 +97,9 @@ int main(int argc, const char *argv[])
 
     printf("Entry point: 0x%x\n", (unsigned int)hdr_p->e_entry);
 
+    /* TEMPORARY (until I relocate THIS executable) */
+    uint64_t temp_offset = 0x800000;
+
     /**
      * find LOAD segments in program header table
      * the 2 LOAD segments typically contain .text and .data
@@ -99,49 +107,51 @@ int main(int argc, const char *argv[])
     printf("the %d segment types:\n", hdr_p->e_phnum);
     Elf64_Phdr *ph = (Elf64_Phdr *)(exec_addr + hdr_p->e_phoff);
     for (idx = 0; idx < hdr_p->e_phnum; idx++, ph++) {
-        uint32_t type = (uint32_t)ph->p_type;
-        bool is_load = type == 1;
-        char *load_str = is_load ? ": LOAD! (loading...)" : "";
-        printf("%u%s\n", type, load_str);
+        if (ph->p_type != PT_LOAD) {
+            continue;
+        }
+        printf("Loading segment at idx %d...\n", idx);
 
-        /* load it if it's a LOAD segment */
-        if (is_load) {
-            printf( /* relevant LOAD segment metadata: */
-                "offset in file:    0x%x\n"
-                "virt addr:         0x%lx\n"
-                /*"phys addr:         0x%lx\n" (we use virt addr instead) */
-                "size in file:      0x%x\n"
-                "size in RAM:       0x%x\n"
-                "flags:             0x%x\n"
-                "align constraint:  0x%x\n\n",
-                (uint32_t) ph->p_offset,
-                (uint64_t) ph->p_vaddr,
-                /*(uint64_t) ph->p_paddr, (only for systems without virt mem) */
-                (uint32_t) ph->p_filesz,
-                (uint32_t) ph->p_memsz,
-                (uint32_t) ph->p_flags,
-                (uint32_t) ph->p_align);
+        printf( /* relevant LOAD segment metadata: */
+            "offset in file:    0x%x\n"
+            "virt addr:         0x%lx\n"
+            "size in file:      0x%x\n"
+            "size in RAM:       0x%x\n"
+            "flags:             0x%x\n"
+            "align constraint:  0x%x\n\n",
+            (uint32_t) ph->p_offset,
+            (uint64_t) ph->p_vaddr,
+            (uint32_t) ph->p_filesz,
+            (uint32_t) ph->p_memsz,
+            (uint32_t) ph->p_flags,
+            (uint32_t) ph->p_align);
 
-            /* copy file segment from filedesc to virtual memory segment */
+        /* copy file segment from filedesc to virtual memory segment */
 
-            int mmap_prot = ((ph->p_flags & PF_X) ? PROT_EXEC  : 0)
-                          | ((ph->p_flags & PF_W) ? PROT_WRITE : 0)
-                          | ((ph->p_flags & PF_R) ? PROT_READ  : 0);
+        int mmap_prot = ((ph->p_flags & PF_X) ? PROT_EXEC  : 0)
+                      | ((ph->p_flags & PF_W) ? PROT_WRITE : 0)
+                      | ((ph->p_flags & PF_R) ? PROT_READ  : 0);
 
-            char* seg_addr = mmap(
-                (void*) ph->p_vaddr,
-                ph->p_filesz, /* NOTE: this is just how long the raw data is
-                                 the in-RAM segment is bigger, so TODO I'll mmap
-                                 another chunk above this one?? */
-                mmap_prot,
-                MAP_PRIVATE | MAP_FIXED /* HAS to mmap to loc I request */,
-                fd,
-                ph->p_offset
-            );
+        char* seg_addr = mmap(
+            (void*) (ph->p_vaddr - ph->p_offset + temp_offset),
+            ph->p_filesz, /* NOTE: this is just how long the raw data is
+                             the in-RAM segment is bigger, so TODO I'll mmap
+                             another chunk above this one?? */
+            mmap_prot,
+            MAP_PRIVATE | MAP_FIXED /* HAS to mmap to loc I request */,
+            fd,
+            PAGE_ALIGN(ph->p_offset)
+        );
 
-            if ( seg_addr == (char*)(-1) ) {
-                print_error("mmap seg_addr");
-            }
+        if ( seg_addr == (char*)(-1) ) {
+            print_error("mmap seg_addr");
+        } else {
+            printf("loaded into address: 0x%lx\n\n", (uint64_t)seg_addr);
+        }
+
+        /* MAP_ANON the .bss */
+        if (ph->p_filesz < ph->p_memsz) {
+            /* TODO */
         }
     }
 
