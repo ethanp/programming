@@ -4,8 +4,11 @@ e: clean
 
 moved: clean
 	gcc -Wl,\
-	--section-start=.data=0x00000000006f0060 \
-	-static hello.c -o moved_hello
+	--section-start=.data=0x6f0060,\
+	--section-start=.bss=0x7f0060,\
+	--section-start=.text=0x5f0060 \
+	-static elf_reader.c -o moved_e
+	./moved_e
 
 sec: clean e
 	gcc -static someone_elses_code.c -o sec

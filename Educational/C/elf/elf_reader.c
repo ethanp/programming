@@ -98,7 +98,7 @@ int main(int argc, const char *argv[])
     printf("Entry point: 0x%x\n", (unsigned int)hdr_p->e_entry);
 
     /* TEMPORARY (until I relocate THIS executable) */
-    uint64_t temp_offset = 0x800000;
+    uint64_t temp_offset = 0;// 0x800000;
 
     /**
      * find LOAD segments in program header table
