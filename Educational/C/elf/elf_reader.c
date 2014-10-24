@@ -29,8 +29,8 @@ typedef char bool;
 #define print_failure(msg) \
     do { fprintf(stderr, msg); exit(EXIT_FAILURE); } while (0)
 
-/* http://linux.die.net/man/2/getpagesize */
-#define PAGE_ALIGN(strt) ((strt) & ~(sysconf(_SC_PAGESIZE)-1))
+#define ALIGN(strt, align) ((strt) & ~((align) - 1))
+#define ALIGN_OFFSET(strt, align) ((strt) & ((align) - 1))
 
 
 int main(int argc, const char *argv[])
@@ -114,44 +114,48 @@ int main(int argc, const char *argv[])
 
         printf( /* relevant LOAD segment metadata: */
             "offset in file:    0x%x\n"
-            "virt addr:         0x%lx\n"
+            "virt addr:         0x%lx, aligned to: 0x%lx, meaning offset: 0x%lx\n"
             "size in file:      0x%x\n"
             "size in RAM:       0x%x\n"
             "flags:             0x%x\n"
             "align constraint:  0x%x\n\n",
             (uint32_t) ph->p_offset,
             (uint64_t) ph->p_vaddr,
+            (uint64_t) ALIGN(ph->p_vaddr, ph->p_align),
+            (uint64_t) ALIGN_OFFSET(ph->p_vaddr, ph->p_align),
             (uint32_t) ph->p_filesz,
             (uint32_t) ph->p_memsz,
             (uint32_t) ph->p_flags,
             (uint32_t) ph->p_align);
 
-        /* copy file segment from filedesc to virtual memory segment */
+        /* copy file segment from filedesc to virtual memory segment
+           see binfmt_elf.c: "Now use mmap to map the library into memory" */
 
-        int mmap_prot = ((ph->p_flags & PF_X) ? PROT_EXEC  : 0)
+        void* alloc_addr = (void*) (ALIGN(ph->p_vaddr, ph->p_align) + temp_offset);
+
+        size_t alloc_size = ALIGN_OFFSET(ph->p_vaddr, ph->p_align) + ph->p_memsz;
+
+        int mmap_prot = ((ph->p_flags & PF_R) ? PROT_READ  : 0)
                       | ((ph->p_flags & PF_W) ? PROT_WRITE : 0)
-                      | ((ph->p_flags & PF_R) ? PROT_READ  : 0);
+                      | ((ph->p_flags & PF_X) ? PROT_EXEC  : 0);
 
-        char* seg_addr = mmap(
-            (void*) (ph->p_vaddr - ph->p_offset + temp_offset),
-            ph->p_filesz, /* NOTE: this is just how long the raw data is
-                             the in-RAM segment is bigger, so TODO I'll mmap
-                             another chunk above this one?? */
-            mmap_prot,
-            MAP_PRIVATE | MAP_FIXED /* HAS to mmap to loc I request */,
-            fd,
-            PAGE_ALIGN(ph->p_offset)
-        );
+        int flags = MAP_PRIVATE | MAP_FIXED;
+        off_t offset = ALIGN(ph->p_offset, ph->p_align);
+        char* seg_addr = mmap(alloc_addr, alloc_size, mmap_prot, flags, fd, offset);
 
         if ( seg_addr == (char*)(-1) ) {
             print_error("mmap seg_addr");
         } else {
-            printf("loaded into address: 0x%lx\n\n", (uint64_t)seg_addr);
+            printf("loaded into address: 0x%lx\n", (uint64_t)seg_addr);
         }
 
-        /* MAP_ANON the .bss */
         if (ph->p_filesz < ph->p_memsz) {
-            /* TODO */
+            unsigned long nbyte = ph->p_memsz - ph->p_filesz;
+            printf("zero-out 0x%lx bytes for the .bss\n", nbyte);
+            char* start = seg_addr + ALIGN_OFFSET(ph->p_vaddr, ph->p_align) + ph->p_filesz;
+            while (nbyte--) {
+                *start++ = 0;
+            }
         }
     }
 
