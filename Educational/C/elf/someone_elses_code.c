@@ -70,9 +70,7 @@ static void shdr_parse(void *ptr)
 
 static void phdr_parse(void *ptr)
 {
-    Elf64_Ehdr *Elf64_ptr = NULL;
-
-    Elf64_ptr = (Elf64_Ehdr *)ptr;
+    Elf64_Ehdr *Elf64_ptr = (Elf64_Ehdr *)ptr;
     Elf64_Phdr *elf64_phdr = NULL;
     int n, found = 0;
 

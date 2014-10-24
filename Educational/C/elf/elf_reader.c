@@ -19,7 +19,7 @@
 /* ssize_t read(int fd, void *buf, size_t num_bytes) */
 /* ssize_t pread(int fd, void *buf, size_t nbytes, off_t offset) */
 #include <unistd.h>
-
+typedef char bool;
 /* this comes from the `man 2 mmap` page */
 #define print_error(msg) \
     do { perror(msg); exit(EXIT_FAILURE); } while (0)
@@ -31,7 +31,7 @@
 int main(int argc, const char *argv[])
 {
     const char *name_to_open;
-    int fd, ret;
+    int fd, ret, idx;
     off_t filesize = 0;
     struct stat filestat;
     Elf64_Ehdr *hdr_p; /* in <elf.h> */
@@ -66,56 +66,60 @@ int main(int argc, const char *argv[])
        then I can just index into the locations I want to access etc,
        and not have to worry about preads or segfaults or mallocs etc. */
 
-    /* TODO mmap(the whole thing) */
-    /* void *mmap(
-            void*   addr,
-            size_t  len,
-            int     prot,
-            int     flags,
-            int     fildes,
-            off_t   off); */
-    char* addr;
-    addr = mmap(
+    /* mmap(the whole executable) */
+    char* exec_addr;
+    exec_addr = mmap(
         NULL,           /* don't care where it goes in VAS */
         filesize,       /* len */
         PROT_READ,      /* pages may be read */
-        MAP_PRIVATE,    /* copy on write (it shouldn't matter bc it's prot_read */
+        MAP_PRIVATE,    /* copy on write (shouldn't matter => it's prot_read */
         fd,             /* the file opened above */
-        0               /* start at the very beginning */
+        0               /* start at the very beginning (good place to start) */
     );
 
-    if (addr == -1) {
-        print_error("mmap");
+    if ( exec_addr == (char*)(-1) ) {
+        print_error("mmap exec_addr");
     }
 
-    /* ssize_t pread(int fd, void *buf, size_t nbytes, off_t offset) */
-
     /* cast to the elf header */
-    hdr_p = (Elf64_Ehdr *)addr;
+    hdr_p = (Elf64_Ehdr *)exec_addr;
+
+    /* ensure valid elf version number */
     assert(hdr_p->e_version == EV_CURRENT);
 
-    // ret = pread(fd, &hdr_p, sizeof(Elf64_Ehdr), 0);
-    // if (ret == -1) {
-    //     print_error("pread hdr_p");
-    // } else if (ret < sizeof(Elf64_Ehdr)) {
-    //     print_failure("couldn't read ELF header for some reason\n");
-    // }
+    printf("Entry point: 0x%x\n", (unsigned int)hdr_p->e_entry);
 
-    /* I'm doing this wrong. One doesn't just go to the Section Header TABLE
-       offset and and expect to get a Shdr.
+    /**
+     * find LOAD segments in program header table
+     * the 2 LOAD segments typically contain .text and .data
+     */
+    printf("the %d segment types:\n", hdr_p->e_phnum);
+    Elf64_Phdr *ph = (Elf64_Phdr *)(exec_addr + hdr_p->e_phoff);
+    for (idx = 0; idx < hdr_p->e_phnum; idx++, ph++) {
+        uint32_t type = (uint32_t)ph->p_type;
+        bool is_load = type == 1;
+        char *load_str = is_load ? ": LOAD! (loading...)" : "";
+        printf("%u%s\n", type, load_str);
 
-       TODO ... loop through each of the sections and /each/ of those is an
-       individual "Section Header". */
-
-    /* pread section header */
-    // int sechdr_offset = hdr_p.e_shoff;
-    // Elf64_Shdr section_header;
-    // ret = pread(fd, &section_header, sizeof(Elf64_Shdr), sechdr_offset);
-    // if (ret == -1) {
-    //     print_error("pread section header");
-    // } else if (ret < sizeof(Elf64_Shdr)) {
-    //     print_failure("couldn't read section header for some reason\n");
-    // }
+        /* load it if it's a LOAD segment */
+        if (is_load) {
+            printf(
+                "offset in file:    0x%x\n"
+                "virt addr:         0x%lx\n"
+                "phys addr:         0x%lx\n"
+                "size in file:      0x%x\n"
+                "size in RAM:       0x%x\n"
+                "flags:             0x%x\n"
+                "align constraint:  0x%x\n\n",
+                (uint32_t)ph->p_offset,
+                (uint64_t)ph->p_vaddr,
+                (uint64_t)ph->p_paddr,
+                (uint32_t)ph->p_filesz,
+                (uint32_t)ph->p_memsz,
+                (uint32_t)ph->p_flags,
+                (uint32_t)ph->p_align);
+        }
+    }
 
     return 0;
 }
