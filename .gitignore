@@ -111,3 +111,12 @@ Educational/C/scpfs/first_try/hostdir/huge
 Educational/C/scpfs/first_try/hostdir/m
 Educational/C/scpfs/first_try/hostdir/mega
 ot
+Educational/C/elf/e
+Educational/C/elf/e_copy
+Educational/C/elf/e_copy.bin
+Educational/C/elf/basics/core
+Educational/C/elf/basics/exec
+Educational/C/elf/basics/moved_hello
+Educational/C/elf/basics/segfaulter
+Educational/C/elf/basics/st_exec
+Educational/C/elf/basics/st_hello

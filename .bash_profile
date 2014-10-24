@@ -42,6 +42,8 @@ alias ca='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentAnalyzer_0
 alias playakka='cs $PROGRAMMINGGIT/StuffIWrote/Scala/akka-redis-websockets-play-scala_translation'
 alias notes='cs $PROGRAMMINGGIT/Notes'
 
+# Operating Systems class
+alias empat='ssh ethan@empat.csres.utexas.edu'
 
 ######################
 #  Terminal Options  #
