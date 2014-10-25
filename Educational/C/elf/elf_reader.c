@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <unistd.h> /* sysconf(_SC_PAGESIZE) */
+#include <string.h> /* strlen */
 
 /* void *mmap(
             void*   addr,
@@ -19,7 +20,9 @@
 
 /* ssize_t read(int fd, void *buf, size_t num_bytes) */
 /* ssize_t pread(int fd, void *buf, size_t nbytes, off_t offset) */
+/* off_t lseek(int fildes, off_t offset, int whence); */
 #include <unistd.h>
+
 typedef char bool;
 /* this comes from the `man 2 mmap` page */
 #define print_error(msg) \
@@ -32,56 +35,104 @@ typedef char bool;
 #define ALIGN(strt, align) ((strt) & ~((align) - 1))
 #define ALIGN_OFFSET(strt, align) ((strt) & ((align) - 1))
 
+/*
+void print_envp(const char *envp[])
+{
+    printf("Here are the first 5 environment variables:\n");
+    char** env; int idx;
+    for (idx = 0, env = envp; *env != 0, idx < 5; env++, idx++) {
+        char *post = strlen(*env) > 30 ? "..." : "";
+        printf("%d| %x: %.30s%s\n", idx, env, *env, post);
+    }
+}
+*/
 
-int main(int argc, const char *argv[])
+int open_file(int argc, const char* argv[])
 {
     const char *name_to_open;
-    int fd, ret, idx;
-    off_t filesize = 0;
-    struct stat filestat;
-    Elf64_Ehdr *hdr_p; /* in <elf.h> */
-
     if (argc == 1) {
-        printf("reading e_copy\n");
+        printf("\nreading e_copy\n");
         name_to_open = "e_copy";
     }
     else {
         printf("reading given file: %s\n", argv[1]);
         name_to_open = argv[1];
     }
-
-    fd = open(name_to_open, O_RDONLY);
-
+    int fd = open(name_to_open, O_RDONLY);
     if (fd == -1) {
         print_error("open");
     }
+    return fd;
+}
+
+void print_segment_metadata(Elf64_Phdr *ph, int idx)
+{
+    printf( /* relevant LOAD segment metadata: */
+        "Loading segment at idx %d...\n"
+        "offset in file:    0x%x\n"
+        "virt addr:         0x%lx, aligned to: 0x%lx, meaning offset: 0x%lx\n"
+        "size in file:      0x%x\n"
+        "size in RAM:       0x%x\n"
+        "flags:             0x%x\n"
+        "align constraint:  0x%x\n\n",
+                   idx,
+        (uint32_t) ph->p_offset,
+        (uint64_t) ph->p_vaddr,
+        (uint64_t) ALIGN(ph->p_vaddr, ph->p_align),
+        (uint64_t) ALIGN_OFFSET(ph->p_vaddr, ph->p_align),
+        (uint32_t) ph->p_filesz,
+        (uint32_t) ph->p_memsz,
+        (uint32_t) ph->p_flags,
+        (uint32_t) ph->p_align);
+}
+
+char *copy_program_segment(Elf64_Phdr *ph, int fd)
+{
+    void* alloc_addr = (void*) ALIGN(ph->p_vaddr, ph->p_align);
+
+    size_t alloc_size = ALIGN_OFFSET(ph->p_vaddr, ph->p_align) + ph->p_memsz;
+
+    int mmap_prot = ((ph->p_flags & PF_R) ? PROT_READ  : 0)
+                  | ((ph->p_flags & PF_W) ? PROT_WRITE : 0)
+                  | ((ph->p_flags & PF_X) ? PROT_EXEC  : 0);
+
+    int flags = MAP_PRIVATE | MAP_FIXED;
+    off_t offset = ALIGN(ph->p_offset, ph->p_align);
+    char* seg_addr = mmap(alloc_addr, alloc_size, mmap_prot, flags, fd, offset);
+
+    if ( seg_addr == (char*)(-1) ) {
+        print_error("mmap seg_addr");
+    } else {
+        printf("loaded into address: 0x%lx\n", (uint64_t)seg_addr);
+    }
+    return seg_addr;
+}
+
+int main(int argc, const char *argv[], const char *envp[/*whoa something new!*/])
+{
+    int fd, ret, idx;
+    off_t filesize = 0;
+    struct stat filestat;
+    Elf64_Ehdr *hdr_p; /* in <elf.h> */
+
+    fd = open_file(argc, argv);
 
     /* get and print filesize */
-    ret = stat(name_to_open, &filestat);
-
-    if (ret == -1) {
-        print_error("stat");
+    filesize = lseek(fd, 0, SEEK_END);
+    if (filesize == -1) {
+        print_error("lseek");
     }
 
-    filesize = filestat.st_size;
     printf("filesize: %jd\n", (intmax_t)filesize);
 
     /* mmap(the whole executable) */
     char* exec_addr;
-    exec_addr = mmap(
-        (void*)0x200000,/* just put it out of the way */
-        filesize,       /* length of image */
-        PROT_READ,      /* pages may be read but not written or exec'd */
-        MAP_PRIVATE, /* COW (shouldn't matter => it's prot_read) */
-        fd,             /* the file opened above */
-        0               /* start at the very beginning (good place to start) */
-    );
+    exec_addr = mmap((void*)0x200000, filesize, PROT_READ, MAP_PRIVATE, fd, 0);
 
     if ( exec_addr == (char*)(-1) ) {
         print_error("mmap exec_addr");
     }
 
-    /* cast to the elf header */
     hdr_p = (Elf64_Ehdr *)exec_addr;
 
     /* ensure valid elf version number */
@@ -102,56 +153,21 @@ int main(int argc, const char *argv[])
         if (ph->p_type != PT_LOAD) {
             continue;
         }
-        printf("Loading segment at idx %d...\n", idx);
-
-        printf( /* relevant LOAD segment metadata: */
-            "offset in file:    0x%x\n"
-            "virt addr:         0x%lx, aligned to: 0x%lx, meaning offset: 0x%lx\n"
-            "size in file:      0x%x\n"
-            "size in RAM:       0x%x\n"
-            "flags:             0x%x\n"
-            "align constraint:  0x%x\n\n",
-            (uint32_t) ph->p_offset,
-            (uint64_t) ph->p_vaddr,
-            (uint64_t) ALIGN(ph->p_vaddr, ph->p_align),
-            (uint64_t) ALIGN_OFFSET(ph->p_vaddr, ph->p_align),
-            (uint32_t) ph->p_filesz,
-            (uint32_t) ph->p_memsz,
-            (uint32_t) ph->p_flags,
-            (uint32_t) ph->p_align);
+        print_segment_metadata(ph, idx);
 
         /* copy file segment from filedesc to virtual memory segment
            see binfmt_elf.c: "Now use mmap to map the library into memory" */
-
-        void* alloc_addr = (void*) ALIGN(ph->p_vaddr, ph->p_align);
-
-        size_t alloc_size = ALIGN_OFFSET(ph->p_vaddr, ph->p_align) + ph->p_memsz;
-
-        int mmap_prot = ((ph->p_flags & PF_R) ? PROT_READ  : 0)
-                      | ((ph->p_flags & PF_W) ? PROT_WRITE : 0)
-                      | ((ph->p_flags & PF_X) ? PROT_EXEC  : 0);
-
-        int flags = MAP_PRIVATE | MAP_FIXED;
-        off_t offset = ALIGN(ph->p_offset, ph->p_align);
-        char* seg_addr = mmap(alloc_addr, alloc_size, mmap_prot, flags, fd, offset);
-
-        if ( seg_addr == (char*)(-1) ) {
-            print_error("mmap seg_addr");
-        } else {
-            printf("loaded into address: 0x%lx\n", (uint64_t)seg_addr);
-        }
+        char* seg_addr = copy_program_segment(ph, fd);
 
         if (ph->p_filesz < ph->p_memsz) {
             unsigned long nbyte = ph->p_memsz - ph->p_filesz;
             printf("zero-out 0x%lx bytes for the .bss\n", nbyte);
-            char* start = seg_addr + ALIGN_OFFSET(ph->p_vaddr, ph->p_align) + ph->p_filesz;
-            while (nbyte--) {
-                *start++ = 0;
-            }
+            void* start = seg_addr + ALIGN_OFFSET(ph->p_vaddr, ph->p_align) + ph->p_filesz;
+            memset(start, 0, nbyte);
         }
     }
 
-    /* setup the stack */
+    /********************** SETUP THE STACK **********************/
 
     /* zero-out the registers used for passing arguments
        the "clobber list" tells GCC to not assume that it knows in the register
