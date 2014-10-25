@@ -50,7 +50,6 @@ int main(int argc, const char *argv[])
         name_to_open = argv[1];
     }
 
-
     fd = open(name_to_open, O_RDONLY);
 
     if (fd == -1) {
@@ -66,10 +65,6 @@ int main(int argc, const char *argv[])
 
     filesize = filestat.st_size;
     printf("filesize: %jd\n", (intmax_t)filesize);
-
-    /* I'm doing this wrong. I should be reading it all into memory,
-       then I can just index into the locations I want to access etc,
-       and not have to worry about preads or segfaults or mallocs etc. */
 
     /* mmap(the whole executable) */
     char* exec_addr;
@@ -96,9 +91,6 @@ int main(int argc, const char *argv[])
     assert(hdr_p->e_type == ET_EXEC);
 
     printf("Entry point: 0x%x\n", (unsigned int)hdr_p->e_entry);
-
-    /* TEMPORARY (until I relocate THIS executable) */
-    uint64_t temp_offset = 0;// 0x800000;
 
     /**
      * find LOAD segments in program header table
@@ -131,7 +123,7 @@ int main(int argc, const char *argv[])
         /* copy file segment from filedesc to virtual memory segment
            see binfmt_elf.c: "Now use mmap to map the library into memory" */
 
-        void* alloc_addr = (void*) (ALIGN(ph->p_vaddr, ph->p_align) + temp_offset);
+        void* alloc_addr = (void*) ALIGN(ph->p_vaddr, ph->p_align);
 
         size_t alloc_size = ALIGN_OFFSET(ph->p_vaddr, ph->p_align) + ph->p_memsz;
 
@@ -158,6 +150,46 @@ int main(int argc, const char *argv[])
             }
         }
     }
+
+    /* setup the stack */
+
+    /* zero-out the registers used for passing arguments
+       the "clobber list" tells GCC to not assume that it knows in the register
+       reference: eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64 */
+
+    __asm__ ( /* this compiles and works according to GDB */
+        "mov $0, %%rdi\n"
+        "mov $0, %%rsi\n"
+        "mov $0, %%rdx\n"
+        "mov $0, %%rcx\n"
+        "mov $0, %%r8\n"
+        "mov $0, %%r9\n"
+        :::
+        "rdx", "rsi", "rdx", "rcx", "r8", "r9"
+    );
+
+    int a = 0;
+    int b = 0;
+
+    /*  set ESP & EBP to point to stack start location (how do I choose that loc?)
+      Recall:
+        EBP holds steady pointing to a cell that contains the previous EBP (linked-list)
+        ESP holds a pointer to the top of the stack (which is the lowest address)
+    */
+
+    /*  Load argc, argv, and envp (or the registers...not clear on how this works)
+        For me, argc=1, argv[]={name_to_open [from above]}, envp="???"
+        Maybe I could just snag envp from the pager's stack and dump it in there?
+
+        Format:
+        (dword argc)
+        (dword [pointer to program name])
+        (dword NULL) ; because I have no other argv's in my case
+        (dword [pointer to env[0]])
+        ...
+        (dword [pointer to env[N-1]])
+        (dword NULL) */
+
 
     return 0;
 }

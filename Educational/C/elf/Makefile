@@ -3,10 +3,10 @@ e: clean
 	./e
 
 moved: clean
-	gcc -Wl,\
-	--section-start=.data=0x6f0060,\
-	--section-start=.bss=0x7f0060,\
-	--section-start=.text=0x5f0060 \
+	gcc -g -Wl,\
+	--section-start=.data=0xac1060,\
+	--section-start=.bss=0xac2c40,\
+	--section-start=.text=0x800360 \
 	-static elf_reader.c -o moved_e
 	./moved_e
 
