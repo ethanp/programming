@@ -35,3 +35,7 @@ clean:
 
 output.assembly:
 	gcc -S assmb.c
+
+hello:
+	rm -f st_hello
+	gcc -g basics/hello.c -o st_hello -static

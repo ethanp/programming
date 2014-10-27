@@ -13,7 +13,7 @@
 
 /**** STACK's AUXiliary Vector ****/
 /* There are a bunch of these things def'd in include/uapi/linux/auxvec.h */
-/* But I don't think I need them */
+/* But I don't think I need them because it looks like libc does this for me */
 #define AT_NULL   0 /* end of vector */
 #define AT_IGNORE 1 /* entry should be ignored */
 /* ... etc. */
@@ -37,7 +37,7 @@ void print_envp(const char *envp[])
     printf("Here are the first 5 environment variables:\n");
     char** env; int idx;
     for (idx = 0, env = envp; *env != 0, idx < 5; env++, idx++) {
-        char *post = strlen(*env) > 30 ? "..." : "";
+        char *post = strlen(*env) > 30 ? "..." : ""`;
         printf("|%d| (%x): %.30s%s\n", idx, env, *env, post);
     }
 }
@@ -113,8 +113,6 @@ void setup_the_stack(int argc, const char *argv[],
     /* zero-out the registers cleared in ELF_PLAT_INIT()
         (viz. all the "general purpose registers") */
 
-
-
     /* Figure out a stack location and mmap it. The way this is going to work
        is by mmapping a bunch of space, and since it will automagically hand
        me space that is not taken, that is what I'll use. */
@@ -132,9 +130,12 @@ void setup_the_stack(int argc, const char *argv[],
         printf("stack bottom at address: 0x%lx\n", (uint64_t)stack_bottom);
     }
 
-    bp = sp = stack_bottom - 1; /* highest address inside stack area */
+    // bus error at 0x0000000000437650 (this address is mmap'd, so it's
+    // probably a null pointer from somewhere?)
 
-    *sp-- = (uint64_t) NULL; /* very "bottom" of stack */
+    bp = sp = stack_bottom - 20; /* highest address inside stack area */
+
+    *sp-- = NULL; /* very "bottom" of stack */
 
     /* go to the last envp */
     char** env; int idx = 0;
@@ -142,20 +143,18 @@ void setup_the_stack(int argc, const char *argv[],
 
     /* load the envp's backwards */
     while (idx--) {
-        *sp-- = (uint64_t) *(--env);
+        *sp-- = *(--env);
     }
 
-    *sp-- = (uint64_t) NULL; /* envp/argv separator */
+    *sp-- = NULL; /* envp/argv separator */
 
+    /* load the argv backwards */
     int argcount = argc-1;
     while (argcount--) {
-        *sp-- = (uint64_t) argv[argcount+1];
+        *sp-- = argv[argcount+1];
     }
 
-    *sp = 1; /* argc */
-
-    /* now I must push the current rbp */
-    // __asm__("mov %%rbp, %0":"=r"(*bp)::);
+    *sp = argc-1; /* argc */
 
     printf("Watchout I'm jumping in!\n");
 
@@ -188,7 +187,7 @@ void setup_the_stack(int argc, const char *argv[],
         :/*"rbp", (not allowed in clobber-list?) */ "rsp"
     );
 
-    printf("This shouldn't print.\n");
+    printf("This should never print.\n");
 }
 
 int main(int argc, const char *argv[], const char *envp[])

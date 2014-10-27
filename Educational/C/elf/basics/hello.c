@@ -1,4 +1,5 @@
-#include<stdio.h>
-main(int argc,char *argv[],char *envp[]){
-printf("Hello world\n");
+#include <stdio.h>
+
+main(int argc, const char *argv[]) {
+    printf("Hello world!!\n");
 }
