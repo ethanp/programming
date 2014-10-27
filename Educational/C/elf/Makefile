@@ -18,7 +18,7 @@ debug: clean
 	-static elf_reader.c -o apager
 	gdb \
 	-ex "b main" \
-	-ex "b 256" \
+	-ex "b 174" \
 	-ex "r /home/ethan/Desktop/3lab/e_copy" \
 	-ex "run" \
 	./apager

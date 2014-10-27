@@ -14,6 +14,7 @@
 /**** STACK VARS ****/
 /* There are a bunch of these defined in include/uapi/linux/auxvec.h */
 /* But there's a good chance I won't need them at all */
+/* Actually, I think I DO need all this crap. */
 #define AT_NULL   0 /* end of vector */
 #define AT_IGNORE 1 /* entry should be ignored */
 /* ... etc. */
@@ -106,10 +107,58 @@ char *copy_program_segment(Elf64_Phdr *ph, int fd)
     return seg_addr;
 }
 
-void setup_the_stack(const char *argv[], const char *envp[])
+void setup_the_stack(int argc, const char *argv[],
+                     const char *envp[],
+                     uint64_t entrypoint)
 {
     /* zero-out the registers cleared in ELF_PLAT_INIT()
         (viz. all the "general purpose registers") */
+
+
+
+    /* Figure out a stack location and mmap it. The way this is going to work
+       is by mmapping a bunch of space, and since it will automagically hand
+       me space that is not taken, that is what I'll use. */
+    uint64_t *bp, *sp, *stack_bottom;
+    stack_bottom = mmap( /* addr, size, prot, flgs, fd, offset */
+        0, ((8 << 3 /*bits2bytes*/) << 20 /*mega*/), /* 8MB (seems standard) */
+        PROT_READ | PROT_WRITE,                      /* non-executable stack */
+        MAP_PRIVATE | MAP_ANONYMOUS | MAP_GROWSDOWN, /* COW, backed by zeros */
+        0, 0
+    );
+
+    if ( stack_bottom == (char*)(-1) ) {
+        print_error("mmap stack_bottom");
+    } else {
+        printf("stack bottom at address: 0x%lx\n", (uint64_t)stack_bottom);
+    }
+
+    bp = sp = stack_bottom - 1; /* highest address inside stack area */
+
+    *sp-- = NULL; /* very "bottom" of stack */
+
+    /* go to the last envp */
+    char** env; int idx = 0;
+    for (env = envp; *env != 0; env++, idx++);
+
+    /* load the envp's backwards */
+    while (idx--) {
+        *sp-- = *(--env);
+    }
+
+    *sp-- = NULL; /* envp/argv separator */
+
+    int argcount = argc-1;
+    while (argcount--) {
+        *sp-- = argv[argcount+1];
+    }
+
+    sp++; /* RSP should point to most recently pushed item */
+
+    /* now I must push the current rbp */
+    // __asm__("mov %%rbp, %0":"=r"(*bp)::);
+
+    printf("Watchout I'm jumping in!\n");
 
     /* this WORKS according to GDB "info registers" after its execution */
     __asm__ (
@@ -132,53 +181,15 @@ void setup_the_stack(const char *argv[], const char *envp[])
         "r9", "r10", "r11", "r12", "r13", "r14", "r15"
     );
 
-    /*  Format:
-        (dword argc) ; note: dword is 64 bits
-        (dword [pointer to program name])
-        (dword NULL) ; because I have no other argv's in my case
-        (dword [pointer to env[0]])
-        ...
-        (dword [pointer to env[N-1]])
-        (dword NULL) */
-
-    /* Figure out a stack location and mmap it. The way this is going to work
-       is by mmapping a bunch of space, and since it will automagically hand
-       me space that is not taken, that is what I'll use. */
-    uint64_t *bp, *sp, *stack_bottom;
-    stack_bottom = mmap( /* addr, size, prot, flgs, fd, offset */
-        0, ((8 << 3 /*bits2bytes*/) << 20 /*mega*/), /* give the stack 8MB */
-        PROT_READ | PROT_WRITE,
-        MAP_PRIVATE | MAP_ANONYMOUS | MAP_GROWSDOWN, /* COW, backed by zeros */
-        0, 0
-    );
-    if ( stack_bottom == (char*)(-1) ) {
-        print_error("mmap stack_bottom");
-    } else {
-        printf("stack bottom at address: 0x%lx\n", (uint64_t)stack_bottom);
-    }
-
-    bp = sp = stack_bottom - 1;
-
-    /* now I must push the current rbp */
-    __asm__("mov %%rbp, %0":"=r"(*rbp)::);
-
-    *sp-- = 1UL;        /* argc */
-    *sp-- = &argv[1];   /* argv (program name) */
-    *sp-- = NULL;       /* separator */
-
-    char** env;
-    for (env = envp; *env != 0; env++) {
-        *sp-- = *env;   /* envp */
-    }
-    *sp = NULL;         /* terminator */
     __asm__(
         "mov %0, %%rbp\n"
         "mov %1, %%rsp\n"
         "jmp %2\n"
-        ::"r"(bp), "r"(sp), "r"(hdr_p->e_entry)
-        :"rbp", "rsp"
+        ::"r"(bp), "r"(sp), "r"(entrypoint)
+        :/*"rbp", (not allowed in clobber-list?) */ "rsp"
     );
-    printf("why am I here right now?\n");
+
+    printf("This shouldn't print.\n");
 }
 
 int main(int argc, const char *argv[], const char *envp[])
@@ -235,11 +246,12 @@ int main(int argc, const char *argv[], const char *envp[])
         if (ph->p_filesz < ph->p_memsz) {
             unsigned long nbyte = ph->p_memsz - ph->p_filesz;
             printf("zero-out 0x%lx bytes for the .bss\n", nbyte);
-            void* start = seg_addr + ALIGN_OFFSET(ph->p_vaddr, ph->p_align) + ph->p_filesz;
+            void* start = seg_addr + ALIGN_OFFSET(ph->p_vaddr, ph->p_align)
+                                   + ph->p_filesz;
             memset(start, 0, nbyte);
         }
     }
-    setup_the_stack(argv, envp);
+    setup_the_stack(argc, argv, envp, (uint64_t)hdr_p->e_entry);
 
     return 0;
 }
