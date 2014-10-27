@@ -10,6 +10,14 @@ moved: clean
 	-static elf_reader.c -o apager
 	./apager /home/ethan/Desktop/3lab/st_hello
 
+dyn: clean
+	gcc -g -Wl,\
+	--section-start=.data=0xac1060,\
+	--section-start=.bss=0xac2c40,\
+	--section-start=.text=0x800360 \
+	-static elf_reader.c -o dpager
+	./dpager /home/ethan/Desktop/3lab/st_hello
+
 debug: clean
 	gcc -g -Wl,\
 	--section-start=.data=0xac1060,\

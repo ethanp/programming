@@ -11,13 +11,6 @@
 #include <sys/mman.h>   /* mmap */
 #include <unistd.h>     /* pread, lseek */
 
-/**** STACK's AUXiliary Vector ****/
-/* There are a bunch of these things def'd in include/uapi/linux/auxvec.h */
-/* But I don't think I need them because it looks like _start does this for me */
-#define AT_NULL   0 /* end of vector */
-#define AT_IGNORE 1 /* entry should be ignored */
-/* ... etc. */
-
 typedef char bool;
 
 /* this comes from the `man 2 mmap` page */
@@ -30,18 +23,6 @@ typedef char bool;
 
 #define ALIGN(strt, align) ((strt) & ~((align) - 1))
 #define ALIGN_OFFSET(strt, align) ((strt) & ((align) - 1))
-
-/*
-void print_envp(const char *envp[])
-{
-    printf("Here are the first 5 environment variables:\n");
-    char** env; int idx;
-    for (idx = 0, env = envp; *env != 0, idx < 5; env++, idx++) {
-        char *post = strlen(*env) > 30 ? "..." : ""`;
-        printf("|%d| (%x): %.30s%s\n", idx, env, *env, post);
-    }
-}
-*/
 
 int open_file_to_exec(int argc, const char* argv[])
 {
@@ -82,6 +63,7 @@ void print_segment_metadata(Elf64_Phdr *ph, int idx)
         (uint32_t) ph->p_align);
 }
 
+/* TODO this is probably the part that's going to have to change */
 char *copy_program_segment(Elf64_Phdr *ph, int fd)
 {
     void* alloc_addr = (void*) ALIGN(ph->p_vaddr, ph->p_align);
