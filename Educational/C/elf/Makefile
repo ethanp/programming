@@ -8,7 +8,7 @@ moved: clean
 	--section-start=.bss=0xac2c40,\
 	--section-start=.text=0x800360 \
 	-static elf_reader.c -o apager
-	./apager /home/ethan/Desktop/3lab/e_copy
+	./apager /home/ethan/Desktop/3lab/st_hello
 
 debug: clean
 	gcc -g -Wl,\
@@ -19,7 +19,7 @@ debug: clean
 	gdb \
 	-ex "b main" \
 	-ex "b 174" \
-	-ex "r /home/ethan/Desktop/3lab/e_copy" \
+	-ex "r /home/ethan/Desktop/3lab/st_hello" \
 	-ex "run" \
 	./apager
 
@@ -28,7 +28,10 @@ sec: clean e
 	./sec e
 
 clean:
-	rm -f e sec moved_e apager
+	rm -f e
+	rm -f sec
+	rm -f moved_e
+	rm -f apager
 
 output.assembly:
 	gcc -S assmb.c

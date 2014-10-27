@@ -11,10 +11,9 @@
 #include <sys/mman.h>   /* mmap */
 #include <unistd.h>     /* pread, lseek */
 
-/**** STACK VARS ****/
-/* There are a bunch of these defined in include/uapi/linux/auxvec.h */
-/* But there's a good chance I won't need them at all */
-/* Actually, I think I DO need all this crap. */
+/**** STACK's AUXiliary Vector ****/
+/* There are a bunch of these things def'd in include/uapi/linux/auxvec.h */
+/* But I don't think I need them */
 #define AT_NULL   0 /* end of vector */
 #define AT_IGNORE 1 /* entry should be ignored */
 /* ... etc. */
@@ -127,7 +126,7 @@ void setup_the_stack(int argc, const char *argv[],
         0, 0
     );
 
-    if ( stack_bottom == (char*)(-1) ) {
+    if ( stack_bottom == (uint64_t*)(-1) ) {
         print_error("mmap stack_bottom");
     } else {
         printf("stack bottom at address: 0x%lx\n", (uint64_t)stack_bottom);
@@ -135,7 +134,7 @@ void setup_the_stack(int argc, const char *argv[],
 
     bp = sp = stack_bottom - 1; /* highest address inside stack area */
 
-    *sp-- = NULL; /* very "bottom" of stack */
+    *sp-- = (uint64_t) NULL; /* very "bottom" of stack */
 
     /* go to the last envp */
     char** env; int idx = 0;
@@ -143,17 +142,17 @@ void setup_the_stack(int argc, const char *argv[],
 
     /* load the envp's backwards */
     while (idx--) {
-        *sp-- = *(--env);
+        *sp-- = (uint64_t) *(--env);
     }
 
-    *sp-- = NULL; /* envp/argv separator */
+    *sp-- = (uint64_t) NULL; /* envp/argv separator */
 
     int argcount = argc-1;
     while (argcount--) {
-        *sp-- = argv[argcount+1];
+        *sp-- = (uint64_t) argv[argcount+1];
     }
 
-    sp++; /* RSP should point to most recently pushed item */
+    *sp = 1; /* argc */
 
     /* now I must push the current rbp */
     // __asm__("mov %%rbp, %0":"=r"(*bp)::);
