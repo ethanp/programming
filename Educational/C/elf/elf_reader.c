@@ -6,29 +6,25 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <assert.h>
-#include <unistd.h> /* sysconf(_SC_PAGESIZE) */
-#include <string.h> /* strlen */
+#include <unistd.h>     /* sysconf(_SC_PAGESIZE) */
+#include <string.h>     /* strlen */
+#include <sys/mman.h>   /* mmap */
+#include <unistd.h>     /* pread, lseek */
 
-/* void *mmap(
-            void*   addr,
-            size_t  len,
-            int     prot,
-            int     flags,
-            int     fildes,
-            off_t   off); */
-#include <sys/mman.h>
-
-/* ssize_t read(int fd, void *buf, size_t num_bytes) */
-/* ssize_t pread(int fd, void *buf, size_t nbytes, off_t offset) */
-/* off_t lseek(int fildes, off_t offset, int whence); */
-#include <unistd.h>
+/**** STACK VARS ****/
+/* There are a bunch of these defined in include/uapi/linux/auxvec.h */
+/* But there's a good chance I won't need them at all */
+#define AT_NULL   0 /* end of vector */
+#define AT_IGNORE 1 /* entry should be ignored */
+/* ... etc. */
 
 typedef char bool;
+
 /* this comes from the `man 2 mmap` page */
 #define print_error(msg) \
     do { perror(msg); exit(EXIT_FAILURE); } while (0)
 
-/* I believe since this is a macro it will work an varargs too */
+/* I believe that since this is a macro it will work an varargs too */
 #define print_failure(msg) \
     do { fprintf(stderr, msg); exit(EXIT_FAILURE); } while (0)
 
@@ -42,12 +38,12 @@ void print_envp(const char *envp[])
     char** env; int idx;
     for (idx = 0, env = envp; *env != 0, idx < 5; env++, idx++) {
         char *post = strlen(*env) > 30 ? "..." : "";
-        printf("%d| %x: %.30s%s\n", idx, env, *env, post);
+        printf("|%d| (%x): %.30s%s\n", idx, env, *env, post);
     }
 }
 */
 
-int open_file(int argc, const char* argv[])
+int open_file_to_exec(int argc, const char* argv[])
 {
     const char *name_to_open;
     if (argc == 1) {
@@ -97,7 +93,9 @@ char *copy_program_segment(Elf64_Phdr *ph, int fd)
                   | ((ph->p_flags & PF_X) ? PROT_EXEC  : 0);
 
     int flags = MAP_PRIVATE | MAP_FIXED;
+
     off_t offset = ALIGN(ph->p_offset, ph->p_align);
+
     char* seg_addr = mmap(alloc_addr, alloc_size, mmap_prot, flags, fd, offset);
 
     if ( seg_addr == (char*)(-1) ) {
@@ -108,14 +106,89 @@ char *copy_program_segment(Elf64_Phdr *ph, int fd)
     return seg_addr;
 }
 
-int main(int argc, const char *argv[], const char *envp[/*whoa something new!*/])
+void setup_the_stack(const char *argv[], const char *envp[])
+{
+    /* zero-out the registers cleared in ELF_PLAT_INIT()
+        (viz. all the "general purpose registers") */
+
+    /* this WORKS according to GDB "info registers" after its execution */
+    __asm__ (
+        "mov $0, %%rax\n"
+        "mov $0, %%rbx\n"
+        "mov $0, %%rcx\n"
+        "mov $0, %%rdx\n"
+        "mov $0, %%rsi\n"
+        "mov $0, %%rdi\n"
+        "mov $0, %%r8\n"
+        "mov $0, %%r9\n"
+        "mov $0, %%r10\n"
+        "mov $0, %%r11\n"
+        "mov $0, %%r12\n"
+        "mov $0, %%r13\n"
+        "mov $0, %%r14\n"
+        "mov $0, %%r15\n"
+        :::
+        "rax", "rbx", "rcx", "rdx", "rsi", "rdi", "r8",
+        "r9", "r10", "r11", "r12", "r13", "r14", "r15"
+    );
+
+    /*  Format:
+        (dword argc) ; note: dword is 64 bits
+        (dword [pointer to program name])
+        (dword NULL) ; because I have no other argv's in my case
+        (dword [pointer to env[0]])
+        ...
+        (dword [pointer to env[N-1]])
+        (dword NULL) */
+
+    /* Figure out a stack location and mmap it. The way this is going to work
+       is by mmapping a bunch of space, and since it will automagically hand
+       me space that is not taken, that is what I'll use. */
+    uint64_t *bp, *sp, *stack_bottom;
+    stack_bottom = mmap( /* addr, size, prot, flgs, fd, offset */
+        0, ((8 << 3 /*bits2bytes*/) << 20 /*mega*/), /* give the stack 8MB */
+        PROT_READ | PROT_WRITE,
+        MAP_PRIVATE | MAP_ANONYMOUS | MAP_GROWSDOWN, /* COW, backed by zeros */
+        0, 0
+    );
+    if ( stack_bottom == (char*)(-1) ) {
+        print_error("mmap stack_bottom");
+    } else {
+        printf("stack bottom at address: 0x%lx\n", (uint64_t)stack_bottom);
+    }
+
+    bp = sp = stack_bottom - 1;
+
+    /* now I must push the current rbp */
+    __asm__("mov %%rbp, %0":"=r"(*rbp)::);
+
+    *sp-- = 1UL;        /* argc */
+    *sp-- = &argv[1];   /* argv (program name) */
+    *sp-- = NULL;       /* separator */
+
+    char** env;
+    for (env = envp; *env != 0; env++) {
+        *sp-- = *env;   /* envp */
+    }
+    *sp = NULL;         /* terminator */
+    __asm__(
+        "mov %0, %%rbp\n"
+        "mov %1, %%rsp\n"
+        "jmp %2\n"
+        ::"r"(bp), "r"(sp), "r"(hdr_p->e_entry)
+        :"rbp", "rsp"
+    );
+    printf("why am I here right now?\n");
+}
+
+int main(int argc, const char *argv[], const char *envp[])
 {
     int fd, ret, idx;
     off_t filesize = 0;
     struct stat filestat;
     Elf64_Ehdr *hdr_p; /* in <elf.h> */
 
-    fd = open_file(argc, argv);
+    fd = open_file_to_exec(argc, argv);
 
     /* get and print filesize */
     filesize = lseek(fd, 0, SEEK_END);
@@ -153,10 +226,10 @@ int main(int argc, const char *argv[], const char *envp[/*whoa something new!*/]
         if (ph->p_type != PT_LOAD) {
             continue;
         }
+
         print_segment_metadata(ph, idx);
 
-        /* copy file segment from filedesc to virtual memory segment
-           see binfmt_elf.c: "Now use mmap to map the library into memory" */
+        /* copy file segment from filedesc to virtual memory segment */
         char* seg_addr = copy_program_segment(ph, fd);
 
         if (ph->p_filesz < ph->p_memsz) {
@@ -166,46 +239,7 @@ int main(int argc, const char *argv[], const char *envp[/*whoa something new!*/]
             memset(start, 0, nbyte);
         }
     }
-
-    /********************** SETUP THE STACK **********************/
-
-    /* zero-out the registers used for passing arguments
-       the "clobber list" tells GCC to not assume that it knows in the register
-       reference: eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64 */
-
-    __asm__ ( /* this compiles and works according to GDB */
-        "mov $0, %%rdi\n"
-        "mov $0, %%rsi\n"
-        "mov $0, %%rdx\n"
-        "mov $0, %%rcx\n"
-        "mov $0, %%r8\n"
-        "mov $0, %%r9\n"
-        :::
-        "rdx", "rsi", "rdx", "rcx", "r8", "r9"
-    );
-
-    int a = 0;
-    int b = 0;
-
-    /*  set ESP & EBP to point to stack start location (how do I choose that loc?)
-      Recall:
-        EBP holds steady pointing to a cell that contains the previous EBP (linked-list)
-        ESP holds a pointer to the top of the stack (which is the lowest address)
-    */
-
-    /*  Load argc, argv, and envp (or the registers...not clear on how this works)
-        For me, argc=1, argv[]={name_to_open [from above]}, envp="???"
-        Maybe I could just snag envp from the pager's stack and dump it in there?
-
-        Format:
-        (dword argc)
-        (dword [pointer to program name])
-        (dword NULL) ; because I have no other argv's in my case
-        (dword [pointer to env[0]])
-        ...
-        (dword [pointer to env[N-1]])
-        (dword NULL) */
-
+    setup_the_stack(argv, envp);
 
     return 0;
 }
