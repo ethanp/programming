@@ -96,13 +96,18 @@ char *copy_program_segment(Elf64_Phdr *ph, int fd)
 
     off_t offset = ALIGN(ph->p_offset, ph->p_align);
 
-    fprintf(stderr, "mmapping at 0x%lx\n", alloc_addr);
+    fprintf(stderr,
+        "mmapping at address: (0x%lx), "
+        "offset: (0x%lx), "
+        "with size: (0x%lx)\n",
+        alloc_addr, offset, alloc_size
+    );
     char* seg_addr = mmap(alloc_addr, alloc_size, mmap_prot, flags, fd, offset);
 
     if ( seg_addr == (char*)(-1) ) {
         print_error("mmap seg_addr");
     } else {
-        printf("loaded into address: 0x%lx\n", (uint64_t)seg_addr);
+        printf("loaded\n");
     }
     return seg_addr;
 }
@@ -118,7 +123,6 @@ void setup_the_stack(int argc, const char *argv[],
        is by mmapping a bunch of space, and since it will automagically hand
        me space that is not taken, that is what I'll use. */
     uint64_t *bp, *sp, *stack_bottom;
-    fprintf(stderr, "mmapping the stack\n");
     stack_bottom = mmap( /* addr, size, prot, flgs, fd, offset */
         0, ((8 << 3 /*bits2bytes*/) << 20 /*mega*/), /* 8MB (seems standard) */
         PROT_READ | PROT_WRITE | PROT_EXEC,
@@ -129,7 +133,7 @@ void setup_the_stack(int argc, const char *argv[],
     if ( stack_bottom == (uint64_t*)(-1) ) {
         print_error("mmap stack_bottom");
     } else {
-        printf("stack bottom at address: 0x%lx\n", (uint64_t)stack_bottom);
+        fprintf(stderr, "\nmmapped stack bottom at address: 0x%lx with size: 0x%lx\n", (uint64_t)stack_bottom, 8 <<23);
     }
 
     bp = sp = stack_bottom - 20; /* highest address inside stack area */
@@ -161,7 +165,7 @@ void setup_the_stack(int argc, const char *argv[],
 
     *sp = argc-1; /* argc */
 
-    printf("Watchout I'm jumping in!\n");
+    fprintf(stderr, "\njmp'ing to entrypoint (0x%lx)\n", entrypoint);
 
     /* this WORKS according to GDB "info registers" after its execution */
     __asm__ (
