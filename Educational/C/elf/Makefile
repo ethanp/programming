@@ -1,14 +1,14 @@
-e: clean
-	gcc elf_reader.c -g -o e -static
-	./e
-
-moved: clean
+all: clean hello
 	gcc -g -Wl,\
 	--section-start=.data=0xac1060,\
 	--section-start=.bss=0xac2c40,\
 	--section-start=.text=0x800360 \
 	-static elf_reader.c -o apager
-	./apager /home/ethan/Desktop/3lab/st_hello
+	./apager $(pwd)st_hello
+
+e: clean
+	gcc elf_reader.c -g -o e -static
+	./e
 
 dyn: clean
 	gcc -g -Wl,\
@@ -46,4 +46,4 @@ output.assembly:
 
 hello:
 	rm -f st_hello
-	gcc -g basics/hello.c -o st_hello -static
+	gcc -g hello.c -o st_hello -static

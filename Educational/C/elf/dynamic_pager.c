@@ -10,6 +10,7 @@
 #include <string.h>     /* strlen */
 #include <sys/mman.h>   /* mmap */
 #include <unistd.h>     /* pread, lseek */
+#include <signal.h>
 
 typedef char bool;
 
@@ -23,6 +24,46 @@ typedef char bool;
 
 #define ALIGN(strt, align) ((strt) & ~((align) - 1))
 #define ALIGN_OFFSET(strt, align) ((strt) & ((align) - 1))
+
+struct memory_region {
+    int mmap_prot;
+    int mmap_flags;
+    int fd;
+    char *start;
+    char *end;
+}
+
+typedef struct siginfo_t siginfo_t;
+
+void map_it(int signum, siginfo_t *siginfo) {
+    if (signum == SIGSEGV) {
+        void* location = siginfo->si_addr;
+        struct memory_region *reg = get_region_containing(location);
+
+        /* if region not found */
+        if (reg == NULL) {
+            fprintf(stderr, "Invalid address %ul\n", (uint64_t)location);
+
+            /* generate core-dump */
+            signal(SIGSEGV, SIG_DFL);
+            kill(getpid(), SIGSEGV);
+        }
+
+        /* valid address: map it */
+        mmap(
+            PAGE_ALIGN(location),
+            PAGE_SIZE,
+            reg->mmap_prot,
+            reg->mmap_flags,
+            reg->fd,
+            PAGE_ALIGN(location)
+        );
+    } else {
+        fprintf(stderr, "Unexpected signal!\n");
+        exit(EXIT_FAILURE);
+    }
+    /* now faulting instruction will be re-tried */
+}
 
 int open_file_to_exec(int argc, const char* argv[])
 {
@@ -63,7 +104,6 @@ void print_segment_metadata(Elf64_Phdr *ph, int idx)
         (uint32_t) ph->p_align);
 }
 
-/* TODO this is probably the part that's going to have to change */
 char *copy_program_segment(Elf64_Phdr *ph, int fd)
 {
     void* alloc_addr = (void*) ALIGN(ph->p_vaddr, ph->p_align);
@@ -116,12 +156,6 @@ void setup_the_stack(int argc, const char *argv[],
 
     *sp-- = NULL; /* very "bottom" of stack */
 
-    // segfault @ 0x00002aaaaaaade80
-    // before we were @ 0x00000000004074f8 in __run_exit_handlers
-    // 0x00000000004074fe
-    // 0x0000000000407507
-    // 0x0000000000436e63 // __init_misc before strrchr
-
     /* go to the last envp */
     char** env; int idx = 0;
     for (env = envp; *env != 0; env++, idx++);
@@ -164,9 +198,9 @@ void setup_the_stack(int argc, const char *argv[],
         "r9", "r10", "r11", "r12", "r13", "r14", "r15"
     );
 
-    __asm__( /* TODO I think I need to push the current return address onto the stack or something? */
+    __asm__(
         // "mov %0, %%rbp\n"
-        "push %%rbp\n"
+        // "push %%rbp\n"
         "mov %0, %%rsp\n"
         "jmp %1\n"
         ::"r"(sp), "r"(entrypoint)

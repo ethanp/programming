@@ -96,6 +96,7 @@ char *copy_program_segment(Elf64_Phdr *ph, int fd)
 
     off_t offset = ALIGN(ph->p_offset, ph->p_align);
 
+    fprintf(stderr, "mmapping at 0x%lx\n", alloc_addr);
     char* seg_addr = mmap(alloc_addr, alloc_size, mmap_prot, flags, fd, offset);
 
     if ( seg_addr == (char*)(-1) ) {
@@ -117,6 +118,7 @@ void setup_the_stack(int argc, const char *argv[],
        is by mmapping a bunch of space, and since it will automagically hand
        me space that is not taken, that is what I'll use. */
     uint64_t *bp, *sp, *stack_bottom;
+    fprintf(stderr, "mmapping the stack\n");
     stack_bottom = mmap( /* addr, size, prot, flgs, fd, offset */
         0, ((8 << 3 /*bits2bytes*/) << 20 /*mega*/), /* 8MB (seems standard) */
         PROT_READ | PROT_WRITE | PROT_EXEC,
@@ -182,9 +184,9 @@ void setup_the_stack(int argc, const char *argv[],
         "r9", "r10", "r11", "r12", "r13", "r14", "r15"
     );
 
-    __asm__( /* TODO I think I need to push the current return address onto the stack or something? */
+    __asm__(
         // "mov %0, %%rbp\n"
-        "push %%rbp\n"
+        // "push %%rbp\n"
         "mov %0, %%rsp\n"
         "jmp %1\n"
         ::"r"(sp), "r"(entrypoint)
