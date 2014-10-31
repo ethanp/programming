@@ -72,6 +72,7 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
 ### The Types
 1. `tick_t` --- `uint64_t`; *time* in the simulation; in `node.h`
 2. `rid_t` --- `uint64_t`; *request id*; in `paxtypes.h`
+3. `cb` --- `std::unique_ptr<std::function<void(std::string)>>`; pointer to a function that takes a string and returns nothing; typedef'd in `paxclient.h`
 2. `struct event`
     1. `tick` --- time associated with
     2. `nidid` --- node associated with
@@ -93,7 +94,7 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
     2. `std::string prefix;` --- a lowercase-letter    
 8. `struct paxclient::req_cb` --- "request callback"
     1. `paxobj::op request`
-    2. `cb reply_cb` ("callback") --- *I can't find the definition of this thing*
+    2. `cb reply_cb` ("callback") --- pointer to a `function<void(string)>`
 9. `struct paxobj::op  [paxobj.h]` --- essentially a named function that takes a state machine pointer and returns a string
     1. `std::function<std::string (paxobj*)> func;` --- a function that takes a state machine pointer and returns a string
     2. `std::string name;` --- the name of this `op`
@@ -114,7 +115,30 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
 ## The Code
 
 ### C++
+1. [`static_cast<T>(value)`][sc] --- convert one type into another
+    
+        double result = static_cast<double>(4)/5;
 1. [`std::shared_ptr<T>`][sp] --- does **ref-count garbage collection** on our behalf, so we don't need to deallocate manually
+2. [`std::make_unique<T>()`][mu] --- call's `T`'s constructor and wraps the object in a `std::unique_ptr`
+3. [`std::unique_ptr`][up] --- the sole owner of the thing pointed to, `delete`'s the object pointed to when the `unique_ptr` goes out *of scope*, 
+    1. Reasons delete function will be called:
+        1. `unique_ptr` is explicitly destroyed
+        2. `unique_ptr` is reassigned via `operator=` or `reset()`
+    2. You can specify your own `Deleter` of `T`s for each `unique_ptr`
+4. [`std::move`][mv] --- turn an rvalue into an lvalue (really an rvalue reference) so we can invoke the move constructor
+    1. *Move semantics* --- avoid unnecessary copying of temporary objects
+    2. Relies on C++11's "rvalue references"
+    3. *lvalue* --- has a memory address
+    4. *rvalue* --- is a temporary value with no address
+        1. E.g. when you *return by value*, that thing you return is an *rvalue*, which means the entire functions acts as an *rvalue*
+    5. *rvalue reference* --- can only bind to an *rvalue* (rvalue references are actually *lvalue*s)
+        1. *Syntax:* --- "double ampersand": `string&& rVRef = getName();`
+    6. *Move constructor* --- like a copy constructor, creates a new instance based on a passed-in rvalue reference more efficiently
+        1. This process can be optimized compared to a copy constructor because we know the rvalue reference we're copying from won't ever be needed later or modified
+        1. For primitive types we copy as usual
+        2. For pointers, we can *steal* the pointer and *null out* the original!
+        3. The move constructor only called for temporary objects that can be modified
+            4. A function that returns a `const` object, will cause the copy constructor to run instead
 2. [`std::function<T(U,...)>`][fctn] --- can store, copy, and invoke any `Callable` target (e.g. functions and lambdas)
     1. `T` is the return type
     2. `U,...` are the argument types
@@ -127,14 +151,30 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
 3. [*Lambdas*][lbd] --- "Constructs a closure: an unnamed function object capable of capturing variables in scope."
     1. `[ capture_list ] ( params ) -> return_type { function_body }`
     2. *Capture list* options
-        1. `[=]` --- captures all automatic (stack-local) variables in `{ body }` *by value*
+        1. `[=]` --- captures all automatic (stack-local) variables in `{ function_body }` *by value*
         
 2. The nastiest-looking line of code I have ever seen (`word_vec_pax.cpp:83 std::unique_ptr<paxclient::req_cb> pc_word_vec::work_get()`
-
-        // auto := std::unique_ptr<paxclient::req_cb> (defined above)
-        // 
-        // cb := callback (can't find the definition)
-        // struct paxobj::op := 
+        
+        /**
+         we're creating a "req_cb" request callback object, which requires two objects:
+         
+            1. an "op", which has
+                1. a function that
+                    1. takes a po_word_vec and captures the
+                        current work_word (the next string [e.g. "prefix-a"] in this pc_word_vec)
+                    2. pushes the work_word onto the po_word_vec
+                    3. returns the given work_word
+                2. a name (the work_word)
+            
+            2. a "cb" ("callback") which is a function that takes a string and returns void.
+               In our case, what it does is:
+                1. Takes the word passed as a reply (string reply_word)
+                2. Makes sure it is the same word given
+                3. Increments the (state) callback-count
+         
+         then we return this request callback created above
+         */
+         
         auto res = std::make_unique<paxclient::req_cb>(
             std::make_unique<paxobj::op> (
                 [=](paxobj* _local_this) -> std::string {
@@ -158,6 +198,10 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
 [sp]: http://en.cppreference.com/w/cpp/memory/shared_ptr
 [fctn]: http://en.cppreference.com/w/cpp/utility/functional/function
 [lbd]: http://en.cppreference.com/w/cpp/language/lambda
+[mu]: http://en.cppreference.com/w/cpp/memory/unique_ptr/make_unique
+[up]: http://en.cppreference.com/w/cpp/memory/unique_ptr
+[mv]: http://www.cprogramming.com/c++11/rvalue-references-and-move-semantics-in-c++11.html
+[sc]: http://www.cprogramming.com/reference/typecasting/staticcast.html
 
 ### Nice Tricks
 1. Make a switch to disable a big block of code

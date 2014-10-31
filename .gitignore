@@ -129,3 +129,4 @@ segf
 Educational/C++/PaxosLab/code/*.d
 Educational/C++/PaxosLab/code/getoptpp/tests/ref
 Educational/C++/PaxosLab/code/getoptpp
+CMakeLists.txt
