@@ -79,7 +79,7 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
         1. { die, sjoin, cjoin, pause, unpause }
 3. `class Sched`
     4. `std::vector<event> events;` --- smallest tick value at the end
-4. `class dssim_t`
+4. `class dssim_t` --- "distributed system simulator"
     5. `tick_t ticks;` --- I *believe* this is the *current* tick number in the simulator?
 3. A **client** is of type `paxclient`, which is a ("public") *subtype* of `node_t`
     1. it has a `rid_t local_rid` --- request counter
@@ -90,8 +90,15 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
     1. **todo**
 7. `class pc_word_vec : public paxclient  [word_vec_pax.h]` --- the client *implementation* used when you just run the thing
     1. `std::vector<std::string> wvec =  "{ [prefix]-a", "[prefix]-b", ..., "...-z" };`
-    2. `std::string prefix;` --- a lowercase-letter
-    
+    2. `std::string prefix;` --- a lowercase-letter    
+8. `struct paxclient::req_cb` --- "request callback"
+    1. `paxobj::op request`
+    2. `cb reply_cb` ("callback") --- *I can't find the definition of this thing*
+9. `struct paxobj::op  [paxobj.h]` --- essentially a named function that takes a state machine pointer and returns a string
+    1. `std::function<std::string (paxobj*)> func;` --- a function that takes a state machine pointer and returns a string
+    2. `std::string name;` --- the name of this `op`
+9. `request` --- "a function that takes the paxos object `[paxobj]`, changes its state, and, and returns a `string
+    1. physically, it's a pointer to an `op`
 
 ### The Code
 
@@ -108,8 +115,49 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
 
 ### C++
 1. [`std::shared_ptr<T>`][sp] --- does **ref-count garbage collection** on our behalf, so we don't need to deallocate manually
+2. [`std::function<T(U,...)>`][fctn] --- can store, copy, and invoke any `Callable` target (e.g. functions and lambdas)
+    1. `T` is the return type
+    2. `U,...` are the argument types
+    3. So for example (tested!)
+            
+            long a(int d) { return d*2; }
+            std::function<long(int)> v = a;
+            std::cout << v(3) << '\n'; // => 6
+        
+3. [*Lambdas*][lbd] --- "Constructs a closure: an unnamed function object capable of capturing variables in scope."
+    1. `[ capture_list ] ( params ) -> return_type { function_body }`
+    2. *Capture list* options
+        1. `[=]` --- captures all automatic (stack-local) variables in `{ body }` *by value*
+        
+2. The nastiest-looking line of code I have ever seen (`word_vec_pax.cpp:83 std::unique_ptr<paxclient::req_cb> pc_word_vec::work_get()`
+
+        // auto := std::unique_ptr<paxclient::req_cb> (defined above)
+        // 
+        // cb := callback (can't find the definition)
+        // struct paxobj::op := 
+        auto res = std::make_unique<paxclient::req_cb>(
+            std::make_unique<paxobj::op> (
+                [=](paxobj* _local_this) -> std::string {
+                    auto local_this = static_cast<po_word_vec*>(_local_this);
+                    local_this->push_back(work_word);
+                    return work_word;
+                }, work_word),
+            std::make_unique<std::function<void(std::string)>>(
+                [=](std::string reply_word) {
+                    cb_cnt++;
+                    if(reply_word != work_word) {
+                        LOG(l::WARN,  "Yikes: " << id_str()
+                            << " work_word: " << work_word
+                            << " reply: " << reply_word
+                            << std::endl);
+                    }
+                }
+            )
+        );
 
 [sp]: http://en.cppreference.com/w/cpp/memory/shared_ptr
+[fctn]: http://en.cppreference.com/w/cpp/utility/functional/function
+[lbd]: http://en.cppreference.com/w/cpp/language/lambda
 
 ### Nice Tricks
 1. Make a switch to disable a big block of code
