@@ -26,7 +26,7 @@ class Sched {
       A_PAUSE,
       A_UNPAUSE
    };
-   // Nodes are identified by number or symbolically by 
+   // Nodes are identified by number or symbolically by
    // letter.  So a layer of indirection to node_id_t
    typedef std::string nidid_t;
    struct event {
@@ -104,8 +104,8 @@ public:
    // It is important that repeated calls not always return the same
    // server id
    node_id_t get_rand_server();
-   // This call is an optimization of get_rand_server that returns all 
-   // current servers.  This could be implemented by broadcast RPC or 
+   // This call is an optimization of get_rand_server that returns all
+   // current servers.  This could be implemented by broadcast RPC or
    // a service that monitors whether nodes are up.
    std::set<node_id_t> get_serv_ids(node_id_t);
 
@@ -126,7 +126,7 @@ public:
    // Print short stats
    std::ostream& pr_short_stat(std::ostream& os);
    std::ostream& pr_short_short_stat(std::ostream& os);
-   // Print more statistics 
+   // Print more statistics
    std::ostream& pr_stat(std::ostream& os);
 
    // Random generator, here for use in Net::recv to shuffle

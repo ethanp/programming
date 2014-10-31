@@ -20,7 +20,9 @@ latex footer:       mmd-memoir-footer
 
     make pax
 
-    ./pax -h # see how to configure
+    pax -h # see how to configure
+    
+    pax -fl DEBUG # run with a ton of prints
 
 Since we're not dealing with *view changes*, we need to form an initial view using a "fake initial view change" with the `-f` option
 
@@ -57,9 +59,19 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
 4. `tup` (for the `Paxlog`) --- this is what the *log* is composed of
     1. Implemented as an inner struct in Paxlog
     
-## The code as I see it
+## What I See
 
-1. `tick_t` --- `uint64_t`; *time* in the simulation; `node.h`
+### The Logs
+1. `C04 primary:1` --- `paxclient.cpp:38 paxclient::paxclient` --- the `paxclient` constructor is successfully initializing a client
+    1. It `assert`s that servers have already been initialized at this point
+    2. The `04` is this client's `node_id_t nid` (inherited from `node_t` in `node.h`)
+    3. The `1` is the randomly assigned `node_id_t primary` server
+2. `C06 new work:c-aa rid:1` --- `word_vec_pax.cpp:82 std::unique_ptr<paxclient::req_cb> pc_word_vec::work_get()`
+    
+    
+### The Types
+1. `tick_t` --- `uint64_t`; *time* in the simulation; in `node.h`
+2. `rid_t` --- `uint64_t`; *request id*; in `paxtypes.h`
 2. `struct event`
     1. `tick` --- time associated with
     2. `nidid` --- node associated with
@@ -69,11 +81,41 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
     4. `std::vector<event> events;` --- smallest tick value at the end
 4. `class dssim_t`
     5. `tick_t ticks;` --- I *believe* this is the *current* tick number in the simulator?
-2. The `main()` loop is `while(dssim.tick() || net.any_pending());`
-    3. `bool dssim_t::tick()`
-        1. `void dssim_t::do_events()`
-            1. `while(config.sched.eventp(ticks))`
-                1. `bool Sched::eventp(tick_t tick)`
-                    1. `return 0` if there are no `event`s to process
-                    2. Otherwise `return 1` *iff* the *earliest* event waiting to be processed is from before the passed-in `tick`
-                2. 
+3. A **client** is of type `paxclient`, which is a ("public") *subtype* of `node_t`
+    1. it has a `rid_t local_rid` --- request counter
+4. A **server** is similar
+    5. telling a server to `bool tick() = false;`
+5. `class po_word_vec : public paxobj  [word_vec_pax.h]` --- **todo** (I got here from log-line-2, which was in word_vec_pax which used this thing)
+6. `class paxobj  [paxobj.h]` --- the base class of internal state machines (as noted above)
+    1. **todo**
+7. `class pc_word_vec : public paxclient  [word_vec_pax.h]` --- the client *implementation* used when you just run the thing
+    1. `std::vector<std::string> wvec =  "{ [prefix]-a", "[prefix]-b", ..., "...-z" };`
+    2. `std::string prefix;` --- a lowercase-letter
+    
+
+### The Code
+
+1. The `main()` loop is `while(dssim.tick() || net.any_pending());`
+2. `bool dssim_t::tick()`
+3. `void dssim_t::do_events()`
+    1. `while(config.sched.eventp(ticks))` --- while there is an event from before now to process
+    2. `bool Sched::eventp(tick_t tick)`
+        1. `return 0` if there are no `event`s to process
+        2. Otherwise `return 1` *iff* the *earliest* event waiting to be processed is from before the passed-in `tick`
+4. I
+                
+## The Code
+
+### C++
+1. [`std::shared_ptr<T>`][sp] --- does **ref-count garbage collection** on our behalf, so we don't need to deallocate manually
+
+[sp]: http://en.cppreference.com/w/cpp/memory/shared_ptr
+
+### Nice Tricks
+1. Make a switch to disable a big block of code
+
+        #if 0
+        all this = code(is);
+        now disabled;
+        enable with = set_if(1);
+        #endif
