@@ -49,7 +49,7 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
 #### Where I come in
 
 1. **Implement** handlers for servers in `paxos_exec.cpp`
-    1. This does *not* include view change (the bulk of the paper...)
+    1. This does *not* include view change (the bulk of the paper [and according to Witchel the main part of the algorithm...] ...)
 2. Don't worry about persistence
 
 ## Some common shorthands
@@ -67,13 +67,47 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
     2. The `04` is this client's `node_id_t nid` (inherited from `node_t` in `node.h`)
     3. The `1` is the randomly assigned `node_id_t primary` server
 2. `C06 new work:c-aa rid:1` --- `word_vec_pax.cpp:82 std::unique_ptr<paxclient::req_cb> pc_word_vec::work_get()`
+    1. the `main` loop has `tick`ed
+    2. the `sched` finished executing all the `event`s
+    3. the `dssim` is `tick`ing each of the `node`s
+    4. so it's calling `bool paxclient::tick(void)`
+    5. which calls `net->recv(this_client)`
+        1. which finds an `inq` for this node (Client 6) in the `net`
+        2. but it has no `net_msg`s (I'm not sure here), so it returns a `nullptr`
+    5. but `!this_client->work_done()` indicates that `cb_cnt < max_req`
+    1. so `this_client` is allowed to make a new request via `next_req_rec()`
+    1. `paxclient::next_req_rec` calls `paxclient::req_cb pc_word_vec::work_get(void)`
+    2. which (fully explained below) pulls the `client`'s next `work_word` out
+        1. creates a a `paxobj::op std::function<void(string)>` that pushes it into a `po_word_vec`
+        2. creates a callback that `cb_cnt++` and `assert reply_word == sent_word`
+    1. Client 6 indicates that it sent `work_word == c-aa` and  by logging the above message.
+    2. Back in `paxclient::next_req_rec`, it
+        1. logs the `local_rid` (request counter) to be 1 (it *starts* at 1)
+        2. creates & returns a `struct paxclient::req_rec` for the request created
+    3. Back in `paxclient::tick`
+    1. the returned `req_rec` is turned into a `struct execute_arg : paxmsg_t : net_msg_t`
+    2. and passed to `bool net->send(primary)`
+    3. which makes sure the destination is still a part of the network (i.e. stil *alive*)
+        4. (in our case it's *not* dead, because it would have logged that that happened)
+    4. fill in metadata of the `execute_arg` about this packet
+    5. push the `execute_arg` onto `net::inqs`
+    6. return to `paxclient::tick`
+    7. insert the `req_rec` to `paxclient::out_req`
+        1. which in the current implementation can only hold one outstanding `execute_request` at a time
+    8. increment `struct paxclient::stat.started_op`
+        1. wrt `struct paxclient::stat.success_op`, which is not incremented
+    9. `paxclient::tick()` returns `true` to `bool dssim_t::tick()`
+    10. which continues to loop through and `tick` all the `nodes`
+3. **3** of the above messages are printed because there are 3 clients    
+4. `Initial view ([cnt:1 mgr:3]  pr:3 bk: 1 2)` --- **TODO**
+    
     
     
 ### The Types
 1. `tick_t` --- `uint64_t`; *time* in the simulation; in `node.h`
 2. `rid_t` --- `uint64_t`; *request id*; in `paxtypes.h`
 3. `cb` --- `std::unique_ptr<std::function<void(std::string)>>`; pointer to a function that takes a string and returns nothing; typedef'd in `paxclient.h`
-2. `struct event`
+2. `struct event` --- { time, node, type }
     1. `tick` --- time associated with
     2. `nidid` --- node associated with
     3. `aid` --- type of event
@@ -101,16 +135,22 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
 9. `request` --- "a function that takes the paxos object `[paxobj]`, changes its state, and, and returns a `string
     1. physically, it's a pointer to an `op`
 
-### The Code
+### Main
 
-1. The `main()` loop is `while(dssim.tick() || net.any_pending());`
+1. Set the network configuration variables using the given defaults & arguments
+2. `dssim.configure`
+    1. make `num_server` `paxservers` with `po_word_vec`s as `poxobj`s
+        1. add them to the `nodes` map (`id -> node`) of the `dssim`
+    2. make `num_client` `pc_word_vec`s, each with its own prefix, and an initialized word vector
+        1. add these to the `nodes` map as well
+3. The `main()` loop is `while(dssim.tick() || net.any_pending());`
 2. `bool dssim_t::tick()`
 3. `void dssim_t::do_events()`
     1. `while(config.sched.eventp(ticks))` --- while there is an event from before now to process
-    2. `bool Sched::eventp(tick_t tick)`
-        1. `return 0` if there are no `event`s to process
-        2. Otherwise `return 1` *iff* the *earliest* event waiting to be processed is from before the passed-in `tick`
-4. I
+    2. `pop` the *earliest* `event` off the `sched`
+    3. perform it
+4. `tick()` every `node` that is not paused
+    1. `void paxclient::tick(void)` --- **TODO**
                 
 ## The Code
 
