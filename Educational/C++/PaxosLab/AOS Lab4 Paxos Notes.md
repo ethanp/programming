@@ -99,7 +99,20 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
     9. `paxclient::tick()` returns `true` to `bool dssim_t::tick()`
     10. which continues to loop through and `tick` all the `nodes`
 3. **3** of the above messages are printed because there are 3 clients    
-4. `Initial view ([cnt:1 mgr:3]  pr:3 bk: 1 2)` --- **TODO**
+4. `Initial view ([cnt:1 mgr:3]  pr:3 bk: 1 2)` --- `paxserver.cpp:328 void paxserver::do_fake_init_vc()`
+    1. I'll just start by describing `void paxserver::do_fake_init_vc()`
+    2. create a `view_t` and configure it according to the algorithm
+    3. Log the configured view (as we see above)
+    4. That's it for that function, but "How did we *get* here?" you ask. From a `paxserver` getting `tick`ed, as I describe below when explaining the next 3 lines of log.
+5. `S01 executeARG from C05 R(002)`
+    5. The previous log triplets were from `client`s getting `tick`ed
+    6. Well similarly, *this* triplet is from the `primary` `paxserver` getting `tick`ed
+    7. The server notices that there is no `primary` in its own `vc_state` (view state)
+    8. So it executes the `do_fake_init_vc()` described above
+    9. then it procedes to process 3 messages
+    10. it calls `net->recv(this)` to tell the `paxserver` to `pop_front` the next item in its `inq`
+    11. it passes the `paxmsg_t` to `void paxserver::dispatch(paxmsg_t)`
+    12. which ... **TODO (START HERE, BRAH)**
     
     
     
@@ -120,7 +133,7 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
     1. it has a `rid_t local_rid` --- request counter
 4. A **server** is similar
     5. telling a server to `bool tick() = false;`
-5. `class po_word_vec : public paxobj  [word_vec_pax.h]` --- **todo** (I got here from log-line-2, which was in word_vec_pax which used this thing)
+5. `class po_word_vec : public paxobj  [word_vec_pax.h]` --- **todo** (I got here from log-line-2, which was in `word_vec_pax.cpp` which used this thing)
 6. `class paxobj  [paxobj.h]` --- the base class of internal state machines (as noted above)
     1. **todo**
 7. `class pc_word_vec : public paxclient  [word_vec_pax.h]` --- the client *implementation* used when you just run the thing
@@ -134,6 +147,18 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
     2. `std::string name;` --- the name of this `op`
 9. `request` --- "a function that takes the paxos object `[paxobj]`, changes its state, and, and returns a `string
     1. physically, it's a pointer to an `op`
+10. `struct viewid_t`
+    1. `uint64_t counter`
+    2. `node_id_t manager`
+    3. `==` & `!=` operators
+11. `struct viewstamp_t` --- a viewid and a timestamp, with a function for returning whether once `viewstamp_t` is the `successor` of another
+    1. Used in `Paxlog::tup` which is a logged operation, sequentially ordered in the `Paxlog` by viewstamp
+    2. The `Paxlog` itself is an alement of a `paxserver : node_t`
+        1. Though I'm jumping the gun a bit because I haven't gotten here in the code.
+10. `struct view_t  [paxtypes.h]` --- { counter int, manager node, primary node, backup node-set } 
+    1. `viewid_t vid` --- counter int and a manager node
+    2. `node_id_t primary` --- node ID of the primary for this view [duh!]
+    3. `set<node_id_t> backups` --- I guess everyone who's *not* the `primary`
 
 ### Main
 
@@ -243,7 +268,7 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
 [mv]: http://www.cprogramming.com/c++11/rvalue-references-and-move-semantics-in-c++11.html
 [sc]: http://www.cprogramming.com/reference/typecasting/staticcast.html
 
-### Nice Tricks
+#### Nice Tricks
 1. Make a switch to disable a big block of code
 
         #if 0
@@ -251,3 +276,13 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
         now disabled;
         enable with = set_if(1);
         #endif
+        
+### CLion Hotkeys
+
+| **action** | **keys** |
+| :--------- | :------: |
+| jump from declaration to implementation   | `ctrl+cmd+up`     |
+| find usages                               | `ctrl+cmd+dwn`    |
+| jump to class                             | `cmd+O`           |
+| jump to symbol                            | `optn+cmd+O`      |
+| jump to previous/next location            | `cmd+[`/`]`       |
