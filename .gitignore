@@ -126,7 +126,11 @@ apager
 st_hello
 dpager
 segf
-Educational/C++/PaxosLab/code/*.d
-Educational/C++/PaxosLab/code/getoptpp/tests/ref
-Educational/C++/PaxosLab/code/getoptpp
 CMakeLists.txt
+
+# ignore all the paxos code
+Educational/C++/PaxosLab/code/*
+
+# except its makdefile and the code I have to write
+!Educational/C++/PaxosLab/code/Makefile
+!Educational/C++/PaxosLab/code/paxos_exec.cpp

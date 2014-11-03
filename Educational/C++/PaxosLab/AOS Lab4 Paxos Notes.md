@@ -10,6 +10,21 @@ latex input:        mmd-natbib-plain
 latex input:        mmd-article-begin-doc
 latex footer:       mmd-memoir-footer
 
+## Implementing `paxos_exec.cpp`
+
+### Methods
+
+    void paxserver::execute_arg(const struct execute_arg& ex_arg)
+    void paxserver::replicate_arg(const struct replicate_arg& repl_arg)
+    void paxserver::replicate_res(const struct replicate_res& repl_res)
+    void paxserver::accept_arg(const struct accept_arg& acc_arg)
+
+### About
+
+1. Execute arg is called by `void paxserver::dispatch(paxmsg_t &paxmsg)` when `paxmsg.rpc_id == execute_arg::ID`
+2. Which is called by `bool paxserver::tick(void)`, where `paxmsg` is returned by `net->recv(paxserver)`
+3. Which pops a message off the queue for this server which was place their by a client when it `tick`ed.
+
 ## Summary
 > ***You will implement the Paxos replication algorithm within the context of a distributed systems simulator.***
 
@@ -18,11 +33,16 @@ latex footer:       mmd-memoir-footer
 
 ### Compile and Run
 
-    make pax
+    make [clean] pax
 
     pax -h # see how to configure
     
     pax -fl DEBUG # run with a ton of prints
+    
+    # debug
+    gdb
+    file pax
+    run -fl DEBUG --delay 0 --shuffle 0
 
 Since we're not dealing with *view changes*, we need to form an initial view using a "fake initial view change" with the `-f` option
 
