@@ -25,6 +25,8 @@ latex footer:       mmd-memoir-footer
 2. Which is called by `bool paxserver::tick(void)`, where `paxmsg` is returned by `net->recv(paxserver)`
 3. Which pops a message off the queue for this server which was place their by a client when it `tick`ed.
 
+### The Figure I Need is Figure 2!
+
 ## Summary
 > ***You will implement the Paxos replication algorithm within the context of a distributed systems simulator.***
 
