@@ -301,10 +301,11 @@ Since we're not dealing with *view changes*, we need to form an initial view usi
         
 ### CLion Hotkeys
 
-| **action** | **keys** |
-| :--------- | :------: |
-| jump from declaration to implementation   | `ctrl+cmd+up`     |
-| find usages                               | `ctrl+cmd+dwn`    |
-| jump to class                             | `cmd+O`           |
-| jump to symbol                            | `optn+cmd+O`      |
-| jump to previous/next location            | `cmd+[`/`]`       |
+| **action**                                | **keys**         |
+| :---------------------------------------- | :--------------: |
+| jump from declaration to implementation   | `ctrl+cmd+up`    |
+| find usages                               | `ctrl+cmd+dwn`   |
+| jump to class                             | `cmd+O`          |
+| jump to symbol                            | `optn+cmd+O`     |
+| jump to previous/next location            | `cmd+[`/`]`      |
+| search *everywhere*                       | `shift+shift`    |

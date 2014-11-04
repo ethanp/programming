@@ -25,17 +25,21 @@ void paxserver::execute_arg(const struct execute_arg& ex_arg) {
 
     /* "The primary cohort logs the request and forwards it to all other cohorts." */
 
+    /* client needs update */
     if (ex_arg.vid < vc_state.view.vid) {
-        /* TODO Do I need to ensure that ex_arg._vid == vc_state.view.vid ?
-         *  we get in here often, why is that?
-         */
-        LOG(l::DEBUG, "ex_arg.vid < vc_state.view.vid" << "\n")
+        LOG(l::DEBUG, "ex_arg.vid < vc_state.view.vid" << "\n");
 
-        return; // TODO dismiss these messages for now.
-                // I'm not sure why they exist in a deterministic simulator
+        /* tell client what's good */
+        send_msg(ex_arg.nid,
+                std::make_unique<struct execute_fail>(
+                        vc_state.view.vid,
+                        vc_state.view.primary,
+                        ex_arg.rid));
+
+        return; // don't log this message
     }
 
-    /* The primary server includes the view- stamp it assigns an
+    /* The primary server includes the viewstamp it assigns an
         operation when forwarding the operation to backups */
     const struct viewstamp_t proposed_vs = { ex_arg.vid, ts++ };
 
@@ -45,7 +49,6 @@ void paxserver::execute_arg(const struct execute_arg& ex_arg) {
             ex_arg.rid,
             proposed_vs,
             ex_arg.request,
-            // for determining what number of Acks constitutes a "majority"
             (uint)vc_state.view.get_servers().size(),
             ex_arg.sent_tick);
 
@@ -103,19 +106,47 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
      *     const char* _descr = "replicaRES"
      *     viewstamp_t vs */
 
-    /* TODO is this when we actually *execute* the execute_arg?
-        since it's in the log, we can use that <tup> */
+    /*************************************
+        meanwhile, back at the PRIMARY...
+     *************************************/
 
     /* after receiving acknowledgments from a majority of cohorts (including itself),
        the primary calls the execute function on request and sends the reply back to the client */
 
-    /* we know we've hit a majority of cohorts when tup.resp_cnt > tup.serv_cnt */
+    /* we know we've hit a majority of cohorts when tup.resp_cnt > tup.serv_cnt / 2 */
     // TODO get tup, increment res_cont, check majority-condition.
 
-    /* judging by the next function, I guess we
-       TODO tell the backups that this thing was committed so they can commit up to this too */
+    /* we cast-away the 'const' modifier, bc we need to edit it */
+    Paxlog::tup* tup = (Paxlog::tup *) paxlog.get_tup(repl_res.vs);
+    if (!tup) {
+        LOG(l::DEBUG, "couldn't find tup in log, CANCELLING" << "\n");
+        return;
+    }
+    if (tup && tup->vs == repl_res.vs) {
+        // make sure it's been a majority
+        if (++tup->resp_cnt > tup->serv_cnt/2) {
+            // If it has, execute if it hasn't already been executed
+            // Am I allowed to execute even if something behind it in the log hasn't executed?
+            // I'd think not... but it's impossible to intuit these types of things.
+            auto rickshaw = std::make_unique<Paxlog::tup>(tup);
+            std::string resp = paxop_on_paxobj(rickshaw);
+            paxlog.execute(rickshaw);
 
-   MASSERT(0, "replicate_res not implemented\n");
+            // send result back to the client
+            send_msg((tup)->src,
+                    std::make_unique<struct execute_success>(
+                            resp, tup->rid));
+
+        }
+    }
+
+    /* judging by the next function, I guess we tell the backups
+        that this thing was committed so they can commit up to
+        here too */
+    /* TODO actually this should only happen if the log is now empty */
+    for (auto backup : vc_state.view.backups) {
+        send_msg(backup, std::make_unique<struct accept_arg>(tup->vs));
+    }
 }
 
 void paxserver::accept_arg(const struct accept_arg& acc_arg) {
@@ -123,6 +154,11 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
      *     const char* _descr = "accept ARG"
      *     viewstamp_t committed
      */
-    /* TODO execute up to committed */
-   MASSERT(0, "accept_arg not implemented\n");
+     /* when the primary's log is empty it sends a message to the backups to accept <= committed */
+    for (auto it = paxlog.begin(); it != paxlog.end() && (*it)->vs < acc_arg.committed; it++) {
+        if (paxlog.next_to_exec(it)) {
+            paxop_on_paxobj(*it);
+            paxlog.execute(*it);  // here we note that we executed
+        }
+    }
 }
