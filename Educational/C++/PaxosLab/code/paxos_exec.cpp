@@ -141,13 +141,9 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
         LOG(l::DEBUG, "Request " << this_tup->rid << " has been ACK'd by everyone.\n");
 
         /* if the entire log has been executed */
-        if (paxlog.latest_exec() == paxlog.latest_accept()) {
+        if (paxlog.latest_exec() == paxlog.latest_accept() && this_tup->vs == paxlog.latest_exec()) {
 
             LOG(l::DEBUG, "The Primary's entire log has been executed.\n");
-
-            if (paxlog.latest_exec() != this_tup->vs) {
-                LOG(l::DEBUG, "IF THIS SHOWS UP IT [might] SIGNIFY A BUG IN MY CODE");
-            }
 
             /* ** When the primary has no unexecuted entries in the Paxos log,
                   propagate latest_accept using accept_arg.
