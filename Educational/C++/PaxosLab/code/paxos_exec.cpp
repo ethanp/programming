@@ -40,6 +40,11 @@ void paxserver::execute_arg(const struct execute_arg& ex_arg) {
         return; // don't log this message
     }
 
+    if (paxlog.find_rid(ex_arg.src, ex_arg.rid)) {
+        LOG(l::DEBUG, "Dropping duplicate request.\n");
+        return;
+    }
+
     /* The primary server includes the viewstamp it assigns an
         operation when forwarding the operation to backups */
     const struct viewstamp_t proposed_vs = { ex_arg.vid, ts++ };
@@ -68,6 +73,11 @@ void paxserver::replicate_arg(const struct replicate_arg& repl_arg) {
      *     execute_arg arg
      *     viewstamp_t committed */
 
+    if (paxlog.find_rid(repl_arg.arg.src, repl_arg.arg.rid)) {
+        LOG(l::DEBUG, "Dropping duplicate request.\n");
+        return;
+    }
+
     /* "Our backups log all requests, and acknowledge the primary after logging." */
     paxlog.log(
             repl_arg.arg.nid,
@@ -90,9 +100,8 @@ void paxserver::replicate_arg(const struct replicate_arg& repl_arg) {
         viewstamp_t nil_vs = {};
         if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
             LOG(l::DEBUG, "executing backloged rid = " << (*it)->rid << "\n");
-            paxop_on_paxobj(*it); // TODO here we execute (to change the state of the state machine)
+            paxop_on_paxobj(*it); // here we execute (to change the state of the state machine)
             paxlog.execute(*it);  // here we note that we executed
-
         }
     }
 
@@ -120,17 +129,63 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
         return;
     }
 
-    for (auto it = paxlog.begin(); it != paxlog.end(); it++) {
+    viewstamp_t nil_vs = {};
 
-        /* find this request in the log */
-        if ((*it)->vs == repl_res.vs) {
-            std::unique_ptr<Paxlog::tup> &tup = *it;
+    Paxlog::tup const *this_tup = paxlog.get_tup(repl_res.vs);
 
-            /* if it's been Ack'd by a majority */
-            if (tup->resp_cnt > tup->serv_cnt/2) {
+    /* if it's been ACK'd by everyone */
+    if (this_tup->resp_cnt == this_tup->serv_cnt) {
+        LOG(l::DEBUG, "Request " << this_tup->rid << " has been ACK'd by everyone.\n");
 
+        /* if the entire log has been executed */
+        if (paxlog.latest_exec() == paxlog.latest_accept()) {
+
+            LOG(l::DEBUG, "The Primary's entire log has been executed.\n");
+
+            if (paxlog.latest_exec() != this_tup->vs) {
+                LOG(l::DEBUG, "IF THIS SHOWS UP IT [might] SIGNIFY A BUG IN MY CODE");
+            }
+
+            /* ** When the primary has no unexecuted entries in the Paxos log,
+                  propagate latest_accept using accept_arg.
+
+               ** Accept messages are sent infrequently in the chaos of a
+                  distributed system, but they allow the simulation to end when
+                  everyone is in the same state. */
+
+            /* trim the log */
+
+            std::function<bool (const std::unique_ptr<Paxlog::tup>&)> trim_fctn =
+                    [&](const std::unique_ptr<Paxlog::tup>& tptr) {
+                        return tptr->vs <= paxlog.latest_exec();};
+
+            paxlog.trim_front(trim_fctn); // ought to clear the whole log at this point
+
+            LOG(l::DEBUG, "The Primary's log was trimmed\n");
+
+            paxlog.set_latest_accept(nil_vs); // TODO is this correct?
+            paxlog.set_latest_exec(nil_vs);   // TODO is this correct?
+
+            /* tell the backups that this thing was committed
+               so they can commit up to here and (potentially) trim too */
+            for (auto backup : vc_state.view.backups) {
+                send_msg(backup, std::make_unique<struct accept_arg>(this_tup->vs));
+            }
+        }
+    }
+
+    /* if it has *just now* been Ack'd by a majority */
+    else if (this_tup->resp_cnt == this_tup->serv_cnt/2 + 1) {
+
+        for (auto it = paxlog.begin(); it != paxlog.end(); it++) {
+
+            /* find this request in the log */
+            if ((*it)->vs == repl_res.vs) {
+                std::unique_ptr<Paxlog::tup> &tup = *it;
+
+
+                MASSERT(tup->resp_cnt == tup->serv_cnt/2 + 1, "Well that's odd.");
                 auto op_to_exec = std::make_unique<Paxlog::tup>(*tup);
-                viewstamp_t nil_vs = {};
 
                 /* execute if it's next to exec, or nothing has been exec'd yet */
                 if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
@@ -139,24 +194,12 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
 
                     LOG(l::DEBUG, "Sending result to client: " << resp << "\n");
                     send_msg(tup->src, std::make_unique<struct execute_success>(resp, tup->rid));
-
-                    /* if the log can be trimmed */
-                    if (paxlog.latest_exec() == paxlog.latest_accept()) {
-
-                        /* TODO I think this is where I trim the log? */
-
-                        /* tell the backups that this thing was committed
-                           so they can commit up to here and (potentially) trim too */
-                        for (auto backup : vc_state.view.backups) {
-                            send_msg(backup, std::make_unique<struct accept_arg>(tup->vs));
-                        }
-                    }
                 }
                 else if (paxlog.latest_exec() == nil_vs && !paxlog.next_to_exec(it)) {
                     LOG(l::DEBUG, "item wasn't next to execute\n");
                 }
+                break;
             }
-            break;
         }
     }
 }
@@ -168,9 +211,12 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
      */
      /* when the primary's log is empty it sends a message to the backups to accept <= committed */
     for (auto it = paxlog.begin(); it != paxlog.end() && (*it)->vs < acc_arg.committed; it++) {
-        if (paxlog.next_to_exec(it) || paxlog.size() == 1) {
+        viewstamp_t nil_vs = {};
+        if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
             paxop_on_paxobj(*it);
             paxlog.execute(*it);  // here we note that we executed
         }
     }
+
+    /* TODO this seems like another good opportunity to trim the log */
 }
