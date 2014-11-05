@@ -62,6 +62,7 @@ void paxserver::execute_arg(const struct execute_arg& ex_arg) {
     paxlog.set_latest_accept(proposed_vs);
 
     for (auto backup : vc_state.view.backups) {
+        LOG(l::DEBUG, "Sending " << proposed_vs << " to: " << backup << "\n");
         send_msg(backup,
                 std::make_unique<struct replicate_arg>(
                         proposed_vs, ex_arg, paxlog.latest_exec()));
@@ -169,44 +170,42 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
             LOG(l::DEBUG, "The Primary's log was emptied\n");
 
             paxlog.set_latest_accept(nil_vs);
-            paxlog.set_latest_exec(nil_vs);
 
             /* tell the backups that this thing was committed
                so they can commit up to here and (potentially) trim too */
             for (auto backup : vc_state.view.backups) {
-                send_msg(backup, std::make_unique<struct accept_arg>(this_tup->vs));
+                send_msg(backup, std::make_unique<struct accept_arg>(paxlog.latest_exec()));
             }
+            paxlog.set_latest_exec(nil_vs);
         }
     }
 
     /* if it has *just now* been Ack'd by a majority */
     else if (this_tup->resp_cnt == this_tup->serv_cnt/2 + 1) {
 
+        /* go through the log again from the start */
         for (auto it = paxlog.begin(); it != paxlog.end(); it++) {
+            std::unique_ptr<Paxlog::tup> &tup = *it;
 
-            /* find this request in the log */
-            if ((*it)->vs == repl_res.vs) {
-                std::unique_ptr<Paxlog::tup> &tup = *it;
+            /* determine if this entry ought to be executed */
 
+            bool has_enough_votes   = tup->resp_cnt > tup->serv_cnt/2;
+            bool none_have_execd    = paxlog.latest_exec() == nil_vs;
+            bool first_entry        = it == paxlog.begin();
 
-                MASSERT(tup->resp_cnt == tup->serv_cnt/2 + 1, "Well that's odd.");
-                auto op_to_exec = std::make_unique<Paxlog::tup>(*tup);
+            bool cold_start         = none_have_execd && first_entry;
+            bool next_to_exec       = paxlog.next_to_exec(it) || cold_start;
+            bool should_execute     = has_enough_votes && next_to_exec;
 
-                /* TODO actually, since this may have plugged a hole,
-                    I need to iterate through the whole log from the start right here */
+            if (should_execute) {
+                std::string resp = paxop_on_paxobj(tup);
+                paxlog.execute(tup);
 
-                /* execute if it's next to exec, or nothing has been exec'd yet */
-                if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
-                    std::string resp = paxop_on_paxobj(op_to_exec);
-                    paxlog.execute(op_to_exec);
-
-                    LOG(l::DEBUG, "Sending result " << resp << " to Client: " << tup->src << "\n");
-                    send_msg(tup->src, std::make_unique<struct execute_success>(resp, tup->rid));
-                }
-                else if (paxlog.latest_exec() == nil_vs && !paxlog.next_to_exec(it)) {
-                    LOG(l::DEBUG, (*it)->vs << "wasn't next to execute\n");
-                }
-                break;
+                LOG(l::DEBUG, "Sending result " << resp << " to Client: " << tup->src << "\n");
+                send_msg(tup->src, std::make_unique<struct execute_success>(resp, tup->rid));
+            }
+            else if (paxlog.latest_exec() == nil_vs && !paxlog.next_to_exec(it)) {
+                LOG(l::DEBUG, (*it)->vs << "wasn't next to execute\n");
             }
         }
     }
@@ -217,14 +216,37 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
      *     const char* _descr = "accept ARG"
      *     viewstamp_t committed
      */
+
+    viewstamp_t nil_vs = {};
+
      /* when the primary's log is empty it sends a message to the backups to accept <= committed */
     for (auto it = paxlog.begin(); it != paxlog.end() && (*it)->vs <= acc_arg.committed; it++) {
-        viewstamp_t nil_vs = {};
-        if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
-            LOG(l::DEBUG, "backup is executing " << (*it)->vs << "\n");
+        std::unique_ptr<Paxlog::tup> &tup = *it;
+
+        /* determine if this entry ought to be executed */
+//
+//        bool has_enough_votes   = tup->resp_cnt > tup->serv_cnt/2;
+//        bool none_have_execd    = paxlog.latest_exec() == nil_vs;
+//        bool first_entry        = it == paxlog.begin();
+//        bool committed          = tup->vs <= acc_arg.committed;
+//
+//        bool cold_start         = none_have_execd && first_entry;
+//        bool next_to_exec       = paxlog.next_to_exec(it) || cold_start;
+//        bool should_execute     = committedhas_enough_votes && next_to_exec;
+//
+//        LOG(l::DEBUG, "\n" << *tup << "\n");
+//        LOG(l::DEBUG, "has_enough_votes: " << has_enough_votes<< "\n");
+//        LOG(l::DEBUG, "none_have_execd: "  << none_have_execd << "\n");
+//        LOG(l::DEBUG, "first_entry: "      << first_entry     << "\n");
+//        LOG(l::DEBUG, "cold_start: "       << cold_start      << "\n");
+//        LOG(l::DEBUG, "next_to_exec: "     << next_to_exec    << "\n");
+//        LOG(l::DEBUG, "should_execute: "   << should_execute  << "\n\n");
+//
+//        if (should_execute) {
+            LOG(l::DEBUG, "backup " << nid << " is executing " << (*it)->vs << "\n");
             paxop_on_paxobj(*it);
             paxlog.execute(*it);  // here we note that we executed
-        }
+//        }
     }
 
     /* this seems like another good opportunity to trim the log */
@@ -232,7 +254,7 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
 
     std::function<bool (const std::unique_ptr<Paxlog::tup>&)> trim_fctn =
             [&](const std::unique_ptr<Paxlog::tup>& tptr) {
-                return tptr->vs <= paxlog.latest_exec();};
+                return tptr->vs <= acc_arg.committed;};
 
     paxlog.trim_front(trim_fctn); // ought to clear the whole log at this point
 }
