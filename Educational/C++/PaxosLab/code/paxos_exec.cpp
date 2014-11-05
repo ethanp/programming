@@ -41,7 +41,8 @@ void paxserver::execute_arg(const struct execute_arg& ex_arg) {
     }
 
     if (paxlog.find_rid(ex_arg.src, ex_arg.rid)) {
-        LOG(l::DEBUG, "Dropping duplicate request.\n");
+        /* TODO what todo about dupes? */
+        LOG(l::DEBUG, "Re-sending duplicate request ??\n");
         return;
     }
 
@@ -128,7 +129,7 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
 
     /* count this response */
     if (!paxlog.incr_resp(repl_res.vs)) {
-        LOG(l::DEBUG, "couldn't find tup in log, CANCELLING\n");
+        LOG(l::DEBUG, "couldn't find " << repl_res.vs << " in log, CANCELLING\n");
         return;
     }
 
@@ -138,10 +139,10 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
 
     /* if it's been ACK'd by everyone */
     if (this_tup->resp_cnt == this_tup->serv_cnt) {
-        LOG(l::DEBUG, "Request " << this_tup->rid << " has been ACK'd by everyone.\n");
+        LOG(l::DEBUG, "Request " << this_tup->vs << " has been ACK'd by everyone.\n");
 
         /* if the entire log has been executed */
-        if (paxlog.latest_exec() == paxlog.latest_accept() && this_tup->vs == paxlog.latest_exec()) {
+        if (paxlog.latest_exec() == paxlog.latest_accept()) {
 
             LOG(l::DEBUG, "The Primary's entire log has been executed.\n");
 
@@ -156,16 +157,19 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
 
             std::function<bool (const std::unique_ptr<Paxlog::tup>&)> trim_fctn =
                     [&](const std::unique_ptr<Paxlog::tup>& tptr) {
-                        return tptr->vs <= paxlog.latest_exec();};
+                        return tptr->vs <= paxlog.latest_exec()
+                            && tptr->resp_cnt == tptr->serv_cnt;};
 
             paxlog.trim_front(trim_fctn); // ought to clear the whole log at this point
 
-            MASSERT(paxlog.empty(), "Primary's log still isn't empty after trimming.");
+            if(!paxlog.empty()) {
+                LOG(l::DEBUG, "Primary's log still isn't empty after trimming.");
+            }
 
             LOG(l::DEBUG, "The Primary's log was emptied\n");
 
-            paxlog.set_latest_accept(nil_vs); // TODO is this correct?
-            paxlog.set_latest_exec(nil_vs);   // TODO is this correct?
+            paxlog.set_latest_accept(nil_vs);
+            paxlog.set_latest_exec(nil_vs);
 
             /* tell the backups that this thing was committed
                so they can commit up to here and (potentially) trim too */
@@ -188,16 +192,19 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
                 MASSERT(tup->resp_cnt == tup->serv_cnt/2 + 1, "Well that's odd.");
                 auto op_to_exec = std::make_unique<Paxlog::tup>(*tup);
 
+                /* TODO actually, since this may have plugged a hole,
+                    I need to iterate through the whole log from the start right here */
+
                 /* execute if it's next to exec, or nothing has been exec'd yet */
                 if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
                     std::string resp = paxop_on_paxobj(op_to_exec);
                     paxlog.execute(op_to_exec);
 
-                    LOG(l::DEBUG, "Sending result to client: " << resp << "\n");
+                    LOG(l::DEBUG, "Sending result " << resp << " to Client: " << tup->src << "\n");
                     send_msg(tup->src, std::make_unique<struct execute_success>(resp, tup->rid));
                 }
                 else if (paxlog.latest_exec() == nil_vs && !paxlog.next_to_exec(it)) {
-                    LOG(l::DEBUG, "item wasn't next to execute\n");
+                    LOG(l::DEBUG, (*it)->vs << "wasn't next to execute\n");
                 }
                 break;
             }
