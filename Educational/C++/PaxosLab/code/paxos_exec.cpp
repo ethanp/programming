@@ -26,8 +26,9 @@ void paxserver::execute_arg(const struct execute_arg& ex_arg) {
     /* "The primary cohort logs the request and forwards it to all other cohorts." */
 
     /* client needs update */
-    if (ex_arg.vid < vc_state.view.vid) {
-        LOG(l::DEBUG, "ex_arg.vid < vc_state.view.vid" << "\n");
+    LOG(l::DEBUG, "RID = " << ex_arg.rid << "\n");
+    if (ex_arg.vid != vc_state.view.vid) {
+        LOG(l::DEBUG, "Sending Client new View_ID" << "\n");
 
         /* tell client what's good */
         send_msg(ex_arg.nid,
@@ -76,25 +77,25 @@ void paxserver::replicate_arg(const struct replicate_arg& repl_arg) {
             (uint)vc_state.view.get_servers().size(),
             repl_arg.arg.sent_tick);
 
+    /* Backups execute all requests less than or equal to the committed field in replicate_arg. */
 
-    /* But backups and the primary execute operations in strict viewstamp order (see viewstamp_t::sucessor).
-       Backups execute all requests less than or equal to the committed field in replicate_arg.
-       The quite ugly iterator interface to Paxlog (Paxlog::begin and Paxlog::end) are
-       provided for you to traverse the log to determine which entries can be executed. */
-
-    // we iterate through this backup's log, executing entries that have been committed by the primary
+    /* we iterate through this backup's log, executing
+       entries that have been committed by the primary */
     std::vector<std::unique_ptr<Paxlog::tup>>::iterator it;
 
     /* committed specifies a viewstamp below which the server has executed all requests
        and sent their results back to clients. These committed operations never need to
        be rolled back and can therefore be executed at backups. */
     for (it = paxlog.begin(); it != paxlog.end() && (*it)->vs < repl_arg.committed; it++) {
-        if (paxlog.next_to_exec(it)) {
-
+        viewstamp_t nil_vs = {};
+        if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
+            LOG(l::DEBUG, "executing backloged rid = " << (*it)->rid << "\n");
             paxop_on_paxobj(*it); // TODO here we execute (to change the state of the state machine)
             paxlog.execute(*it);  // here we note that we executed
+
         }
     }
+
     /* The backup acknowledges the request by viewstamp */
     send_msg(vc_state.view.primary, std::make_unique<struct replicate_res>(repl_arg.vs));
 
@@ -107,45 +108,56 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
      *     viewstamp_t vs */
 
     /*************************************
-        meanwhile, back at the PRIMARY...
+        Meanwhile, back at the PRIMARY...
      *************************************/
 
     /* after receiving acknowledgments from a majority of cohorts (including itself),
        the primary calls the execute function on request and sends the reply back to the client */
 
-    /* we know we've hit a majority of cohorts when tup.resp_cnt > tup.serv_cnt / 2 */
-    // TODO get tup, increment res_cont, check majority-condition.
-
-    /* we cast-away the 'const' modifier, bc we need to edit it */
-    Paxlog::tup* tup = (Paxlog::tup *) paxlog.get_tup(repl_res.vs);
-    if (!tup) {
-        LOG(l::DEBUG, "couldn't find tup in log, CANCELLING" << "\n");
+    /* count this response */
+    if (!paxlog.incr_resp(repl_res.vs)) {
+        LOG(l::DEBUG, "couldn't find tup in log, CANCELLING\n");
         return;
     }
-    if (tup && tup->vs == repl_res.vs) {
-        // make sure it's been a majority
-        if (++tup->resp_cnt > tup->serv_cnt/2) {
-            // If it has, execute if it hasn't already been executed
-            // Am I allowed to execute even if something behind it in the log hasn't executed?
-            // I'd think not... but it's impossible to intuit these types of things.
-            auto rickshaw = std::make_unique<Paxlog::tup>(tup);
-            std::string resp = paxop_on_paxobj(rickshaw);
-            paxlog.execute(rickshaw);
 
-            // send result back to the client
-            send_msg((tup)->src,
-                    std::make_unique<struct execute_success>(
-                            resp, tup->rid));
+    for (auto it = paxlog.begin(); it != paxlog.end(); it++) {
 
+        /* find this request in the log */
+        if ((*it)->vs == repl_res.vs) {
+            std::unique_ptr<Paxlog::tup> &tup = *it;
+
+            /* if it's been Ack'd by a majority */
+            if (tup->resp_cnt > tup->serv_cnt/2) {
+
+                auto op_to_exec = std::make_unique<Paxlog::tup>(*tup);
+                viewstamp_t nil_vs = {};
+
+                /* execute if it's next to exec, or nothing has been exec'd yet */
+                if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
+                    std::string resp = paxop_on_paxobj(op_to_exec);
+                    paxlog.execute(op_to_exec);
+
+                    LOG(l::DEBUG, "Sending result to client: " << resp << "\n");
+                    send_msg(tup->src, std::make_unique<struct execute_success>(resp, tup->rid));
+
+                    /* if the log can be trimmed */
+                    if (paxlog.latest_exec() == paxlog.latest_accept()) {
+
+                        /* TODO I think this is where I trim the log? */
+
+                        /* tell the backups that this thing was committed
+                           so they can commit up to here and (potentially) trim too */
+                        for (auto backup : vc_state.view.backups) {
+                            send_msg(backup, std::make_unique<struct accept_arg>(tup->vs));
+                        }
+                    }
+                }
+                else if (paxlog.latest_exec() == nil_vs && !paxlog.next_to_exec(it)) {
+                    LOG(l::DEBUG, "item wasn't next to execute\n");
+                }
+            }
+            break;
         }
-    }
-
-    /* judging by the next function, I guess we tell the backups
-        that this thing was committed so they can commit up to
-        here too */
-    /* TODO actually this should only happen if the log is now empty */
-    for (auto backup : vc_state.view.backups) {
-        send_msg(backup, std::make_unique<struct accept_arg>(tup->vs));
     }
 }
 
@@ -156,7 +168,7 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
      */
      /* when the primary's log is empty it sends a message to the backups to accept <= committed */
     for (auto it = paxlog.begin(); it != paxlog.end() && (*it)->vs < acc_arg.committed; it++) {
-        if (paxlog.next_to_exec(it)) {
+        if (paxlog.next_to_exec(it) || paxlog.size() == 1) {
             paxop_on_paxobj(*it);
             paxlog.execute(*it);  // here we note that we executed
         }
