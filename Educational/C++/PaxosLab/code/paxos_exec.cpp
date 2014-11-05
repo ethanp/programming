@@ -87,6 +87,9 @@ void paxserver::replicate_arg(const struct replicate_arg& repl_arg) {
             (uint)vc_state.view.get_servers().size(),
             repl_arg.arg.sent_tick);
 
+    /* why isn't this done in paxlog.log? I don't know. */
+    paxlog.set_latest_accept(repl_arg.vs);
+
     /* Backups execute all requests less than or equal to the committed field in replicate_arg. */
 
     /* we iterate through this backup's log, executing
@@ -96,7 +99,7 @@ void paxserver::replicate_arg(const struct replicate_arg& repl_arg) {
     /* committed specifies a viewstamp below which the server has executed all requests
        and sent their results back to clients. These committed operations never need to
        be rolled back and can therefore be executed at backups. */
-    for (it = paxlog.begin(); it != paxlog.end() && (*it)->vs < repl_arg.committed; it++) {
+    for (it = paxlog.begin(); it != paxlog.end() && (*it)->vs <= repl_arg.committed; it++) {
         viewstamp_t nil_vs = {};
         if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
             LOG(l::DEBUG, "executing backloged rid = " << (*it)->rid << "\n");
@@ -161,7 +164,9 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
 
             paxlog.trim_front(trim_fctn); // ought to clear the whole log at this point
 
-            LOG(l::DEBUG, "The Primary's log was trimmed\n");
+            MASSERT(paxlog.empty(), "Primary's log still isn't empty after trimming.");
+
+            LOG(l::DEBUG, "The Primary's log was emptied\n");
 
             paxlog.set_latest_accept(nil_vs); // TODO is this correct?
             paxlog.set_latest_exec(nil_vs);   // TODO is this correct?
@@ -210,13 +215,21 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
      *     viewstamp_t committed
      */
      /* when the primary's log is empty it sends a message to the backups to accept <= committed */
-    for (auto it = paxlog.begin(); it != paxlog.end() && (*it)->vs < acc_arg.committed; it++) {
+    for (auto it = paxlog.begin(); it != paxlog.end() && (*it)->vs <= acc_arg.committed; it++) {
         viewstamp_t nil_vs = {};
         if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
+            LOG(l::DEBUG, "backup is executing " << (*it)->vs << "\n");
             paxop_on_paxobj(*it);
             paxlog.execute(*it);  // here we note that we executed
         }
     }
 
-    /* TODO this seems like another good opportunity to trim the log */
+    /* this seems like another good opportunity to trim the log */
+    /* trim the log */
+
+    std::function<bool (const std::unique_ptr<Paxlog::tup>&)> trim_fctn =
+            [&](const std::unique_ptr<Paxlog::tup>& tptr) {
+                return tptr->vs <= paxlog.latest_exec();};
+
+    paxlog.trim_front(trim_fctn); // ought to clear the whole log at this point
 }
