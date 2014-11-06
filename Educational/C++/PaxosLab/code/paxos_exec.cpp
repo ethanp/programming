@@ -17,9 +17,22 @@ void paxserver::execute_arg(const struct execute_arg& ex_arg) {
         return; // don't log this message
     }
 
+    /* duplicate request means the network timed out before responding to the client.
+     * so we resend it out */
     if (paxlog.find_rid(ex_arg.src, ex_arg.rid)) {
-        LOG(l::DEBUG, "duplicate request ?? ignoring...\n");
-        return;
+        LOG(l::DEBUG, "duplicate request, re-replicating it back out\n");
+        for (auto it = paxlog.begin(); it != paxlog.end(); it++) {
+            if ((*it)->src == ex_arg.src && (*it)->rid == ex_arg.rid) {
+                for (auto backup : vc_state.view.backups) {
+                    LOG(l::DEBUG, "RESending " << (*it)->vs << " to: " << backup << "\n");
+                    send_msg(backup,
+                            std::make_unique<struct replicate_arg>(
+                                    (*it)->vs, ex_arg, paxlog.latest_exec()));
+                }
+                return;
+            }
+        }
+        MASSERT(0, "Shouldn't be here\n");
     }
 
     const struct viewstamp_t proposed_vs = { ex_arg.vid, ts++ };
@@ -44,10 +57,6 @@ void paxserver::execute_arg(const struct execute_arg& ex_arg) {
 }
 
 void paxserver::replicate_arg(const struct replicate_arg& repl_arg) {
-    /* replicate_arg:
-           viewstamp_t  vs
-           execute_arg  arg
-           viewstamp_t  committed */
 
     /* this never happens */
     if (paxlog.find_rid(repl_arg.arg.src, repl_arg.arg.rid)) {
@@ -75,7 +84,7 @@ void paxserver::replicate_arg(const struct replicate_arg& repl_arg) {
     for (it = paxlog.begin(); it != paxlog.end() && (*it)->vs <= repl_arg.committed; it++) {
         viewstamp_t nil_vs = {};
         if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
-            LOG(l::DEBUG, "executing backloged vs = " << (*it)->vs << "\n");
+            LOG(l::DEBUG, "executing backlogged vs = " << (*it)->vs << "\n");
             paxop_on_paxobj(*it); // here we execute (to change the state of the state machine)
             paxlog.execute(*it);  // here we note that we executed
         }
@@ -83,8 +92,6 @@ void paxserver::replicate_arg(const struct replicate_arg& repl_arg) {
 
     /* The backup acknowledges the request by viewstamp */
     send_msg(vc_state.view.primary, std::make_unique<struct replicate_res>(repl_arg.vs));
-
-    /* TODO "cohorts can safely delete log entries before committed" */
 }
 
 void paxserver::replicate_res(const struct replicate_res& repl_res) {
@@ -102,7 +109,8 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
     /* count this response */
     if (!paxlog.incr_resp(repl_res.vs)) {
         LOG(l::DEBUG, "couldn't find " << repl_res.vs << " in log, just send em another accept arg\n");
-        send_msg(repl_res.src, std::make_unique<struct accept_arg>(paxlog.latest_exec()));
+        for (auto backup : vc_state.view.backups)
+            send_msg(backup, std::make_unique<struct accept_arg>(paxlog.latest_exec()));
         return;
     }
 
@@ -169,12 +177,11 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
 
             /* trim the log */
 
-            std::function<bool (const std::unique_ptr<Paxlog::tup>&)> trim_fctn =
+            std::function<bool (const std::unique_ptr<Paxlog::tup>&)> clear_log =
                     [&](const std::unique_ptr<Paxlog::tup>& tptr) {
-                        return /*tptr->vs <= paxlog.latest_exec()
-                                && tptr->resp_cnt == tptr->serv_cnt*/true;};
+                        return true;};
 
-            paxlog.trim_front(trim_fctn); // just clear the entire log
+            paxlog.trim_front(clear_log); // just clear the entire log
 
             LOG(l::DEBUG, "The Primary's log was trimmed ");
             if(!paxlog.empty()) {
@@ -184,11 +191,12 @@ void paxserver::replicate_res(const struct replicate_res& repl_res) {
             }
 
 
-            paxlog.set_latest_accept(nil_vs);
+//            paxlog.set_latest_accept(nil_vs);
 
             /* tell the backups that this thing was committed
                so they can commit up to here and (potentially) trim too */
             for (auto backup : vc_state.view.backups) {
+                LOG(l::DEBUG, "sending " << backup << " accept\n");
                 send_msg(backup, std::make_unique<struct accept_arg>(paxlog.latest_exec()));
             }
         }
@@ -203,7 +211,7 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
 
     viewstamp_t nil_vs = {};
 
-     /* when the primary's log is empty it sends a message to the backups to accept <= committed */
+    /* when the primary's log is empty it sends a message to the backups to accept <= committed */
     for (auto it = paxlog.begin(); it != paxlog.end() && (*it)->vs <= acc_arg.committed; it++) {
         std::unique_ptr<Paxlog::tup> &tup = *it;
 
@@ -211,14 +219,14 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
         bool none_have_execd    = paxlog.latest_exec() == nil_vs;
         bool first_entry        = it == paxlog.begin();
         bool cold_start         = none_have_execd && first_entry;
-        bool next_to_exec       = paxlog.next_to_exec(it) || cold_start;
+        bool next_to_exec       = paxlog.next_to_exec(it) || first_entry;
 
         LOG(l::DEBUG, "\n"                 << *tup            << "\n");
         LOG(l::DEBUG, "none_have_execd: "  << none_have_execd << "\n");
         LOG(l::DEBUG, "first_entry: "      << first_entry     << "\n");
         LOG(l::DEBUG, "cold_start: "       << cold_start      << "\n");
         LOG(l::DEBUG, "next_to_exec: "     << next_to_exec    << "\n");
-//
+
         if (next_to_exec) {
             LOG(l::DEBUG, "backup " << nid << " is executing " << (*it)->vs << "\n");
             paxop_on_paxobj(*it);
@@ -226,6 +234,7 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
         }
     }
 
+    LOG(l::DEBUG, "still alive!\n");
     /* this seems like another good opportunity to trim the log */
     std::function<bool (const std::unique_ptr<Paxlog::tup>&)> trim_fctn =
             [&](const std::unique_ptr<Paxlog::tup>& tptr) {
