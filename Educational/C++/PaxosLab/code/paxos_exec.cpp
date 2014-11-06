@@ -79,7 +79,8 @@ void paxserver::replicate_arg(const struct replicate_arg& repl_arg) {
 
     for (it = paxlog.begin(); it != paxlog.end() && (*it)->vs <= repl_arg.committed; it++) {
         viewstamp_t nil_vs = {};
-        if (paxlog.next_to_exec(it) || paxlog.latest_exec() == nil_vs) {
+        bool cold_start = paxlog.latest_exec() == nil_vs && it == paxlog.begin();
+        if (paxlog.next_to_exec(it) || cold_start) {
             LOG(l::DEBUG, "executing backlogged vs = " << (*it)->vs << "\n");
             paxop_on_paxobj(*it); // here we execute (to change the state of the state machine)
             paxlog.execute(*it);  // here we note that we executed
@@ -166,11 +167,12 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
     if (paxlog.empty()) {
         return;
     }
+    viewstamp_t nil_vs = {};
     for (auto it = paxlog.begin(); it != paxlog.end() && (*it)->vs <= acc_arg.committed; it++) {
 
         std::unique_ptr<Paxlog::tup> &tup = *it;
-
-        if (paxlog.next_to_exec(it) || it == paxlog.begin()) {
+        bool cold_start = paxlog.latest_exec() == nil_vs && it == paxlog.begin();
+        if (paxlog.next_to_exec(it) || cold_start) {
             LOG(l::DEBUG, "backup " << nid << " is executing " << tup->vs << "\n");
             paxop_on_paxobj(tup);
             paxlog.execute(tup);
@@ -184,10 +186,13 @@ void paxserver::accept_arg(const struct accept_arg& acc_arg) {
                         && tptr->vs <= paxlog.latest_exec();
             };
 
-    paxlog.trim_front(trim_fctn);
+    if (!paxlog.empty()) {
+        paxlog.trim_front(trim_fctn);
+    }
 
     if (paxlog.empty()) {
         LOG(l::DEBUG, "Backup log now empty\n");
+        paxlog.set_latest_accept(nil_vs);
     }
     else {
         LOG(l::DEBUG, "Backup log still not empty\n");
