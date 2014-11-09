@@ -12,101 +12,55 @@ latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
 
-# Z-Shell
+## Jobs
+#### 11/9/14
 
-## Refs
+    $ vim
 
-1. [https://wiki.archlinux.org/index.php/zsh]()
-2. [https://github.com/robbyrussell/oh-my-zsh](), [http://ohmyz.sh/]()
-3. [http://zanshin.net/2013/09/03/how-to-use-homebrew-zsh-instead-of-max-os-x-default/]()
-4. [http://www.iterm2.com/#/section/features/configurability]()
-5. [http://mikebuss.com/2014/02/02/a-beautiful-productive-terminal-experience/]()
-6. [http://mikegrouchy.com/blog/2012/01/zsh-is-your-friend.html]()
-7. [http://stevelosh.com/blog/2010/02/my-extravagant-zsh-prompt/]()
-8. [http://www.paradox.io/posts/9-my-new-zsh-prompt]()
+    # you type
+    ^z  # stop (pause) process
 
-## Intro
+    [1]+ Stopped    vim
 
-### Things to figure out
+    $ jobs
+    [1]+ Stopped    vim
 
-1. The prompt
-2. The coloring
-3. Vim mode
-4. Git stuff
-5. Autocompletion
-6. Easy `ls`ing to common locations    
+    # go back to most recently stopped job
+    $ fg
+    ^z
 
-# Sed & Awk
+    $ less somefile.txt
+    # you type
+    ^z
+    [2]+ Stopped    less somefile.txt
 
-Sed
----
+    $ jobs
+    [1]- Stopped    vim
+    [2]+ Stopped    less somefile.txt
 
-### Delete matching lines from file
+    $ fg  # back to  less
+    ^z
 
-[Source](http://en.kioskea.net/faq/1451-sed-delete-one-or-more-lines-from-a-file)
+    $ fg %1 (or) fg 1  # back to vim
+    ^z
 
-    sed '{[/]<n>|<string>|<regex>[/]}d' <fileName>
-    sed '{[/]<addr1>[,<addr2>][/]d' <fileName>
+    $ kill 2
+    bash: kill: (2) - No such process
 
-* `/.../` = delimiters
-* `n` = line number
-* `string` = string found in in line
-* `regex` = regular expression corresponding to the searched pattern
-* `addr` = address of a line (number or pattern)
-* `d` = delete
-* `!d` = delete anything that *doesn't match*
+    $ kill %2
+    [2]- Terminated: 15   less somefile.txt
 
-#### This is the command I *wanted*
+    $ fg  # now vim is queued for foreground'ing
+    ^z
 
-Replace `file1` with only the lines that *don't* contain `dlm`
+If you have a job that's taking too long and you want to **move it to the
+background**, you can do `CTRL-Z` to `STOP` it, then do
 
-    sed '/dlm/d' file1 > tmp; cat tmp > file1; rm -f tmp
+    $ bg %{it's job_no}
 
-#### These are the given examples
+and the shell will run it as a background jobs, as though you had run it with
 
-* These examples are just printed (stdout1= screen).
-* Using, the `-i"tmpfile"` option, you can save the original version to `tmpfile` as a backup
-
-        sed -i".bak" '3d' filename.txt
-
-Remove the 3rd line:
-
-    sed '3d' fileName.txt
-
-
-Remove the line containing the string "awk":
-
-    sed '/awk/d' filename.txt
-
-
-Remove the last line:
-
-    sed '$d' filename.txt
-
-
-
-Remove all empty lines:
-
-    sed '/^$/d' filename.txt
-    sed '/./!d' filename.txt
-
-
-Remove the line matching by a regular expression (by eliminating one containing digital characters, at least 1 digit, located at the end of the line):
-
-    sed '/[0-9/][0-9]*$/d' filename.txt
-
-
-Remove the interval between lines 7 and 9:
-
-    sed '7,9d' filename.txt
-
-
-The same operation as above but replacing the address with parameters:
-
-    sed '/-Start/,/-End/d' filename.txt
-
-
-# Other
+    $ command for background execution &
 
 ## File Descriptors
 
@@ -136,7 +90,7 @@ PID of the most recent background command
     ~$ echo $!
     3846
     [1]+  Done                    echo hello
-    ~$ 
+    ~$
 
 ### $$
 #### 9/22/14
@@ -170,13 +124,41 @@ There are two good options
 
     # cleaner syntax
     for i in {1..10}; do command; done
-    
+
     # potentially more flexible
     for i in `seq 10`; do command; done
 
 [bash repeat]: http://serverfault.com/questions/273238/how-to-run-a-command-multiple-times
 
 # Commands to Command
+
+## 11/9/14
+
+### tail --- print the end of the file
+
+    tail [optns] [files]
+
+* -N --- show last N lines
+* +N --- show all but first N lines
+* -f --- (**watch file**) keep file open, and when new content gets appended,
+         print it too (super useful)
+
+
+### ln --- create a file that is a link to this file
+
+    ln [-sif] source target
+
+* **i** --- ask before doing anything
+* **f** --- don't ask for permission
+* **s** --- make a symbolic/soft link instead of a hard link
+
+#### Hard vs. Soft Links
+
+* **Hard** --- create a new name for a pointer to the `source`-file's
+               `inode` on disk
+* **Soft** --- create a new file on disk whose contents hold the
+               `source`-file's *name*
+    *  if the source file disappears this symbolic link will be broken
 
 ## 10/2/14
 
@@ -209,25 +191,26 @@ There are two good options
 #### Examples
 
     $ pkg-config fuse --cflags
-    
-    -D_FILE_OFFSET_BITS=64 -D_DARWIN_USE_64_BIT_INODE -I/usr/local/Cellar/osxfuse/2.7.1/include/osxfuse/fuse 
 
-says to use pkg-config to determine what C compiler flags are necessary to compile a source file that makes use of FUSE.
+    -D_FILE_OFFSET_BITS=64 -D_DARWIN_USE_64_BIT_INODE -I/usr/local/Cellar/osxfuse/2.7.1/include/osxfuse/fuse
+
+says to use pkg-config to determine what C compiler flags are necessary to
+compile a source file that makes use of FUSE.
 
     $ pkg-config fuse --libs
-    
+
     -L/usr/local/Cellar/osxfuse/2.7.1/lib -losxfuse -pthread -liconv
-    
+
 does the same for the libs to link with.
 
 So you might use it in a Makefile like this
 
     bbfs : bbfs.o log.o
             gcc -g -o bbfs bbfs.o log.o `pkg-config fuse --libs`
-    
+
     bbfs.o : bbfs.c log.h params.h
             gcc -g -Wall `pkg-config fuse --cflags` -c bbfs.c
-    
+
     log.o : log.c log.h params.h
             gcc -g -Wall `pkg-config fuse --cflags` -c log.c
 
@@ -415,6 +398,12 @@ This is the **opposite of [`dirname`](#dirname)**
     dir
     other
     file.txt
+
+You can get it to strip off the file suffix, though this doesn't seem to work
+well with globbing.
+
+    $ basename args.h .h
+    args
 
 ### find
 
