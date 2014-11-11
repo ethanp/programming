@@ -132,6 +132,89 @@ There are two good options
 
 # Commands to Command
 
+## 11/10/14
+
+### lynx --- run the text-based browser
+
+This is *just* too cool.
+
+### diff --- print differences between text files
+
+* -y --- view differences *side-by-side* (mind-blowing)
+* -u --- use the +/- format (it's honestly not as nice)
+
+### cut --- extract column of text
+
+    cut -(b|c|f)range [optns] [files]
+
+* -c5 --- extract the 5th character of each line
+* -b3-5 --- extract the 3rd, 4th, and 5th byte of each line
+* -f2,4 -d, --- extract the 2nd and 4th **fields** of each line, where a field delimiter is a comma
+* by default, the *delimiter* (`-d`) is a `TAB`
+* --output-delimiter=C --- when you're printing multiple fields,
+*                          use this delimiter (default is `TAB`)
+* -s --- suppress (don't print) lines not containing the delimiter character
+
+### paste --- make multiple text files into a csv-type-thing
+
+    $ cat D1
+    A
+    B
+    C
+
+    $ cat D2
+    1
+    2
+    3
+
+    $ paste D1 D2
+    A   1
+    B   2
+    C   3
+
+    $ paste -d, D1 D2
+    A,1
+    B,2
+    C,3
+
+    # this file is shorter than the others
+    $ cat D3
+    A
+    B
+
+    # it turns into a blank column
+    $ paste -d, D3 D2
+    A,1
+    B,2
+    ,3
+
+    # we can transpose too!!
+    $ paste -s D1 D2
+    A   B   C
+    1   2   3
+
+### sort
+
+* You can sort by columns
+* You can use offsets within columns
+* You can use multiple columns, each with its own offset
+
+    $ cat D3
+    B,2
+    A,1
+    E,4
+    D,5
+    C,3
+
+    # sort by column two, with separator=,
+    $ sort --key=2 --field-separator=, D3
+    $ sort -k2 -t, D3
+    A,1
+    B,2
+    C,3
+    E,4
+    D,5
+
 ## 11/9/14
 
 ### tail --- print the end of the file
