@@ -134,6 +134,11 @@ There are two good options
 
 ## 11/10/14
 
+### printf --- basically like you'd expect
+
+    $ printf "hello %s, that's $%.2f please for %d hamburglers\n" Jann 2.32 3
+    hello Jann, that's $2.32 please for 3 hamburglers
+
 ### lynx --- run the text-based browser
 
 This is *just* too cool.
@@ -453,8 +458,6 @@ con`cat`enate the contents of the given files, and sort that list of lines.
 
 this is the **opposite of [`basename`](#basename)**
 
-##### Examples
-
     $ dirname a/b/myfile
     a/b
 
@@ -470,8 +473,6 @@ this is the **opposite of [`basename`](#basename)**
 **given a filepath, return the part after the last slash**
 
 This is the **opposite of [`dirname`](#dirname)**
-
-##### Examples
 
     $ basename "./dir space/other dir/file.txt"
     file.txt
@@ -491,8 +492,6 @@ well with globbing.
 ### find
 
 **recursive listing of all the files underneath given file**
-
-##### Example
 
     $ find .
     ./.DS_STORE

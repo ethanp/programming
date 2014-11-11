@@ -1,3 +1,17 @@
+latex input:    mmd-article-header
+Title:          C Notes
+Author:         Ethan C. Petuchowski
+Base Header Level:  1
+latex mode:     memoir
+Keywords:       C, Programming Language, Syntax
+CSS:            http://fletcherpenney.net/css/document.css
+xhtml header:   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+copyright:      2014 Ethan C. Petuchowski
+latex input:    mmd-natbib-plain
+latex input:    mmd-article-begin-doc
+latex footer:   mmd-memoir-footer
+
 ## GDB
 
 ##### 10/17/14
@@ -27,12 +41,15 @@ Run these at the `(gdb)` prompt
 3. **break or 'b' <symbol>** --- set breakpoint on `<symbol>`
 4. **b <lineNo>** --- this works too
 3. **run** --- run to completion
-4. **continue [N]** --- run to breakpoint or completion, ignores `N-1` breakpoints along the way
+4. **continue [N]** --- run to breakpoint or completion, ignores `N-1`
+   breakpoints along the way
 5. **print <varName>** --- print value of `<varName>`
 6. **set <varName>=<value>** --- idn't that special?
-7. **help <command>** --- print a very nice little *help* about the given GDB command
+7. **help <command>** --- print a very nice little *help* about the given GDB
+   command
 8. **info registers** --- dump all registers
-9. **condition <bp-num> <exp>** --- break on breakpoint number `bp-num` if `exp`
+9. **condition <bp-num> <exp>** --- break on breakpoint number `bp-num` if
+   `exp`
 10. **info break** --- show current breakpoints
 11. **until <line>** --- continue till `line`
 
@@ -46,13 +63,17 @@ Run these at the `(gdb)` prompt
 
     #include <unistd.h>
     ssize        _t pread(int fd, void *buf, size_t count, off_t offset);
-    
-Reads up to `count` bytes from file descriptor `fd` at offset `offset` (from the start of the file) into the buffer starting at `buf`. The file offset (held by the OS) is not changed. On success, the number of bytes read or written is returned, or -1 on error, in which case errno is set to indicate the error.
+
+Reads up to `count` bytes from file descriptor `fd` at offset `offset` (from
+the start of the file) into the buffer starting at `buf`. The file offset
+(held by the OS) is not changed. On success, the number of bytes read or
+written is returned, or -1 on error, in which case errno is set to indicate
+the error.
 
 The atomicity of pread enables processes or threads that share file
-descriptors to read from a shared file at a particular offset
-without using a locking mechanism that would be necessary to
-achieve the same result in separate lseek and read system calls.
+descriptors to read from a shared file at a particular offset without using a
+locking mechanism that would be necessary to achieve the same result in
+separate lseek and read system calls.
 
 #### fopen
 
@@ -101,9 +122,9 @@ Modes
 
 **Precedence:** *follows* assignment
 
-    i = (a, b);  // stores b into i 
+    i = (a, b);  // stores b into i
     i = a, b;    // stores a into i. Equivalent to (i = a), b;
-                    
+
 ### Escape Sequences
 
 ##### 4/6/14
@@ -112,11 +133,13 @@ I'm having a hard time finding good documentation of these things.
 By experiment here is what I know:
 
 * What does `puts("\e[2J\e[H");` do?
-   * **puts**: print string followed by newline (see <a href=#puts>link to `puts`</a>)
-   * \e[2J: clears the screen by inserting enough newlines that the old content is off the screen
-   * \e[H:  in this case, it changes the clearing of the screen by `e[2J` so that it only involves
-            writing one newline and scrolling the screen itself so the old content is no longer
-            visible
+   * **puts**: print string followed by newline (see <a href=#puts>link to
+     `puts`</a>)
+   * \e[2J: clears the screen by inserting enough newlines that the old
+     content is off the screen
+   * \e[H:  in this case, it changes the clearing of the screen by `e[2J` so
+     that it only involves writing one newline and scrolling the screen itself
+     so the old content is no longer visible
 
 ### stdio.h
 
@@ -136,7 +159,8 @@ By experiment here is what I know:
     void *memset(void *str, int c, size_t n)
 
 * **does:** fills `n` bytes of `str` with `n` `(unsigned char)c`s
-* **returns:** `str` (possibly so that you can chain calls to different functions together)
+* **returns:** `str` (possibly so that you can chain calls to different
+  functions together)
 
 ### MACROS
 
@@ -147,14 +171,14 @@ By experiment here is what I know:
     //  macro to log fields in structs.
     #define log_struct(st, field, format, typecast) \
       log_msg("    " #field " = " #format "\n", typecast st->field)
-      
-* When a macro parameter is used with a leading ‘#’, the preprocessor
-  replaces it with the literal text of the actual argument, converted
-  to a string constant.
+
+* When a macro parameter is used with a leading ‘#’, the preprocessor replaces
+  it with the literal text of the actual argument, converted to a string
+  constant.
 * So you write a series of adjacent string constants and "stringified"
-  arguments, the preprocessor will replace the stringified arguments
-  with string constants. Then the C compiler will combine all the
-  adjacent string constants into one long string.
+  arguments, the preprocessor will replace the stringified arguments with
+  string constants. Then the C compiler will combine all the adjacent string
+  constants into one long string.
 
 #### Newline in macro
 
@@ -165,7 +189,7 @@ be no space between the letters
 
 	a\
 	b  // => ab
-	
+
 	a \
 	b 	// => a b
 
@@ -183,8 +207,8 @@ To define a macro that does nothing:
 
 [Reference: SO](http://stackoverflow.com/questions/1067226/c-multi-line-macro-do-while0-vs-scope-block)
 
-If you want to use a macro that calls multiple function within an `if` statement,
-you'll be in for a bit of a surprise.
+If you want to use a macro that calls multiple function within an `if`
+statement, you'll be in for a bit of a surprise.
 
 We define the naive
 
@@ -211,9 +235,9 @@ But that gets expanded to the following **problematic code**
     else
         bar(a);
 
-So you need to put the func's in some sort of block, but you want to make sure that
-it gets executed exactly once. This is precicely what `do {...} while (0)`
-accomplishes.
+So you need to put the func's in some sort of block, but you want to make sure
+that it gets executed exactly once. This is precicely what `do {...} while
+(0)` accomplishes.
 
 So we instead define
 
@@ -242,18 +266,17 @@ which works as we expect!
 
 ##### 5/29/14
 
-I found this in Apple's [RosyWriter][] example app. The macro itself
-doesn't look useful (at all), but the fact that you pass a `<` into
-it is pretty cool.
+I found this in Apple's [RosyWriter][] example app. The macro itself doesn't
+look useful (at all), but the fact that you pass a `<` into it is pretty cool.
 
 ###### Definition
 
 	#define CMTIME_COMPARE_INLINE(time1, comparator, time2) ((Boolean)(CMTimeCompare(time1, time2) comparator 0))
-	
+
 ###### Usage
 
 	while( CMTIME_COMPARE_INLINE( [[previousSecondTimestamps objectAtIndex:0] CMTimeValue], <, oneSecondAgo ) )
-		[previousSecondTimestamps removeObjectAtIndex:0];	
+		[previousSecondTimestamps removeObjectAtIndex:0];
 
 
 [RosyWriter]: https://developer.apple.com/library/ios/samplecode/RosyWriter/Introduction/Intro.html
@@ -291,8 +314,10 @@ it is pretty cool.
 
     int sprintf(char *buffer, char *format, ...)
 
-* Basically, it calls `printf` on the `format` argument, but instead of writing the output to `stdout`, it writes it into the `buffer` argument
-* **Returns** the number of characters written, or a negative value if there was an error
+* Basically, it calls `printf` on the `format` argument, but instead of
+  writing the output to `stdout`, it writes it into the `buffer` argument
+* **Returns** the number of characters written, or a negative value if there
+  was an error
 
 ## Concepts
 
@@ -311,25 +336,25 @@ space, whereas:
 
     char *pmessage = "now is the time";
 
-Defines a pointer that lives in the current scope's stack space,
-but that references memory elsewhere (in this one, "now is the
-time" is stored elsewhere in memory, commonly a string table).
+Defines a pointer that lives in the current scope's stack space, but that
+references memory elsewhere (in this one, "now is the time" is stored
+elsewhere in memory, commonly a string table).
 
-Also, note that because the data belonging to the second definition
-(the explicit pointer) is not stored in the current scope's stack
-space, it is unspecified exactly where it will be stored and should
-not be modified. *(I.e. beware the segfault, I guess.)*
+Also, note that because the data belonging to the second definition (the
+explicit pointer) is not stored in the current scope's stack space, it is
+unspecified exactly where it will be stored and should not be modified. *(I.e.
+beware the segfault, I guess.)*
 
-Edit: As pointed out by Mark, GMan, and Pavel, there is also a
-difference when the address-of operator is used on either of these
-variables. For instance, &pmessage returns a pointer of type char\*\*,
-or a pointer to a pointer to chars, whereas &amessage returns a
-pointer of type char(\*)[16], or a pointer to an array of 16 chars
-(which, like a char\*\*, needs to be dereferenced twice as litb
-points out).
+Edit: As pointed out by Mark, GMan, and Pavel, there is also a difference when
+the address-of operator is used on either of these variables. For instance,
+&pmessage returns a pointer of type char\*\*, or a pointer to a pointer to
+chars, whereas &amessage returns a pointer of type char(\*)[16], or a pointer
+to an array of 16 chars (which, like a char\*\*, needs to be dereferenced
+twice as litb points out).
 
 [SO PvA]: http://stackoverflow.com/questions/1335786
 
 ## Misc
 * In C, function names are pointers to functions
-    * So if you need to pass a pointer to a function, you can just pass a function name (idnat special?)
+    * So if you need to pass a pointer to a function, you can just pass a
+      function name (idnat special?)

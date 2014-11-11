@@ -176,9 +176,9 @@ Padding vs. Margin
 
 [Nice Tutorial](http://www.smashingmagazine.com/2009/10/05/mastering-css-coding-getting-started/#CSS-Basics1)
 
-![illustration](http://www.smashingmagazine.com/wp-content/uploads/2009/09/1_b.gif)
+* Good illustration [here](http://www.smashingmagazine.com/wp-content/uploads/2009/09/1_b.gif)
 
-* Use margin to separate the block from things outside it 
+* Use margin to separate the block from things outside it
 * Use padding to move the contents away from the edges of the block.
 
 \<div> vs \<p>
@@ -216,7 +216,7 @@ First the **HTML**
     <section id =" csvImport">
         <div>
             <label for="task">Import tasks from a CSV file</label>
-            <input type="file" id="importFile" name="importFile"/>       
+            <input type="file" id="importFile" name="importFile"/>      
         </div>
     </section>
 
@@ -247,18 +247,18 @@ You create a manifest file with the following outline
     file.html
     scripts/jquery-v.r.s.n.js
     scripts/myapp.js
-    
+
     # files to use when offline
     FALLBACK:
     file.html backupPlan.html
     etc. etc2.
-    
+
     # network addresses the browser is allowed to access
     # to retrieve the files you specified
     NETWORK:
     /     # only the origin server
     *     # *any* server
-    
+
 The files are only reloaded from your server when *something (anything [e.g. comment])*
 changes in your manifest file.
 
@@ -266,8 +266,8 @@ To tell the `tasks.html` file to download the manifest when it is loaded,
 add an attribute to its `html` tag:
 
     <html lang="en" manifest="tasks.appcache">
-    
- 
+
+
 
 Web Storage API
 ---------------
