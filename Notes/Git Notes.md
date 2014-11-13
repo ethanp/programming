@@ -12,21 +12,68 @@ latex input:    mmd-natbib-plain
 latex input:    mmd-article-begin-doc
 latex footer:   mmd-memoir-footer
 
-# Chapter
+Many of these notes are from O'Reilly's *Git Pocket Guide,* by Richard E. Silverman.
 
-## Section
+## Basic Commands
+#### 11/12/14
 
-### Something Cool Stuff
+### Show current branch
 
-#### Date
+    $ git branch
+    * master        # for example
 
-**A very brief summary of it.**
+### Checkout a tagged commit
 
-* Items
-* In a
-* List
+    $ git checkout mytag
+    You are in 'detached HEAD' state...
 
-##### Example description
+### Show `diff`erence between your working tree and the *index* (staging area)
 
-    $ example code
-    example output
+    $ git diff
+
+### Show the `diff`erence between your *index* (staging area) and the most recent ("current") commit
+
+    $ git diff --staged
+
+### Make the *index* (staging area) *become* the newest commit
+Physically, this just adds a pointer from it to the previous commit
+
+    $ git commit
+
+### Merge branch `refactor` into `master`.
+This applies the diffs, asks you to resolve conflicts, and commits the result.
+
+    $ git checkout master   # switch to master branch
+    $ git merge refactor
+
+##### Note: A `merge` is what happens when you `git pull` after it `fetch`es the changes.
+
+### Add only *some* of the changes you've made
+Starts an interactive loop that lets you select which "hunks" of (all) changes
+you want to index.
+
+Use "`?`" to see the commands
+
+    $ git add -p
+
+### Remove a file
+
+    $ git rm [filename]
+
+What this actually does is
+
+* Remove it from your index ("staging area" from now on, that's more clear to
+  me)
+    * which will remove it from your repo from now on
+        * not really sure the best way to say this
+        * basically, if you were to clone the repo after git rm [fn] and git
+          commit
+        * then you wouldn't see the file in your clone
+        * of course it will still be there in the history
+* NB: **This also deletes the working file**
+    * as if you did a little `rm [filename]` too
+
+### Reset (empty) the staging area
+Your changes will still be there on your local filesystem
+
+    $ git reset

@@ -77,6 +77,9 @@ perf-record:
 perf-report:
 	perf report -g
 
+simple: pax
+	pax -fl DEBUG --delay 0 --shuffle 0 --clients 1 --requests 1
+
 .PHONY: test
 test: pax
 # Basic functionality

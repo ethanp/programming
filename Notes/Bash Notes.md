@@ -133,6 +133,15 @@ There are two good options
 # Commands to Command
 
 ## 11/10/14
+### apropos --- pertaining too ...
+
+    $ apropos database
+
+Find all man-pages containing the word "database".
+
+There is a **synonym**
+
+    $ man -k database
 
 ### printf --- basically like you'd expect
 
