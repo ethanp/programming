@@ -24,5 +24,4 @@ done
     sleep 15  # MAGIC NUMBER, I can't get it to wait() properly
     cd $LATEX_DIR
     rm -f *.aux *.idx *.glo *.ist *.out *.log *.tex
-    echo "done"
 )&

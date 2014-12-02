@@ -26,6 +26,7 @@ alias vimrc='sb ~/.vimrc'
 alias bprof='sb ~/.bash_profile'
 alias this='export PATH="${PATH}:."'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n $@'
+alias sba='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -a $@'
 alias ut='ssh -o ServerAliveInterval=10 ethanp@almond-joy.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
 alias tracker='cs ~/Dropbox/CSyStuff/TTRails/tracker'
@@ -157,7 +158,6 @@ function dedir {
 # Compile C programs with useful gcc flags
 # ----------------------------------------
 # TODO this could probably be upgraded using stuff from "Learn C the Hard Way"
-#       or stuff from the makefiles set up by Dr. Downing in "CS371p Object Oriented Programming"
 #
 # I've removed -O2 & -ffast-math optimization because I figure there are going
 # to be more situations where I don't want something optimized out than where
@@ -220,8 +220,8 @@ if [[ -d ~/code/fuzzycd ]]; then
 else  # TODO why doesn't this work when surrounded by either '' or "" ??
     FUZZYCD=~/code/personal_project_use/code_to_base_off_of/Ruby/fuzzycd
 fi
-PATH=$FUZZYCD:$PATH                               # add fuzzycd, may have to precede RVM in PATH
-PATH="/usr/local/bin:${PATH}"                     # Homebrew comes last
+PATH=$FUZZYCD:$PATH                 # add fuzzycd, may have to precede RVM in PATH
+PATH="/usr/local/bin:${PATH}"       # Homebrew comes first
 export PATH
 
 # install https://github.com/rupa/z cd utility
