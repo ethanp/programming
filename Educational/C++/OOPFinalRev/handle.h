@@ -11,6 +11,11 @@ public:
         if (!h.shape) shape = 0; /* don't try to ->clone() a nullptr! */
         else shape = h.shape->clone();
     }
+    bool operator == (const shape_handle& h) {
+        if (!shape && !h.shape) return true;
+        if (!shape || !h.shape) return false;
+        return *shape == *h.shape;
+    }
     shape_handle& operator = (shape_handle& s) { swap(s); return *this; }
     void swap(shape_handle& h) { std::swap(shape, h.shape); }
     ~shape_handle() { delete shape; }
@@ -30,8 +35,15 @@ public:
     friend std::ostream& operator << (std::ostream& o, abstract_shape& a) {
         return a.write(o);
     }
+    friend bool operator == (const abstract_shape& a, const abstract_shape& b) {
+        return a.equals(b);
+    }
     virtual std::ostream& write(std::ostream& o) = 0;
     virtual ~abstract_shape() {};
+    virtual bool equals(const abstract_shape& a) const {
+        /* there would be stuff in here if this class had any private fields */
+        return true;
+    }
 };
 
 /* default inheritance access is private for classes */
@@ -44,6 +56,11 @@ public:
     virtual std::ostream& write(std::ostream& o) {
         return o << "Circle w radius: " << r
                  << " and area: " << area() << '\n';
+    }
+    virtual bool equals(const abstract_shape& a) {
+        if (const circle* const p = dynamic_cast<const circle*>(&a))
+            return abstract_shape::equals(*p) && r == p->r;
+        return false;
     }
 private:
     int r;
@@ -58,6 +75,11 @@ public:
     virtual std::ostream& write(std::ostream& o) {
         return o << "Triangle w (b,h): (" << b << "," << h
                  << ") and area: " << area() << '\n';
+    }
+    virtual bool equals(const abstract_shape& a) {
+        if (const triangle* const p = dynamic_cast<const triangle*>(&a))
+            return abstract_shape::equals(*p) && b == p->b && h == p->h;
+        return false;
     }
 private:
     int b, h;
