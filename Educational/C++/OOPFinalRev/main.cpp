@@ -1,5 +1,6 @@
 #include <iostream>
 #include "handle.h"
+#include "allocator.h"
 
 using namespace std;
 
@@ -19,5 +20,7 @@ int main() {
     cout << s3;
     s3 = s;
     cout << s3;
+    my_vector<int> mv(10, 20);
+    for (int i = 0; i < 10; i++) cout << mv[i]; cout << endl;
     return 0;
 }

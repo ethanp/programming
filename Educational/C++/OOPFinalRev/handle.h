@@ -16,7 +16,7 @@ public:
         if (!shape || !h.shape) return false;
         return *shape == *h.shape;
     }
-    shape_handle& operator = (shape_handle& s) { swap(s); return *this; }
+    shape_handle& operator = (shape_handle s) { swap(s); return *this; }
     void swap(shape_handle& h) { std::swap(shape, h.shape); }
     ~shape_handle() { delete shape; }
     T& operator * () const { return *shape; }
