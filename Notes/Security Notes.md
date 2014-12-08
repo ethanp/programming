@@ -106,51 +106,35 @@ References:
 
 1. [Coda Hale: How to safely store a password](http://codahale.com/how-to-safely-store-a-password/)
 2. [Security Stack Exchange: How to securely hash passwords](http://security.stackexchange.com/questions/211/how-to-securely-hash-passwords)
-3. [Wikipedia: bcrypt](http://en.wikipedia.org/wiki/Bcrypt)
-4. [Wikipedia: Key derivation function](http://en.wikipedia.org/wiki/Key_derivation_function)
-5. [Wikipedia: Password](http://en.wikipedia.org/wiki/Password)
-6. [OWASP: Password Storage Cheat Sheet](https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet)
+3. [OWASP: Password Storage Cheat Sheet](https://www.owasp.org/index.php/Password_Storage_Cheat_Sheet)
 
-### Recurrent themes
+### Recurrent theme
 
-* Use `bcrypt`. E.g. `py-bcrypt` or `jBCrypt`
-* Borrow code from someone who knows what they're doing because you don't want to mess this up
-
-##### Hashing Vs. Encryption
-
-**You can't un-hash, but you can *decrypt***
+> Don't write your own code for this stuff
 
 ### Why bcrypt?
 
-* General purpose hash functions (e.g. MD5, SHA-X) are too fast to calculate, making brute force attacks easier.
-* Salts don't prevent **dictionary attacks** *(see Glossary above)* or brute force attacks
-* `bcrypt` uses a variant of the Blowfish encryption algorithm’s keying schedule, and introduces a work factor,
-  which **allows you to determine how expensive the hash function will be**
-* Instead of cracking a password every 40 seconds, I’d be cracking them every 12 years or so
-* `bcrypt` has salts built-in to prevent **rainbow table** attacks
+* It is *slow* to compute, unlike MD5, SHA-X
+* *Salts* don't prevent **dictionary attacks** *(see Glossary above)* or brute force attacks
+* It has a parameter to allow you to choose the compute requirements
+* It has salts built-in to prevent **rainbow table** attacks
 
 ### Salting
 
-* The `salt` is a 128-byte char-string
+* The salt is a **128-char string**
 * You save `"salt:HASH(salt+password)"` into the database
-	* Note the `salt` is visible there as plaintext, this is OK as long as you're not just *giving these away*
+    * Note the salt is visible there as plaintext, this is OK as long as you're not just *giving these away*
 * This means no one can use a table of pre-hashed strings to attack you
 * They *can* find your salt, but then they'd have to compute all the hashes *for each user*
 
 ### Some Don'ts
 
-From [Reference 2](http://security.stackexchange.com/questions/211/how-to-securely-hash-passwords)
-
-> For some reason, many developers insist on designing function themselves, and seem to assume that
-> "secure cryptographic design" means "throw together every kind of cryptographic or non-cryptographic
-> operation that can be thought of". See 
-> [this question](http://security.stackexchange.com/questions/25585/is-my-developers-home-brew-password-security-right-or-wrong-and-why)
-> for an example. The underlying principle seems to be that the sheer complexity of the resulting
-> utterly tangled mess of instruction will befuddle attackers. In practice, though, the developer
-> himself will be more confused by his own creation than the attacker.
+Paraphrased from
+[stackexchange](http://security.stackexchange.com/questions/211/how-to-securely-hash-passwords)
 
 > **Complexity is bad. Homemade is bad. New is bad.** If you remember that, you'll avoid 99% of
 > problems related to password hashing, or cryptography, or even security in general.
+> Do *not* write a tangled mess of operations and expect that to confuse attackers.
 
 ### Some Dos
 
@@ -168,152 +152,98 @@ Cryptographic Hash Functions
 #### Message-Digest
 
 * **MD5** --- *has had some problems*; produces 128-bit / 16-byte / 32-digit-hex hash value
-    * **Uses** --- store one-way hash of password (often with **key stretching**)
     * It's not *that* secure, it seems like
 * **SHA-1** --- produces 160-bit / 20-byte / 40-digit-hex
-    * **Uses** --- encryption, data integrity (e.g. Git)
-* **SHA-2** --- more secure than SHA-1, this one's really secure.
+    * **Uses** --- encryption (not so secure), data integrity (e.g. Git)
+* **SHA-2** --- more secure than SHA-1, really secure.
 
 ### Other Noteworthy Algorithms
 
 * **AES** (Advanced Encryption Standard) --- **symmetric** and popular within the U.S. government
 * **Base64** -- encode into alphanumeric+2
     * The last 2 chars might be `[(+,/),(+,-),(-,_),(.,-),(_,:),(!,-), etc.]`
-* **RSA** (Rivest, Shamir, Adleman) --- **deterministic, asymmetric** cryptosystem widely used for secure data transmission
-    * *Public* encryption key, *Private* decryption key
-    * Here, the asymmetry is based on the difficulty of factoring the product of two large prime numbers
-    * The public key is the product of two large prime numbers along with an auxiliary value
-    * The private key is the two large prime numbers
-    * It is an open question whether the "RSA Problem" (break ing RSA) is as 'hard' as the factoring problem
-    * **[Operation](http://en.wikipedia.org/wiki/RSA_(algorithm))**
-        * Choose two *distinct* prime numbers *p* and *q* (at random, of similar bit-length)
-        * Compute \\(n = pq\\) and \\(\Phi(n) = (p-1)(q-1)\\)
-        * Choose an integer \\(e\\) s.t. \\(1 < e < \Phi(n)\\), and also \\(e\\) & \\(\Phi(n)\\) are *coprime* (share no prime factors)
-            * *e* is the *public key exponent*
-            * smaller *e* will be more efficient to compute, but slightly less secure
-        * *d* := multiplicative inverse of *e* (modulo \\(\Phi(n)\\)) [sic]
-            * *d* is the *private key exponent*
-        * **Encryption**:
-            1. Alice sends public key \\((n, e)\\) to Bob
-            2. Bob turns message \\(M\\) into an integer m s.t. \\(0 \leq m < n\\) using an agreed-upon reversible **padding scheme** protocol
-            3. Bob computes the ciphertext \\(c \equiv {m}^{e}\\) (mod \\(n\\)) and transmits \\(c\\) to Alice
-        * **Decryption**:
-            1. Alice recovers \\(m\\) from \\(c\\) by computing \\(m \equiv {c}^{d} \;(\mathrm{mod} \; n\\))
-            2. Now she reverses the padding scheme to recover \\(M\\) from \\(m\\)
-        * **Signing Messages**: note that Bob (the public key holder) can **authenticate**
-          messages Alice **signs** using her private key. This means that Bob can verify
-          both that Alice sent it, and that the message hasn't been tampered with in
-          the process.
-            * This is *key*
-    * One can avoid a lot of the known methods of attack by embedding structured, randomized padding into the value m before encrypting it
-        * Padding is very difficult, so there is a patent-expired secure padding scheme known as **RSA-PSS**
-        * Padding schemes "are as essential for the security of message signing as they are for message encryption"
-    * Integer factorization and the RSA problem
-        * For \\( \mathrm{len}(n)  \leq 300 \\), \\(n\\) can be factored in a few hours on a PC using free software
-        * For \\( \mathrm{len}(n) \geq 2048 \\), you should be safe for a while
-        * Shor's algorithm shows that a quantum computer would be able to factor in polynomial time, breaking RSA
 
-Big Idea
---------
+#### RSA
+Rivest, Shamir, Adleman --- **deterministic, asymmetric** cryptosystem widely used for secure data transmission
 
-### Part 1
+* *Public* encryption key, *Private* decryption key
+* Based on the difficulty of factoring the product of two large prime numbers
+* Public key --- the product of two large prime numbers and an auxiliary value
+* Private key --- the two large prime numbers
+* **[Operation](http://en.wikipedia.org/wiki/RSA_(algorithm))**
+    * Choose two *distinct* prime numbers *p* and *q* (at random, of similar bit-length)
+    * Compute \\(n = pq\\) and \\(\Phi(n) = (p-1)(q-1)\\)
+    * Choose an integer \\(e\\) s.t. \\(1 < e < \Phi(n)\\), and also \\(e\\) & \\(\Phi(n)\\) are *coprime* (share no prime factors)
+        * *e* is the *public key exponent*
+        * smaller *e* will be more efficient to compute, but slightly less secure
+    * *d* := multiplicative inverse of *e* (modulo \\(\Phi(n)\\)) [sic]
+        * *d* is the *private key exponent*
+    * **Encryption**:
+        1. Alice sends public key \\((n, e)\\) to Bob
+        2. Bob turns message \\(M\\) into an integer m s.t. \\(0 \leq m < n\\) using an agreed-upon reversible **padding scheme** protocol
+        3. Bob computes the ciphertext \\(c \equiv {m}^{e}\\) (mod \\(n\\)) and transmits \\(c\\) to Alice
+    * **Decryption**:
+        1. Alice recovers \\(m\\) from \\(c\\) by computing \\(m \equiv {c}^{d} \;(\mathrm{mod} \; n\\))
+        2. Now she reverses the padding scheme to recover \\(M\\) from \\(m\\)
+    * **Signing Messages**: note that Bob (the public key holder) can **authenticate**
+      messages Alice **signs** using her private key. This means that Bob can verify
+      both that Alice sent it, and that the message hasn't been tampered with in
+      the process.
+        * This is *key*
+* One can avoid a lot of the known methods of attack by embedding structured, randomized padding into the value m before encrypting it
+    * Padding is very difficult, so there is a patent-expired secure padding scheme known as **RSA-PSS**
+    * Padding schemes "are as essential for the security of message signing as they are for message encryption"
+* Integer factorization and the RSA problem
+    * For \\( \mathrm{len}(n)  \leq 300 \\), \\(n\\) can be factored in a few hours on a PC using free software
+    * For \\( \mathrm{len}(n) \geq 2048 \\), you should be safe for a while
+    * Shor's algorithm shows that a quantum computer would be able to factor in polynomial time, breaking RSA
 
-1. An **HMAC algorithm** (e.g. SHA-1) gives you a nonsense string to put at the end of
-   the message so that people know it hasn't been fussed with.
-2. An **encryption algorithm** (e.g. RSA) gives you a tool to make your data secret as
-   you transmit it, and verify that it was sent by whoever said they sent it.
+## Notes about Practice
 
-Notes about Practice
-------------------------
+[Ref: Apple][Apple on Public, Private Keys]
 
 Asymmetric encryption is often used for establishing a shared communication
 channel. Because asymmetric encryption is computationally expensive, the two
-**endpoints often use asymmetric encryption to exchange a symmetric key, and then
-use a much faster symmetric encryption algorithm for encrypting and decrypting
-the actual data.**
+endpoints often use asymmetric encryption to exchange a symmetric key, and
+then use a much faster symmetric encryption algorithm for encrypting and
+decrypting the actual data.
 
 Asymmetric encryption can also be used to establish trust. By encrypting
 information with your private key, someone else can read that information with
 your public key and be certain that it was encrypted by you.
 
-In addition to the data itself, signing and verifying require two pieces of
-information: the appropriate half of a public-private key pair and a digital
-certificate.
-
-The sender computes a hash of the message and encrypts it with the private key.
-The recipient also computes a hash and then uses the corresponding public key
-to decrypt the sender’s hash and compares the hashes. If they are the same, the
-data was not modified in transit, and you can safely trust that the data was
-sent by the owner of that key. [Ref: Apple][Apple on Public, Private Keys]
-
 ### Typical use of Public Key, and Reason it is Naive
 
-1. Alice uses one of the public key algorithms to generate a pair of encryption
-   keys: a private key, which she keeps secret, and a public key. She also
-   prepares a message to send to Bob.
-2. Alice sends the public key to Bob, unencrypted. Because her private key
-   cannot be deduced from the public key, doing so does not compromise her private
-   key in any way.
-3. Alice can now easily prove her identity to Bob (a process known as
-   authentication). To do so, she encrypts her message (or any portion of the
-   message) using her private key and sends it to Bob.
-4. Bob decrypts the message with Alice’s public key. This proves the message
-   must have come from Alice, as only she has the private key used to encrypt it.
-5. Bob encrypts his message using Alice’s public key and sends it to Alice. The
-   message is secure, because even if it is intercepted, no one but Alice has the
-   private key needed to decrypt it.
+1. Alice generate public/private key pair
+2. Alice sends the public key to Bob, unencrypted
+3. Alice encrypts her message (or any portion of the message) using her
+   private key and sends it to Bob
+4. Bob decrypts it with Alice’s public key, proving it came from Alice
+5. Bob encrypts his message using Alice’s public key and sends it to Alice.
 6. Alice decrypts the message with her private key.
 
 #### Problem:
-Since encryption and authentication are subjects of great interest in national
-security and protecting corporate secrets, some extremely smart people are
-engaged both in creating secure systems and in trying to break them. Therefore,
-it should come as no surprise that actual secure communication and
-authentication procedures are considerably more complex than the one just
-described. For example, the authentication method of encrypting the message
-with your private key can be got around by a man-in-the-middle attack, in which
-someone with malicious intent (usually referred to as Eve in books on
-cryptography) intercepts Alice’s original message and replaces it with their
-own, so that Bob is using not Alice’s public key, but Eve’s. Eve then
-intercepts each of Alice’s messages, decrypts it with Alice’s public key,
-alters it (if she wishes), and reencrypts it with her own private key. When Bob
+The authentication method of encrypting the message with your private key can
+be got around by a man-in-the-middle attack, in which someone with malicious
+intent ("Eve") replaces Alice’s original message with her own, so that Bob
+Eve’s instead. Eve then intercepts & alters each of Alice’s messages. When Bob
 receives the message, he decrypts it with Eve’s public key, thinking that the
 key came from Alice.
 
-Although this is a subject much too broad and technical to be covered in detail
-in this document, digital certificates and digital signatures can help address
-these security problems. These techniques are described later in this chapter.
-
-[Ref: Apple][Apple on Public, Private Keys]
-
 [Apple on Public, Private Keys]: https://developer.apple.com/library/ios/documentation/Security/Conceptual/Security_Overview/CryptographicServices/CryptographicServices.html
 
-HTTPS
------
+## HTTPS[ecure]
 
-#### HTTP Secure
+> *The first step in providing secure services is using HTTP Secure (HTTPS),
+> which encrypts your packets.*
 
-* [Wiki](http://en.wikipedia.org/wiki/HTTP_Secure)
-* [Security Stack Exchange](http://security.stackexchange.com/questions/19616)
+### Overview
 
-**The first step in providing secure services is using HTTP Secure (HTTPS). The nature of the Internet makes it possible for a third party to intercept packets being transmitted between clients and servers. HTTPS encrypts those packets, making it extremely difficult for an attacker to get access to the information being transmitted.** -- *Web Development with Node and Express (65% through)*
-
-In short *https* sessions work this way:
-
-1. Client and server exchange some initial information
-    1. Namely, the server sends an *SSL certificate* in a `.crt` file
-    2. If you want an SSL certificate that common browsers are going to trust,
-       you're going to have to pay up ($10-$300)
-2. Using this info, the client authenticates the server, ensuring it is trustworthy
+1. Client and server exchange an *SSL certificate* in a `.crt` file ($10-300)
+2. Now client *authenticates* server (using Web of Trust, scariest part of the process)
 3. Client uses the server's public key to send him an encrypted secret
 4. Server decrypts this secret using his *private* key (which *only* the authenticated server can do!)
 5. Both the client and the server use the secret to locally generate the session symmetric key
-6. Now the can talk to each other safely because no one else knows their session symmetric key
-    * However, if somehow along the way a third party is able to get access to the shared
-      secret he will also be able to generate the session symmetric key and decrypt
-      the communication.
-
-The problem is that step 2 (authenticating the server) is hard.  SSL is only as
-strong as your certificate validation. It all comes down to: Do you accept the
-certificate as valid? The logic of out current browsers is: Accept if it's signed
-by a trusted Certificate Authority (CA) or if the user overrides (clicks "Accept").
+6. Now they can talk safely because no one else knows their session symmetric key
+    * However, a third party with access to the shared secret will be able to
+      generate the session symmetric key and decrypt the communication.
