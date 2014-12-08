@@ -14,66 +14,185 @@ latex footer:		mmd-memoir-footer
 
 ## Sed
 
-### Delete matching lines from file
+* [Source](http://www.thegeekstuff.com/2009/09/unix-sed-tutorial-printing-file-lines-using-address-and-patterns/)
 
-[Source](http://en.kioskea.net/faq/1451-sed-delete-one-or-more-lines-from-a-file)
+### Overview
 
-    sed '{[/]<n>|<string>|<regex>[/]}d' <fileName>
-    sed '{[/]<addr1>[,<addr2>][/]d' <fileName>
+1. Non-interactive stream editor
+2. 2 buffers: **pattern** and **hold**
+3. Pseudocode
+    1. Read a line from `stdin`, remove trailing newline
+    3. Put line in *pattern buffer*
+    4. Modify *pattern buffer* according to command
+    5. Print *pattern buffer* to `stdout`
 
-* `/.../` = delimiters
-* `n` = line number
-* `string` = string found in in line
-* `regex` = regular expression corresponding to the searched pattern
-* `addr` = address of a line (number or pattern)
-* `d` = delete
-* `!d` = delete anything that *doesn't match*
+#### Initial Examples
 
-#### This is the command I *wanted*
+Print 3rd line of afile
 
-Replace `file1` with only the lines that *don't* contain `dlm`
+    sed -n 3p afile
 
-    sed '/dlm/d' file1 > tmp; cat tmp > file1; rm -f tmp
+Print every `N`th line starting at `M`
 
-#### These are the given examples
+    sed -n 'M~N'p afile
 
-* These examples are just printed (stdout1= screen).
-* Using, the `-i"tmpfile"` option, you can save the original version to `tmpfile` as a backup
+Print lines `M` to `N` inclusive
 
-        sed -i".bak" '3d' filename.txt
+    sed -n 'M,N'p afile
 
-Remove the 3rd line:
+Print last line
 
-    sed '3d' fileName.txt
+    sed -n '$p' afile
 
+Print `N`th through last line
 
-Remove the line containing the string "awk":
+    sed -n 'N,$p' afile
 
-    sed '/awk/d' filename.txt
+Print lines matching pattern `xxx`
 
+    sed -n /xxx/p afile
 
-Remove the last line:
+Print all lines starting at one matching pattern `xxx`, up through the 7th line
 
-    sed '$d' filename.txt
+    sed -n '/xxx/,7p' afile
 
+Print lines from 3 to one matching `xxx`
 
+    sed -n '3,/xxx/p' afile
 
-Remove all empty lines:
+Print lines matching `xxx` and the next 2 lines
+
+    sed -n '/xxx/,+2p' afile
+
+Print from where `xxx` matches to where `yyy` matches
+
+    sed -n '/xxx/,/yyy/p' afile
+
+#### Special Characters
+
+1. **&** --- represents the matched text
+
+    e.g. to replace `this` with `this and that`
+
+        sed 's/this/& and that/g' afile
+
+2. **Groups** --- capture by surrounding with `\(` `\)`
+
+    e.g. change order
+
+        sed 's/\([^0-9]+\):\([^a-z]+\)/\2:\1/' afile
+
+#### Options (before command)
+
+1. **-n** --- don't print input lines
+2. **-e** --- allows you to supply more than one instruction on the command line
+3. **-f file** --- read command from `file`
+
+#### Flags (last part of command)
+
+| **Flag**      | **Effect**                                            |
+| ------------: | :---------------------------------------------------- |
+| **g**         | replace *every* `regex` with `replacement`            |
+| **`[0-9]+`**  | replace *nth* instance of `regex` with `replacement`  |
+| **i**         | match case insensitively                              |
+| **w file**    | write changed lines to `file`                         |
+| **p**         | print data in *pattern buffer*                        |
+
+### Substitute Command (`s//`)
+
+#### By Example
+
+* [Source](http://www.thegeekstuff.com/2009/09/unix-sed-tutorial-replace-text-inside-a-file-using-substitute-command/)
+
+Replace *all* `xxx` with `yyy` in `afile`
+
+    sed 's/xxx/yyy/g' afile
+
+Replace *first* `xxx` on each line with `yyy`
+
+    sed 's/xxx/yyy/' afile
+
+Replace *second* `xxx` on each line with `yyy`
+
+    sed 's/xxx/yyy/2' afile
+
+Write (only) modified lines to `afile`
+
+    sed 's/xxx/yyy/2w bfile' afile
+
+On lines containing `zzz`, replace all `xxx` with `yyy`
+
+    sed '/zzz/s/xxx/yyy/g' afile
+
+Delete last 3 chars from each line
+
+    sed 's/...$//' afile
+
+#### General Format
+
+    sed '[<address>]s/<regex>/<replacement>/<flags>' filename
+    sed '[<pattern>/]s/<regex>/<replacement>/<flags>' filename
+
+Note that the *delimiter* here is `/`, but it could be one of `@%;:` instead.
+
+### Delete command
+
+#### By Example
+
+Print all lines except line 3
+
+    sed 3d afile
+
+Print all lines except \[7,9\] (inclusive)
+
+    sed '7,9d' afile
+
+Print all lines that don't have `<pattern>`
+
+    sed /<pattern>/d afile
+
+Print all but (completely) empty lines:
 
     sed '/^$/d' filename.txt
+    # or
     sed '/./!d' filename.txt
 
+#### Flags
 
-Remove the line matching by a regular expression (by eliminating one containing digital characters, at least 1 digit, located at the end of the line):
+* **d** --- delete matching lines
+* **!d** --- delete *non*-matching lines
 
-    sed '/[0-9/][0-9]*$/d' filename.txt
+### More Examples
+
+Delete comments and empty lines
+
+    sed -e 's/#.*//;/^$/d' afile
+
+## Awk
+
+### Basics
+
+1. The default delimiters are spaces & tabs
+2. `$1`, `$2`, ... refer to the individual *fields* on the input line
+3. `$0` refers to the *whole* line
+
+### Options
+
+1. **-F,** --- change the **delimiter** to a `,` [comma]
+2. **-f afile** --- read `awk` script from `afile`
+
+### Examples
+
+Print first field of each line
+
+    awk '{ print $1 }' afile
+
+Print lines matching `pattern`
+
+    awk '/pattern/' afile
+
+Print first field of lines matching `pattern`
+
+    awk '/pattern { print $1 }' afile
 
 
-Remove the interval between lines 7 and 9:
-
-    sed '7,9d' filename.txt
-
-
-The same operation as above but replacing the address with parameters:
-
-    sed '/-Start/,/-End/d' filename.txt

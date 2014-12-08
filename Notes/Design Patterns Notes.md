@@ -13,6 +13,9 @@ latex footer: mmd-memoir-footer
 
 ## Just a list of them at this point
 
+Much of this list is from **An introduction to Object-Oriented Programming**
+(3rd ed.) by *Timothy Budd*.
+
 1. **Adaptor** --- a *client* object needs a *service* but requires a specific
    *interface*, a *server* object provides the *functionality*, but *doesn’t
    support* the right interface; instead of rewriting either client or server,
