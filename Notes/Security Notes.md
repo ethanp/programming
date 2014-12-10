@@ -81,14 +81,20 @@ latex footer:		mmd-memoir-footer
         * I.e. one that accepts as input a **secret key**
 * **Modular arithmetic** --- \\(a \equiv b\\) (mod \\(n\\)) **if** \\(((a-b)\,\%\,n == 0 \\))
     * E.g. \\(\,38 = 14 \,( \mathrm{mod}\, 12) \\) because \\((14-2)\, \% \,12 == (38-2) \,\%\, 12 == 0 \\)
-    * I guess I might summarize this operation as saying: "a and b are the same distance from being multiples of n"
-* **Nonce** --- arbitrary (generally pseudorandom) number used only once in a cryptographic communication
-    * E.g. used to **authenticate** users in a way that can't be reused in **replay attacks**
-        * First you ask the server for a nonce, then you use the result to encrypt your **password** and send it
-* **Private-key / Symmetric Cryptography** --- uses one key for both encryption and decryption
+    * I guess I might summarize this operation as saying: "a and b are the
+      same distance from being multiples of n"
+* **Nonce** --- arbitrary (generally pseudorandom) number used only once in a
+  cryptographic communication
+    * E.g. used to **authenticate** users in a way that can't be reused in
+      **replay attacks**
+        * First you ask the server for a nonce, then you use the result to
+          encrypt your **password** and send it
+* **Private-key / Symmetric Cryptography** --- uses one key for both
+  encryption and decryption
 * **Privilege escalation** --- gain elevated access to resources that are
   normally protected from an application or user
-* **Public-key / Asymmetric Cryptography** --- requires a *secret* **private key** and an *openly available* **public key**
+* **Public-key / Asymmetric Cryptography** --- requires a *secret* **private
+  key** and an *openly available* **public key**
     * **Public key**
         * *Encrypt plaintext*
         * *Verify* a **digital signature**
@@ -96,29 +102,42 @@ latex footer:		mmd-memoir-footer
         * *Decrypt ciphertext*
         * *Create* the **digital signature**
     * Computationally infeasible to determine private key from public key
-        * So public key can be published, and only those with private key may read the messages
-* **Rainbow table attack** --- a *dictionary attack* using a precomputed table of reversed cryptographic hash functions
-	* using a **salt** makes this attack unfeasible
-* **Replay attack** --- someone catches your request to send money to someone else, and they just keep sending that request over and over
-* **Salt** --- random data that is used as an additional input to a one-way function that hashes a password or passphrase
-	* Protects against *dictionary* and *rainbow table* attacks
-* **Secret Key** --- a piece of information that serves as a parameter to a cryptographic algorithm
-* **Semantically secure** --- when an attacker cannot distinguish two encryptions from each other even if the they chose the corresponding plaintexts
+        * So public key can be published, and only those with private key may
+          read the messages
+* **Rainbow table attack** --- a *dictionary attack* using a precomputed table
+  of reversed cryptographic hash functions
+    * using a **salt** makes this attack unfeasible
+* **Replay attack** --- someone catches your request to send money to someone
+  else, and they just keep sending that request over and over
+* **Salt** --- random data that is used as an additional input to a one-way
+  function that hashes a password or passphrase
+    * Protects against *dictionary* and *rainbow table* attacks
+* **Secret Key** --- a piece of information that serves as a parameter to a
+  cryptographic algorithm
+* **Semantically secure** --- when an attacker cannot distinguish two
+  encryptions from each other even if the they chose the corresponding
+  plaintexts
 * **Signature** --- scheme for checking **authentication** and **integrity**
-* **Spoofing attack** --- one person or program successfully masquerades as another by falsifying data
-* **SSL (Secure Sockets Layer) / TLS (Transport Layer Security)** --- cryptographic protocols designed to provide communication security over the Internet
+* **Spoofing attack** --- one person or program successfully masquerades as
+  another by falsifying data
+* **SSL (Secure Sockets Layer) / TLS (Transport Layer Security)** ---
+  cryptographic protocols designed to provide communication security over the
+  Internet
     * **SSL provides an encrypted TCP connection**
     * **data integrity**
     * **endpoint authentication**
-    * First they *assure the counterparty*, aka *handshake*, then they exchange a *symmetric key* which is then used to encrypt data sent between them
+    * First they *assure the counterparty*, aka *handshake*, then they
+      exchange a *symmetric key* which is then used to encrypt data sent
+      between them
     * Often uses port 443 for **HTTPS**
     * *Uses:* eCommerce and banking
-* **Vulnerability** --- a *security-relevant* **software defect** that can be *exploited*
+* **Vulnerability** --- a *security-relevant* **software defect** that can be
+  *exploited*
 
 
 ## Notes on Specific Things
 
-### Buffer Overflow
+### Buffer Overflow (C[++] only, I think)
 ##### 12/8/14
 
 This example is from the Coursera course "Software Security" video "Buffer Overflow"
@@ -140,6 +159,171 @@ This example is from the Coursera course "Software Security" video "Buffer Overf
 What happens is `mystr` is bigger than `buffer`, so it overwrites
 `authenticated` to be non-zero, meaning that `if (authenticated)` is `true`,
 even though the authentication didn't check-out.
+
+#### Variants
+
+1. Overwrite the stack-frame's saved return address to return to data that has
+   been overwritten using the overflow with code to invoke the shell (via the
+   `execve` system call) and give the attacker access to running what she
+   wants
+2. Overwrite the header created by `malloc`
+3. Overflow the `int` passed to malloc
+4. Overwrite the program's *secret key* with a known key, so that future
+   encrypted messages can be decrypted
+5. Modify state variables, like in the example above where `authenticated` was
+   overwritten
+6. Server programs might communicate with a database with SQL strings, which
+   we can overwrite
+7. If you don't know exactly where to jump to, you can create a `nop` sled,
+   where processor will jump somewhere into your sled and slide into your code
+8. "Read overflow" --- *read* instead of write beyond the buffer
+    1. You ask client for both length of message and message, and you print
+       chars up to that length. But if the length was longer than the message,
+       then you'll print chars *beyond* the message, and they can read it.
+    2. E.g. **Heartbleed**
+    3. With this they can get passwords and crypto-keys
+9. "Format string"
+
+    with the code
+
+        char *mystring = "%d %x";
+        printf(mystring);
+
+    `printf` will try to find the variables corresponding to those values off
+    the stack frame, but they don't exist, so it is reading someone else's
+    memory.
+
+    The safe way to do it is like
+
+        printf("%s", mystring);
+
+    because now it print the string literal `"%d %x"` without trying to
+    interpret it.
+10. Note that you get total **memory safety** by simply *not* using C or C++
+
+#### Protections
+
+1. **Stack canary** --- save a number at a known location on the stack, and make
+   sure it doesn't get overwritten during the function, else abort
+2. Make stack (and heap) non-executable
+    1. But we can still jump to code that calls `execve` *inside* `libc`, which
+       is known to be in our process's address space
+    2. So we can use **Address-space Layout Randomization** to make it hard to
+       find `libc`
+    3. But this is defeated using "gadgets" and "blind ROPs"
+    4. We can defeat "blind ROPs" with "Control-flow Integrity" (which isn't
+       used currently) which defines the program's "expected behavior" and
+       detects deviations from that *efficiently*
+
+### Secure coding in C[++]
+
+1. Follow the "CERT C Coding Standard"
+    1. There are similar guides for other languages
+2. Use techniques like static program analysis, fuzz testing, and symbolic
+   execution
+3. Make sure the length the user gave you is not longer than their actual
+   input
+4. Validate input
+5. Put pessimistic checks on assumed preconditions
+6. Use safe versions of the string functions
+    1. E.g. `strcpy(buf, "str")` becomes `strlcpy(buf, "str", sizeof(buf))`
+    2. And `strcat` becomes `strlcat`
+7. Don't forget about the byte added by the NUL terminator
+8. Get pointer arithmetic right, e.g. (`int + 1`) adds 4 bytes
+9. Don't reuse memory malloc'd before by setting `p` to `NULL` after
+   passing it to `free(p)`
+10. Use `goto` chains to properly free memory when you exit early from a function
+    1. I think they did this all the time in the Linux kernel
+11. Use safe libraries
+    1. the Very Secure FTP string library or `std::string` which don't
+       rely on null-terminators to find the length of strings
+    2. Use smart pointers (standard in C++11)
+    3. For networking use Google's *protocol buffers* or *Apache Thrift*
+12. Use a safe allocator
+
+### Problems on the WWW
+
+* *Common theme:* **validate your input**
+
+#### SQL Injection
+
+##### The Attack
+
+E.g. when you enter your `name` into a form as
+
+    someone' OR 1=1); DROP TABLE mytable; --
+
+so that PHP creates a SQL query
+
+    SELECT * FROM mytable WHERE (name='someone' OR 1=1);
+    DROP TABLE mytable;
+    -- their code is commented out;
+
+which retrieves all data then deletes it.
+
+##### Protections
+
+1. **Sanitize** the input --- deleting or escape characters we don't want,
+   like `' ; --`
+2. Stronger, **whitelist** --- make sure that it matches something that is
+   valid before appending it to the query string.
+3. **Limit privileges** that this instance of a connection to the database
+   has, so it doesn't have the right to e.g. drop the database.
+4. **Encrypt sensitive data** in the database, so when they get it they can't
+   read it.
+
+#### Session Hijacking
+
+1. Servers send clients *cookies* which they send to the server on subsequent
+   requests
+2. Servers know requests with your cookies came from you, and that way you can
+   access your private data on the server
+3. So by stealing a cooking, an attacker can impersonate a user
+4. Protect against this by sending session-cookies over HTTPS
+5. Delete 'logged-in' cookies after session ends
+6. Have them 'time out' anyway after some long period of time
+
+#### Cross-site Request Forgery (CSRF)
+
+##### Example of Mechanism
+
+1. A user is logged in on `bank.com`, and has appropriate session-cookies
+2. The user navigates to `attacker.com/index.html`
+3. `index.html` has `<img src="bank.com/transfer?amt=9999&to=attacker">`
+4. The user's browser automatically issues a `GET` to the page in the `img` tag
+5. So the bank sees an authenticated transfer request to the attacker and
+   performs it
+
+User could also be tricked into clicking a link for the `GET` request, e.g.
+from a spam email.
+
+##### Protections (on `bank.com`)
+
+1. Ensure that the `GET` header's `Referer` field is within `bank.com`
+2. Only respond to requests that contain a hidden form field in every link &
+   form that hacker has trouble guessing (e.g. the user's session ID)
+
+#### Cross-site Scripting (XSS)
+
+##### Same Origin Policy (SOP)
+
+1. Browser associates web page elements (layout, cookies, events) with a given
+   *origin* (e.g. `bank.com`)
+2. Only scripts received from a web-page's origin have access to that page's
+   elements (layout, cookies, events)
+3. XSS is a way to circumvent this
+
+##### XSS Mechanisms
+
+1. **Stored/Persistent XSS** --- attacker plants script to transfer them cache
+   directly on the `bank.com` server
+    1. This was used to take MySpace down for a weekend
+2. **Reflected XSS attack**
+    1. Attacker gets you to send `bank.com` its Javascript (via a URL)
+    2. `bank.com` "echoes" that Javascript back to you
+    3. Your browser executes the script, within the `bank.com` origin
+    4. **Defense** --- `bank.com` ought to *sanitize* its responses to not
+       contain `script` tags sent by the user
 
 ### Passwords
 
