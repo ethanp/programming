@@ -22,7 +22,7 @@ latex footer:       mmd-memoir-footer
             self.a = [1, 2, 3, 4]
         def __getitem__(self, key):
             return self.a[key]
-  
+
     >>> a = A()
     >>> a[2]
     3
@@ -31,12 +31,35 @@ latex footer:       mmd-memoir-footer
 
 **See `__getitem__(self, key)` above**
 
+### \_\_call__(self)
+
+**Defines what happens when you follow the instance name with parentheses**
+
+    class A:
+        def __init__(self):
+            print "init"
+        def __call__(self):
+            print "call"
+
+    >>> a = A()
+    init
+    >>> a()
+    call
+
+It can also take arguments
+
+    def __call__(self, a, b):
+        print a*b
+
+    >>> a(1, 2)
+    2
+
 ## Data libraries
 
 ### File I/O
 
     df = pd.read_csv('data/train.csv', header=0)
-    
+
 ### Quick column-by-name access
 
     df['colName']
@@ -49,14 +72,14 @@ latex footer:       mmd-memoir-footer
 We use `values` because `mode()` returns a `pd.Series` and we want a `np.array`
 
     df.Embarked[ df.Embarked.isnull() ] = df.Embarked.dropna().mode().values
-    
+
 ##### A more complex example using a different syntax:
 
 In all locations where the column `Fare` is null `and` the `Pclass` equals `f+1`,
 set the value in the `Fare` column to the `median_fare[f]` calculated before.
 
     df.loc[ (df.Fare.isnull()) & (df.Pclass == f+1 ), 'Fare'] = median_fare[f]
-    
+
 #### Convert Categorical variable to a set of dummies/indicators
 
 First we create a dataframe of dummy variable columns for each of the values found in the Categorical variable
@@ -66,15 +89,15 @@ First we create a dataframe of dummy variable columns for each of the values fou
 Then we append those to the original dataframe
 
     df = pd.concat([df, dummies], axis=1)
-    
+
 Then we drop the original categorical variable and one of the dummies (because having *all* of them is redundant)
 
     df = df.drop(['one_of_the_vars', 'Embarked'], axis=1)
-    
+
 ##### All in one go it would be
 
     df = pd.concat([df,pd.get_dummies(df.Embarked)], axis=1).drop(['one_of_the_vars', 'Embarked'], axis=1)
-    
+
 ### Convert dataframe to numpy array
 sklearn expects a `numpy array`, not a `dataframe`
 
@@ -85,11 +108,11 @@ sklearn expects a `numpy array`, not a `dataframe`
     y = np_arr[:,0]
     logit = logit.fit(X,y)
     predictions = logit.predict(test_arr).astype(int)
-    
+
 ### Exploratory Data Analysis
 
     df.groupby(['col']).mean().plot()
-    
+
     df.describe()      # print summary stats of *only those cols for which this is available*
     df.head(n=5)       # print first 'n' rows
     df.count()         # count of non-nulls
@@ -98,11 +121,11 @@ sklearn expects a `numpy array`, not a `dataframe`
     df.columns         # np.array of unicode column names
     df.Column.value_counts() # Series showing counts for each value in Column
     df.Column.value_counts().hist() # histogram of the count info for Column
-    
+
 
 ## `vars(thing)`: Turn `thing` into an equivalent dictionary
 #### 6/29/14
-    
+
     >>> class A(object):
     ...    def __init__(self):
     ...       self.a = 123
@@ -114,7 +137,7 @@ sklearn expects a `numpy array`, not a `dataframe`
 
     >>> a.__dict__          # maybe this is the same thing
     {'a': 123, 'b': 436}
-    
+
 ### This gives you a cheap implementation of object equivalence
 
 This is my own invention, so maybe it's a Bad Idea for some reason.
@@ -132,7 +155,7 @@ This is my own invention, so maybe it's a Bad Idea for some reason.
 To append to a file real quick, use
 
     print >> file_handle, 'msg'     # 2.x only
-    
+
 
 To do breakneck speed logging while running a `nose unittest`, use
 
@@ -148,17 +171,17 @@ Though what you're *supposed* to do is use the `logging` framework
 Python's **built-in xUnit framework**
 
     import unittest
-    
+
     class TestMyClass(unittest.TestCase):
-    
+
         def setUp(self):
             setup_code()
-    
+
         def test_my_test_case(self):
             something = use_code_under_test()
             self.assertFalse(not something, 'returned None instead of something')
             self.assertEqual(something, 'that thing my code returns', 'my code did not return what it's supposed to')
-    
+
     if __name__ == '__main__'
         unittest.main()
 
@@ -194,7 +217,7 @@ anything special* to access it.
 However, to ***assign to*** a global variable, you **must declare it
 as `global` first**
 
-	globvar = 0	
+	globvar = 0
 	def set_globvar_to_one():
 	    global globvar # Needed to modify global copy of globvar
 	    globvar = 1
@@ -274,8 +297,7 @@ Create a new list out of sorted values of given list
 
     sorted(myList)
 
-Justifying Text
----------------
+## Justifying Text
 
     >>> print '  TITLE  '.center(20, '-')
     -----  TITLE  ------
@@ -286,16 +308,14 @@ Justifying Text
     >>> print '  TITLE  '.rjust(20, '-')
     -----------  TITLE
 
-Raw Strings
------------
+## Raw Strings
 
 Usually patterns will be expressed in Python code using this raw string notation.
 
 * `r"\n"` is a **two-character string** containing `'\'` and `'n'`
 * `"\n"` is a **one-character string** containing a *newline*.
 
-Regex
------
+## Regex
 
 `string`s have several methods for performing operations with fixed strings and they’re usually much faster.
 
@@ -455,8 +475,7 @@ A `?` after a quantifier (incl. `{m,n}`) makes it *non-greedy*
     <html>
 
 
-Decorators
-----------
+## Decorators
 
 You wrap a burger (your function) inside a bun (the decorator)
 
@@ -492,3 +511,10 @@ To provide more generic decorators (I don't know the details), you have
     def foo():
         code_goes_here
 
+## Multiprocessing Module
+
+Spawn *subprocesses,* allowing you to side-step the Global Interpreter Lock to
+leverage multiple processors on one machine.
+
+I should mention that the real Python Docs on this are *quite well done*, so
+let that be the reference.
