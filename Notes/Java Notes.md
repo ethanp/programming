@@ -736,17 +736,36 @@ the unit test.
 
 # Other things one simply must know about
 
+## Data types
+
+**12/12/14**
+
+1. Always use `double` instead of `float`
+2. Don't use `char` instead of `String`
+    1. `char` uses 16-bit variable-length Unicode.
+    2. This means each *code unit* is 16-bits, but some characters require
+       multiple code units.
+    3. This is a hassle, and `String` manages all this for you.
+3. Don't use `short` unless you need to save the space
+4. **Don't use doubles for finance**, use **`BigDecimal`**
+5. The reason strings are immutable is so that the compiler can *share* them
+    1. Because most of the time you are comparing, not changing, strings
+6. For dates, use the `GregorianCalendar` class instead of `Date`
+
 ## Initialization
 **5/24/14**
 
 [Javaworld description](http://www.javaworld.com/article/2076614/core-java/object-initialization-in-java.html)
 
-**Instance and class variables** are **given initial values** of **`0 / 0.0 /
-false / null`**.
+1. Instance and class variables** are **given initial values** of **`0 / 0.0 /
+   false / null`**.
 
-**Local variables** are **not given initial values** and **must be initialized
-explicitly before they are used**. This is true for local object references
-too, not only primitive types.
+2. **Local variables** are **not given initial values** and **must be
+   initialized explicitly before they are used**. This is true for local
+   object references too, not only primitive types.
+
+3. The Java compiler will not let you use the value of an uninitialized
+   variable
 
 ## JAR
 **5/20/14**
@@ -832,3 +851,116 @@ It can be used to access enclosing instances from within a nested class:
 	        }
 	    }
 	}
+
+# Syntax
+
+1. In Java 7+, write numbers in binary with a prefix 0b (e.g. `0b1001` is 9).
+2. Also in Java 7+, you can add underscores to number literals (e.g. `1_000_000`).
+
+
+# Java from 2,000 feet
+
+This stuff is largely from *Horstmann, Cay S.; Cornell, Gary (2012-11-27). Core Java
+Volume I-- Fundamentals (9th Edition) (Core Series Book 1). Pearson Education.
+Kindle Edition.*
+
+## Java History
+
+In late 1995, the Java programming language burst onto the Internet scene and
+gained instant celebrity status. It promised to become the universal glue
+between users, web servers, databases, etc. Indeed, Java is in a unique
+position to fulfill this promise, having gained acceptance by all major
+vendors except for Microsoft. It has great built-in security and safety
+features. It has built-in support for advanced programming tasks, such as
+network programming, database connectivity, and multithreading. Since 1995,
+eight major revisions of the Java Development Kit have been released. Over the
+course of the last 17 years, the Application Programming Interface (API) has
+grown from about 200 to over 3,000 classes. The API now spans such diverse
+areas as user interface construction, database management,
+internationalization, security, and XML processing.
+
+Java was never just a language...Java is a whole platform, with a
+huge library , containing lots of reusable code, and an execution environment
+that provides services such as security, portability across operating systems,
+and automatic garbage collection.
+
+Java is intended for writing programs that must be reliable. It eliminates
+situations that are error-prone. The single biggest difference between Java
+and C/ ++ is that Java has a pointer model that eliminates the possibility of
+overwriting memory and corrupting data.
+
+Java makes it extremely difficult to outwit its security mechanisms. The bugs
+found so far have been very technical and few in number.
+
+Unlike C and C + +, there are no “implementation-dependent” aspects of the
+specification. The sizes of the primitive data types are specified , as is the
+behavior of arithmetic on them. Having a fixed size for number types
+eliminates a major porting headache. Binary data is stored and transmitted in
+a fixed format, eliminating confusion about byte ordering. Strings are saved
+in a standard Unicode format.
+
+The ease of multithreading is one of the main reasons why Java is such an
+appealing language for server-side development.
+
+Besides Java "Standard Edition" (SE), there are two other editions: Micro
+Edition for embedded devices such as cell phones, and Enterprise Edition for
+server-side processing. I'm only familiar with SE.
+
+Java is successful because its class libraries let you easily do things that
+were hard before, such as networking and multithreading. The fact that Java
+reduces pointer errors is a bonus, so programmers seem to be more productive
+with Java— but these factors are not the source of its success.
+
+*Only* use C# if you're tied to Windows, because you'll lose the security and
+platform independence.
+
+in 2007, when Sun announced that future versions of Java will be available
+under the General Public License (GPL), the same open source license that is
+used by Linux. There is only one fly in the ointment—patents. Everyone is
+given a patent grant to use and modify Java, subject to the GPL, but only on
+desktop and server platforms. If you want to use Java in embedded systems, you
+need a different license and will likely need to pay royalties. However, these
+patents will expire within the next decade, and at that point Java will be
+entirely free.
+
+To our knowledge, no actual Java systems were ever compromised. To keep this
+in perspective, consider the literally millions of virus attacks in Windows
+executable files and Word macros. Even 15 years after its creation, Java is far safer than any other commonly available execution platform.
+
+## Java vs. C++
+
+* The major difference between Java and C++ lies in *multiple inheritance*,
+  which Java has *replaced with* the simpler concept of *interfaces*, and in
+  the Java metaclass model.
+
+* The “hot spots” of your code will run just as fast in Java as they would in
+  C++, and in some cases even faster. Java does have some additional overhead
+  over C++. Virtual machine startup time is slow, and Java GUIs are slower
+  than their native counterparts because they are painted in a platform-
+  independent manner. A slow Java program will still run quite a bit better
+  today than those blazingly fast C++ programs did a few years ago.
+
+* In Java, you don't explicitly return an exit code. It simply returns 0 when
+  it ends. You *can* return an exit code to the Operating System though via
+  `System.exit(int)`.
+
+* Java has no unsigned types.
+
+* C++ strings are mutable, Java's are *immutable*
+
+* C++ strings can be compared with `==`, Java strings must be compared with
+  `"".equals("")`
+
+* In C++, one may redefine a variable inside a nested block. The inner definition then shadows the outer one. Java does not permit this.
+
+        int n;
+        if (...) {
+            int n; // C++ YES, Java NO
+        }
+
+* C++ allows you to define a copy constructor or copy assignment which
+  actually copies the data. To do this in Java you'd override `Object
+  Object.clone(void)` and then do `MyClass copy = (MyClass) myObj.clone();`.
+
+* In Java there's no way to specify a method as `const` (i.e. access but not
+  mutate)
