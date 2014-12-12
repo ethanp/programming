@@ -130,20 +130,20 @@ From the [Github Wiki & Tutorial][]
 * One can **convert an unbuffered into a buffered stream by passing the
   unbuffered stream object into the constructor for a buffered stream class**
 
-		inputStream = new BufferedReader(new FileReader("xanadu.txt"));
+        inputStream = new BufferedReader(new FileReader("xanadu.txt"));
 
-	* This is that thing you've seen oh-so-many times
+    * This is that thing you've seen oh-so-many times
 * *Flushing* the buffer is when you write out non-full buffer (use `flush()`)
 
 ### Scanners
 
-	s = new Scanner(new BufferedReader(new FileReader("xanadu.txt")));
+    s = new Scanner(new BufferedReader(new FileReader("xanadu.txt")));
 
 * A `Scanner` breaks input into *tokens*
 * By default it uses whitespace to separate tokens
 * To change it to `comma with optional following whitespace`, use:
 
-		s.useDelimiter(",\\s*");
+        s.useDelimiter(",\\s*");
 
 ### Data streams
 
@@ -156,8 +156,7 @@ Support I/O of primitive data types
 
 E.g.
 
-	out.writeObject(obj);
-	Object obj = in.readObject();
+    out.writeObject(obj); Object obj = in.readObject();
 
 **11/11/14**
 ## Java Pipes
@@ -269,8 +268,7 @@ E.g.
 
 ### Java Memory Model
 
-Ref:
-[Wikipedia](http://en.wikipedia.org/wiki/Java_Memory_Model)
+Ref: [Wikipedia](http://en.wikipedia.org/wiki/Java_Memory_Model)
 
 * On modern platforms, code is frequently reordered by the compiler, the
   processor and the memory subsystem to achieve maximum performance.
@@ -736,6 +734,23 @@ the unit test.
 
 # Other things one simply must know about
 
+## Packages
+
+* These are for putting your objects inside another layer of namespacing
+* To put classes into a package, put the name of the package at the top of the
+  source file, *before* any code.
+* With no package declaration, your code is in the "default package" (no
+  package name)
+* Put files in *package* `com.petski.ethan` in *directory* `com/petski/ethan`
+    * If you don't, *it will **compile but not run!***
+
+## Factory Methods
+
+### Why?
+
+1. You can't name constructors
+2. A constructor can only return a single type of object
+
 ## Data types
 
 **12/12/14**
@@ -809,6 +824,50 @@ If you *don't* `@Override public boolean equals(Object o){}`, each instance is
 *equal only to itself*. If this is what you want: *don't override* `equals`
 (e.g. `Thread`).
 
+Here is an industrial-strength example from *Core Java, Vol. 1, 9th Ed.*
+
+    class Employee {
+        private String name;
+        private int salary;
+        private Date hireDay;
+        ...
+        @Override public boolean equals(Object otherObj) {
+
+            /* same reference */
+            if (this == otherObj) return true;
+
+            /* comparison with null */
+            if (otherObj == null) return false;
+
+            /* classes differ */
+            if (getClass() != otherObj.getClass())
+                return false;
+
+            /* cast to class */
+            Employee other = (Employee) otherObj;
+
+            /* recursively equavalent fields */
+            return Object.equals(name, other.name)
+                && salary == other.salary
+                && Object.equals(hireDay, other.hireDay);
+
+            /* Object.equals works even if one or both args are null,
+             * which would *not* work using hireDay.equals(other.hireDay)
+             */
+        }
+    }
+
+This example is for a subclass
+
+    class Manager extends Employee {
+        private int bonus;
+        ...
+        @Override public boolean equals(Object otherObj) {
+            if (!super.equals(otherObj)) return false;
+            Manager other = (Manager) otherObj;
+            return bonus == other.bonus;
+        }
+    }
 
 ### Hash Code
 
@@ -835,10 +894,42 @@ Rules
 
     for (char c : charArr) { ... }
 
-# Asides
-**5/20/14**
+## Asides
 
-[`this` keyword](http://stackoverflow.com/questions/577575/using-the-keyword-this-in-java)
+### Objects are References
+
+* The following code is *incorrect*
+
+        class A {
+            Obj obj;
+            public Obj getObj() {
+                return obj;
+            }
+        }
+
+    because anyone can *modify* the returned *reference* to `obj`!
+
+    The proper thing to do is
+
+        public Obj getObj() {
+            return obj.clone();
+        }
+
+* If you say
+
+        private final MutableObj obj;
+
+    then `obj` will always refer to the same instance of `MutableObj`, however
+    the instance itself is still mutable.
+
+    * This does not apply to `Strings`, which are immutable
+
+### Source files
+
+* You can only have *one `public` class in a source file*, but you can have any
+  number of *nonpublic* classes.
+
+### [`this` keyword](http://stackoverflow.com/questions/577575/using-the-keyword-this-in-java)
 
 It can be used to access enclosing instances from within a nested class:
 
@@ -855,14 +946,15 @@ It can be used to access enclosing instances from within a nested class:
 # Syntax
 
 1. In Java 7+, write numbers in binary with a prefix 0b (e.g. `0b1001` is 9).
-2. Also in Java 7+, you can add underscores to number literals (e.g. `1_000_000`).
+2. Also in Java 7+, you can add underscores to number literals (e.g.
+   `1_000_000`).
 
 
 # Java from 2,000 feet
 
-This stuff is largely from *Horstmann, Cay S.; Cornell, Gary (2012-11-27). Core Java
-Volume I-- Fundamentals (9th Edition) (Core Series Book 1). Pearson Education.
-Kindle Edition.*
+This stuff is largely from *Horstmann, Cay S.; Cornell, Gary (2012-11-27).
+Core Java Volume I-- Fundamentals (9th Edition) (Core Series Book 1). Pearson
+Education. Kindle Edition.*
 
 ## Java History
 
@@ -879,10 +971,10 @@ grown from about 200 to over 3,000 classes. The API now spans such diverse
 areas as user interface construction, database management,
 internationalization, security, and XML processing.
 
-Java was never just a language...Java is a whole platform, with a
-huge library , containing lots of reusable code, and an execution environment
-that provides services such as security, portability across operating systems,
-and automatic garbage collection.
+Java was never just a language...Java is a whole platform, with a huge library
+, containing lots of reusable code, and an execution environment that provides
+services such as security, portability across operating systems, and automatic
+garbage collection.
 
 Java is intended for writing programs that must be reliable. It eliminates
 situations that are error-prone. The single biggest difference between Java
@@ -925,7 +1017,8 @@ entirely free.
 
 To our knowledge, no actual Java systems were ever compromised. To keep this
 in perspective, consider the literally millions of virus attacks in Windows
-executable files and Word macros. Even 15 years after its creation, Java is far safer than any other commonly available execution platform.
+executable files and Word macros. Even 15 years after its creation, Java is
+far safer than any other commonly available execution platform.
 
 ## Java vs. C++
 
@@ -947,11 +1040,13 @@ executable files and Word macros. Even 15 years after its creation, Java is far 
 * Java has no unsigned types.
 
 * C++ strings are mutable, Java's are *immutable*
+    * Note that boxed primitive types (e.g. `Integer`) are *immutable* as well
 
 * C++ strings can be compared with `==`, Java strings must be compared with
   `"".equals("")`
 
-* In C++, one may redefine a variable inside a nested block. The inner definition then shadows the outer one. Java does not permit this.
+* In C++, one may redefine a variable inside a nested block. The inner
+  definition then shadows the outer one. Java does not permit this.
 
         int n;
         if (...) {
@@ -964,3 +1059,34 @@ executable files and Word macros. Even 15 years after its creation, Java is far 
 
 * In Java there's no way to specify a method as `const` (i.e. access but not
   mutate)
+
+* Parameters in Java are *always* passed the same way, you can't choose
+    * ***Primitives** are passed **by value***
+    * ***Objects** are passed **by something similar to reference***
+        * It's different though because it's actually passed by, say,
+          **reference value**
+        * This means you can't do `void swap(Obj a, Obj b)` because the
+          references in the `swap` method are copies of the original.
+        * But if you mutate an object passed in, you're really affecting the
+          caller's object.
+
+* Since Java does garbage collection, there are no destructors
+    * However your object might be using something other than heap space, like
+      a file handle, in which case you want to reclaim/recycle it
+    * So write a `finalize(void)` method, which will be called by the garbage
+      collector
+    * Since you don't know when your object will be GC'd, you don't know when
+      this method will be invoked.
+    * If you need to release resources on demand, define a `close(void)`
+      method and call it when you want.
+
+* Like C++, methods have *covariant* return types
+
+        public class Employee {
+            public Employee getBuddy() {...}
+        }
+        public class Manager extends Employee {
+            public Manager getBuddy() {...}
+        }
+
+    In this case, `Manager`'s method successfully *overrides* `Employee`'s
