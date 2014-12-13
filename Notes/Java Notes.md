@@ -104,17 +104,18 @@ only a few simple interfaces so that it's easier to learn.
          * can't call it twice in a row
          */
         void remove()
+    }
 
 #### ListIterator
 
 These can be extracted from a `List<E>`
 
     interface ListIterator<E> {
-        void add(E)             // optional
-        boolean hasPrevious()
         int nextIndex()
+        boolean hasPrevious()
         E previous()
         int previousIndex()
+        void add(E)             // optional
         void set(E)             // optional
     }
 
@@ -152,6 +153,7 @@ up to the implementer to provide whatever specifics they want.
 ### List
 
 An *ordered* collection (aka. "sequence"), meaning **it has indexes**.
+
     interface List<E> extends Collection<E> {
         void add(int, E)
         boolean addAll(int, Collection<>)
@@ -167,8 +169,8 @@ An *ordered* collection (aka. "sequence"), meaning **it has indexes**.
 
 ### AbstractCollection
 
-Implements most of `Collection` based on `Iterator<E> iterator()` and `int
-size()`, so that those are *all that remain* for *you* to get your class to
+Implements most of `Collection` based on (`Iterator<E> iterator()`) and (`int
+size()`), so that those are *all that remain* for *you* to get your class to
 `implement Collection`.
 
 This example is for `contains(Object)`. Note that you can always override this
@@ -382,29 +384,26 @@ E.g.
 
 * The programmer must ensure read and write access to objects is properly
   coordinated (or "synchronized") between threads.
-* Thread synchronization ensures that objects are modified by only one thread
-  at a time
 * And that threads are prevented from accessing partially updated objects
   during modification by another thread.
-* The Java language has built-in constructs to support this coordination.
+* Java has built-in constructs to support this coordination.
 * Multiple processes can only be realized with multiple JVMs, so we really
   just care about *multi*-***threaded*** programming
 
 #### Thread objects
 
-* **Threads share the process's resources, including memory** and open files.
-* This makes for efficient, but potentially problematic, communication.
+* **Threads share the process's resources, including memory and open files.**
 * Every application has at least one thread called the `main thread`.
 * The `main thread` has the ability to create additional threads from the
   `Runnable` or `Callable` object
 * Each thread can be scheduled on a different CPU core
-* Every JVM implementation can map Java threads to native OS threads in a
-  different way
 * Each thread is associated with an instance of the `class Thread`
 
 ##### Two ways to start a thread
 
 ###### Provide a Runnable object
+
+This is the *preferred* method
 
 	public class HelloRunnable implements Runnable {
 	   public void run() {
