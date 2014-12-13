@@ -11,7 +11,7 @@ latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
 
-# Useful external libraries and frameworks
+# Useful libraries and frameworks
 
 ## JUnit
 **5/20/14**
@@ -38,13 +38,191 @@ From the [Github Wiki & Tutorial][]
 [JUnit Homepage]: http://junit.org/
 [Github Wiki & Tutorial]: https://github.com/junit-team/junit/wiki
 
+## Logger
+
+1. Has different settable *levels*
+    1. SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST
+2. Can be passed to a custom formatter (e.g. for HTML)
+3. An app can have multiple loggers
+4. By default logging configuration is done in a configuration file
+
+### Simple Usage
+
+For example executing
+
+    Logger.getGlobal().info("\nFile->Open menu item selected");
+
+would print
+
+    May 10, 2013 10: 12: 15 PM LoggingImageViewer fileOpen INFO:
+    File-> Open menu item selected
+
+Calling
+
+    Logger.getGlobal().setLevel(Level.OFF);
+
+before executing any log statements from the Global Logger would suppress all
+logging.
+
+### Next Level
+
+Define your own logger
+
+    private static final Logger myLogger = Logger.getLogger("com.mycompany.myapp");
+
+By default, the log level is "INFO" (prints top 3 levels), change it with
+
+    logger.setLevel(Level.FINE);
+
+You log at a particular level with
+
+    logger.warning(moreImportantMessage);
+    logger.fine(lessImportantMessage);
+    logger.log(Level.FINE, lessImportantMessageAgain);
+
+There's more to it, but I've never wished I knew anything more than what's
+already written above.
 
 # Collections
 
-## Maps
-**5/12/14**
+## The way this works
 
-[SO Maps][]
+For all the "optional" methods, it means that if you're not implementing it,
+you should throw an `UnsupportedOperationException`. This sounds like a sloppy
+way to set up the Collections hierarchy, but the point was to make there be
+only a few simple interfaces so that it's easier to learn.
+
+### Iterator
+
+    interface Iterator<E> {
+        boolean hasNext()
+        E next()
+
+        /* [optional]
+         * removes most recent element
+         * you *must* have just called next() or previous()
+         * can't call it twice in a row
+         */
+        void remove()
+
+#### ListIterator
+
+These can be extracted from a `List<E>`
+
+    interface ListIterator<E> {
+        void add(E)             // optional
+        boolean hasPrevious()
+        int nextIndex()
+        E previous()
+        int previousIndex()
+        void set(E)             // optional
+    }
+
+### Iterable
+
+Implementing `Iterable<T>` allows you to use the "foreach" loop construct.
+
+    interface Iterable<T> {
+        Iterator<T> iterator()
+    }
+
+### Collection
+
+"The root interface in the *collection heirarchy*." A lot of freedom is left
+up to the implementer to provide whatever specifics they want.
+
+    interface Collection<E> extends Iterable<E> {
+        boolean add(E)                             // optional
+        boolean addAll(Collection<? extends E>)    // optional
+        void clear()                               // optional
+        boolean contains(Object)
+        boolean containsAll(Collection<?>)
+        boolean equals(Object)
+        int hashCode()
+        boolean isEmpty()
+        Iterator<E> iterator()
+        boolean remove(Object)                     // optional
+        boolean removeAll(Collection<?>)           // optional
+        int size()
+        Object[] toArray()
+        <T> T[] toArray(T[] a) // you can specify runtime type of array
+    }
+
+
+### List
+
+An *ordered* collection (aka. "sequence"), meaning **it has indexes**.
+    interface List<E> extends Collection<E> {
+        void add(int, E)
+        boolean addAll(int, Collection<>)
+        E get(int)
+        int indexOf()
+        int lastIndexOf(Object)
+        ListIterator<E> listIterator()
+        ListIterator<E> listIterator(int)
+        boolean retainAll(Collection<?>)
+        E set(int, E)                       // optional
+        List<E> subList(int, int)
+    }
+
+### AbstractCollection
+
+Implements most of `Collection` based on `Iterator<E> iterator()` and `int
+size()`, so that those are *all that remain* for *you* to get your class to
+`implement Collection`.
+
+This example is for `contains(Object)`. Note that you can always override this
+implementation if you want to.
+
+    abstract class AbstractCollection<E> implements Collection<E> {
+        public boolean contains(Object obj) {
+            for (E element : this) // calls iterator()
+                if (element.equals(obj))
+                    return true;
+            return false;
+        }
+    }
+
+### Map
+
+From the docs:
+
+* An object that maps keys to values
+* A map cannot contain duplicate keys
+* Each key can map to at most one value
+
+Doesn't extend anything. Comments are mine.
+
+    interface Map<K, V> {
+
+        /* find & retrieve */
+        boolean             containsKey(Object)
+        boolean             containsValue(Object)
+        V                   get(Object key)
+
+        /* size */
+        int                 size()
+        boolean             isEmpty()
+
+        /* alternate view */
+        Set<K>              keySet()
+        Collection<V>       values()
+
+        // from this you call entry.getKey|Value()
+        Set<Map.Entry<K,V>> entrySet()
+
+        boolean             equals(Object)
+        int                 hashCode()
+
+        /* insert */
+        // overwrites, returns *previous* value
+        V                   put(K, V)      // optional
+        void                putAll(Map<>)  // optional
+
+        /* remove */
+        void clear()        // optional
+        V remove(Object)    // optional
+    }
 
 ### HashMap
 * **no guarantees** about iteration order
@@ -156,7 +334,8 @@ Support I/O of primitive data types
 
 E.g.
 
-    out.writeObject(obj); Object obj = in.readObject();
+    out.writeObject(obj);
+    Object obj = in.readObject();
 
 **11/11/14**
 ## Java Pipes
@@ -436,6 +615,13 @@ specified by `HasWord`.
 1. Wait, but then couldn't we just say `List<HasWord>` and get the *exact*
    same effect?
 
+**12/12/14**
+
+From *Core Java V1 Ed. 9, Section 12.8 "Wildcard Types*
+
+If we have an instance `Pair<Superclass> p` then we *cannot* assign `p = new
+Pair<Subclass>` which is not good. But we can pull this off if we declare
+`Pair<? extends Superclass> p` instead.
 
 # Useful interfaces/abstract classes
 
@@ -561,7 +747,7 @@ And then do this
 
 1. Introduces its own type parameters
 2. The type parameter's scope is limited to the method
-3. Method could be static or non-static or class constructor
+3. Method could be static, non-static, *or* class constructor
 4. Syntax: appears inside angle brackets in the method declaration before the
    return type
 
@@ -576,9 +762,12 @@ And then do this
         public static <K extends Comparable<? super K>, V> boolean
                 myMethod(MyType<K, V> a, MyType<K, V> b)
         {/*...*/}
-5. I believe this means that *only now* can you say
+5. I believe this means that *only now* can you put the line
 
         a.key.compareTo(b.key)
+
+    inside of `myMethod(...)`
+
 6. You invoke this method with
 
         StaticClass.<TypeK, TypeV>myMethod(obj1, obj2);
