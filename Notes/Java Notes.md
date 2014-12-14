@@ -1171,7 +1171,7 @@ Must be
 
 * reflexive -- `a.equals(a) == true`
 * symmetric -- `a.equals(b) iff b.equals(a)`
-* transitive -- `a.equals(b) && b.equals(c) => a.equals(c)`
+* transitive -- `a.equals(b) && b.equals(c)` \\(\Longrightarrow\\) `a.equals(c)`
 * consistent -- always returns the same value for the same [unchanged] object
 
 If you *don't* `@Override public boolean equals(Object o){}`, each instance is
@@ -1227,7 +1227,7 @@ This example is for a subclass
 
 Rules
 
-* `a.equals(b) => a.hashCode() == b.hashCode()`
+* `a.equals(b)` \\(\Longrightarrow\\) `a.hashCode() == b.hashCode()`
 
 # Useful things for interview questions
 

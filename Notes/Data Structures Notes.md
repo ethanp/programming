@@ -64,7 +64,7 @@ Tree
         / \ /
         x x x
 
-* **Full** -- every node other than the leaves has two children
+* **Full** -- every node has either two children or zero children
 
                x
              /   \
@@ -269,6 +269,23 @@ RingBuffer
 
 ### LinkedHashMap
 
+## SkipList
+
+* Allows fast search within an ordered sequence of elements
+* "Skip list algorithms have the same asymptotic expected time bounds as
+  balanced trees and are simpler, faster and use less space." --- inventor
+  William Pugh
+    * \\(log(n)\\) for contains, insert, and remove
+* a "data structure for storing a sorted list of items, using a hierarchy of
+  linked lists that connect increasingly sparse subsequences of the items."
+* It's hard to explain but the picture on Wikipedia makes it clear
+* So you walk down the highest (sparsest) list until you find that you've
+  skipped your element
+    * If you found your element, you're good to go
+* Then you go to the most recent element before you skipped over the element,
+  and walk down a lower list
+* The last list contains your entire sequence and you'll definitely find your
+  element there
 
 TODO
 ----
