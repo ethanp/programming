@@ -734,12 +734,40 @@ feasible.
         E take()        // block while empty
     }
 
-You'll also find the following implementations
+You'll also find the following implementations:
+
+Queues
 
     ArrayBlockingQueue  // fixed max size on creation
     LinkedBlockingQueue // no fixed upper bound on size
     PrioirityBlockingQueue // removed by priority, unbounded size
     LinkedTransferQueue // SE 7, producer's insert blocks till consumer removes
+
+Other
+
+    ConcurrentHashMap       // shared cache, ≤ 16 *simult* writers by default
+    ConcurrentSkipListMap
+    ConcurrentSkipListSet
+    ConcurrentLinkedQueue
+
+    CopyOnWriteArrayList
+    CopyOnWriteArraySet
+
+## Callables & Futures
+
+* `Runnable` --- runs a task asynchronously, no params, no return value
+* `Callable` --- runs a task asynchronously, no params, with return value
+* `Future<V>` --- holds result of asynchronous computation
+    * no callbacks
+    * blocking `V get()`
+    * non-blocking `boolean isCancelled()`
+
+## Thread Pools
+
+* Use these if your program use a large number of short-lived threads.
+* When a thread dies, it gets the next task instead of getting deallocated &
+  reallocated.
+* `Executors` --- contains *static factory methods* for constructing thread pools
 
 # Inheritance
 

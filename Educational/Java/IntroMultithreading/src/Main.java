@@ -1,5 +1,8 @@
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Ethan Petuchowski 12/13/14
@@ -13,21 +16,19 @@ public class Main {
 	static ArrayBlockingQueue<String> strings = new ArrayBlockingQueue<String>(2);
 
     public static void main(String[] args) throws InterruptedException {
-	    Thread[] threads = new Thread[NUM]; // one for the null char
+	    ExecutorService threadPool = Executors.newFixedThreadPool(3);
 	    new Thread(new Taker()).start();
 	    for (int i = 0; i < NUM; i++) {
 		    String letter = String.format("%c", 'a'+i);
-		    Runnable runnable = new Putter(letter);
-		    threads[i] = new Thread(runnable);
-		    threads[i].start();
+		    // submit returns a Future that lets you get the return value,
+		    // but I have no return value
+		    threadPool.submit(new Putter(letter));
 	    }
-	    for (Thread t : threads)
-		    t.join();
-
-	    // just for kicks stick a terminator into the
-	    // queue to signal that it's over between us
-	    Thread nullStr = new Thread(new Putter(NULL_STRING));
-	    nullStr.start();
+	    threadPool.awaitTermination(3, TimeUnit.SECONDS);
+	    threadPool.shutdown();
+	    // just for kicks stick a terminator into the queue
+	    // to signal that it's over between us
+	    new Thread(new Putter(NULL_STRING)).start();
     }
 }
 
