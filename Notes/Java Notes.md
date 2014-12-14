@@ -708,7 +708,7 @@ In package `java.util.concurrent.atomic` there is (e.g.) `AtomicInteger` which
   has atomic methods `in/decrementAndGet()`, meaning you can safely use it as
   a *shared counter* without any synchronization.
 
-## Blocking Queues
+## Concurrent Data Structures
 
 You want to stay away from the above low-level constructs whenever posssible,
 and use higher-level structures implemented by concurrency experts with a lot
@@ -753,21 +753,46 @@ Other
     CopyOnWriteArrayList
     CopyOnWriteArraySet
 
-## Callables & Futures
+## Callables, Futures, Thread Pools
 
 * `Runnable` --- runs a task asynchronously, no params, no return value
-* `Callable` --- runs a task asynchronously, no params, with return value
+    * You implmement `public void run()` which gets called via `new
+      Thread(runnable).start()`
+* `Callable<V>` --- runs a task asynchronously, no params, with return value
+    * You implement `public V call()`
 * `Future<V>` --- holds result of asynchronous computation
     * no callbacks
     * blocking `V get()`
     * non-blocking `boolean isCancelled()`
 
-## Thread Pools
+### Thread Pools
 
 * Use these if your program use a large number of short-lived threads.
 * When a thread dies, it gets the next task instead of getting deallocated &
   reallocated.
 * `Executors` --- contains *static factory methods* for constructing thread pools
+
+        newFixedThreadPool(size)    // fixed size pool
+        newCachedThreadPool()       // creates new threads when necessary
+        newScheduledThreadPool(nThreads)    // run periodically / after delay
+        newSingleThreadScheduledExecutor()  // see above
+
+    * `Future<T> submit(Callable<T>/Runnable[, T result])` --- submit to pool
+        * `Callable` is the easiest way to get the return value. Just call
+          `get()` on the `Future<T>`
+    * `shutdown()` --- shuts down pool nicely (call when you're done so you
+      program can terminate)
+    * `shutdownNow()` --- cancels all current tasks and shuts down
+
+## Other
+
+There's a lot more advanced stuff in here that I will not take notes on
+
+* Controlling groups of tasks with `ExecutorCompletionService`
+* The fork-join framework, allowing `RecursiveTask<T>`,\
+* Synchronizers --- pre-implemented patterns for common multithread
+  synchronization patterns, e.g. `Exchanger`, `CyclicBarrier` (neural nets?), and
+  `Semaphore`
 
 # Inheritance
 
