@@ -379,141 +379,278 @@ E.g.
 
 # Java concurrency
 
-**5/12/14**
-[Wikipedia](http://en.wikipedia.org/wiki/Java_concurrency)
-
 * The programmer must ensure read and write access to objects is properly
-  coordinated (or "synchronized") between threads.
-* And that threads are prevented from accessing partially updated objects
-  during modification by another thread.
-* Java has built-in constructs to support this coordination.
-* Multiple processes can only be realized with multiple JVMs, so we really
-  just care about *multi*-***threaded*** programming
+  coordinated (or "synchronized") between threads
+    * Including preventing threads from accessing partially updated objects
+      during modification by another thread
+    * Use the built-in constructs
+* Multiple processes implies multiple JVMs; here, we're referring to
+  *multi*-***threaded*** programming
+* Rule of Thumb
+    1. Try to use objects in `java.util.concurrent` instead of figuring out
+       concurrency for yourself
+    2. Try to use `synchronized` over using actual `Lock`/`Condition` objects
+* Brian Goetz (author of *Java Concurrency in Practice*) coined the following
+  “synchronization motto”:
+    * “If you write a variable which may next be read by another thread, or
+      you read a variable which may have last been written by another thread,
+      you must use synchronization.”
 
-#### Thread objects
+## Thread Objects
 
-* **Threads share the process's resources, including memory and open files.**
-* Every application has at least one thread called the `main thread`.
-* The `main thread` has the ability to create additional threads from the
-  `Runnable` or `Callable` object
+* **Threads share the process's resources, including memory and open files**
+* Every application has at least one thread called the *main thread*
 * Each thread can be scheduled on a different CPU core
 * Each thread is associated with an instance of the `class Thread`
+* Threads are always in 1 of 6 states
+    * New --- instantiated, but you haven't called `start()` yet
+    * Runnable --- up to OS whether it is *actually* running
+    * *Inactive*, i.e.
+        * Blocked --- waiting to acquire an *intrinsic object lock*
+        * Waiting --- waiting for a `java.util.concurrent` `Condition` or
+          `Lock` object
+        * Timed waiting --- waiting for `Thread.sleep(time)` or similar
+    * Terminated --- either `run()` exited normally, or an uncaught exception
+      terminated it
+* The `stop()` and `suspend()` methods, which directly make a thread stop,
+  have been *deprecated* because they could be stopped while the data structure
+  they're operating upon is in an *inconsistent* state.
 
-##### Two ways to start a thread
+### Two ways to start a thread
 
-###### Provide a Runnable object
+#### Provide your own Runnable to a Thread
 
-This is the *preferred* method
+This is the **preferred** method. "The general contract of the method `run` is
+that it may take any action whatsoever."
 
 	public class HelloRunnable implements Runnable {
-	   public void run() {
-	       System.out.println("Hello from thread!");
-	   }
-	   public static void main(String[] args) {
-	       (new Thread(new HelloRunnable())).start();
-	   }
-	}
+        public void run() {
+            System.out.println("Hello from thread!");
+        }
+        public static void main(String[] args) {
+            Runnable hello = new HelloRunnable();
+            Thread thread = new Thread(hello);
+            thread.start();
+        }
+    }
 
-###### Subclass Thread
+#### Subclass Thread
+
+The *other* way is *preferred*.
 
 	public class HelloThread extends Thread {
-	   public void run() {
-	       System.out.println("Hello from thread!");
-	   }
-	   public static void main(String[] args) {
-	       (new HelloThread()).start();
-	   }
+	   public void run() { System.out.println("Hello from thread!"); }
+	   public static void main(String[] args) { new HelloThread().start(); }
 	}
 
-#### Thread basics
+### Thread basics
 
-* Use `Thread.interrupt()` to tell a thread to stop what it is doing and do
-  something else.
-* Wait for the completion of another thread with `Thread.join()`
-* To synchronize threads, Java uses **monitors**, a mechanism allowing only
+* Wait for the completion of another thread with
+  `myThreadInstance.join(timeout)`
+* To *synchronize* threads, Java uses **monitors**, a mechanism allowing only
   one thread at a time to execute a region of code protected by the monitor
+* You can give threads *priority* levels
+* You can designate a thread to be a *daemon* meaning the JVM will exit if
+  only *daemon* threads are still executing
 
-##### Cache coherence:
+#### Interrupting Threads
 
-* After we exit a synchronized block, we release the monitor
-* This flushes the cache to main memory, making writes made by this thread
-  visible to other threads.
-* So now, before we can enter a synchronized block, we acquire the monitor,
-  invalidating the local processor cache, so that variables will be reloaded
-  from main memory, so are now able to see all of the writes made by the
-  previous release.
+Say you have a "runnable" `Thread` instance:
 
+    Thread thr = new Thread(new MyRunnable());
+    thread.start();
 
-### Java Memory Model
+Now it's off doing its thang, but you'd like to kindly ask it to stop when it
+gets a chance. So you call `interrupt()` on the instance:
 
-Ref: [Wikipedia](http://en.wikipedia.org/wiki/Java_Memory_Model)
+    thread.interrupt();
 
-* On modern platforms, code is frequently reordered by the compiler, the
-  processor and the memory subsystem to achieve maximum performance.
-* On multiprocessor architectures, individual processors may have their own
-  local caches that are out of sync with main memory.
-* It is generally undesirable to require threads to remain perfectly in sync
-  with one another because this would be too costly from a performance point
-  of view.
-* This means that at any given time, different threads may see different
-  values for the same shared data.
-* **The Java Memory Model (JMM) defines** the allowable behavior of
-  multithreaded programs, and therefore describes **when such reorderings are
-  possible**.
-* It places execution-time constraints on the relationship between threads and
-  main memory in order to achieve consistent and reliable Java applications.
-* By doing this, it makes it possible to reason about code execution in a
-  multithreaded environment, even in the face of optimizations performed by
-  the dynamic compiler, the processor(s) and the caches.
-* The *Java Language Specification* requires a *Java Virtual Machine* to
-  observe `within-thread` `as-if-serial` semantics.
-* The major caveat of this is that `as-if-serial` semantics do *not* prevent
-  different threads from having different views of the data.
-* Everything that happens before the release of a lock will be seen to be
-  ordered before and visible to everything that happens after a subsequent
-  acquisition of that same lock.
+Now in `MyRunnable implements Runnable` you defined `run()`. Some of the
+methods your `Runnable` can call (e.g. `Thread.sleep(millisec)`) can `throw
+InterruptedException` which will happen after you called `interrupt()` above.
+At this point before you call `sleep()` or any other blocking call, you can
+check if you have been interrupted with
 
+    boolean Thread.currentThread().isInterrupted()
 
-### Synchronized
+and perform actions before you actually throw the exception. But then you
+throw it, and you can catch it too, which is where you should probably
+interrupt yourself in whatever way is apropos.
 
-Ref:
+## Locks
 
-* [SO-1](http://stackoverflow.com/questions/442564/avoid-synchronizedthis-in-java)
-* [SO-2](http://stackoverflow.com/questions/574240/synchronized-block-vs-synchronized-method)
-* [SO-3](http://stackoverflow.com/questions/1085709/what-does-synchronized-mean)
+See **package**
 
-Here is a quote from Sun:
+    java.util.concurrent.locks
 
-> Synchronized methods enable a simple strategy for preventing thread
-> interference and memory consistency errors: if an object is visible to more
-> than one thread, all reads or writes to that object's variables are done
-> through synchronized methods.
+### Interface lock
 
+We have (*none* are "optional"):
 
-#### Block vs Method
+    interface Lock {
+        void lock()   // can't be interrupted while waiting, can cause deadlock
+        void lockInterruptibly()   // will wake up if interrupted while waiting
+        Condition newCondition()   // bound to this Lock instance
+        boolean tryLock()          // only acquire if free
 
-Synchronized block
+        /* e.g. myLock.tryLock(100, TimeUnit.MILLISECONDS);
+         * this method can be interrupted while waiting  */
+        boolean tryLock(long time, TimeUnit unit)  // give up after time
 
-	public void blah() {
-	  synchronized (this) {
-	    // do stuff
-	  }
-	}
+        void unlock()
+    }
 
-is semantically equivalent to synchronized method
+In the docs, we are instructed to use the following idiom
 
-	public synchronized void blah() {
-	  // do stuff
-	}
+    Lock l = new ReentrantLock(); // could be *any* type of lock
+    l.lock();
+    try {
+        // access protected resource
+    }
+    finally {       // IMPORTANT:
+        l.unlock(); // still unlock even after Exception is thrown
+    }
 
-* The only real difference is that a synchronized block can choose which
-  object it synchronizes on.
-* A `synchronized` method can only use `this`
-    * Or the corresponding `class` instance for a synchronized `static` class
-      method
+### Interface ReadWriteLock
 
+> A ReadWriteLock maintains a pair of associated locks, one for read-only
+operations and one for writing. The read lock may be held simultaneously by
+multiple reader threads, so long as there are no writers. The write lock is
+exclusive. [-- Oracle]
 
-#### synchronized(this) block
+Protect a concurrent object with this thing when there are many readers but
+few updates to it.
+
+This is implemented in `class ReentrantReadWriteLock`
+
+This interface does *not* `extend` anything.
+
+    interface ReadWriteLock {
+        Lock readLock()     // return read-lock
+        Lock writeLock()    // return write-lock
+    }
+
+### Class ReentrantLock
+
+A `ReentrantLock` has the same behavior & semantics as the *implicit monitor
+lock* used by the `synchronized(obj)` keyword, but has "extended capabilities".
+
+What makes it "reentrant" is that a single thread can repeatedly acquire a
+lock it already owns (which increases its `getHoldCount()`). You must
+`unlock()` over and over until your `hold count == 0`. This allows a single
+thread to acquire a lock, then call another method that also acquires that
+lock, without any issues.
+
+Don't make your lock `fair` unless you have a reason, because it makes your
+code much slower. Fairness gives preferential treatment to the longest-waiting
+threads.
+
+Note that the `Serializable` interface has no methods.
+
+    class ReentrantLock implements Lock, Serializable {
+        boolean isLocked()
+
+        int     getHoldCount() // number of holds by current thread
+        Thread  getOwner() // null if not owned
+
+        Collection<Thread> getWaitingThreads(Condition) // waiting on Condition
+        int getWaitQueueLength(Condition) // est. #threads waiting on Condition
+        boolean hasWaiters(Condition)
+
+        boolean hasQueuedThread(Thread) // is thread waiting to acquire this?
+        boolean hasQueuedThreads()      // check if *anyone* is waiting
+
+        boolean isHeldByCurrentThread()
+
+        boolean isFair() // is fairness == true?
+    }
+
+### Interface Condition
+
+* Use a `Condition` to make one thread wait for another thread's signal. The
+  `Condition` variable facilitates this being done *atomically*. A `Condition`
+  instance is *bound* to a `Lock`. You create the condition via
+
+        Condition c = myLock.newCondition()
+
+* You might do this when you have acquired a lock, but still must wait before
+  you can do useful work.
+
+* You can only call `await()`, `signal()`, or `signalAll()` if you *have* the
+  `Lock` that the `Condition` is attached to.
+
+* When you call `await()` you relinquish the lock, and your `Thread` enters
+  the *wait* state (see above). It is *not* made *runnable* again when the
+  lock becomes available. It is *only* made runnable when someone calls
+  `myCondition.signal()` and you are next-in-line on the `Condition`, or
+  someone calls `myCondition.signalAll()`. At this point you can take the lock
+  back and continue where you left off (returning from your call to
+  `await()`). In general the code for this really ought to take the form
+
+        while(!(ok to proceed))
+            condition.await();
+
+    * This is because just because you got the lock back doesn't mean that
+      whatever reason you stopped in the first place is not true anymore so
+      you'll want to check again and keep blocking if the condition is still
+      not met. This code does exactly that.
+
+* If no one *ever* signals you, you can *deadlock*.
+
+The interface looks like:
+
+    interface Condition {
+
+        /* wait for another thread to call signal() on this Condition */
+        void await()       // wait for Condition.signal() or Thread.interrupt()
+        void awaitUninterruptibly()  // wait for signal() but not interrupt()
+
+        /* wait until timeout */
+        boolean await(long, TimeUnit)
+        long    awaitNanos(long)
+        void    awaitUntil(Date)
+
+        void signal()               // wakeup one waiting thread
+        void signalAll()            // wakeup *all* waiting threads
+    }
+
+## Synchronized
+
+Synchronization prevents *race conditions* (threads stepping on each other's
+toes, accessing corrupt shared data).
+
+### Block vs Method
+
+A `synchronized` method
+
+    public synchronized void blah() {
+      // do stuff
+    }
+
+is semantically equivalent to a `synchronized (this)` block
+
+    public void blah() {
+      synchronized (this) {
+        // do stuff
+      }
+    }
+
+is semantically equivalent to using the *intrinsic lock* itself
+
+    public void blah() {
+        this.intrinsicLock.lock();
+        try {
+            // do stuff
+        }
+        finally {
+            this.intrinsicLock.unlock();
+        }
+    }
+
+We can wait on the `intrinsicLock`'s `intrinsicCondition` using `this.wait()`
+i.e. simply `wait()`, and `notifyAll()`.
+
+#### synchronized(objInstance) block
 
 * Unlike synchronized methods, synchronized statements must specify the object
   that provides the intrinsic lock
@@ -522,44 +659,87 @@ is semantically equivalent to synchronized method
 
 Two Effects:
 
-1. When one thread is executing a synchronized method for an object, all other
-   threads that invoke synchronized methods for the same object block (suspend
-   execution) until the first thread is done with the object.
-2. When a synchronized method exits, it automatically establishes a happens-
-   before relationship with any subsequent invocation of a synchronized method
-   for the same object. This guarantees that changes to the state of the
-   object are visible to all threads. (not sure what this means)
+1. Only one thread can execute it at a time
+2. Exiting the method establishes a happens-before relationship with
+   subsequent invocations for the same object
 
-Other notes:
+### Other
 
-* Constructors cannot be synchronized — using the synchronized keyword with a
-  constructor is a syntax error. Synchronizing constructors doesn't make
-  sense, because only the thread that creates an object should have access to
-  it while it is being constructed.
-
-#### Other
-
+* Constructors cannot be `synchronized`
 * Every object has an intrinsic lock associated with it
-    * This is what the implementation of `synchronized` relies upon to use the
-      `monitor` synchronization pattern
-* Note that of course we *could* also use an "explicit lock" such as
-  `java.util.concurrent.locks.ReentrantLock`, which provides the same
-  implications for memory behavior.
 
+## Java Memory Model
 
-### Volatile Fields
+* On modern platforms, code is frequently reordered by the compiler, the
+  processor and the memory subsystem to achieve maximum performance
+* **The Java Memory Model (JMM) defines** *when such reorderings are
+  possible*
+    * Execution-time constraints on the relationship between threads and main
+      memory to achieve consistent and reliable applications
+    * Makes it possible to reason about code execution in the face of
+      optimizations
+* JVMs must observe **within-thread as-if-serial** semantics
+    * NB: *as-if-serial* semantics do *not* prevent different threads from
+      having different views of the data.
+    * It *does* mean that everything that happens before the release of a lock
+      will be seen to be ordered before and visible to everything that happens
+      after a subsequent acquisition of that same lock.
 
-* Guarantees that every thread accessing a volatile field will read its
-  current value before continuing, instead of (potentially) using a cached
-  value.
-* However, there is no guarantee about the relative ordering of volatile reads
-  and writes with regular reads and writes, meaning that it's generally not a
-  useful threading construct.
-* Volatile reads and writes establish a happens-before relationship, much like
-  acquiring and releasing a mutex.
-    * This relationship is simply a guarantee that memory writes by one
-      specific statement are visible to another specific statement.
+### Cache coherence:
 
+* After we exit a `synchronized` block, we *release* the monitor
+* This flushes the cache to main memory, making writes made by this thread
+  visible to other threads.
+* So now, before we can enter a `synchronized` block, we *acquire* the
+  monitor, invalidating the local processor cache, so that variables will be
+  reloaded from main memory, so are now able to see all of the writes made by
+  the previous release.
+
+## Volatile Fields
+
+* Lock-free mechanism for synchronizing access to an instance field
+* Guarantees a thread access will read its *current* value, instead of a
+  cached value
+* Does not provide update atomicity so you *can* still have *race conditions*
+
+## Atomics
+
+In package `java.util.concurrent.atomic` there is (e.g.) `AtomicInteger` which
+  has atomic methods `in/decrementAndGet()`, meaning you can safely use it as
+  a *shared counter* without any synchronization.
+
+## Blocking Queues
+
+You want to stay away from the above low-level constructs whenever posssible,
+and use higher-level structures implemented by concurrency experts with a lot
+of time to sink into it and experience to debug it. Queues are often the right
+choice for multithreading scenarios; you have producer(s) that insert in and
+consumer(s) that retrieve out. *Blocking queues* block when you try to insert
+into a full queue or remove from an empty one, until that operation because
+feasible.
+
+    interface BlockingQueue<E> {
+
+        /* insert */
+        void add()      // Exception if it's full
+        bool offer()    // block while full, false on timeout
+        void put()      // block while full, no timeout
+
+        /* return head element */
+        E element()     // Exception if empty
+        E peek()        // null if empty
+
+        /* remove and return head element */
+        E remove        // Exception if empty
+        E take()        // block while empty
+    }
+
+You'll also find the following implementations
+
+    ArrayBlockingQueue  // fixed max size on creation
+    LinkedBlockingQueue // no fixed upper bound on size
+    PrioirityBlockingQueue // removed by priority, unbounded size
+    LinkedTransferQueue // SE 7, producer's insert blocks till consumer removes
 
 # Inheritance
 
@@ -778,28 +958,27 @@ but basically it confirms the above to be a correct interpretation.
 ## Reflection
 **5/21/14**
 
-This is all just a quote from [StOve](http://stackoverflow.com/questions/37628/what-is-reflection-and-why-is-it-useful/37638#37638)
-
-"Reflection" is a language's ability to inspect and dynamically call classes,
+> "Reflection" is a language's ability to inspect and dynamically call classes,
 methods, attributes, etc. at runtime. For example, all objects in Java has the
 method getClass, which lets you determine its class even if you don't know it
 at compile time (like if you declared it as Object) - this might seem trivial,
 but such reflection is not by default possible in less dynamic languages such
 as C++.
 
-More advanced uses lets you list and call methods, constructors, etc.
+> More advanced uses lets you list and call methods, constructors, etc.
 
-Reflection is important since it lets you write programs that does not have to
-"know" everything at compile time, making them more dynamic, since they can be
-tied together at runtime. The code can be written against known interfaces,
+> Reflection is important since it lets you write programs that does not have
+to "know" everything at compile time, making them more dynamic, since they can
+be tied together at runtime. The code can be written against known interfaces,
 but the actual classes to be used can be instantiated using reflection from
-configuration files.
+configuration files. Lots of modern frameworks uses reflection extensively for
+this very reason.
 
-Lots of modern frameworks uses reflection extensively for this very reason.
-
-Most other modern languages uses reflection as well, and in script languages
+> Most other modern languages uses reflection as well, and in script languages
 like Python can be said to be even more tightly integrated, since it matches
 more naturally with the general programming model for those languages.
+
+> [StOve](http://stackoverflow.com/questions/37628)
 
 ### Notes from a [great tutorial][]
 
@@ -819,25 +998,12 @@ classes you can obtain information about
 * Fields
 * Annotations
 
-You get this from the **`Class` object**, which you get from `Class class = MyObject.class`
+You get this from the **`Class` object**, which you get from `Class class =
+MyObject.class`
 
-### Notes from the [Oracle docs][]
-
-[Oracle docs]: http://docs.oracle.com/javase/tutorial/reflect/
-
-#### Uses
-
-* creating Visual Development Environments (ie. visual IDE features)
-* or a Debugger
-* or Test Tools
-
-#### Drawbacks
-
-* Slow performance
-* Can't be run in certain restricted security contexts (such as in an Applet)
-* Allows you to access `private` fields and do unexpected side-effecting and
-  break portability
-
+* Useful for creating visual IDE features, debugger, test tools
+* Drawbacks include slow performance, and allowing you freedom to break
+  incapsulation.
 
 ## Annotations
 **5/21/14**

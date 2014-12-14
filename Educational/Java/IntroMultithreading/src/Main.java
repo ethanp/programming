@@ -1,36 +1,25 @@
+import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.TreeSet;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Ethan Petuchowski 12/13/14
  */
 public class Main {
 
-	static Set<String> strings = new TreeSet<String>();
+	static Set<String> strings = new LinkedHashSet<String>();
 
-    static class HelloRunnable implements Runnable {
 
-	    String myString;
-	    public HelloRunnable(String s) {
-		    myString = s;
-	    }
-
-	    /* "The general contract of the method `run` is that
-         *  it may take any action whatsoever."
-         */
-	    public void run() {
-	        System.out.println("Hello from thread!");
-		    Main.addString(myString);
-	    }
-	}
     public static void main(String[] args) throws InterruptedException {
-	    for (int i = 0; i < 26; i++) {
+	    int NUM = 26;
+	    Thread[] threads = new Thread[NUM];
+	    for (int i = 0; i < NUM; i++) {
 		    String letter = String.format("%c", 'a'+i);
 		    Runnable runnable = new HelloRunnable(letter);
-		    Thread thread = new Thread(runnable);
-		    thread.start();
+		    threads[i] = new Thread(runnable);
+		    threads[i].start();
 	    }
-	    Thread.sleep(20);
+	    for (Thread t : threads) t.join();
 	    System.out.println(strings);
     }
 	public static void addString(String s) {
@@ -38,4 +27,25 @@ public class Main {
 			strings.add(s);
 		}
 	}
+}
+
+class HelloRunnable implements Runnable {
+    String myString;
+    public HelloRunnable(String s) {
+	    myString = s;
+    }
+    /* "The general contract of the method `run` is that
+     *  it may take any action whatsoever."
+     */
+    public void run() {
+	    try {
+		    /* ThreadLocalRandom is a convenience class so that each
+		       thread doesn't have to wait on a global random generator */
+		    int sleepTime = ThreadLocalRandom.current().nextInt(100);
+		    Thread.sleep(sleepTime);
+	    }
+	    catch (InterruptedException e) {}
+	    System.out.println(myString+" adding myself!");
+	    Main.addString(myString);
+    }
 }
