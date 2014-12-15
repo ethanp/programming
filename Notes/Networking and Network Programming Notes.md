@@ -1,7 +1,7 @@
 latex input:    mmd-article-header
 Title:          Networking and Network Programming Notes
 Author:			Ethan C. Petuchowski
-Base Header Level:		2
+Base Header Level:		1
 latex mode:     memoir
 Keywords:       REST protocol, protocols, sockets, TCP/IP
 CSS:            http://fletcherpenney.net/css/document.css
@@ -11,7 +11,7 @@ latex input:    mmd-natbib-plain
 latex input:    mmd-article-begin-doc
 latex footer:   mmd-memoir-footer
 
-## The Layers
+## Internets have Layers, like an Onion
 
 * **Internet implementations** (TCP over IP) don't actually strictly follow
   that 7-layer OSI Model
@@ -21,15 +21,21 @@ latex footer:   mmd-memoir-footer
     * Link \\(\rightarrow\\) Internet \\(\rightarrow\\) Transport
       \\(\rightarrow\\) Application
 
-### TCP/IP Layers
+#### TCP/IP Layers
 
 1. **Network Interface / Link** -- (OSI 1,2) -- uses the hardware to do the
    above layers
-    * TCP/IP is designed to be hardware independent
+    * **Ethernet**
+    * **Wifi**
 2. **Internet** -- (OSI 3) -- congestion control and routing global unique IP
    addresses and IP packets
+    * **IP** (Internet Protocol) -- addresses hosts and routes packets across
+      1+ IP networks
 3. **Transport** -- (OSI 4) -- error control, segmentation, congestion
    control, application addresssing
+    * **TCP** (Transmission Control Protocol) -- creates *reliable* connection
+      between 2 computers
+    * **UDP** (User Datagram Protocol) -- *broadcasts* messages over a network
 4. **Application** -- (OSI 5,6,7) -- protocols used by applications
     * **FTP** -- for transmitting files, out-of-date (see below)
     * **SMTP** (Simple Mail Transfer Protocol) -- for sending mail between
@@ -40,28 +46,29 @@ latex footer:   mmd-memoir-footer
     * **IMAP** (Internet Message Access Protocol) -- for retrieving email from
       mail server
     * **DNS** (Domain Name System) -- for translating name to an IP address
-    * **TCP** (Transmission Control Protocol) -- creates *reliable* connection
-      between 2 computers
-    * **IP** (Internet Protocol) -- addresses hosts and routes packets across
-      1+ IP networks
     * **ICMP** (Internet Control Message Protocol) -- provides error messages
-    * **UDP** (User Datagram Protocol) -- *broadcasts* messages over a network
-    *
-## TCP
+
+### Networking Concepts
+
+* **Host** -- provides an endpoint for networked communication
+* **Packet** -- small piece of the data to be sent (see IP, below)
+* **Latency** -- request's *round-trip time*
+* **Firewall** -- a *router* that inspects, modifies, or blocks specific traffic
+  flowing through it.
+
+
+## Transport Layer
+
+### TCP (Transmission Control Protocol)
 **9/5/14**
 
 * This is the **transport layer** of the **TCP/IP suite**
-* TCP is an intermediary between the application and Internet Protocol (IP)
-    * Instead of the app breaking the data into packets and issuing a bunch of
-      IP requests, it just issues a *single* TCP request, and TCP handles the
-      details.
-* IP exchanges **packets** --- which have a **header** and a **body**
-    * Packet **header** --- source, destination, control information
-    * Packet **body** --- the data to be transmitted
+* Intermediary between the application and Internet Protocol (IP)
+    * An app simply issues a *single* TCP request with the data it wants to
+      transmit, and TCP handles the packet breakup and IP requests etc.
 * IP packets can be lost, duplicated, or delivered out of order
-    * TCP handles all this
-        * Specifically, it *guarantees* that all bytes are perfectly received
-          in the correct order
+    * TCP handles all this; specifically, it *guarantees* that all bytes are
+      perfectly received in the correct order
 * TCP uses *positive acknowledgement with retransmission* as the basis of its
   algorithm
     * Sender keeps a record of each packet it sends
@@ -69,111 +76,53 @@ latex footer:   mmd-memoir-footer
         * Sender retransmits if no ACK is received before *timeout* (due to
           loss or data corruption)
     * Receiver responds with an ACK message as it receives the packet
+    * The actual algorithm is not in these notes at this time.
 
-## Socket
+### Sockets & Ports
 
-### Socket Vs Port
-**6/18/14**
-
-* From [StackOverflow][S vs P]
-* A **TCP Socket** is an `(IP-Address) + (Port Number)`
-* A **Socket** is an **endpoint of a Connection**
-* A **Port** is the *location* to which **packets** are shipped
-* A **TCP Connection** is *defined by* **2 sockets**
-* In general, a *Socket* needs to define its **transport protocol** (e.g.
-  **TCP**)
-* Every connection between a client and server requires a unique socket.
-
-
-[S vs P]: http://stackoverflow.com/questions/152457
-
-### What it is, what it do
-**5/30/14**
-
-* A **socket** is how a **process** (an 'object' managed by the OS), interacts
-  with the network
-* This is on the **application** layer (#7)
-* It can shove a message into it, or receive a message from it
-
-#### IP address, port, process
-
+* **TCP Socket** --- endpoint of a Connection
+    * `(IP-Address) + (Port Number)`
+    * An application can shove a message into it, or receive a message from it
+* **TCP Port** --- *location* to which packets are shipped
+* **TCP Connection** --- 2 sockets (one on each end)
+* Each connection between a client and server requires its own unique socket.
 * You can send a message to a server by sending to it's **IP adress**,
-* but you still need to make sure your message gets to the correct **process**
-  on that server,
-* which is why you append a **port number**.
-* The server uses this to figure out which process should receive your
-  message.
-* For example, if you send it to **port 80**, the server will route it to a
-  process that handles **HTTP requests**.
+* You append a **port number** to make sure your message gets "demultiplexed"
+  to the correct **process** on that server,
 
-## SSL
+## Network Layer
+### IP (Internet Protocol)
 
-### What it is, why it be
-**5/30/14**
-
-* TCP & UDP do not provide encryption
-* **SSL provides an encrypted TCP connection**
-	* **data integrity**
-	* **endpoint authentication**
-* SSL has a socket API
-
-## Network Core
-
-### Difference between a router and a switch
-**5/29/14**
-
-* From [about.com](http://compnetworking.about.com/od/homenetworkhardware/f/routervsswitch.htm) (not a great reference though)
-* Traditionally, **routers** join together multiple **LAN**s with a **WAN**.
-* They are intermediate destinations for network traffic, forwarding packets
-  along toward their destinations.
-* For example, your router at home connects your house's LAN to the Internet
-  WAN.
-* **Switches** (and **hubs**) can't do that.
-* Instead, they just forward packets *within one LAN*.
-* Switches (not hubs) can inspect the messages as they pass through, and
-  forward data only to the specific device intended.
+* Exchanges **packets** --- which have a **header** and a **body**
+    * **Header** -- source, destination, control info
+    * **Payload** -- the *data*
+    * **Trailer** -- *checksum* (sometimes inside the header)
+* Packets can get lost, reordered, duplicated (, corrupted? not sure)
 
 ## REST
 
 ### Summary
 
-**REST is an architectural style for developing distributed, networked systems
-and software applications such as the World Wide Web and web applications.**
-REST means that most *application components* (such as users and microposts)
-are modeled as *resources* that can be *created, read, updated, and deleted*
--— operations that correspond both to the `CRUD` operations of *relational
-databases* and four fundamental `HTTP` request methods: `POST`, `GET`,
-`PATCH`, and `DELETE`.
-
-##### 3/30/14
-
-[Hypertext Transfer Protocol (HTTP/1.1): Semantics and Content, expires 8/10/14](http://tools.ietf.org/pdf/draft-ietf-httpbis-p2-semantics-26.pdf)
-
-HTML forms (up to and including HTML 5) can only send `GET` and `POST`.
+* An architectural style for developing distributed, networked systems such as
+  the World Wide Web and its applications. *Application components* (e.g.
+  `users` and `tweets`) are *resources* that can be *created, read, updated,
+  and deleted* [CRUD], corresponding to the four fundamental `HTTP` request
+  methods: `POST`, `GET`, `PATCH`, and `DELETE`.
+* HTML forms (up to and including HTML 5) can only send `GET` and `POST`.
 
 ### POST
 
-The `POST` method requests that the target resource process the representation
-enclosed in the request according to the resource’s own specific semantics.
-For example, `POST` is used for the following functions (among others):
+* **Providing a block of data** to a handling process
+    * Fields from an HTML form
+    * A message for a bulletin board
+    * A new resource
+    * Appending data to a resource
 
-* **Providing a block of data**, such as the fields entered into an HTML form,
-  to a data-handling process;
-* **Posting a message to a bulletin board**, newsgroup, mailing list, blog, or
-  similar group of articles;
-* **Creating a new resource** that has yet to be identified by the origin
-  server; and
-* **Appending data to a resource**’s existing representation(s).
+### If your action is not *idempotent*, then you *MUST* use `POST`
 
-#### If your action is not idempotent, then you *MUST* use `POST`
-
-If you don't, you're just asking for trouble down the line.  `GET`, `PUT` and
-`DELETE` methods are required to be idempotent. Imagine what would happen in
-your application if the client was pre-fetching every possible `GET` request
-for your service -- if this would cause side effects visible to the client,
-then something's wrong. **This is true even if you're just sending a query
-string with no body.**
-
+**`GET`, `PUT` and `DELETE` methods are required to be idempotent.** The client
+should be able to pre-fetch every possible `GET` request for your service
+without it causing visible side-effects.
 
 #### The format
 
@@ -198,256 +147,75 @@ are encoded as
 
 ### PUT
 
-Used to **create a resource, or overwrite it**. While you **specify the
-resources new URL**.
+Create a resource, or overwrite it at the specified new URL.
 
-The `PUT` method requests that the state of the target resource be created or
-replaced with the state defined by the representation enclosed in the request
-message payload.
-
-The `PUT` method requests that the state of the target resource be created or
-replaced with the state defined by the representation enclosed in the request
-message payload. A successful `PUT` of a given representation would suggest
-that a subsequent `GET` on that same target resource will result in an
-equivalent representation being sent in a `200 (OK)` response. However, there
-is no guarantee that such a state change will be observable, since the target
-resource might be acted upon by other user agents in parallel, or might be
-subject to dynamic processing by the origin server, before any subsequent
-`GET` is received.
-
-`PUT` is **idempotent**, so if you `PUT` an object twice, it has no effect
-[the second time]. This is a nice property, so I would use `PUT` when
-possible. I think one cannot stress enough the fact that `PUT` is idempotent:
-if the network is botched and the client is not sure whether his request made
-it through, it can just send it a second (or 100th) time, and it is guaranteed
-by the HTTP spec that this has exactly the same effect as sending once.
-
-It must be stressed that `PUT` is *defined* to be idempotent, but you still
-have to write your server in such a way that `PUT` behaves correctly.
+A successful `PUT` of a given representation would suggest that a subsequent
+`GET` on that same target resource will result in an equivalent representation
+being sent in a `200 (OK)` response. `PUT` is **idempotent**, so duplicate
+attempts after a successful one have no effect.
 
 ### PUT vs. POST
 
-Here is the same thing stated over and over again in different ways, from
-[StackOverflow][PUTvPOST]:
-
-* `PUT` is merely a statement of what content the service should, from now on,
-  use to render representations of the resource identified by the client;
-  `POST` is a statement of what content the service should, from now on,
-  contain (possibly duplicated) but it's up to the server how to identify that
-  content.
 * `POST` means "create new" as in "Here is the input for creating a user,
   create it for me".
 * `PUT` means "insert, replace if already exists" as in "Here is the data for
   user 5".
-* `POST` to a URL creates a child resource at a server defined URL.
-* `PUT` to a URL creates/replaces the resource in it's entirety at the client
-  defined URL.
 * `PATCH` to a URL updates part of the resource at that client defined URL.
 
 ### PUT vs. PATCH
 
-The HTTP RFC specifies that **`PUT` must take a full new resource**
-representation as the request entity. This means that if for example only
-certain attributes are provided, those should be removed (i.e. set to null).
+`PUT` must take a full new resource representation as the request entity.
+`PATCH` also updates a resource, but unlike PUT, it *applies a delta* rather
+than replacing the entire resource. Many APIs simply implement PUT as a
+synonym for PATCH.
 
-The semantics of **PATCH** are like PUT in that it updates a resource, but
-unlike PUT, it **applies a delta** rather than replacing the entire resource.
-For simple resource representations, the difference is often not important,
-and **many APIs simply implement PUT as a synonym for PATCH**. [Restful API Design][]
+## Some More Protocols
 
-[Restful API Design]: http://restful-api-design.readthedocs.org/en/latest/methods.html
-[PUTvPOST]: http://stackoverflow.com/questions/630453/put-vs-post-in-rest/
+### SSL (Secure Sockets Layer) / TLS (Transport Layer Security)
 
-## [SOAP](http://en.wikipedia.org/wiki/SOAP)
+* TCP & UDP do not provide encryption on their own
+* **SSL provides an encrypted TCP connection**, yielding improved
+    * data integrity
+    * endpoint authentication
+* In addition to encrypting data over the wire (like SSL), TLS authenticates a
+  server with a certificate to prevent spoofing.
 
-### TODO
+### SOAP (Simple Object Access Protocol) (TODO)
 
-### Simple Object Access Protocol
+Uses XML, kind of old-school now, but I guess enterprises use it?
 
-Old school web-interface pattern that uses verbose XML.
-That's what I seem to remember it being anyway.
+### XMPP (Extensible Messaging and Presence Protocol aka "Jabber") -- 1999
 
-## [Apples Networking Concepts](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/NetworkingConcepts/NetworkingTerminology/NetworkingTerminology.html)
+* Message-oriented middleware based on XML
+* Open standard, many free and open source software implementations
+* Instant messaging (IM) (including multi-user), VoIP, video, file transfer,
+  gaming, Internet of Things, smart grid, social networking
+* Transport over TCP, or HTTP, or WebSocket; optionally uses TLS
+* No central master server, but it's neither anonymous nor peer-to-peer
+* Client-server architecture, clients don't talk directly to each other
 
-##### 3/15/14
+### Telnet
 
-* **Host** -- any device **provides an endpoint for networked communication**
-    * It is called a host because it **hosts the applications and daemons that
-      run on it**
-    * E.g.s
-        * desktop computer
-        * server
-        * iOS device
-        * virtual machine running on a server
-        * the VoIP telephone sitting on your desk
+From 1968, an unencrypted-but-otherwise-SSH-like protocol
 
-* **Packets** -- small pieces of the data to be sent
-    * **Header** -- says **where** the packet should be sent
-    * **Payload** -- the actual **data**
-    * **Trailer** -- contains a **checksum** to ensure the packet was received
-      correctly
-        * Sometimes this is inside the header
-    * **Encapsulation** -- often one packet contains another packet
-        * E.g. an Ethernet packet might hold an entire TCP packet as its
-          payload
-* **Latency** -- **round-trip time** of a request (to and from the destination
-  machine)
-    * Satellite connections are "painfully" slow because of the distance that
-      must be travelled
+## Miscellaneous
 
-* **Firewall** -- any router that inspects traffic, modifies traffic, or
-  blocks specific subsets of traffic that flows through it.
+### Router vs. Switch
 
-## [Apples Networking Overview](https://developer.apple.com/library/ios/documentation/NetworkingInternetWeb/Conceptual/NetworkingOverview/Introduction/Introduction.html)
+* **Routers** join together multiple **LAN**s with a **WAN**
+* Intermediate destinations, forwarding packets toward their destinations
+* Your home router connects your house's LAN to the Internet WAN
+* **Switches** just forward packets *within one LAN*
+    * They can inspect the messages, and forward data only to the intended
+      device
 
-##### 3/15/14
+### Apple's general Network Programming Tips
 
-Higher-level APIs also solve many of the most complex and difficult networking
-problems for you -- caching, proxies, choosing from among multiple IP
-addresses for a host, and so on. If you write your own low-level code to
-perform the same tasks, you have to handle that complexity yourself (and debug
-and maintain the code in question).
-
-Be wary of all incoming data. Any data received from an untrusted source may
-be a malicious attack. Your app should carefully inspect incoming data and
-immediately discard anything that looks suspicious.
-
-Although your software cannot magically fix a truly broken network, poorly
-written networking code can easily make things much, much worse. For example,
-suppose a server is heavily overloaded and is taking 45 seconds to respond to
-each request. If your software connects to that server with a 30-second
-timeout, it contributes to the server’s workload, but never successfully
-receives any data.
-
-And even when the network is working perfectly, poorly written networking code
-can cause problems for the user—poor battery life, poor performance, and so
-on.
-
-##### Batch Your Transfers, and Idle Whenever Possible
-
-When writing code in general, to the maximum extent possible, you should
-perform as much work as you can and then return to an idle state. This applies
-doubly for network activity. If you keep their radio on, you're wasting their
-battery life.
-
-To avoid *latency* issues whenever your program needs to send multiple
-messages (resource requests, acknowledgments, and so on) that are not
-dependent on one another, send them all simultaneously rather than waiting for
-a response to one message before sending the next.
-
-##### Cache Resources Locally
-
-Only redownload the thing if you know it has changed.
-
-##### TLS (Transport Layer Security)
-
-TLS is the successor to the SSL protocol. In addition to encrypting data over
-the wire, TLS authenticates a server with a certificate to prevent spoofing.
-
-
-# Coursera Course: Networks Illustrated
-
-## Intro -- Principles
-
-### Sharing is hard (most important?)
-* Interference
-* Multiple phones must be able to *share* the same air between the phone and
-  the tower
-
-### Consensus is hard
-* How do we decide what is *important*?
-* How should we facilitate an auction/election?
-* Wikipedia uses "rough consensus" to decide whose edits to keep
-* Google uses referrals and auctions to decide how to rank webpages
-
-### Crowds are wise
-* Amazon's star-rating
-* Knowledge of the many are better than knowledge of the few
-* Netflix recommendations
-
-### Crowds are not so wise
-* Information cascade -- people do what they see everyone else doing, even if
-  it's wrong
-* Peer pressure
-
-### 	Networks are expensive
-* E.g. cellular mobile data plans
-
-### Network of networks
-* Different ISPs own different parts of the whole network
-* How do different users *share* the pipeline?
-
-### Layers on layers
-* E.g. the Internet is built on many layers
-* Physical/link layer(s) --- get data onto link and send it across
-* Network layer --- Packet hits router, which looks at IP address, and sends
-  it to appropriate *next* router
-* Transport layer --- end-to-end connectivity, congestion control
-* Application layer --- directly visible to end-users
-
-### Bigger and bigger
-* Internet keeps growing
-* By 2020, each person will have 6-7 internet-connected devices
-* Cloud = datacenters = servers = CPUs + switches --- holds data so you don't
-  have to
-
-## Week 1: How does your cell phone decide what power to transmit?
-
-1. There are about as many cell phones as people
-2. Morse invented Morse Code for the Telegraph was invented in the 1800s
-3. A.G. Bell figured out how to get multiple messages on the same wire
-   ("multiple telegraph") in the 1860s
-    * We could divide the wire by *timeslices*
-    * We could divide by *pitch/frequency*
-    * We could divide by *language* (this is mainly a metaphor)
-
-### FDMA -- Frequency division multiple access
-1. Give each link a separate band of frequencies
-
-### 0G
-1. MTS (1946) --- operator connects people physically
-2. IMTS (1964) --- automated the operator
-3. DynaTAC (1973) --- first mobile phone (2 lb., $3000, 30 mins battery)
-4. MTS & IMTS had 32 frequency channels
-5. You need a license from the FCC to use a band of cellular frequencies (WiFi
-   is *unlicensed*)
-6. **Attenuation** --- the fading away of a signal as you move further from
-   its source
-    * Might sound like a bad thing, but we can take advantage of it to *reuse*
-      pieces of the spectrum
-
-### 1G -- Cells
-1. **Cell** --- hexagon with **base stations** at the corners
-2. **Mobile station** --- e.g. cell phone, each must be on a different channel
-3. Adjacent cells must use different sets of frequencies --- non-adjacent
-   cells may use the same frequencies
-    * Using graph coloring, we can use 4 sets of frequencies (4 colors of
-      cells)
-    * So if there are 12 channels, each cell can have 3 bands of frequencies
-
-### 2G -- 2000 -- Analog to digital
-1. Heretofore network signals were all analog
-2. Then they realized using digital signals would be more efficient
-3. Allowed for *texting*
-
-### TDMA -- [Addition of] Time division multiple access
-1. We're *already* splitting on *frequency*, but let's *also* add
-   **timesharing**
-2. With analog signals, this was impossible, but not so for digital
-
-### GSM -- 1982
-1. Adopted in Europe as a whole, but not in the USA
-
-### CDMA -- 1988
-1. Everyone uses same frequency band and time domain, but each side of the
-   communication has its own key which is in some way applied to the signal
-
-### DPC -- Distributed power control
-1. Each person who wants to connect to the cell tower transmits something
-2. Cell tower measures signal interference ratios, and tells transmitters what
-   theirs is
-3. Transmitters readjust their powers
-4. Process repeats
-5. Eventually converges to optimal location, provided there *is* a solution
-
-
+* Higher-level APIs solve many networking problems for you -- caching,
+  proxies, choosing from among multiple IP addresses for a host, and so on
+* Be wary of all incoming data. Carefully inspect incoming data and
+  immediately discard anything that looks suspicious
+* Bad networking code can cause poor battery life, performance, and so on
+* Batch your transfers, and idle whenever possible
+    * If you keep their radio on, you're wasting their battery life
+* Cache resources locally, only redownload if you know it changed
