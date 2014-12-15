@@ -258,62 +258,97 @@ Doesn't extend anything. Comments are mine.
 
 # Java I/O
 
-**5/12/14**
-[docs.oracle-tutorial](http://docs.oracle.com/javase/tutorial/essential/io/index.html)
+#### Refs
+
+* [Oracle's Java Tuts](http://docs.oracle.com/javase/tutorial/essential/io/streams.html)
+* [And more](http://docs.oracle.com/javase/tutorial/essential/io/index.html)
 
 ## I/O Streams
 
-[Oracle's Java Tuts](http://docs.oracle.com/javase/tutorial/essential/io/streams.html)
-
-* Represents an input source *or* an output destination
-* Could be disk files, devices, other programs, a network socket, or memory
-  arrays
+* **An object from/to which we can read/write bytes** (one item at a time)
+* There are **Input** and **Output** Streams
+* E.g. a file, network, device, other program, or block of memory
 * Could be any *kind* of data (bytes, primitives, objects, etc.)
-* Streams can manipulate and transform the data
-* **Input** streams *read* from a source, one item at a time
-* **Output** streams *write* to a destination, one item at a time
+* Streams can manipulate & transform the data
+* There are 60+ stream types
+* You need to compose stream filters together to get the type of reads you want
+    * E.g. you want to do buffered reads of type `double` from a file
 
-### Print Stream
-* Allows you to **write *formatted data*** to an underlying `OutputStream`
-* E.g. writing `int`s formatted as text rather than their byte values
-* It gives you a `printf()` function for this purpose
+            DataInputStream din =
+                    new DataInputStream(
+                        new BufferedInputStream(
+                            new FileInputStream("filename.dbls")));
 
-### Byte Streams
+        This will allow you to use `readDouble()` which is read from the file
+        through a black-box buffering mechanism that you can expect will speed
+        things up.
+* To **write text to a file** use a `PrintWriter`
 
-* Byte streams perform I/O of 8-bit bytes
-* All byte stream classes descend from `InputStream` and `OutputStream`
-* E.g. `FileInputStream` and `FileOutputStream`, which in particular
-  `read()`s/`write()`s from files
-    * Otw they act much the same as any other byte stream
-* Only use byte streams when there is no higher-level abstraction of your use-
-  case available
-    * But note that those higher-level abstractions are *built* on byte
-      streams
+        PrintWriter out = new PrintWriter("file.txt");
+        out.println(aLine);
+        out.printf("%s%n", more);
+        out.close();
+
+### InputStream
+
+* The `abstract` "superclass of *all* classes representing an input stream of
+  bytes".
+* Subclassers *must* define a method for returning the next byte
+* You probably don't want to operate on a `byte` level, so use a subclass that
+  does what you want
+
+#### Interface
+
+    interface AutoCloseable {
+        void close() throws Exception
+    }
+
+    interface Closeable extends AutoCloseable {
+        void close() throws IOException // close & release system resources
+    }
+
+    abstract class InputStream implements Closeable {
+        int  available()    // estimate #bytes available to read w/o blocking
+        void close()        // from Closeable
+        void mark(int)      // mark position for reset() [see below]
+        abstract int read() // read next byte, block till read
+        int  read(byte[])   // read into buffer
+        int  read(byte[], offset, len) // read ≤ len bytes
+        void reset()        // go to last mark()
+        long skip(long n)   // skip & discard next `n` bytes
+    }
 
 
-### Character Streams
+#### Reads can block
 
-* Uses Unicode conventions
-* All character stream classes descend from `Reader` and `Writer`
-* For file I/O, we have `FileReader` and `FileWriter`
+* if you're trying hard not to block, you can try
 
+        int bytesAvailable = in.available();
+        if (bytesAvailable > 0) {
+            byte[] data = new byte[bytesAvailable];
+            in.read(data);
+        }
 
-### Buffered Streams
+    * Alternatively, you could delegate blocking calls to another thread
 
-* The aforementioned I/O classes use *unbuffered I/O* -- where each read/write
-  is handled directly by the underlying OS
-    * This can be inefficient, so we use *buffered I/O* streams
-* **Buffered I/O streams read data from a memory area known as a *buffer*; the
-  native input API is called only when the buffer is empty**
-    * Writing data is analogously done to a buffer, with the OS only writing-
-      out when the buffer is full
-* One can **convert an unbuffered into a buffered stream by passing the
-  unbuffered stream object into the constructor for a buffered stream class**
+### OutputStream
 
-        inputStream = new BufferedReader(new FileReader("xanadu.txt"));
+Analogous to `InputStream` above
 
-    * This is that thing you've seen oh-so-many times
-* *Flushing* the buffer is when you write out non-full buffer (use `flush()`)
+#### Interface
+
+    /** "a destination for data that can be flushed" */
+    interface Flushable {
+        void flush() // writes buffered output to underlying stream
+    }
+
+    abstract class OutputStream implements Closeable, Flushable {
+        void close() // from Closeable, also flushes
+        void flush() // from Flushable
+        void write(byte[])
+        void write(byte[], offset, len)
+        abstract void write(int byte) // write byte to strm, block till written
+    }
 
 ### Scanners
 
@@ -339,8 +374,9 @@ E.g.
     out.writeObject(obj);
     Object obj = in.readObject();
 
+### Pipes
 **11/11/14**
-## Java Pipes
+
 > `Pipe` in Java IO provides the ability for two **threads** running *in the
 > **same JVM*** to **communicate**. You cannot use a pipe to communicate with
 > a thread in a different JVM (different process), so it is different from the
@@ -352,9 +388,28 @@ E.g.
 * You construct the `PipedInputStream` by passing it your instance of the
   `PipedOutputStream`
 
+## Other
 
-[Jenkov's Tutorial]: http://tutorials.jenkov.com/java-io/pipes.html
+* `Files` --- remove, rename, create directory find `mtime`, file-system stuff
+* `Path` --- object representing the system absolute path to a resource
 
+### Memory-mapping files
+
+* Use this to make file operations faster
+* For just like sequential *reading* or something, it'd be simpler & roughly the same
+  speed to just go with a `BufferedInputStream`
+
+#### Example
+
+    try (FileChannel channel = new FileChannel.open(pathObject)) {
+        int length = (int) channel.size();
+        MappedByteBuffer buffer =
+                channel.map(FileChannel.MapMode.READ_ONLY, 0, length);
+
+        for (int byteIWant : bytesIWant)
+            bytesIWanted.add( buffer.get(byteIWant) );
+
+    }
 
 ## GSON
 **5/20/14**
