@@ -1514,9 +1514,9 @@ It can be used to access enclosing instances from within a nested class:
         URL(URL base, String relative)
 * To get data from it you have
 
-        InputStream openStream()                // most common
+        InputStream   openStream()              // most common
         URLConnection openConnection([Proxy])   // more configurable
-        Object getContent([Class[]])            // don't use this
+        Object        getContent([Class[]])     // don't use this
 * Encode Strings into URLs using
 
         String encoded = URLEncoder.encode("MyCrazy@*&^ STring", "UTF-8");

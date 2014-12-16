@@ -13,7 +13,6 @@ latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
 
 ## Jobs
-#### 11/9/14
 
     $ vim
 
@@ -25,12 +24,10 @@ latex footer:		mmd-memoir-footer
     $ jobs
     [1]+ Stopped    vim
 
-    # go back to most recently stopped job
-    $ fg
+    $ fg  # back to vim
     ^z
 
     $ less somefile.txt
-    # you type
     ^z
     [2]+ Stopped    less somefile.txt
 
@@ -38,33 +35,31 @@ latex footer:		mmd-memoir-footer
     [1]- Stopped    vim
     [2]+ Stopped    less somefile.txt
 
-    $ fg  # back to  less
+    $ fg    # back to less
     ^z
 
     $ fg %1 (or) fg 1  # back to vim
     ^z
 
-    $ kill 2
+    $ kill 2  # raw number means pid, but pid:2 is not a child
     bash: kill: (2) - No such process
 
     $ kill %2
     [2]- Terminated: 15   less somefile.txt
 
-    $ fg  # now vim is queued for foreground'ing
+    $ fg    # vim is only job left
     ^z
 
 If you have a job that's taking too long and you want to **move it to the
 background**, you can do `CTRL-Z` to `STOP` it, then do
 
-    $ bg %{it's job_no}
+    $ bg %JOB_NO
 
 and the shell will run it as a background jobs, as though you had run it with
 
     $ command for background execution &
 
 ## File Descriptors
-
-#### 3/24/14
 
 * **0** -- `stdin`
 * **1** -- `stdout`
@@ -74,74 +69,43 @@ and the shell will run it as a background jobs, as though you had run it with
 
     make check 2>&1 | tee make-check.log
 
-We can think of **`2>&1`** as **"point `STDERR` to where `STDOUT` points"**
-
-And then of course `| tee file` means "and also print it to the log-file"
+* We can think of **`2>&1`** as "point `STDERR` to where `STDOUT` points"
+* `| tee afile` means "and also print it to the log-file"
 
 ## State Variables
 
-### $!
-#### 9/22/14
-PID of the most recent background command
+Try `echo`ing these.
 
-    ~$ echo hello &
-    [1] 3846
-    hello
-    ~$ echo $!
-    3846
-    [1]+  Done                    echo hello
-    ~$
+* `$!` --- PID of the most recent background command
+* `$$` --- PID of the (current) script file or bash terminal
+* `$?` --- Most recent foreground pipeline **exit status**
 
-### $$
-#### 9/22/14
-The process ID that the (current) script file is running under
+## Things one may want to do
 
-    ~$ ps
-      PID TTY          TIME CMD
-     3699 pts/13   00:00:00 bash
-     3847 pts/13   00:00:00 ps
-    ~$ echo $$
-    3699
-    ~$
+### Repeat a command *N* times
 
-### $?
-#### 9/22/14
-Most recent foreground pipeline exit status
+cleaner syntax
 
-    ~$ echo $0   # name of current shell
-    -bash
-    ~$ $?
-    0: command not found
-    ~$ echo $?
-    127
-    ~$
-
-## Repeat a command *N* times
-
-From [Server Fault][bash repeat]
-
-There are two good options
-
-    # cleaner syntax
     for i in {1..10}; do command; done
 
-    # potentially more flexible
+more flexible because you can go by 3's etc. (see `seq` command below)
+
     for i in `seq 10`; do command; done
 
-[bash repeat]: http://serverfault.com/questions/273238/how-to-run-a-command-multiple-times
+### Iterate through files
 
-# Commands to Command
+    find . -name '*.csv' | while read line; do
+        echo "$line"
+    done
 
-## 11/10/14
+## Commands to Command
+
 ### apropos --- pertaining too ...
 
     $ apropos database
+    $ man -k database
 
 Find all man-pages containing the word "database".
-
-There is a **synonym**
-
-    $ man -k database
 
 ### printf --- basically like you'd expect
 
@@ -163,10 +127,11 @@ This is *just* too cool.
 
 * -c5 --- extract the 5th character of each line
 * -b3-5 --- extract the 3rd, 4th, and 5th byte of each line
-* -f2,4 -d, --- extract the 2nd and 4th **fields** of each line, where a field delimiter is a comma
+* -f2,4 -d, --- extract the 2nd and 4th **fields** of each line, where a field
+  delimiter is a comma
 * by default, the *delimiter* (`-d`) is a `TAB`
-* --output-delimiter=C --- when you're printing multiple fields,
-*                          use this delimiter (default is `TAB`)
+* --output-delimiter=C --- when you're printing multiple fields, use this
+  delimiter (default is `TAB`)
 * -s --- suppress (don't print) lines not containing the delimiter character
 
 ### paste --- make multiple text files into a csv-type-thing
@@ -191,17 +156,6 @@ This is *just* too cool.
     B,2
     C,3
 
-    # this file is shorter than the others
-    $ cat D3
-    A
-    B
-
-    # it turns into a blank column
-    $ paste -d, D3 D2
-    A,1
-    B,2
-    ,3
-
     # we can transpose too!!
     $ paste -s D1 D2
     A   B   C
@@ -212,6 +166,8 @@ This is *just* too cool.
 * You can sort by columns
 * You can use offsets within columns
 * You can use multiple columns, each with its own offset
+
+Check this out
 
     $ cat D3
     B,2
@@ -229,16 +185,14 @@ This is *just* too cool.
     E,4
     D,5
 
-## 11/9/14
-
 ### tail --- print the end of the file
 
     tail [optns] [files]
 
-* -N --- show last N lines
-* +N --- show all but first N lines
-* -f --- (**watch file**) keep file open, and when new content gets appended,
-         print it too (super useful)
+* **-N** --- show last `N` lines
+* **+N** --- show all but first `N` lines
+* **-f** --- (*watch file*) keep file open, and when new content gets
+  appended, print it too (super useful)
 
 
 ### ln --- create a file that is a link to this file
@@ -256,8 +210,6 @@ This is *just* too cool.
 * **Soft** --- create a new file on disk whose contents hold the
                `source`-file's *name*
     *  if the source file disappears this symbolic link will be broken
-
-## 10/2/14
 
 ### seq -- create a sequence of numbers
 
@@ -281,8 +233,6 @@ This is *just* too cool.
 * Print some random ascii (this could be improved...)
     * `jot -s '' -r -c 100 A`
 
-## 9/28/14
-
 ### pkg-config -- determine C compiler flags
 
 #### Examples
@@ -300,7 +250,7 @@ compile a source file that makes use of FUSE.
 
 does the same for the libs to link with.
 
-So you might use it in a Makefile like this
+You can use it in a Makefile like this
 
     bbfs : bbfs.o log.o
             gcc -g -o bbfs bbfs.o log.o `pkg-config fuse --libs`
@@ -320,14 +270,11 @@ So you might use it in a Makefile like this
   keep the connection to `stdout` open so that all live input into the
   log file gets written out to the terminal
 
-## 9/22/14
+### locate -- find file on file system
 
-### locate -- find location of <header> file on file system
+It's just like `find` only *way* faster and less thorough and has less
+features. For simple things it ought to suffice.
 
-It's just like `find` only *way* faster and less thorough and has less features.
-For simple things it ought to suffice.
-
-## 7/24/14
 ### ack -- better than grep
 
 Basic:
@@ -348,14 +295,15 @@ Options:
 * **-c** --- show count of matching lines in *all* files
 * **-lc** --- show count of matching lines in *files with matches*
 * **-C** --- specify lines of context (default: `2`)
-* **--pager=LESS** --- pipe it into less (same as `ack ... | less`), except that it can be added (not sure yet if I want this) to the `~/.ackrc`
-* **--[no]smart-case** --- Ignore case distinctions in `PATTERN`, only if `PATTERN` contains no upper case. Ignored if **-i** is specified.
-
-## 6/25/14
+* **--pager=LESS** --- pipe it into less (same as `ack ... | less`), except
+  that it can be added (not sure yet if I want this) to the `~/.ackrc`
+* **--[no]smart-case** --- Ignore case distinctions in `PATTERN`, only if
+  `PATTERN` contains no upper case. Ignored if **-i** is specified.
 
 ### tr -- translate characters
 
-**I think you *have* to pipe or carrat stuff into this thing, there's no place for an input file**
+**I think you *have* to pipe or carrat stuff into this thing, there's no place
+for an input file**
 
 To map all uppercase characters to their corresponding lowercase variants:
 
@@ -374,60 +322,26 @@ To map all uppercase characters to their corresponding lowercase variants:
 
         tr -s ' ' '\t'  # convert spaces to tabs
 
-* **-cs** --- convert repetitions of compliments first string into singles,
-              then turn them into the second string (used by Doug McIlroy)
+* **-cs** --- convert and squeeze (used by Doug McIlroy)
 
-        tr -cs A-Za-z '\n' < /tmp/a.txt  # convert any number of non-letters into a single newline
-
-## 6/20/14
+        tr -cs A-Za-z '\n' < /tmp/a.txt  # convert multiple non-letters into a newline
 
 ### `$(c)` vs `backtick(c)` vs `eval c`
 
 * `$(c)` and `backtick(c)` are (at least practically) the same, they **capture the output**.
 * `eval c` **interprets the text** you give it as a bash command.
 
-### remove duplicate lines: `uniq` and/or `sort`
+### `uniq`
 
-	$ cat a.txt
-	a
-	a
-	b
-	b
-	a
-	a
+*Remove lines that are duplicates of the previous line*
 
-	$ uniq a.txt
-	a
-	b
-	a
+`uniq -c --count` --- prefix lines by the number of consecutive occurrences
 
-	$ sort a.txt | uniq
-	a
-	b
-
-	$ sort -u a.txt
-	a
-	b
-
-* **`uniq -c --count`**	 --- prefix lines by the number of occurrences
-
-        $ sort < a.txt | uniq -c
-        4 a
-        2 b
-
-## 4/11/14
+    $ sort < a.txt | uniq -c
+    4 a
+    2 b
 
 ### ps -- Process Status
-
-##### Example:
-
-    [~]--[10:56 PM] ps
-    PID TTY           TIME CMD
-    370 ttys000    0:00.11 -bash
-    2802 ttys001    0:00.01 -bash
-    3199 ttys002    0:00.02 -bash
-    3244 ttys002    0:00.01 man ps
-    3245 ttys002    0:00.00 sh -c (cd '/usr/share/man' && (echo ".ll 9.0i"; echo ".
 
 ##### Description:
 
@@ -449,17 +363,7 @@ con`cat`enate the contents of the given files, and sort that list of lines.
 * `-o FILE, --output=FILE` -- write to file
 * `-r, --reverse` -- reverse the output
 * `-f, --ignore-case` -- ignore case
-
-
-## 3/20/14
-
-### Iterate through files
-
-    find . -name '*.csv' | while read line; do
-        echo "$line"
-    done
-
-## 3/12/14
+* `-u` -- deduplicate lines
 
 ### dirname
 
@@ -518,8 +422,6 @@ well with globbing.
 ### read
 
 **Read user input into local variable**
-
-[linuxcommand.org](http://linuxcommand.org/wss0110.php)
 
 ##### Example
 
