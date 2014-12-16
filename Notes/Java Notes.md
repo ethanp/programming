@@ -308,14 +308,16 @@ Doesn't extend anything. Comments are mine.
     }
 
     abstract class InputStream implements Closeable {
-        int  available()    // estimate #bytes available to read w/o blocking
+        int  available()    // minimal est. of #bytes available w/o blocking
         void close()        // from Closeable
-        void mark(int)      // mark position for reset() [see below]
         abstract int read() // read next byte, block till read
-        int  read(byte[])   // read into buffer
+        int  read(byte[])   // read into buffer, return #bytes received
         int  read(byte[], offset, len) // read ≤ len bytes
-        void reset()        // go to last mark()
         long skip(long n)   // skip & discard next `n` bytes
+
+        /* not always supported */
+        void mark(int)      // mark position for reset()
+        void reset()        // go to last mark()
     }
 
 
@@ -345,9 +347,15 @@ Analogous to `InputStream` above
     abstract class OutputStream implements Closeable, Flushable {
         void close() // from Closeable, also flushes
         void flush() // from Flushable
+
+        /* write byte to strm, block till written */
         void write(byte[])
         void write(byte[], offset, len)
-        abstract void write(int byte) // write byte to strm, block till written
+
+        // It's an `int` rather than `byte` because it's unsigned and Java
+        // doesn't have unsigned types. Don't write values > 255 because not
+        // all libraries handle that the same way.
+        abstract void write(int aByte)
     }
 
 ### Scanners
@@ -505,6 +513,15 @@ The *other* way is *preferred*.
 * To *synchronize* threads, Java uses **monitors**, a mechanism allowing only
   one thread at a time to execute a region of code protected by the monitor
 * You can give threads *priority* levels
+    * `void setPriority(int priority)`
+    * `Thread.MIN_PRIORITY = 1`, `MAX_PRIORITY = 10` (reverse order from Unix)
+    * High priority threads
+        * User interaction
+        * Short tasks
+    * Low priority
+        * Long tasks
+    * The VM *generally* runs *only* the highest-priority task, but not always
+        * This makes it easy to accidentally *starve* low-priority tasks
 * You can designate a thread to be a *daemon* meaning the JVM will exit if
   only *daemon* threads are still executing
 
@@ -531,6 +548,52 @@ check if you have been interrupted with
 and perform actions before you actually throw the exception. But then you
 throw it, and you can catch it too, which is where you should probably
 interrupt yourself in whatever way is apropos.
+
+### Implementing Callbacks
+
+This is based on Chapter 3 of *Harold, Elliotte Rusty (2013-10-04). Java
+Network Programming. O'Reilly Media. Kindle Edition.*
+
+* The reason we create an "`instanceOfMe`" is to show what it looks like when
+  the `callbackHandler()` is not `static`, which it *would* have to be if we
+  didn't create an instance of *something* to call the `callbackHandler` on.
+* The reason we don't spawn and start the other thread in the constructor is
+  becase the thread could try to call back before the constructor has finished
+  initializing the object!
+* If many objects have the same callbacks, make an `interface` for them.
+
+#### Code
+
+    public class Callbacker implements Runnable {
+        private Thing forDoing;
+        private ToCallback toCall;
+        public Callbacker(Thing forDoing, ToCallback toCall) {
+            this.forDoing = forDoing;
+            this.toCall = toCall;
+        }
+        @Override public void run() {
+            Info forYou = myRaisonDEtre(forDoing);
+            toCall.callbackHandler(forYou);
+        }
+    }
+
+    public class ToCallback {
+        Thing something;
+        public ToCallback(Thing something) {
+            this.something = something;
+        }
+        public static void main(String[] args) {
+            ToCallback instanceOfMe = new ToCallback(someThing);
+            instanceOfMe.startThreadToDoThings();
+        }
+        public void startThreadToDoThings() {
+            Callbacker cb = new Callbacker(something, this);
+            new Thread(cb).start();
+        }
+        public void callbackHandler(Into receivedStuff) {
+            doThingsWith(receivedStuff);
+        }
+    }
 
 ## Locks
 
@@ -1411,6 +1474,59 @@ It can be used to access enclosing instances from within a nested class:
 2. Also in Java 7+, you can add underscores to number literals (e.g.
    `1_000_000`).
 
+# Network Programming
+
+* The *only* transport-layer protocols Java supports are TCP & UDP; for
+  anything else, you must link to native code (JNI)
+* Don't write to the network through a `PrintStream`
+    * It chooses end-of-line chars based on your platform, not the protocol
+      (HTTP uses `\r\n`)
+    * It uses the default char encoding of your platform, not whatever the
+      server expects
+    * It eats all exceptions into this `boolean checkError()` method, when
+      you're better off just using the normal exception hubbub
+
+## class InetAddress
+
+* `java.net.InetAddress` --- Java's representation of an IP address (v4 or v6)
+    * DNS lookups are provided by this class
+* Acquire one via a static factory
+
+        InetAddress address = InetAddress.getByName("www.urls4all.com");
+
+    This will look in your cache, and if it's not there connect to your DNS to
+    get the IP address
+
+## class URL
+
+* Simplest way to locate and retrieve data from the network
+* `final class java.net.URL extends Object` uses the *strategy design pattern*
+  instead of inheritance to configure instances for different kinds of URLs
+    * E.g. protocol handlers are strategies
+* Think about it has having fields like
+    * Protocol, hostname, port, path, query string, fragment identifier
+* Immutable (makes it thread safe)
+* Some constructors (all `throw MalformedURLException`)
+
+        URL(String url)
+        URL(String protocol, String hostame, String file)
+        URL(String protocol, String host, int port, String file)
+        URL(URL base, String relative)
+* To get data from it you have
+
+        InputStream openStream()                // most common
+        URLConnection openConnection([Proxy])   // more configurable
+        Object getContent([Class[]])            // don't use this
+* Encode Strings into URLs using
+
+        String encoded = URLEncoder.encode("MyCrazy@*&^ STring", "UTF-8");
+    * There is a similar `decode(String s, String encoding)` method
+
+
+## Jsoup
+
+This is a 3rd party library for downloading and traversing Web content which
+looks quite friendly.
 
 # Java from 2,000 feet
 

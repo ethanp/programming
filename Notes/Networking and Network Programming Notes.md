@@ -20,6 +20,9 @@ latex footer:   mmd-memoir-footer
 * They generally follow a 4-layer abbreviation
     * Link \\(\rightarrow\\) Internet \\(\rightarrow\\) Transport
       \\(\rightarrow\\) Application
+* "The Internet" is the world's largest IP-based network
+    * No one owns or controls it, it's just a bunch of nodes that know how to
+      communicate with each other.
 
 #### TCP/IP Layers
 
@@ -41,21 +44,54 @@ latex footer:   mmd-memoir-footer
     * **SMTP** (Simple Mail Transfer Protocol) -- for sending mail between
       mail servers
     * **HTTP** -- used by the WWW
+        * **SOAP**
+        * **XML-RPC**
+        * **REST API**
     * **POP3** (Post Office Protocol Version 3) -- for retrieving email from
       mail server
     * **IMAP** (Internet Message Access Protocol) -- for retrieving email from
       mail server
     * **DNS** (Domain Name System) -- for translating name to an IP address
+      (uses UDP)
     * **ICMP** (Internet Control Message Protocol) -- provides error messages
+        * *Traceroute*
+        * *Ping*
 
 ### Networking Concepts
 
 * **Host** -- provides an endpoint for networked communication
 * **Packet** -- small piece of the data to be sent (see IP, below)
+    * Allows for wire-time to shared effectively, and for integrity checks
 * **Latency** -- request's *round-trip time*
-* **Firewall** -- a *router* that inspects, modifies, or blocks specific traffic
-  flowing through it.
-
+* **Firewall** -- software in the *router* (and your OS may have one) that
+  inspects, modifies, or blocks specified traffic flowing through it
+* **Node** -- a machine on a network
+* **Address** -- a sequence of bytes uniquely identifying a *node*
+    * In IPv4 these are 4 full unsigned bytes (0-255), e.g. 199.1.32.90
+        * This allows for 4 billion *total*, not enough to have one per
+          person...
+        * Asia, Australia, and Europe ran out by 2013
+    * In IPv6 these are 16 bytes, e.g.
+      `FEDC:BA98:7654:3210:FEDC:BA98:7654:3210`
+* **Protocol** -- a precise set of rules defining how computers communicate
+* **DNS** (Domain Name Service) -- translates *hostnames* into IP addresses
+* `127.0.0.1` is the *local loopback address* -- always points to the local
+  computer (*hostname* `localhost`)
+    * For IPv6 it's `0:0:...:0:1` aka `::1`
+* `255.255.255.255` is *broadcast* to everyone on the local network, and is
+  used to find the local DHCP server
+* **NAT** (Network Address Translation) -- your internal IP address within
+  your LAN is different from your external IP address to The Internet, and
+  this translation is done/managed by your router
+    * It could be that your router is only using up a single IP address for
+      all devices in your house
+* **Proxy server** -- you connect to the outside world through this server
+    * It has a different IP address, so that the outside world never learns
+      about your real IP address
+    * It can do more thorough inspection of packets being sent by and to you
+    * It can be used to implement local area caching
+* **Peer-to-peer** -- an alternative to the *client/server* model, where any
+  node can initiate a connection with any other
 
 ## Transport Layer
 
@@ -80,6 +116,8 @@ latex footer:   mmd-memoir-footer
 
 ### Sockets & Ports
 
+* Ports have a number between 1 and 65,535 (2 bytes)
+* Ports up to 1023 are reserved for *well-known services*
 * **TCP Socket** --- endpoint of a Connection
     * `(IP-Address) + (Port Number)`
     * An application can shove a message into it, or receive a message from it
@@ -97,7 +135,73 @@ latex footer:   mmd-memoir-footer
     * **Header** -- source, destination, control info
     * **Payload** -- the *data*
     * **Trailer** -- *checksum* (sometimes inside the header)
-* Packets can get lost, reordered, duplicated (, corrupted? not sure)
+        * Only for detecting corruption in header itself, *not* the data
+* Packets can get lost, reordered, duplicated, or corrupted
+
+## HTTP
+
+### Status codes
+
+* `100s` --- informational response
+* `200s` --- request succeeded
+* `300s` --- redirection
+* `400s` --- client error
+* `500s` --- server error
+
+### Methods
+
+#### Main ones
+* `GET` --- retrieve, idempotent, side-effect free
+* `POST` --- upload reseource without specifying a any action, not idempotent
+* `PUT` --- idempotent, upload representation of resource to server
+* `DELETE` --- remove resource from specified URL, idempotent
+
+#### Other ones
+* `HEAD` --- only download resource header
+    * e.g. to check `mtime` to see if cache is valid
+* `OPTIONS` --- ask server what can be done with specified resource
+* `TRACE` --- echo back client request
+
+#### Non-standard ones
+* `COPY`
+* `MOVE`
+
+### Request
+
+This is from *Harold, Elliotte Rusty (2013-10-04). Java Network
+Programming. O'Reilly Media. Kindle Edition.* It may contain typos.
+
+
+    GET /index.html HTTP/1.1
+    User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv: 20.0)
+    Host: en.wikipedia.org
+    Connection: keep-alive
+    Accept-Language: en-US,en;q=0.5
+    Accept-Encoding: gzip, deflate
+    Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+
+### Response
+
+This is from Wikipedia's page on HTTP.
+
+    HTTP/1.1 200 OK
+    Date: Mon, 23 May 2005 22:38:34 GMT
+    Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
+    Last-Modified: Wed, 08 Jan 2003 23:11:55 GMT
+    ETag: "3f80f-1b6-3e1cb03b"
+    Content-Type: text/html; charset=UTF-8
+    Content-Length: 131
+    Accept-Ranges: bytes
+    Connection: close
+
+    <html>
+    <head>
+      <title>An Example Page</title>
+    </head>
+    <body>
+      Hello World, this is a very simple HTML document.
+    </body>
+    </html>
 
 ## REST
 
