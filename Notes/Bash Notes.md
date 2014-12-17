@@ -80,6 +80,37 @@ Try `echo`ing these.
 * `$$` --- PID of the (current) script file or bash terminal
 * `$?` --- Most recent foreground pipeline **exit status**
 
+## POSIX Regex Character Classes
+
+* These things can help you be international/multicultural
+* They are only recognized *inside* a square-bracket sub-expression. So if you
+  are using one of these standalone, you must wrap it in square-brackets
+
+        [[:alnum:]]
+* They only count for a single character, so for e.g. multiple spaces, you'd
+  have to do
+
+        [[:space:]]+
+* What follows is likely not a complete list for *your* system because GNU
+  added more, etc.
+
+#### But here are the basics
+
+| **Class**   | **Matches**   |
+|  -------:   | :----------   |
+| `[:alnum:]` | alphanumeric  |
+| `[:alpha:]` | alphabetic    |
+| `[:blank:]` | space & tab   |
+| `[:cntrl:]` | control chars |
+| `[:digit:]` | numeric       |
+| `[:graph:]` | non-space     |
+| `[:lower:]` | lowercase     |
+| `[:print:]` | printable     |
+| `[:punct:]` | punctuation   |
+| `[:space:]` | whitespace    |
+| `[:upper:]` | uppercase     |
+| `[:xdigit:]`| hexadecimal   |
+
 ## Things one may want to do
 
 ### Repeat a command *N* times
@@ -432,3 +463,26 @@ well with globbing.
     Enter some text > this is some text
     You entered: this is some text
 
+### fmt
+
+Reformat paragraphs by changing line breaks to not exceed a given width. Think
+of `cmd-opt-q` in my Sublime.
+
+    $ fmt -w 20 << END
+    > this line is going to broken up into 20 char chunks
+    > END
+    this line is going
+    to broken up into 20
+    char chunks
+
+## Craziest bash command I've written to date
+
+In a folder containing a bunch of videos with titles of the format *"Compilers
+3.0 04-01 Lexical Specification (14m30s).mp4"*, I'd like to count the total
+number of hours of video.
+
+    $ ls \
+    >   | sed 's/[^(]*(\([^s]*\)s).*/\1/' \  # get lines containing e.g. 6m29
+    >   | awk -Fm '{s+=$1;t+=$2} END {printf "%.2f hrs\n", (t/60+s)/60}'
+
+    #=> 19.50 hrs

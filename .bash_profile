@@ -7,10 +7,11 @@
 #  Terminal Aliases  #
 ######################
 
-# Aliases: if you use "quotes", then the substitution is made here in the _profile
-#           but if you use 'aposts', then the substitution is done at call-time
+# Aliases: if you use "quotes", the substitution is made here in the _profile
+#           but if you use 'aposts', the substitution is done at call-time
 #   You probably want 'single quotes' if you're using variables
-#       Or you may just want to use a function instead as I did with cs(){}
+#   You may just want to use a function instead as I did with cs(){}
+#       I think Aliases are unavailable in scripts and Functions are
 alias h='cd ~'
 alias gohome='cd ~'
 alias ls='ls -AFG'
@@ -29,22 +30,14 @@ alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n 
 alias sba='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -a $@'
 alias ut='ssh -o ServerAliveInterval=10 ethanp@almond-joy.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
-alias tracker='cs ~/Dropbox/CSyStuff/TTRails/tracker'
 alias trracker='cs ~/Dropbox/CSyStuff/TTRails/trracker'
 alias play_activator='~/Applications/activator-1.0.10/activator ui'
 alias blog='cs ~/code/personal_project_use/libraries_to_use/Ruby/octopress/'
-alias octop='cs /Users/Ethan/code/personal_project_use/libraries_to_use/Ruby/octopress'
-if [[ -d ~/Dropbox/CSyStuff/ProgrammingGit ]]; then
-    PROGRAMMINGGIT=~/Dropbox/CSyStuff/ProgrammingGit
-else
-    PROGRAMMINGGIT=~/code/programming
-fi
+PROGRAMMINGGIT=~/Dropbox/CSyStuff/ProgrammingGit
 alias ca='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentAnalyzer_0'
 alias playakka='cs $PROGRAMMINGGIT/StuffIWrote/Scala/akka-redis-websockets-play-scala_translation'
 alias notes='cs $PROGRAMMINGGIT/Notes'
-
-# Operating Systems class
-alias empat='ssh ethan@empat.csres.utexas.edu'
+alias empat='ssh ethan@empat.csres.utexas.edu' # AOS class beastly Linux machine
 
 ######################
 #  Terminal Options  #
@@ -157,11 +150,13 @@ function dedir {
 
 # Compile C programs with useful gcc flags
 # ----------------------------------------
-# TODO this could probably be upgraded using stuff from "Learn C the Hard Way"
+# TODO the "right" way to do this is to have a standard
+#      Makefile that you know your way around
 #
 # I've removed -O2 & -ffast-math optimization because I figure there are going
 # to be more situations where I don't want something optimized out than where
-# I really care about the speed of program execution.
+# I really care about the speed of program execution.  Though I think it could
+# make a significant difference in execution speed.
 function compile {
     if [[ $# == 0 ]]; then
         echo "This is a shortcut for compiling simple .c files with a whole lot of warnings enabled"
@@ -214,12 +209,8 @@ PATH="/Applications/Postgres93.app/Contents/MacOS/bin:$PATH:$PATH" # for use wit
 # I'm not clear that this is working though...
 PATH=/usr/local/Cellar/coreutils/8.23/libexec/gnubin:$PATH
 
-# accommodate directory-structure differences between two computers
-if [[ -d ~/code/fuzzycd ]]; then
-    FUZZYCD=~/code/fuzzycd
-else  # TODO why doesn't this work when surrounded by either '' or "" ??
-    FUZZYCD=~/code/personal_project_use/code_to_base_off_of/Ruby/fuzzycd
-fi
+# TODO why doesn't this work when surrounded by either '' or "" ??
+FUZZYCD=~/code/personal_project_use/code_to_base_off_of/Ruby/fuzzycd
 PATH=$FUZZYCD:$PATH                 # add fuzzycd, may have to precede RVM in PATH
 PATH="/usr/local/bin:${PATH}"       # Homebrew comes first
 export PATH
@@ -254,10 +245,7 @@ export PYTHONPATH
 ###############
 
 # tells java where to look for classes referenced by your program
-# e.g: import my.package.Foo
-CLASSPATH=.:/usr/share/java/commons-math3-3.2  # this is legacy, now I just use Maven
-export CLASSPATH
-
+# I think you're not really supposed to have that in the .bashrc
 
 ###############
 #  JAVA_HOME  #
@@ -266,33 +254,14 @@ export CLASSPATH
 #JAVA_HOME=/System/Library/Frameworks/JavaVM.framework/Versions/CurrentJDK/Home
 #export JAVA_HOME
 
-# This is the reason I have JAVA_HOME set:
-# Summary: running `pig` requires it
-
-# brew install pig
-# ==> Downloading http://www.apache.org/dyn/closer.cgi?path=pig/pig-0.12
-###################################################
-# ==> Caveats                                     #
-# You may need to set JAVA_HOME:                  #
-#    export JAVA_HOME="$(/usr/libexec/java_home)" #
-###################################################
-# ==> Summary
-# 🍺  /usr/local/Cellar/pig/0.12.0: 8 files, 26M, built in 7.9 minutes
-# ┌──[~/Desktop/Movies]--[ 4:49 PM ]
-# └──╼pig
-# Error: JAVA_HOME is not set.
-# ┌──[~/Desktop/Movies]--[ 4:58 PM ]
-# └──╼export JAVA_HOME="$(/usr/libexec/java_home)"
-# ┌──[~/Desktop/Movies]--[ 5:00 PM ]
-# └──╼pig
-# grunt>
+# I think this was useful for running `pig`
 export JAVA_HOME="$(/usr/libexec/java_home)"
 
 # These are only saved _this_ session
 HISTSIZE=2000
 
 # These are saved _between_ sessions in .bash_history
-HISTFILESIZE=2000   # TODO it's unclear why this file is only ~850 lines/~2 months worth
+HISTFILESIZE=10000
 
 # Load RVM into a shell session *as a function*
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
@@ -310,9 +279,12 @@ source $FUZZYCD/fuzzycd_bash_wrapper.sh
 # The Cool Terminal #
 #####################
 
-# from https://bbs.archlinux.org/viewtopic.php?pid=1068202#p1068202
+# based on bbs.archlinux.org/viewtopic.php?pid=1068202
 
-# Define colornames
+# I think the way this works is that when you "type" a color,
+# the terminal starts writing in that color
+
+# Define colornames:
 NC='\033[0m'   # No Color
 yellow='\033[0;33m'
 green='\033[0;32m'

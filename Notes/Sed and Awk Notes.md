@@ -97,6 +97,7 @@ Print from where `xxx` matches to where `yyy` matches
 | **i**         | match case insensitively                              |
 | **w file**    | write changed lines to `file`                         |
 | **p**         | print data in *pattern buffer*                        |
+| **q**         | quit sed after performing                             |
 
 ### Substitute Command (`s//`)
 
@@ -168,18 +169,40 @@ Delete comments and empty lines
 
     sed -e 's/#.*//;/^$/d' afile
 
+Print the first n (default to 25) lines
+
+    sed ${1:-25}q
+
 ## Awk
 
 ### Basics
 
 1. The default delimiters are spaces & tabs
-2. `$1`, `$2`, ... refer to the individual *fields* on the input line
-3. `$0` refers to the *whole* line
+2. `$1`, `$2`, ... --- individual *fields* on the input line
+3. `$0` --- the *whole* line
+4. `NF` --- number of fields
+5. `$NF` --- last field
 
 ### Options
 
-1. **-F,** --- change the **delimiter** to a `,` [comma]
+1. **-F,** --- change the **delimiter** to (e.g. *comma*)
 2. **-f afile** --- read `awk` script from `afile`
+
+### BEGIN & END
+
+* `BEGIN` blocks (there may be multiple) are run (in sequence) before `awk`
+starts reading input
+    * You may want to set variables in here
+
+            awk 'BEGIN { FS=":" ; OFS="**" }'
+* `END` blocks are run after reading input
+
+In general, we have
+
+    BEGIN    { startup code }
+    pattern1 { action1 }
+    pattern2 { action2 }
+    END      { cleanup code }
 
 ### Examples
 
@@ -195,4 +218,10 @@ Print first field of lines matching `pattern`
 
     awk '/pattern { print $1 }' afile
 
+### Misc
 
+1. You *could* change the environment's *field separator* `$FS` before running
+   `awk`, and then you wouldn't need to set `-F`
+2. You can also change the *output field seperator* `$OFS` too
+
+        awk -F: -v 'OFS=**' '{ print $1, $5 }' /etc/passwd
