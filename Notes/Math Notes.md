@@ -14,6 +14,24 @@ latex footer:		mmd-memoir-footer
 
 This document requires MathJax (and possibly [`MultiMarkdown`](http://fletcherpenney.net)) to be viewed properly.
 
+# Probability #
+
+## Combinations (*n* choose *k*) ##
+
+\\[{n\choose k}=\frac{n!}{k!(n-k)!}\\]
+
+###Explanation ###
+
+1. We know that \\(n!\\) is the number of *permutations* of *n* items
+	1. I.e. the total number of unique *orderings*
+	2. Because there are \\(n\\) options for the first slot, \\(n-1\\) for the second, and so on.
+2. But if we are only "choosing" \\(k\\) items, so we can stop the factorial after
+   computing the permutations of the first \\(k\\) items. This leaves us with
+   \\(n\cdot(n-1)\cdot(n-2)\cdots (n-k+1)=\frac{n!}{(n-k)!}\\).
+3. Now among these \\(k\\) items, we don't actually care about all the
+   different permutations, so we can cancel them out by dividing by
+   \\(k!\\), leaving us with the final formula.
+
 # Statistics #
 
 ## Covariance Matrix ##
@@ -60,9 +78,9 @@ We're trying to find the equation of the straight line
 
 which would provide a line that minimizes the sum of squared residuals of the linear regression model.
 
-We can use 
+We can use
 
-\\[\hat{\beta} = \frac{\mathrm{Cov}[x, y]}{\mathrm{Var}[x]} = r_{xy} \frac{s_y}{s_x}\\] 
+\\[\hat{\beta} = \frac{\mathrm{Cov}[x, y]}{\mathrm{Var}[x]} = r_{xy} \frac{s_y}{s_x}\\]
 
 \\[\hat{\alpha} = \bar{y} - \hat{\beta} \bar{x}\\]
 
@@ -145,8 +163,8 @@ Notes from Brian Douglas's Khan Academy-style  YouTube Videos:
 
 #### Turns a function of *time* into a function of *frequency.* ####
 
-Any function in the time-domain, can be represented as a sum of sinusoids, 
-where each has a different amplitude, frequency, and phase. This is that thing from Diff. EQ class. 
+Any function in the time-domain, can be represented as a sum of sinusoids,
+where each has a different amplitude, frequency, and phase. This is that thing from Diff. EQ class.
 So that's all we're doing.
 
  \\[\mathrm{Frequency}\;\; \nu_{Hz} := \frac{\omega}{2\pi}[Hz]  \\]
@@ -172,8 +190,8 @@ And the inverse:
 * A **signal** and a **function** are the *same thing*
 * **Analysis** -- break a signal into simpler component parts
 * **Synthesis** -- reassemble a signal from its constituent parts
-* **Complex Sinusoids** -- Phase and amplitude can be described by a single complex number. 
-Plotting that point on a real-imaginary plane, the amplitude is the distance of the point from the origin. 
+* **Complex Sinusoids** -- Phase and amplitude can be described by a single complex number.
+Plotting that point on a real-imaginary plane, the amplitude is the distance of the point from the origin.
 The phase is the angle of that line off the positive real line, so a frequency with no phase shift is
 on the real line, where the value *is* the amplitude. Otherwise we have to do some trigonometry to
 go convert between the number and the phase & amplitude.
