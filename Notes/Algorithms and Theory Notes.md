@@ -23,7 +23,7 @@ latex footer:		mmd-memoir-footer
 
 1. Finite number of states
 2. When a *symbol* (a character from some *alphabet*) is input to the
-   machine, it changes state 
+   machine, it changes state
 3. The next state depends *only* on the current state and the input symbol
 
 
@@ -76,11 +76,9 @@ latex footer:		mmd-memoir-footer
 
 [ip fsm]: http://www.i-programmer.info/babbages-bag/223-finite-state-machines.html
 
-Sorting algorithms
-==================
+# Sorting algorithms
 
-Insertion sort
---------------
+## Insertion sort
 **5/27/14**
 
 ### Properties
@@ -98,9 +96,8 @@ Insertion sort
    to the right, and put it at the front
 3. Continue in this manner, moving along the array, putting each
    element in its proper place in relation to those elements previously seen
-   
-Selection sort
---------------
+
+## Selection sort
 **5/27/14**
 
 ### Properties
@@ -114,9 +111,8 @@ Selection sort
 1. Scan the array for the smallest element, and put it in slot `0`
 2. Scan the *rest* of the array for its smallest element, and put it in slot `1`
 3. And so on.
-   
-Bubble sort
------------
+
+## Bubble sort
 **5/27/14**
 
 * Repeatedly step through the list to be sorted, comparing each
@@ -129,8 +125,7 @@ Bubble sort
 * It is a **stable** sort and **in-place**
 
 
-Radix Sort
-----------
+## Radix Sort
 **5/27/14** [Radix sort on Wikipedia](http://en.wikipedia.org/wiki/Radix_sort)
 
 * Sorts data with integer keys by grouping keys by the individual digits
@@ -154,8 +149,7 @@ Gazillions of options
 * Hybrids -- e.g. switch to **insertion sort** when the buckets get small
 * Incremental trie-based -- create a trie then do depth-first, in-order traversal
 
-Spaghetti Sort
---------------
+## Spaghetti Sort
 **5/27/14** [Found on Wikipedia](http://en.wikipedia.org/wiki/Spaghetti_sort)
 
 1. Gather all the spaghetti into a bundle
@@ -164,16 +158,43 @@ Spaghetti Sort
     1. Lower your hand slowly onto the spaghetti
     2. Pull out the first strand your hand touches
 
+# Dynamic Programming
 
-Other algorithms
-================
+## Intro
 
-Bloom Filter
-------------
+1. It means *solving a problem via an **inductive step** (recursion)*
+2. It is applicable to problems exhibiting
+    1. **Overlapping subproblems** --- subproblems can be nested recursively
+       into the entire problem; and when you recurse into another branch, you
+       see the same subproblems you've already solved (e.g. Fibonacci)
+        1. If there is no overlapping-ness of the subproblems, it's called
+           **Divide & Conquer** and is *not Dynamic Programming*. This
+           includes `mergesort` and `quicksort`.
+    2. **Optimal substructure** --- when optimal solutions to subproblems can
+       be combined into an optimal solution of the entire problem
+3. Reduces complexity vs solving with naïve methods, e.g. depth-first-search
+    1. Naive methods may solve the subproblems over-and-over, we want to
+       prevent that
+    2. Sometimes all that is required is **memo-ization** of the basic
+       recursive solution, sometimes finding a dynamic programming algorithm
+       for the problem is not so simple
+4. Solve the subproblems, then combine them to reach the overall solution
+5. *Greedy algorithms* (at each decision, pick the locally optimal choice) are
+   faster, but not always optimal
+6. Two general approaches
+    1. **Top-down** --- direct implementation of the induction rule and
+       memoization
+    2. **Bottom-up** --- after finding induction rule, reformulate into a
+       means of solving the subproblems *first* and combining them to solve
+       bigger subproblems
+        1. Often done by filling in a table
+
+# Other algorithms
+
+## Bloom Filter
 See `Data Structures Notes.md`
 
 
-Vocab
-=====
+# Vocab
 
 * **Stable sort** -- preserves order of duplicate entries
