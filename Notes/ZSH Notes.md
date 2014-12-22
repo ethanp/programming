@@ -25,14 +25,25 @@ latex footer:		mmd-memoir-footer
 7. [http://stevelosh.com/blog/2010/02/my-extravagant-zsh-prompt/]()
 8. [http://www.paradox.io/posts/9-my-new-zsh-prompt]()
 
-## Intro
+### Some Features I've Found
 
-### Things to figure out
+1. I have installed [Zsh-fuzzy-match][], which means that by pressing `cmd-t`,
+   then it does a `find .` and then you interactively choose the file you want
+   to open
+3. You can `google multiple words` to Google it.
+4. The `rails` plugin gives you
+    1. `rc`, `rs`, `rg='rails generate'`, `rgm='rails generate migration'`,
+       `rdm='rake db:migrate`
 
-1. The prompt
-2. The coloring
-3. Vim mode
-4. Git stuff
-5. Autocompletion
-6. Easy `ls`ing to common locations    
+### TODO
 
+1. Look into the [common-aliases plugin][] to see what I got. There's some
+   real cool ideas in there
+2. Look into the `compleat` plugin --- the point is to make it easy to make
+   your own autocomplete setups. This sounds like a good idea.
+3. Probably worth using `fasd` plugin *instead of* `autojump`
+4. Why isn't the `dirhistory` plugin working?
+
+[common-aliases plugin]: /Users/Ethan/.oh-my-zsh/plugins/common-aliases/common-aliases.plugin.zsh
+
+[Zsh-fuzzy-match]: https://github.com/tarruda/zsh-fuzzy-match
