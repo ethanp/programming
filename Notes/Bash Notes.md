@@ -12,6 +12,229 @@ latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
 
+## Syntax
+
+### The Environment
+
+Essentially the shell's *global state*, inherited by every child process of
+this shell.
+
+To change the environment for a *single command*, prefix the command with your
+settings
+
+    CLASSPATH=/bin:/usr/bin java MyProgram
+
+### Variables
+
+Assign a value to a variable
+
+    my_var=24
+
+Make an existing variable **read-only**
+
+    readonly my_var
+
+Add existing variable to the *environment*
+
+    export my_var
+
+Print the environment
+
+    env
+    # or
+    export -p
+
+Remove varaible from shell
+
+    unset my_var
+    unset -f my_fctn    # for functions
+
+#### Expansion operators
+
+| Operator | Meaning |
+| ---------------------: | :------------------------------------------------------- |
+| `${#my_var}`           | Return number of characters in the value of `my_var`     |
+| `${my_var:-default}`   | Return default value if variable is undefined            |
+| `${my_var:=default}`   | Set variable *and* return it if variable is undefined    |
+| `${my_var:?"message"}` | If variable is null or undefined, exit and print message |
+| `${my_var:+value}`     | Return `value` if `my_var` *is* defined                  |
+| `${variable#pattern}`  | Delete *shortest* match from *beginning* (only) of var's value, and return the rest |
+| `${variable##pattern}` | Delete *longest* match, otherwise like above             |
+| `${variable%pattern}`  | Delete *shortest* match from *end* (only), otw like above |
+| `${variable%%pattern}` | Delete *longest* match from *end*                        |
+
+##### e.g.s
+    vble=/my/long/path_to.thing
+    echo ${vble#/*/} # => long/path_to.thing
+    echo ${vble#/*/} # => path_to.thing
+
+### Script/Function Parameters
+
+#### Special variables
+
+Try `echo`ing these.
+
+| Variable | Meaning |
+| -----: | :------ |
+| `$!` | PID of the most recent background command |
+| `$$` | PID of the (current) script file or bash terminal |
+| `$?` | Most recent foreground pipeline **exit status** |
+| `$#` | Number of arguments passed to shell script/function |
+| `$*`/`$@` | All command-line arguments (with no quoting applied) |
+| `"$*"` | All command-line arguments as a *single* string |
+| `"$@"` | All command-line arguments, each wrapped in quotes |
+
+#### Functions for manipulating parameters
+
+Replace supplied positional parameters with your own set of parameters
+
+    set first and third arguments
+
+Shift all arguments *left*, replacing `$1` with `$2` and so on
+
+    shift [#args to shift]
+
+### Arithmetic
+
+The shell evaluates the arithmetic expressions inside and places the result
+back into the text of the command.
+
+This is done as you'd expect, and it has *everything* you're used to, like
+`|`, `||`, `<<`, `+=`, `++`, etc.
+
+    echo $((2 + 3))    # => 5
+
+**Booleans** are `1 = true` and `0 = false`
+
+    echo $((2 && 3))   # => 1
+
+**Exponentiation** is done with `**`, like in Python
+
+    echo $((2 ** 3))   # => 8
+
+### If
+
+General form (based on Algol 68)
+
+    if cond
+    then
+        # what to do
+    elif cond
+        # something
+    else
+        # otherwise
+    fi
+
+`test expr` is a synonym for `[ expr ]` (spaces required)
+
+Test if `$file` is a directory
+
+    if [ -d "$file" ]
+
+String comparison
+
+    if [ "$file" = "myfilename" ]
+
+Multiple boolean checks
+
+    if [ "$file" = "myfilename" ] || [ "$file" = "another/name" ]
+
+### Case
+
+* Check if a variable is one of many values.
+* Patterns for catching the variable *can* contain wildcard characters.
+
+Syntax
+
+    case $1 in
+    -f)
+        # code
+        ;;  # like "break"
+    -d | --directory)  # multiple options
+        # code
+        ;;
+    *)                 # catch-all (not required)
+        ;;  # not required here
+    esac
+
+### Looping
+
+#### For
+
+    for i in *.[ch]
+    do
+        # something
+    done
+
+Loop over command-line arguments
+
+    for i
+    do
+        case $1 in
+        -f)
+            # etc.
+            ;;
+        # etc.
+        esac
+    done
+
+#### While and Until
+
+    while condition
+    do
+        stuff
+    done
+
+    until condition
+    do
+        stuff
+    done
+
+#### POSIX-Style Command-Line Arguments
+
+Use `getopts` to allow getting CLAs like
+
+    grep -vnf --long-one=24
+
+Here's how you'd implement something like that
+
+    file=
+    verbose=
+    quiet=
+    long=
+
+    while getopts "$@" opt
+    do
+        case $opt in
+        f)
+            file=$OPTARG
+            ;;
+        v)
+            verbose=true
+            quiet=
+            ;;
+        esac
+    done
+
+#### Other
+
+`break` and `continue` are allowed in loops
+
+### Functions
+
+    my_func() {
+        my code
+        return 2  # set exit-status to 2 (failing)
+    }
+
+Note that if you modify a global variable in a function, this modification is
+actually modifying that variable for real.
+
+### `$(c)` vs `backtick(c)` vs `eval c`
+
+* `$(c)` and `backtick(c)` are (at least practically) the same, they **capture the output**.
+* `eval c` **interprets the text** you give it as a bash command.
+
 ## Jobs
 
     $ vim
@@ -71,14 +294,6 @@ and the shell will run it as a background jobs, as though you had run it with
 
 * We can think of **`2>&1`** as "point `STDERR` to where `STDOUT` points"
 * `| tee afile` means "and also print it to the log-file"
-
-## State Variables
-
-Try `echo`ing these.
-
-* `$!` --- PID of the most recent background command
-* `$$` --- PID of the (current) script file or bash terminal
-* `$?` --- Most recent foreground pipeline **exit status**
 
 ## POSIX Regex Character Classes
 
@@ -356,11 +571,6 @@ To map all uppercase characters to their corresponding lowercase variants:
 * **-cs** --- convert and squeeze (used by Doug McIlroy)
 
         tr -cs A-Za-z '\n' < /tmp/a.txt  # convert multiple non-letters into a newline
-
-### `$(c)` vs `backtick(c)` vs `eval c`
-
-* `$(c)` and `backtick(c)` are (at least practically) the same, they **capture the output**.
-* `eval c` **interprets the text** you give it as a bash command.
 
 ### `uniq`
 
