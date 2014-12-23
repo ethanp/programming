@@ -14,13 +14,15 @@ latex footer:		mmd-memoir-footer
 
 This document requires MathJax (and possibly [`MultiMarkdown`](http://fletcherpenney.net)) to be viewed properly.
 
-# Probability #
+# Probability & Statistics #
 
-## Combinations (*n* choose *k*) ##
+## Probability ##
+
+### Combinations (*n* choose *k*) ##
 
 \\[{n\choose k}=\frac{n!}{k!(n-k)!}\\]
 
-###Explanation ###
+####Explanation ###
 
 1. We know that \\(n!\\) is the number of *permutations* of *n* items
 	1. I.e. the total number of unique *orderings*
@@ -32,14 +34,31 @@ This document requires MathJax (and possibly [`MultiMarkdown`](http://fletcherpe
    different permutations, so we can cancel them out by dividing by
    \\(k!\\), leaving us with the final formula.
 
-# Statistics #
+## Statistics #
 
-## Covariance Matrix ##
-### How to Compute It ###
+### Bayesian Inference ###
+
+Use **Bayes' Rule** to update the probability for a hypothesis as evidence is acquired.
+
+\\[\mathbb{P}[H|E]=\frac{\mathbb{P}[E|H]\cdot\mathbb{P}[H]}{\mathbb{P}[E]}\\]
+
+In my own words:
+> The *posterior probability* that the *hypothesis* \\(H\\) is *true* *given* the *evidence* \\(E\\), is *equal* to the *probability* of the *evidence* *given* the *hypothesis* is *true* *w.r.t.* seeing that *evidence* under *all* circumstances, multiplied by the *prior* ("overall") probability of the *hypothesis* being *true* in general.
+
+Particularly important in the *dynamic analysis* of a *sequence* of data.
+
+### Markov Chain Monte Carlo ###
+
+A *class* of *algorithms* for *sampling* from a *probability distribution* based on constructing a *Markov chain* that has the desired distribution as its *equilibrium distribution*. We can then use the *state* of the chain after a number of *steps* as a *sample* from the desired distribution. The point is generally to calculate a *numerical approximation* of a *multi-dimensional integral*.
+
+Examples include *Gibbs sampling*, which requires all the *conditional distributions* of the target distribution to be sampled exactly.
+
+### Covariance Matrix ##
+#### How to Compute It ###
 
 \\[X^TX\\]
 
-### Why It Matters ###
+#### Why It Matters ###
 
 Used in **Principal Component Analysis** (PCA), a technique described in Andrew Ng's *Machine Learning* course on Coursera, for reducing the *dimensionality* of a *dataset*. One might want to do this for 2 reasons:
 
@@ -47,7 +66,7 @@ Used in **Principal Component Analysis** (PCA), a technique described in Andrew 
 2. To produce *visualizations* of the data in 1, 2, or 3D
 3. To *reduce computation time*
 
-### Covariance ###
+#### Covariance ###
 
 "A measure of how much two random variables change together."
 [[Wikipedia][WCov]]
@@ -65,10 +84,9 @@ At first glance, it behaves like the slope line of a linear regression: two posi
 
 [WCov]: http://en.wikipedia.org/wiki/Covariance
 
-## Ordinary Least Squares ##
+### Ordinary Least Squares ##
 
-#### 6/4/14
-### Finding the Intercept and the Slope ###
+#### Finding the Intercept and the Slope ###
 
 [On Wikipedia](http://en.wikipedia.org/wiki/Simple_linear_regression)
 
@@ -87,28 +105,25 @@ We can use
 * The line always passes through \\((\bar{x},\bar{y})\\)
 * If you normalize the data, the slope is \\(Cor(Y,X)\\)
 
-#### Without the Intercept Term ####
+##### Without the Intercept Term ####
 
 \\[y = \beta x \\]
 \\[\hat{\beta} = \frac{\bar{xy}}{x^2}\\]
 
-## Similarity Measures ##
-
-#### 5/8/14
-
+### Similarity Measures ##
 Sources:
 
 * [Random blog on Collaborative Filtering with Mahout](http://blog.comsysto.com/2013/04/03/background-of-collaborative-filtering-with-mahout/)
 
-### Real Valued Attributes
+#### Real Valued Attributes
 
-#### Pearson Similarity ####
+##### Pearson Similarity ####
 
 * [Wikipedia](http://en.wikipedia.org/wiki/Pearson_product-moment_correlation_coefficient)
 
 \\[\rho_{X,Y}=\frac{\mathrm{cov}(X,Y)}{\sigma_X \sigma_Y}=\frac{E[(X-\mu_X)(Y-\mu_Y)]}{\sigma_X \sigma_Y}\\]
 
-#### Euclidean Distance ####
+##### Euclidean Distance ####
 
 * [Wikipedia: Norm](http://en.wikipedia.org/wiki/Norm_(mathematics)#Euclidean_norm)
 
@@ -120,11 +135,11 @@ Or more generally, the *p*-norm is
 
 Which means the Euclidean norm \\(\equiv\\) the \\(l_2\\) norm.
 
-### Binary Attributes ###
+#### Binary Attributes ###
 
 * [Wikipedia](http://en.wikipedia.org/wiki/Tanimoto_coefficient#Tanimoto_coefficient_.28extended_Jaccard_coefficient.29)
 
-#### Jaccard index/similarity coefficient ####
+##### Jaccard index/similarity coefficient ####
 
 \\[J(A,B)=\frac{|A\cap{B}|}{|A\cup{B}|}\\]
 

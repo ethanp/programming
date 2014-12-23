@@ -13,32 +13,7 @@ latex input:    mmd-article-begin-doc
 latex footer:   mmd-memoir-footer
 
 
-# Basic Data Structures
-
-## Map
-
-### HashMap
-
-### TreeMap
-
-
-## Array
-
-### ArrayList
-
-### LinkedList
-
-
-Set
----
-
-### HashSet
-
-### TreeSet
-
-
-Tree
-----
+## Tree
 
 * **Perfect** -- every level is full
 
@@ -78,15 +53,9 @@ Tree
 * **Height** -- *distance* from root to deepest leaf
     * So for the above tree examples, the *height* is **3** (*not* 4)
 
-### Binary Tree
 
-### Binary Search Tree
+### Heap
 
-#### Red-Black Tree
-(see below)
-
-Heap
-----
 1. [Wikipedia](http://en.wikipedia.org/wiki/Heap_(data_structure))
 2. [Algorithms -- Sedgewick, pg. 316]()
 3. [Heapsort Summary Page](http://www.sorting-algorithms.com/heap-sort)
@@ -112,19 +81,6 @@ Heap
 * See implementation with explanation at
   `~/Dropbox/CSyStuff/PrivateCode/PreDraft_6-27-14`
 
-Queue
------
-
-### Java implementations
-
-1. `LinkedList<T>`
-2. `PriorityQueue<T>`
-
-### Java methods
-
-1. `add`, `offer`
-2. `remove`, `poll`
-3. `peek`
 
 ### Deque -- double-ended queue
 
@@ -135,38 +91,13 @@ Queue
 * **Doubly-linked-list** -- all required operations are O(1), random access O(n)
 * **Growing array** -- *amortized* time is O(1), random access O(1)
 
-#### Java
-
-##### Implementations
+##### Java
 
 1. `LinkedList<T>` -- doubly-linked-list
 2. `ArrayDeque<T>` -- growing array
 
-##### Methods
 
-Not sure why these are so strange...
-
-* Insert at front -- `offerFirst`
-* Insert at back -- `offerLast`
-* Pop from front -- `pollFirst`
-* Pop from back -- `pollLast`
-* Peek at front -- `peekFirst`
-* Peek at back -- `peekLast`
-
-
-Other
------
-
-### LRUCache
-
-
-More Advanced Data Structures
-=============================
-
-Bloom Filters
--------------
-
-#### 5/4/14
+## Bloom Filters
 
 [i-programmer](http://www.i-programmer.info/programming/theory/2404-the-bloom-filter.html)
 
@@ -237,8 +168,7 @@ Bloom Filters
     * m = -2n * ln(p)
 
 
-Red Black Tree
---------------
+## Red Black Tree
 
 [Tim Roughgarden's Coursera lecture on it](https://www.youtube.com/watch?v=4slgC3UOXc0)
 
@@ -259,16 +189,6 @@ Theorem: every red-black tree with *n* nodes has height ≤ 2log_2(n+1)
 
 This is what backs Java's `TreeMap<T>`
 
-B+ Tree
--------
-
-RingBuffer
-----------
-
-### Trie
-
-### LinkedHashMap
-
 ## SkipList
 
 * Allows fast search within an ordered sequence of elements
@@ -287,8 +207,45 @@ RingBuffer
 * The last list contains your entire sequence and you'll definitely find your
   element there
 
-TODO
-----
+## Distributed Hash Table (DHT)
+
+1. Same interface as a *hash table* (look up *value* by *key*)
+2. Responsibility for maintaining the mapping \\(keys\rightarrow values\\) is
+   *distributed* among the *nodes*
+3. We require change in who is participating to cause minimal disruption
+4. Useful for web caching, distributed file systems, DNS, IM, multicast, P2P
+   (e.g. BitTorrent's distributed "tracker"), content distribution, and search
+   engines
+5. Properties
+    1. decentralization/autonomy --- no central coordinator
+    2. fault-tolerance --- nodes can continuously join, leave, or fail
+    3. scalability --- still functions efficiently with millions of nodes
+6. Generally each node must coordinate with \\(O(\mathrm{log} n)\\) other nodes
+7. Can be optionally designed for better security against malicious
+   participants, and to allow participants to remain anonymous
+8. Handles load balancing, data integrity, and performance
+
+### Structure
+
+1. We start with a *keyspace* and a defined *partitioning scheme*
+2. To add a new entry
+    1. Hash it
+    2. Send it to *any* participating node
+    3. Keep *forwarding* it until the *single* responsible node is reached
+    4. The responsible adds the entry
+3. Getting an entry is quite similar
+4. Uses **consistent hashing** --- has property that when the table is
+   resized, only \\(\frac{#keys}{#slots}\\) keys must be remapped.
+    1. The hashing techniques make it so that only those members adjacent in
+       the keyspace to a new node have to have they're data sloshed around
+5. The **Overlay network** is the set of links connecting nodes
+    1. Requires the property that for any key, each node either owns it, or
+       has a link to someone "closer" to it in terms of some defined keyspace
+       distance
+    1. There's a tradeoff between the number of links we require each node to
+       have ("degree") and the "route length" queries require
+
+# TODO
 
 Scala's `Vector` is a tree of arrays, kind of like a *B-Tree*, also like one
 of the main *file formats*
