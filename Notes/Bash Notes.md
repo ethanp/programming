@@ -51,22 +51,22 @@ Remove varaible from shell
 
 #### Expansion operators
 
-| Operator | Meaning |
+| **Operator** | **Meaning** |
 | ---------------------: | :------------------------------------------------------- |
 | `${#my_var}`           | Return number of characters in the value of `my_var`     |
 | `${my_var:-default}`   | Return default value if variable is undefined            |
-| `${my_var:=default}`   | Set variable *and* return it if variable is undefined    |
-| `${my_var:?"message"}` | If variable is null or undefined, exit and print message |
+| `${my_var:=default}`   | Set variable *and* return it if it is undefined          |
+| `${my_var:?"message"}` | If variable is *null* or *undefined*, exit and print message |
 | `${my_var:+value}`     | Return `value` if `my_var` *is* defined                  |
 | `${variable#pattern}`  | Delete *shortest* match from *beginning* (only) of var's value, and return the rest |
 | `${variable##pattern}` | Delete *longest* match, otherwise like above             |
-| `${variable%pattern}`  | Delete *shortest* match from *end* (only), otw like above |
+| `${variable%pattern}`  | Delete *shortest* match from *end* (only)                |
 | `${variable%%pattern}` | Delete *longest* match from *end*                        |
 
 ##### e.g.s
     vble=/my/long/path_to.thing
     echo ${vble#/*/} # => long/path_to.thing
-    echo ${vble#/*/} # => path_to.thing
+    echo ${vble##/*/} # => path_to.thing
 
 ### Script/Function Parameters
 
@@ -74,15 +74,15 @@ Remove varaible from shell
 
 Try `echo`ing these.
 
-| Variable | Meaning |
+| **Variable** | **Meaning** |
 | -----: | :------ |
 | `$!` | PID of the most recent background command |
 | `$$` | PID of the (current) script file or bash terminal |
 | `$?` | Most recent foreground pipeline **exit status** |
 | `$#` | Number of arguments passed to shell script/function |
-| `$*`/`$@` | All command-line arguments (with no quoting applied) |
+| `$*`/`$@` | All command-line arguments (no quoting applied) |
 | `"$*"` | All command-line arguments as a *single* string |
-| `"$@"` | All command-line arguments, each wrapped in quotes |
+| `"$@"` | All cmd-line args, each wrapped in quotes |
 
 #### Functions for manipulating parameters
 
@@ -182,7 +182,7 @@ Loop over command-line arguments
 
     while condition
     do
-        stuff
+        stuff   # *break* and *continue* are allowed
     done
 
     until condition
@@ -216,10 +216,6 @@ Here's how you'd implement something like that
         esac
     done
 
-#### Other
-
-`break` and `continue` are allowed in loops
-
 ### Functions
 
     my_func() {
@@ -234,6 +230,18 @@ actually modifying that variable for real.
 
 * `$(c)` and `backtick(c)` are (at least practically) the same, they **capture the output**.
 * `eval c` **interprets the text** you give it as a bash command.
+
+### Subshells and Code Blocks
+
+**Subshell** commands are wrapped in parentheses and are run in a separate
+process. The main advantage is that state changes in the subshell (e.g. via
+`cd`) don't affect the parent.
+
+    tar -cf - . | (cd /newdir; tar -xpf -)
+
+A **code block** is like a subshell, but runs in the shell's current process,
+and state changes *do* affect the shell's state. These don't seem all that
+useful.
 
 ## Jobs
 
@@ -673,6 +681,30 @@ well with globbing.
     Enter some text > this is some text
     You entered: this is some text
 
+You can read *multiple* variables at once, splitting the input string using
+`$IFS`. Recall that you can set `IFS` for the duration of a single command.
+
+    echo "thing1:thing2:thing3" | IFS=: read vA vB vC
+    echo $vB    # => thing2
+
+### exec
+
+With *no arguments*, change the current shell's *file descriptors*.
+
+    exec 2> /tmp/mylog  # redirect shell's stderr
+    exec 3< /file       # open new file descriptor
+    read var1 var2 <&3  # read from fd 3
+    exec 5>&2           # save sterr loc in fd 5
+    exec 2> /otherfile  # new stderr loc
+    ...
+    exec 2>&5           # copy back saved stderr loc
+    exec 5>&-           # close fd 5
+
+*With* arguments, `exec` starts a new program in its current process and
+control *never* returns to the shell.
+
+    exec java MyApp
+
 ### fmt
 
 Reformat paragraphs by changing line breaks to not exceed a given width. Think
@@ -684,6 +716,14 @@ of `cmd-opt-q` in my Sublime.
     this line is going
     to broken up into 20
     char chunks
+
+### wait
+
+Wait for all background jobs to finish
+
+### . (dot)
+
+Read and execute commands contained in a separate file.
 
 ## Craziest bash command I've written to date
 
