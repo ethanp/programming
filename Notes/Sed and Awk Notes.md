@@ -177,11 +177,16 @@ Print the first n (default to 25) lines
 
 ### Basics
 
-1. The default delimiters are spaces & tabs
-2. `$1`, `$2`, ... --- individual *fields* on the input line
-3. `$0` --- the *whole* line
-4. `NF` --- number of fields
-5. `$NF` --- last field
+6. In general, we have \\(pattern \to action\\) pairs
+    1. *Actions* with no associated *pattern* are executed on *every* record
+    2. *Patterns* with no associated *action* are *printed* for every match
+7. There's no string concatenation operator, so `"A" "B"=="AB"`
+8. All numbers are represented as double-precision floats
+    1. This means you can do `1/32` and you won't get `0`
+    2. Use `int(number)` to truncate it to an integer
+9. The arithmetic operators are as you'd expect (including `++` and `?:`),
+   except that there are no bitwise operators, and both `a^b` and `a**b` mean
+   `a` *to the power* `b`, though `^` is more portable
 
 ### Options
 
@@ -190,8 +195,8 @@ Print the first n (default to 25) lines
 
 ### BEGIN & END
 
-* `BEGIN` blocks (there may be multiple) are run (in sequence) before `awk`
-starts reading input
+* `BEGIN` blocks (there may be multiple) are run (in given sequence) before
+  `awk` starts reading input
     * You may want to set variables in here
 
             awk 'BEGIN { FS=":" ; OFS="**" }'
@@ -217,6 +222,34 @@ Print lines matching `pattern`
 Print first field of lines matching `pattern`
 
     awk '/pattern { print $1 }' afile
+
+### Built-in Functions
+
+1. `length(string)` --- #chars in `string`
+2. String comparison operators `==`, `!=`, `<=`, etc.
+3. Regex match operators
+    1. `~` --- matches
+
+            "ABC" ~ "^[A-Z]+$" #=> true
+    2. `!~` --- does not match
+4. `int(number)` truncates the fraction off the `number`, leaving an integer
+5. `sqrt()`, `sin()`, `log()`, `exp()`
+
+### Built-in Variables
+
+| Variable      | Description                               |
+| ------------: | :---------------------------------------  |
+| `FILENAME`    | input file's name                         |
+| `FNR`         | current record's number (e.g. line-no)    |
+| `FS`          | field seperator (regex, default: `" "`)   |
+| `NF`          | #fields in current record                 |
+| `NR`          | record-number in job                      |
+| `OFS`         | output field-separator (default: `" "`)   |
+| `ORS`         | output record-separator (default: `"\n"`) |
+| `RS`          | input record-separator (default: `"\n"`)  |
+| `$1`, `$2`, ... | individual *fields* on the input line   |
+| `$0`          | the *whole* line                          |
+| `$NF`         | last field                                |
 
 ### Misc
 
