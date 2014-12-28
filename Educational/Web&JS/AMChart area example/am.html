@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<!-- COPIED FROM http://www.amcharts.com/demos/stacked-area/ -->
+
+<html>
+<head>
+    <title>A Chart</title>
+    <script type="text/javascript" src="http://www.amcharts.com/lib/3/amcharts.js"></script>
+    <script type="text/javascript" src="http://www.amcharts.com/lib/3/serial.js"></script>
+</head>
+<body>
+    <h1>My amCharts Graph</h1>
+    <p>This is my amCharts graph</p>
+
+    <div id="chartdiv" style="width: 100%; height: 400px;"></div>
+
+     <script type="text/javascript">
+        var chartData = generateChartData();
+
+        var chart = AmCharts.makeChart("chartdiv", {
+            "type": "serial",
+            "theme": "none",
+            "pathToImages": "http://www.amcharts.com/lib/3/images/",
+            "legend": {
+                "equalWidths": false,
+                "periodValueText": "[[value.sum]]",
+                "position": "bottom",
+                "valueAlign": "left",
+                "valueWidth": 100
+            },
+            "dataProvider": chartData,
+            "valueAxes": [{
+                "stackType": "regular", // {none, regular, 100%} are valid
+                "position": "left"
+            }],
+            /* this is for parsing the JSON blob */
+            "graphs": [{
+                "title": "Visits",
+                "valueField": "visits",
+                "fillAlphas": 0.4
+            }, {
+                "title": "Hits",
+                "valueField": "hits",
+                "fillAlphas": 0.4
+            }, {
+                "title": "Views",
+                "valueField": "views",
+                "fillAlphas": 0.4
+            }],
+            "chartScrollbar": {},
+            "chartCursor": {},
+            "categoryField": "date",
+            "categoryAxis": {
+                "parseDates": true,
+                "axisColor": "#DADADA",
+                "minorGridEnabled": true
+            }
+        });
+
+        chart.addListener("dataUpdated", zoomChart);
+        zoomChart();
+
+
+        // generate some random data, quite different range
+        function generateChartData() {
+            var chartData = [];
+            var firstDate = new Date();
+            firstDate.setDate(firstDate.getDate() - 100);
+
+            for (var i = 0; i < 100; i++) {
+                // we create date objects here. In your data, you can have date strings
+                // and then set format of your dates using chart.dataDateFormat property,
+                // however when possible, use date objects, as this will speed up chart rendering.
+                var newDate = new Date(firstDate);
+                newDate.setDate(newDate.getDate() + i);
+
+                var visits = Math.round(Math.random() * 100) + 50;
+                var hits = Math.round(Math.random() * 100) + 50;
+                var views = Math.round(Math.random() * 100) + 50;
+
+                chartData.push({
+                    date: newDate,
+                    visits: visits,
+                    hits: hits,
+                    views: views
+                });
+            }
+            return chartData;
+        }
+
+        function zoomChart(){
+            chart.zoomToIndexes(chart.dataProvider.length - 20, chart.dataProvider.length - 1);
+        }
+    </script>
+</body>
+</html>
