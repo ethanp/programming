@@ -38,6 +38,7 @@ files.
 * Swappable algorithms, optimizations
 * Secure connection (SSL?), secure transfer (hashed chunks?), encrypted file
   chunks ("pieces")
+* Java has an API for *"watching"* a directory for changes, use that.
 
 ## Glossary Mapping
 
@@ -51,14 +52,6 @@ understand that
 | `P2PFile`     | torrent                           |
 
 ## The Basic Layout
-
-### New Idea for FileGroup
-
-* Contains an individual `List` of `seeders` for *each file chunk*
-* Not sure it needs a list of `leechers` *at all*
-* Leecheres can *timeout* on downloading file chunks, which would happen if a
-  seeder left the network.  At this point the client will be forced to ask the
-  `tracker` who to request the chunk from anew.
 
 ### Tracker
 

@@ -2,6 +2,7 @@ package p2p;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.net.Socket;
 import java.util.Collection;
 import java.util.Timer;
 import java.util.concurrent.TimeoutException;
@@ -15,11 +16,34 @@ import java.util.concurrent.TimeoutException;
  * TODO should this extend Thread or Callable<T> (e.g. Boolean?) or something?
  */
 public class P2PTransfer {
-    Peer from;
-    Peer to;
+
+    /* I'n not sure if Collection is the right thing here */
     Collection<Integer> chunkIdcs;
+
+    /* I'm not sure if Socket is the right thing here */
+    Socket from;
+    Socket to;
+
+
+    /* we can create the sockets in here, and Sockets have a configurable timeout parameter
+     * when you call
+     *
+     *      mySocket.connect(SocketAddress, Timeout)
+     *
+     */
     Timer timeoutTimer; // if connection times-out raise an Exception
+
     boolean run() throws TimeoutException {
+        throw new NotImplementedException();
+    }
+
+    P2PTransfer(Socket from, Socket to, Collection<Integer> chunkIds) {
+        this.from = from;
+        this.to = to;
+        this.chunkIdcs = chunkIds;
+    }
+
+    boolean sendChunk() {
         throw new NotImplementedException();
     }
 }

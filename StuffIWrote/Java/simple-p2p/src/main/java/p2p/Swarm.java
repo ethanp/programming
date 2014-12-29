@@ -1,5 +1,7 @@
 package p2p;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
@@ -16,5 +18,12 @@ public class Swarm {
             seedersByChunk[i] = new ConcurrentSkipListSet<>();
             seedersByChunk[i].add(initialSeeder);
         }
+    }
+
+    /**
+     * TODO for sending the seedersByChunk to a requesting client
+     */
+    public void serialized() {
+        throw new NotImplementedException();
     }
 }
