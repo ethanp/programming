@@ -1,6 +1,5 @@
-package p2p.server;
+package p2p;
 
-import p2p.file.P2PFile;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
@@ -20,16 +19,12 @@ import java.util.concurrent.Executors;
  * Ethan Petuchowski 12/29/14
  *
  * based on the PooledDaytimeServer in "Java Network Programming"
- *
- * TODO I could probably switch to the single-threaded version because all I need
- *         to do is receive a single request for a file-group's info, and respond.
- *      There is no need for a sustained-connection with any peers.
  */
-public class TrackerPool {
+public class Tracker {
 
     public final static int PORT = 13;
 
-    ConcurrentSkipListSet<FileGroup> fileGroups;
+    ConcurrentSkipListSet<Swarm> swarms;
 
     URL trackerURL; // TODO is this the right way to do this?
 
@@ -100,8 +95,3 @@ class TrackerTask implements Callable<Void> {
     }
 }
 
-class FileGroup {
-    P2PFile file;
-    ConcurrentSkipListSet<Peer> seeders;
-    ConcurrentSkipListSet<Peer> leechers;
-}
