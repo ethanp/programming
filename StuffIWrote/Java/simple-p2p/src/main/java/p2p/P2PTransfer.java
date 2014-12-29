@@ -23,6 +23,7 @@ public class P2PTransfer {
     /* I'm not sure if Socket is the right thing here */
     Socket from;
     Socket to;
+    P2PFile pFile;
 
 
     /* we can create the sockets in here, and Sockets have a configurable timeout parameter
@@ -37,10 +38,11 @@ public class P2PTransfer {
         throw new NotImplementedException();
     }
 
-    P2PTransfer(Socket from, Socket to, Collection<Integer> chunkIds) {
+    P2PTransfer(Socket from, Socket to, Collection<Integer> chunkIds, P2PFile pFile) {
         this.from = from;
         this.to = to;
         this.chunkIdcs = chunkIds;
+        this.pFile = pFile;
     }
 
     boolean sendChunk() {

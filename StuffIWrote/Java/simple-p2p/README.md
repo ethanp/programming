@@ -17,6 +17,13 @@ as I go.*  Currently, I don't really know much about file sharing or P2P.  I
 will be using a tracker-file, which is apparently the way BitTorrent tracks
 files.
 
+## New Route
+
+I'm going back to having the Tracker simply maintain a list of seeders, rather
+than seeders-by-chunk.  Then (eventually) the Client will have to query
+Seeders about which chunks are available, but for now Seeders will have the
+whole file.
+
 ## Fun-looking next-steps
 
 * Performance experiments

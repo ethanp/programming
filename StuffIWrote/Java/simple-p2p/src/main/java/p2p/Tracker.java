@@ -5,10 +5,10 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
  */
 public class Tracker {
 
-    public final static int PORT = 3456;
+    public final static int DEFAULT_PORT = 3456;
 
     static ConcurrentSkipListMap<String, Swarm> swarmsByFilename;
 
@@ -68,9 +68,8 @@ public class Tracker {
         @Override
         public Void call() throws RuntimeException {
             try {
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), /*autoflush:*/ true);
-                out.println("Hello peer");
+                in = Common.bufferedReader(socket);
+                out = Common.printWriter(socket);
 
                 String command = in.readLine();
 
@@ -79,14 +78,34 @@ public class Tracker {
                 }
 
                 switch (command) {
-                    case "locate": {
+                    case Common.ADD_FILE_CMD: {
                         String filename = in.readLine();
-                        String base64OfHash = in.readLine();
-                        byte[] rcvdDataHash = DatatypeConverter.parseBase64Binary(base64OfHash);
-                        // TODO lookup filename and hash in `swarms`
+                        String base64Digest = in.readLine();
+
+                        byte[] rcvdDigest = DatatypeConverter.parseBase64Binary(base64Digest);
+                        SocketAddress addr = socket.getRemoteSocketAddress();
                         if (swarmsByFilename.containsKey(filename)) {
                             Swarm swarm = swarmsByFilename.get(filename);
-                            if (Arrays.equals(swarm.file.sha256Digest, rcvdDataHash)) {
+                            if (Arrays.equals(swarm.pFileMetadata.sha256Digest, rcvdDigest)) {
+                                swarm.
+                            }
+                            else {
+                                throw new SecurityException("given hash didn't match");
+                            }
+                        }
+                        else {
+                            Swarm swarm = new Swarm(addr, filename)
+                        }
+
+                        break;
+                    }
+                    case "locate": {
+                        String filename = in.readLine();
+                        String base64Digest = in.readLine();
+                        byte[] rcvdDigest = DatatypeConverter.parseBase64Binary(base64Digest);
+                        if (swarmsByFilename.containsKey(filename)) {
+                            Swarm swarm = swarmsByFilename.get(filename);
+                            if (Arrays.equals(swarm.file.sha256Digest, rcvdDigest)) {
                                 // TODO send the swarm.seedersByChunk (somehow...)
                             }
                             else {

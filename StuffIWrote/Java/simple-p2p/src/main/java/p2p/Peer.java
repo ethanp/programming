@@ -1,21 +1,20 @@
 package p2p;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.Inet6Address;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
-import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * Ethan Petuchowski 12/29/14
@@ -26,15 +25,39 @@ import java.util.List;
  */
 public class Peer {
 
-    int DEFAULT_PORT = 2102;
+    static int DEFAULT_LISTEN_PORT = 2102;
     InetAddress ipAddr;
+    InetAddress knownTracker;
     Path localDir;
 
-    List<P2PTransfer> ongoingTransfers;
-    List<P2PFile> completeAndSeeding;
+    Set<P2PTransfer> ongoingTransfers = new ConcurrentSkipListSet<>();
+    Set<P2PFile> completeAndSeeding = new ConcurrentSkipListSet<>();
 
-    void informTrackerAboutFile(URL trackerURL, String filename) {
-        throw new NotImplementedException();
+
+    /** PUBLIC INTERFACE **/
+
+    /**
+     * @param pathString location of file to share
+     */
+    public void shareFile(String pathString) {
+        P2PFile sharedFile = new P2PFile(pathString);
+        completeAndSeeding.add(sharedFile);
+        informTrackerAboutFile(sharedFile);
+    }
+
+    public void setTracker(InetAddress trackerAddr) {
+        knownTracker = trackerAddr;
+    }
+
+    void informTrackerAboutFile(P2PFile file2Share) {
+        Socket toTracker = null;
+        try { toTracker = new Socket(knownTracker, Tracker.DEFAULT_PORT); }
+        catch (IOException e) { e.printStackTrace(); }
+        if (toTracker == null) { throw new RuntimeException("null tracker socket"); }
+        PrintWriter out = Common.printWriter(toTracker);
+        out.println(Common.ADD_FILE_CMD);
+        out.println(file2Share.filenameString());
+        out.println(file2Share.base64Digest());
     }
 
     Peer(String dirString) {
@@ -63,19 +86,20 @@ public class Peer {
         }
     }
 
-    void shareFile(String pathString) {
-        // TODO create a P2PFile and informTrackerAboutIt()
-    }
-
-    static class SeedTask extends Thread {
-        String filename;
-        Socket socket;
+    static class PeerListener {
+        P2PTransfer xfer;
+        int myListenPort;
+        ServerSocket socket;
         BufferedReader in;
         BufferedWriter out;
 
-        public SeedTask(String filename, Socket socket) {
-            this.filename = filename;
-            this.socket = socket;
+        public PeerListener(P2PTransfer xfer) {
+            this.xfer = xfer;
+
+            try {
+                this.socket = new ServerSocket(DEFAULT_LISTEN_PORT);
+            }
+            catch (IOException e) { e.printStackTrace(); }
             try {
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
