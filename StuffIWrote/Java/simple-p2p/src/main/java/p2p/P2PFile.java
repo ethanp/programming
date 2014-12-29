@@ -1,7 +1,6 @@
 package p2p;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-import sun.security.provider.SHA2;
 
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedInputStream;
@@ -72,10 +71,25 @@ public class P2PFile {
 }
 
 class Chunk {
-    byte[] bytes;
-    int sizeInBytes;
-    SHA2 dataHash;
-    SHA2 p2pFileHash;
+    static final int BYTES_PER_CHUNK = 1 << 10; // 1KB
+    byte[] data;
+    int numBytes;
+    byte[] chunkDigest;
+
+    Chunk(byte[] data, int len) {
+        this.data = data;
+        numBytes = len;
+        makeDigest();
+    }
+
+    void makeDigest() {
+        MessageDigest digest = null;
+        try { digest = MessageDigest.getInstance("SHA-256"); }
+        catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
+        if (digest == null) return;
+        digest.update(data, 0, numBytes);
+        chunkDigest = digest.digest();
+    }
 }
 
 class P2PFileMetadata {
@@ -86,6 +100,10 @@ class P2PFileMetadata {
 
     /* this is the thing you have to be able to obtain in a trustworthy manner */
     byte[] sha256Digest;
+
+    /* not used for metadata equality */
+    int numBytes = -1; // TODO fill these in
+    int numChunks = -1;
 
     P2PFileMetadata(String filename, InetAddress trackerAddr, byte[] sha256Digest) {
         this.filename = filename;

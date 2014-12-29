@@ -40,7 +40,7 @@ public class Peer {
      * @param pathString location of file to share
      */
     public void shareFile(String pathString) {
-        P2PFile sharedFile = new P2PFile(pathString);
+        P2PFile sharedFile = new P2PFile(pathString, knownTracker);
         completeAndSeeding.add(sharedFile);
         informTrackerAboutFile(sharedFile);
     }
@@ -100,27 +100,37 @@ public class Peer {
                 this.socket = new ServerSocket(DEFAULT_LISTEN_PORT);
             }
             catch (IOException e) { e.printStackTrace(); }
-            try {
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            }
-            catch (IOException e) { e.printStackTrace(); }
         }
 
-        @Override
-        public void run() {
+        static class PeerServeTask extends Thread {
 
-            // TODO no this is not supposed to just be an echo server
+            Socket socket;
+            BufferedReader in;
+            BufferedWriter out;
 
-            while (true) {
+            PeerServeTask() {
                 try {
-                    String msg = "Received: " + in.readLine();
-                    System.out.println(msg);
-                    out.write(msg);
-                    out.newLine();
-                    out.flush();
+                    in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                    out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
                 }
                 catch (IOException e) { e.printStackTrace(); }
+            }
+
+            @Override
+            public void run() {
+
+                // TODO no this is not supposed to just be an echo server
+
+                while (true) {
+                    try {
+                        String msg = "Received: "+in.readLine();
+                        System.out.println(msg);
+                        out.write(msg);
+                        out.newLine();
+                        out.flush();
+                    }
+                    catch (IOException e) { e.printStackTrace(); }
+                }
             }
         }
     }

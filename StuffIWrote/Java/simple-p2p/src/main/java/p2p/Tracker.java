@@ -9,8 +9,6 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +32,9 @@ public class Tracker {
     public static void main(String[] args) {
         System.out.println("Starting tracker/index server"); // TODO create a Logger
         ExecutorService pool = Executors.newFixedThreadPool(5);
-        try (ServerSocket listener = new ServerSocket(PORT)) {
+
+        // TODO try different ports if that one's taken
+        try (ServerSocket listener = new ServerSocket(DEFAULT_PORT)) {
             while (true) {
                 try {
                     Socket connection = listener.accept();
@@ -44,14 +44,14 @@ public class Tracker {
                     pool.submit(new TrackTask(connection));
                 }
                 catch (IOException ex) {
-                    System.out.println("Exception in tracker server main listen-loop");
-                    System.out.println(ex.getMessage());
+                    System.err.println("Exception in tracker server main listen-loop");
+                    System.err.println(ex.getMessage());
                 }
             }
         }
         catch (IOException ex) {
             System.err.println("Couldn't start server");
-            System.out.println(ex.getMessage());
+            System.err.println(ex.getMessage());
         }
     }
 
@@ -79,38 +79,40 @@ public class Tracker {
 
                 switch (command) {
                     case Common.ADD_FILE_CMD: {
-                        String filename = in.readLine();
-                        String base64Digest = in.readLine();
 
-                        byte[] rcvdDigest = DatatypeConverter.parseBase64Binary(base64Digest);
+                        P2PFileMetadata rcvdMeta = readMetadataFromSocket();
                         SocketAddress addr = socket.getRemoteSocketAddress();
+                        String filename = rcvdMeta.filename;
                         if (swarmsByFilename.containsKey(filename)) {
                             Swarm swarm = swarmsByFilename.get(filename);
-                            if (Arrays.equals(swarm.pFileMetadata.sha256Digest, rcvdDigest)) {
-                                swarm.
+                            if (swarm.pFileMetadata.equals(rcvdMeta)) {
+                                swarm.addSeeder(addr);
+                            }
+                            else {
+                                throw new SecurityException("metadata objects didn't match");
+                            }
+                        }
+                        else {
+                            swarmsByFilename.put(filename, new Swarm(addr, rcvdMeta));
+                        }
+                        break;
+                    }
+                    case "locate": {
+                        P2PFileMetadata rcvdMeta = readMetadataFromSocket();
+                        SocketAddress addr = socket.getRemoteSocketAddress();
+                        String filename = rcvdMeta.filename;
+                        if (swarmsByFilename.containsKey(filename)) {
+                            Swarm swarm = swarmsByFilename.get(filename);
+                            if (swarm.pFileMetadata.equals(rcvdMeta)) {
+                                // TODO send the swarm.seedersByChunk (somehow...)
                             }
                             else {
                                 throw new SecurityException("given hash didn't match");
                             }
                         }
                         else {
-                            Swarm swarm = new Swarm(addr, filename)
-                        }
-
-                        break;
-                    }
-                    case "locate": {
-                        String filename = in.readLine();
-                        String base64Digest = in.readLine();
-                        byte[] rcvdDigest = DatatypeConverter.parseBase64Binary(base64Digest);
-                        if (swarmsByFilename.containsKey(filename)) {
-                            Swarm swarm = swarmsByFilename.get(filename);
-                            if (Arrays.equals(swarm.file.sha256Digest, rcvdDigest)) {
-                                // TODO send the swarm.seedersByChunk (somehow...)
-                            }
-                            else {
-                                throw new SecurityException("given hash didn't match");
-                            }
+                            // TODO notify requesting Peer that file wasn't found
+                            throw new RuntimeException("swarm not found");
                         }
                         break;
                     }
@@ -120,7 +122,7 @@ public class Tracker {
 
             }
             catch (IOException ex) {
-                System.err.println(ex);
+                System.err.println(ex.getMessage());
             }
             finally {
                 try {
@@ -133,16 +135,17 @@ public class Tracker {
             return null;
         }
 
-        List<Peer> getSeedersForFile(P2PFile p2PFile) {
-            throw new NotImplementedException();
-        }
+        P2PFileMetadata readMetadataFromSocket() {
+            String filename = null;
+            String base64Digest = null;
+            try {
+                filename = in.readLine();
+                base64Digest = in.readLine();
+            }
+            catch (IOException e) { e.printStackTrace(); }
+            byte[] rcvdDigest = DatatypeConverter.parseBase64Binary(base64Digest);
 
-        List<P2PFile> listKnownFiles() {
-            throw new NotImplementedException();
-        }
-
-        boolean isTrackingFile(String filename) {
-            throw new NotImplementedException();
+            return new P2PFileMetadata(filename, socket.getInetAddress(), rcvdDigest);
         }
     }
 }
