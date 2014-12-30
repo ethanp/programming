@@ -1259,6 +1259,44 @@ the unit test.
 
 # Other things one simply must know about
 
+## Try with resources
+
+You used to have to do it [this way][jenkov twr]
+
+    InputStream input = null;
+    try {
+        input = new FileInputStream("file.txt");
+        int data = input.read();
+        // etc.
+    }
+    finally {
+        if (input != null) {
+            input.close();
+        }
+    }
+
+Now you can do it this way, which calls `close()` automagically
+
+    try (FileInputStream input = new FileInputStream("file.txt")) {
+        int data = input.read();
+        // etc.
+    }
+
+You may want to use *multiple* resources
+
+    try ( FileInputStream input = new FileInputStream("file.txt");
+          BufferedInputStream buffInput = new BufferedInputStream(input))
+    {
+        int data = buffInput.read();
+        // etc.
+    }
+
+You can make your own resource work in the `try-with-resources` construct by
+*implementing* `Autocloseable` and *overriding* `public void close() throws
+Exception { ... }`
+
+[jenkov twr]: http://tutorials.jenkov.com/java-exception-handling/try-with-resources.html
+
 ## Packages
 
 * These are for putting your objects inside another layer of namespacing

@@ -63,8 +63,6 @@ understand that
 ### Tracker
 
 * Has lists of peers seeding and leeching for each file
-    * In the , the node providing this
-      service is called an "index"
 * In the first, simplest iteration, it will just direct you to the seeders and
   initiate a download from them
     * E.g. 1/2 from one guy 1/2 from the other

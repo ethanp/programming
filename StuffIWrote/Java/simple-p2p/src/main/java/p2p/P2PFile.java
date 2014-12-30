@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -15,7 +16,7 @@ import java.util.Arrays;
 /**
  * Ethan Petuchowski 12/29/14
  */
-public class P2PFile {
+public class P2PFile implements Comparable<P2PFile> {
 
     /* Allowing P2PFile to be a Directory full of files is "future work",
      * as in I've never dealt with entire directories before so I'm leaving
@@ -32,7 +33,7 @@ public class P2PFile {
     }
 
     public String base64Digest() {
-        return DatatypeConverter.printBase64Binary(metadata.sha256Digest);
+        return metadata.base64Digest();
     }
 
     Chunk getChunkNum(int chunkNum) {
@@ -43,7 +44,7 @@ public class P2PFile {
         return dataChunks.length;
     }
 
-    P2PFile(String filename, InetAddress trackerAddr) {
+    P2PFile(String filename, InetSocketAddress trackerAddr) {
         byte[] shaDigest = P2PFile.getSha256(filename);
         metadata = new P2PFileMetadata(filename, trackerAddr, shaDigest);
     }
@@ -67,6 +68,11 @@ public class P2PFile {
         }
         catch (IOException e) {  e.printStackTrace(); }
         return digest.digest();
+    }
+
+    @Override
+    public int compareTo(P2PFile o) {
+        return metadata.compareTo(o.metadata);
     }
 }
 
@@ -92,11 +98,11 @@ class Chunk {
     }
 }
 
-class P2PFileMetadata {
+class P2PFileMetadata implements Comparable<P2PFileMetadata> {
     String filename;
 
     /* Allowing for multiple tracker URLs is probably easy, and left for future work */
-    InetAddress trackerAddr;
+    InetSocketAddress trackerAddr;
 
     /* this is the thing you have to be able to obtain in a trustworthy manner */
     byte[] sha256Digest;
@@ -105,7 +111,7 @@ class P2PFileMetadata {
     int numBytes = -1; // TODO fill these in
     int numChunks = -1;
 
-    P2PFileMetadata(String filename, InetAddress trackerAddr, byte[] sha256Digest) {
+    P2PFileMetadata(String filename, InetSocketAddress trackerAddr, byte[] sha256Digest) {
         this.filename = filename;
         this.trackerAddr = trackerAddr;
         this.sha256Digest = sha256Digest;
@@ -132,11 +138,34 @@ class P2PFileMetadata {
         return true;
     }
 
+
+    @Override
+    public int compareTo(P2PFileMetadata that) {
+
+        if (this.equals(that))
+            return 0;
+
+        if (!filename.equals(that.filename))
+            return filename.compareTo(that.filename);
+
+        if (trackerAddr.hashCode() == that.trackerAddr.hashCode())
+            return trackerAddr.hashCode() - that.trackerAddr.hashCode();
+
+        if (!base64Digest().equals(that.base64Digest()))
+            return base64Digest().compareTo(that.base64Digest());
+
+        return 0;
+    }
+
     @Override
     public int hashCode() {
         int result = filename != null ? filename.hashCode() : 0;
         result = 31*result+(trackerAddr != null ? trackerAddr.hashCode() : 0);
         result = 31*result+(sha256Digest != null ? Arrays.hashCode(sha256Digest) : 0);
         return result;
+    }
+
+    public String base64Digest() {
+        return DatatypeConverter.printBase64Binary(sha256Digest);
     }
 }

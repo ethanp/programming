@@ -6,6 +6,8 @@ import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
@@ -16,10 +18,8 @@ import java.util.concurrent.Executors;
 
 /**
  * Ethan Petuchowski 12/29/14
- * <p/>
- * based on the PooledDaytimeServer in "Java Network Programming"
  */
-public class Tracker {
+public class Tracker extends Thread {
 
     public final static int DEFAULT_PORT = 3456;
 
@@ -29,37 +29,57 @@ public class Tracker {
         throw new NotImplementedException();
     }
 
-    public static void main(String[] args) {
-        System.out.println("Starting tracker/index server"); // TODO create a Logger
-        ExecutorService pool = Executors.newFixedThreadPool(5);
+    ServerSocket listener;
 
-        // TODO try different ports if that one's taken
-        try (ServerSocket listener = new ServerSocket(DEFAULT_PORT)) {
-            while (true) {
-                try {
-                    Socket connection = listener.accept();
+    public InetSocketAddress getInetSocketAddr() {
 
-                    // To make the Task to *return* something
-                    // you have to write this a bit differently
-                    pool.submit(new TrackTask(connection));
-                }
-                catch (IOException ex) {
-                    System.err.println("Exception in tracker server main listen-loop");
-                    System.err.println(ex.getMessage());
-                }
-            }
-        }
+        InetAddress ia   = listener.getInetAddress();
+        int         port = listener.getLocalPort();
+
+        return new InetSocketAddress(ia, port);
+    }
+
+    ExecutorService pool = Executors.newFixedThreadPool(5);
+
+    public Tracker() {
+        try { listener = new ServerSocket(0); }
         catch (IOException ex) {
             System.err.println("Couldn't start server");
             System.err.println(ex.getMessage());
         }
     }
 
+    @Override
+    public void run() {
+        System.out.println("Starting tracker/index server"); // TODO create a Logger
+        while (true) {
+            try {
+                Socket connection = listener.accept();
+
+                // To make the Task to *return* something
+                // you have to write this a bit differently
+                pool.submit(new TrackTask(connection));
+            }
+            catch (IOException ex) {
+                System.err.println("Exception in tracker server main listen-loop");
+                System.err.println(ex.getMessage());
+            }
+        }
+
+    }
+
+
     static class TrackTask implements Callable<Void> {
 
         private Socket socket;
         BufferedReader in;
         PrintWriter out;
+
+        public InetSocketAddress getInetSocketAddr() {
+            InetAddress ia   = socket.getInetAddress();
+            int         port = socket.getLocalPort();
+            return new InetSocketAddress(ia, port);
+        }
 
         TrackTask(Socket socket) {
             this.socket = socket;
@@ -79,17 +99,17 @@ public class Tracker {
 
                 switch (command) {
                     case Common.ADD_FILE_CMD: {
-
                         P2PFileMetadata rcvdMeta = readMetadataFromSocket();
                         SocketAddress addr = socket.getRemoteSocketAddress();
                         String filename = rcvdMeta.filename;
+                        System.out.println("received add file cmd for "+filename);
                         if (swarmsByFilename.containsKey(filename)) {
                             Swarm swarm = swarmsByFilename.get(filename);
                             if (swarm.pFileMetadata.equals(rcvdMeta)) {
                                 swarm.addSeeder(addr);
                             }
                             else {
-                                throw new SecurityException("metadata objects didn't match");
+                                throw new SecurityException("metadata didn't match");
                             }
                         }
                         else {
@@ -107,7 +127,7 @@ public class Tracker {
                                 // TODO send the swarm.seedersByChunk (somehow...)
                             }
                             else {
-                                throw new SecurityException("given hash didn't match");
+                                throw new SecurityException("hash didn't match");
                             }
                         }
                         else {
@@ -145,7 +165,9 @@ public class Tracker {
             catch (IOException e) { e.printStackTrace(); }
             byte[] rcvdDigest = DatatypeConverter.parseBase64Binary(base64Digest);
 
-            return new P2PFileMetadata(filename, socket.getInetAddress(), rcvdDigest);
+
+            // TODO not sure I got the InetSocketAddr part right
+            return new P2PFileMetadata(filename, getInetSocketAddr(), rcvdDigest);
         }
     }
 }
