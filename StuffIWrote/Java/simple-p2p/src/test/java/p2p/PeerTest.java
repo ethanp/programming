@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 
@@ -63,7 +65,11 @@ public class PeerTest {
     public void testShareFileTrackerSwarm() throws Exception {
         shareSampleFile();
         P2PFileMetadata trueMeta = sampleP2PFile.metadata;
-        ConcurrentSkipListMap<String, Swarm> swarmMap = tracker.swarmsByFilename;
+        ConcurrentHashMap<String, Swarm> swarmMap = tracker.swarmsByFilename;
+
+        synchronized (swarmMap) {
+            swarmMap.wait();
+        }
         assertEquals(1, swarmMap.size());
         Swarm sampleSwarm = swarmMap.get(SAMPLE_FILENAME);
         assertEquals(1, sampleSwarm.seeders.size());

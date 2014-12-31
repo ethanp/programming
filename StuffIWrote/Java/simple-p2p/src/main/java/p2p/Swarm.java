@@ -2,7 +2,9 @@ package p2p;
 
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
@@ -11,14 +13,14 @@ import java.util.concurrent.ConcurrentSkipListSet;
 public class Swarm {
     /* this is where the DHT will live */
     P2PFileMetadata pFileMetadata;
-    ConcurrentSkipListSet<SocketAddress> seeders = new ConcurrentSkipListSet<>();
+    HashSet<InetSocketAddress> seeders = new HashSet<>();
 
-    Swarm(SocketAddress initialSeederAddress, P2PFileMetadata pFileMetadata) {
+    Swarm(InetSocketAddress initialSeederAddress, P2PFileMetadata pFileMetadata) {
         this.pFileMetadata = pFileMetadata;
         seeders.add(initialSeederAddress);
     }
 
-    void addSeeder(SocketAddress address) {
+    void addSeeder(InetSocketAddress address) {
         seeders.add(address);
     }
 

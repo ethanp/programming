@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -18,8 +18,10 @@ import java.util.concurrent.Executors;
  */
 public class Tracker extends Thread {
 
-    ConcurrentSkipListMap<String, Swarm> swarmsByFilename
-            = new ConcurrentSkipListMap<>();
+    // allocation parameters suggested here:
+    //  ria101.wordpress.com/2011/12/12/concurrenthashmap-avoid-a-common-misuse/
+    ConcurrentHashMap<String, Swarm> swarmsByFilename
+            = new ConcurrentHashMap<>(8, 0.9f, 1);
 
     public boolean isTrackingFilename(String filename) {
         return swarmsByFilename.containsKey(filename);
@@ -92,7 +94,7 @@ public class Tracker extends Thread {
                 switch (command) {
                     case Common.ADD_FILE_CMD: {
                         P2PFileMetadata rcvdMeta = readMetadataFromSocket();
-                        SocketAddress addr = socket.getRemoteSocketAddress();
+                        InetSocketAddress addr = socket.getRemoteSocketAddress();
                         String filename = rcvdMeta.filename;
                         System.out.println("received add file cmd for "+filename);
                         if (swarmsByFilename.containsKey(filename)) {
@@ -105,7 +107,18 @@ public class Tracker extends Thread {
                             }
                         }
                         else { /* no existing swarm for this filename */
-                            swarmsByFilename.put(filename, new Swarm(addr, rcvdMeta));
+
+                            try {
+                                Swarm swarm = new Swarm(addr, rcvdMeta);
+                                swarmsByFilename.put(filename, swarm);
+                                System.out.println("put finished");
+                                synchronized (swarmsByFilename) {
+                                    swarmsByFilename.notifyAll();
+                                }
+                            } catch (Exception e) {
+                                System.err.println(e.getMessage());
+                                System.err.println("Huhh?");
+                            }
                         }
                         break;
                     }
@@ -133,7 +146,9 @@ public class Tracker extends Thread {
 
             }
             catch (IOException ex) { System.err.println(ex.getMessage()); }
-            finally { try { socket.close(); } catch (IOException e) {/*ignore*/} }
+            finally {
+                try { socket.close(); }
+                catch (IOException e) { System.err.println(e.getMessage());} }
         }
 
         P2PFileMetadata readMetadataFromSocket() {
