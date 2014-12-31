@@ -30,13 +30,15 @@ whole file.
     * Find the bottlenecks in different scenarios
         * When is the tracker-server the bottleneck?
     * TCP vs UDP
-* **DHT** -- note that this would *replace* the *"tracker"* system
+* **DHT** -- note that this would *replace* the *"tracker"* system, making it
+  fully *decentralized (!)*
     * BitTorrent uses *Mainline DHT*
         * [Wikipedia](http://en.wikipedia.org/wiki/Mainline_DHT)
         * [Protocol spec draft](http://bittorrent.org/beps/bep_0005.html)
     * Which is based on *Kademlia* (Maziéres!)
         * [Wikipedia](http://en.wikipedia.org/wiki/Kademlia)
         * [Research article](http://www.cs.rice.edu/Conferences/IPTPS02/109.pdf)
+    * Makes use of *magnet links*
 * Enhance a `P2PFile` to allow
     * a directory rather than just a file
     * download using multiple trackers (field `List<Tracker>` instead of

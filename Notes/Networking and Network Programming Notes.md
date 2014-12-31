@@ -302,6 +302,59 @@ Uses XML, kind of old-school now, but I guess enterprises use it?
 
 From 1968, an unencrypted-but-otherwise-SSH-like protocol
 
+### SIP (Session Initiation Protocol)
+
+* A text-based *session (application) layer* *signaling* *communications
+  protocol* from 1996 for controlling e.g. Voice/Video Over IP for two-party
+  ("unicast") or multiparty ("multicast") *sessions*, as well as file transfer
+  and online games; runs over over TCP, UDP, or SCTP
+    * Defines messages for establishment, termination, and other essential
+      elements of a call liike changing addresses or ports, inviting more
+      participants, and adding or deleting media streams
+    * The media itself is transmitted over another application protocol,
+      RTP/RTP (Real-time Transport Protocol) *(see below)*
+    * Like HTTP, each transaction consists of a client request invoking a
+      particular method/function on the server, and at least one response;
+      most devices can perform both the client and server roles, where caller
+      is recipient and callee is server
+    * Request methods include REGISTER, `INVITE`, `ACK`, `CANCEL`, `BYE`, and
+      `OPTIONS`
+    * Response codees include Provisional (`1xx`), Success (`2xx`),
+      Redirection (`3xx`), Client Error (`4xx`), Server Error (`5xx`), and
+      Global Failure (`6xx`)
+    * Reuses most of the header fields, encoding rules, and status codes of
+      HTTP
+    * Each resource in a SIP network as a URI with the format
+      `sip:username:password@host:port`, or `sips:` for secure transmission
+      via TLS
+* **Signaling** --- message to inform receiver of a message to be sent
+    * E.g. to establish a telecommunication circuit
+* **Communications Protocol** --- system of digital rules for data exchange
+  within or between computers.
+    * Well-defined message formats with exact meaning provided by a specified
+      syntax, semantics, and synchronization of communication
+* **Communication session** --- "semi-permanent interactive information
+  interchange between 2+ devices" (lol). *Established* and *terminated* at
+  specific points in time.
+
+### RTP (Real-time Transfer Protocol)
+
+* Defines a standardized packet format for delivering audio and video over IP
+* Often uses RTCP (RTP Control Protocol) for monitoring quality of service
+  (QoS) and SIP (Session Initiation Protocol) *(see above)* for setting up
+  connections across the network
+* Designed for end-to-end, *real-time* transfer of *stream* data, provides
+  *jitter* compensation and detection of out of sequence data arrival. Allows
+  use of IP *multicast*.
+    * **Jitter** --- deviation from true periodicity of a presumed periodic
+      signal (e.g. variation of packet latency). Dejitterizers use a buffer.
+    * **Real-time** programs *must guarantee* response within strict time
+      constraints aka "deadlinees"
+    * **Streaming media** --- bresented to end-user *while* being delivered by
+      provider
+* Tolerates some packet loss to achieve goal of real-time multimedia streaming
+* Generally uses UDP and not TCP
+
 ## Miscellaneous
 
 ### Router vs. Switch

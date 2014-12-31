@@ -1,7 +1,5 @@
 package p2p;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +9,6 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -21,12 +18,11 @@ import java.util.concurrent.Executors;
  */
 public class Tracker extends Thread {
 
-    public final static int DEFAULT_PORT = 3456;
+    ConcurrentSkipListMap<String, Swarm> swarmsByFilename
+            = new ConcurrentSkipListMap<>();
 
-    static ConcurrentSkipListMap<String, Swarm> swarmsByFilename;
-
-    public static String contactInfo() {
-        throw new NotImplementedException();
+    public boolean isTrackingFilename(String filename) {
+        return swarmsByFilename.containsKey(filename);
     }
 
     ServerSocket listener;
@@ -55,9 +51,6 @@ public class Tracker extends Thread {
         while (true) {
             try {
                 Socket connection = listener.accept();
-
-                // To make the Task to *return* something
-                // you have to write this a bit differently
                 pool.submit(new TrackTask(connection));
             }
             catch (IOException ex) {
@@ -65,11 +58,10 @@ public class Tracker extends Thread {
                 System.err.println(ex.getMessage());
             }
         }
-
     }
 
 
-    static class TrackTask implements Callable<Void> {
+    class TrackTask extends Thread {
 
         private Socket socket;
         BufferedReader in;
@@ -86,7 +78,7 @@ public class Tracker extends Thread {
         }
 
         @Override
-        public Void call() throws RuntimeException {
+        public void run() throws RuntimeException {
             try {
                 in = Common.bufferedReader(socket);
                 out = Common.printWriter(socket);
@@ -94,7 +86,7 @@ public class Tracker extends Thread {
                 String command = in.readLine();
 
                 if (command == null) {
-                    throw new RuntimeException("COMMAND WAS NULL");
+                    throw new RuntimeException("null command");
                 }
 
                 switch (command) {
@@ -112,7 +104,7 @@ public class Tracker extends Thread {
                                 throw new SecurityException("metadata didn't match");
                             }
                         }
-                        else {
+                        else { /* no existing swarm for this filename */
                             swarmsByFilename.put(filename, new Swarm(addr, rcvdMeta));
                         }
                         break;
@@ -131,8 +123,7 @@ public class Tracker extends Thread {
                             }
                         }
                         else {
-                            // TODO notify requesting Peer that file wasn't found
-                            throw new RuntimeException("swarm not found");
+                            out.println("swarm not found");
                         }
                         break;
                     }
@@ -141,21 +132,13 @@ public class Tracker extends Thread {
                 }
 
             }
-            catch (IOException ex) {
-                System.err.println(ex.getMessage());
-            }
-            finally {
-                try {
-                    socket.close();
-                }
-                catch (IOException e) {
-                    // ignore;
-                }
-            }
-            return null;
+            catch (IOException ex) { System.err.println(ex.getMessage()); }
+            finally { try { socket.close(); } catch (IOException e) {/*ignore*/} }
         }
 
         P2PFileMetadata readMetadataFromSocket() {
+            // can't use try-with-resources with String
+            // because it doesn't implement `AutoCloseable`
             String filename = null;
             String base64Digest = null;
             try {
@@ -164,9 +147,6 @@ public class Tracker extends Thread {
             }
             catch (IOException e) { e.printStackTrace(); }
             byte[] rcvdDigest = DatatypeConverter.parseBase64Binary(base64Digest);
-
-
-            // TODO not sure I got the InetSocketAddr part right
             return new P2PFileMetadata(filename, getInetSocketAddr(), rcvdDigest);
         }
     }
