@@ -440,7 +440,7 @@ E.g.
 
 
 
-# Java concurrency
+# Java synchronization & concurrency
 
 * The programmer must ensure read and write access to objects is properly
   coordinated (or "synchronized") between threads
@@ -458,6 +458,22 @@ E.g.
     * “If you write a variable which may next be read by another thread, or
       you read a variable which may have last been written by another thread,
       you must use synchronization.”
+* Definitions are hazy
+    * **Synchronization** --- generally means sharing data between multiple
+      processors or threads
+    * **Concurrency** refers to a measure of (or the art of improving) how
+      effectively an application allows multiple jobs required by that
+      application (e.g. serving web page requests from a web server) to run
+      simultaneously.
+* Java is generally a good choice of language for multiprocessor applications,
+  both because of in-built concepts fundamental to the language and because of
+  a relatively rich concurrency library provided from Java 5 onwards.
+
+#### Refs
+
+* [javamex][jm sync intro]
+
+[jm sync intro]: http://www.javamex.com/tutorials/synchronization_concurrency_1.shtml
 
 ## Thread Objects
 
@@ -734,8 +750,16 @@ The interface looks like:
 
 ## Synchronized
 
-Synchronization prevents *race conditions* (threads stepping on each other's
-toes, accessing corrupt shared data).
+* Synchronization prevents *race conditions* (threads stepping on each other's
+  toes, accessing corrupt shared data).
+* Unless told otherwise (using a `synchronized` block or `volatile`), threads
+  may work on locally cached copies of variables (e.g. `count`), updating the
+  "main" copy when it suits them. For the reasons having to do with processor
+  architecture, they may also *re-order reads and writes*, so a variable may
+  not actually get updated when otherwise expected. However, *on entry to and
+  exit from* blocks `synchronized` on a particular object, the
+  entering/exiting thread also effectively *synchronizes* copies of all
+  variables with "main memory" (aka. the Java heap, as seen by the JVM)
 
 ### Block vs Method
 
@@ -781,6 +805,12 @@ Two Effects:
 2. Exiting the method establishes a happens-before relationship with
    subsequent invocations for the same object
 
+#### Refs
+
+1. [Synchronized overview][snc ovr]
+
+[snc ovr]: http://www.javamex.com/tutorials/synchronization_concurrency_synchronized1.shtml
+
 ### Other
 
 * Constructors cannot be `synchronized`
@@ -815,16 +845,67 @@ Two Effects:
 
 ## Volatile Fields
 
+* Indicates that a variable's value will be modified by different threads.
 * Lock-free mechanism for synchronizing access to an instance field
-* Guarantees a thread access will read its *current* value, instead of a
-  cached value
-* Does not provide update atomicity so you *can* still have *race conditions*
+* Declaring a `volatile` Java variable means:
+    * The value of this variable will never be cached thread-locally: all
+      reads and writes will go straight to "main memory"
+    * This shows what it does
+
+            volatile int i;
+            ...
+            i += 5;
+
+        Is basically equivalent to:
+
+            // Note that we can't literally synchronize on an int primitive!
+            int temp;
+            synchronized (i) { temp = i; }
+            temp += 5;
+            synchronized (i) { i = temp; }
+
+        Note! Although it may look it, **the operation i += 5 is *not atomic***. If
+        that's what you want, you should probably use `AtomicInteger` instead.
+* The value of a `volatile` field becomes *visible to all **readers*** (other
+  threads in particular, aka *consistent*) *after a **write** operation
+  completes* on it
+    * Without `volatile`, readers could see some non-updated value
+
+| **Category**                  | `synchronized(thing)` | `volatile`            |
+| ----------------------------: | :-------------------- | :-------------------- |
+| works on **primitive** types  | no                    | yes                   |
+| can **block**                 | yes                   | no (no lock involved) |
+| can be `null`                 | no                    | yes                   |
+| provides **atomicity**        | no                    | no                    |
+
+#### Refs
+
+* [Volatile Tutorial][vol tut]
+* [Jamex's Common Volatile Bugs][jmx vol bug]
+
+[vol tut]: http://www.javamex.com/tutorials/synchronization_volatile.shtml
+[jmx vol bug]: http://www.javamex.com/tutorials/synchronization_volatile_dangers.shtml
+
+## Final variables
+
+* Basically a `const` in C++
+* Remember the whole double-checked locking thing? Well, apparently, "`final`
+  can be used to make sure that when you construct an object, another thread
+  accessing that object doesn't see that object in a partially-constructed
+  state, as could otherwise happen"
+
+#### Refs
+
+* [Final Tutorial][fin tut]
+
+[fin tut]: http://www.javamex.com/tutorials/synchronization_final.shtml
 
 ## Atomics
 
-In package `java.util.concurrent.atomic` there is (e.g.) `AtomicInteger` which
-  has atomic methods `in/decrementAndGet()`, meaning you can safely use it as
-  a *shared counter* without any synchronization.
+* `AtomicInteger` `AtomicLong` `AtomicIntegerArray` `AtomicReferenceArray`
+* In package `java.util.concurrent.atomic`, they have atomic methods
+  `in/decrementAndGet()`, meaning you can safely use e.g. `AtomicInteger` as a
+  *shared counter* without any synchronization.
 
 ## Concurrent Data Structures
 
@@ -870,6 +951,72 @@ Other
 
     CopyOnWriteArrayList
     CopyOnWriteArraySet
+
+### ConcurrentHashMap
+
+| **Feature** | `Collections.synchronizedMap(Map)`  | ConcurrentHashMap |
+| ----------: | :---------------------------------  | :---------------- |
+| Allows multiple concurrent readers            | yes | yes |
+| Must synchronize while iterating through      | yes | no  |
+| Allows (tunable) multiple concurrent writers  | no  | yes |
+
+* In cases in which multiple threads are expected to access a common
+  collection, "Concurrent" versions are normally preferable.
+* Updates to these things are **not *atomic***, but we can provide atomicity
+  in three simple ways
+    * Use the `putIfAbsent(K,V)` method
+    * `synchronize` the whole updating method
+    * Use the `replace()` method like a sort of *compare-and-swap* like the
+      following real-live piece of "optimistic concurrency via compare-and-
+      swap"
+
+            private void incrementCount(String q) {
+            Integer oldVal, newVal;
+                do {
+                  oldVal = queryCounts.get(q);
+                  newVal = (oldVal == null) ? 1 : (oldVal + 1);
+                } while (!queryCounts.replace(q, oldVal, newVal));
+            }
+
+#### How does it work?
+
+* Has a field `Segment[]` whose size is the 3rd constructor parameter
+  ("`concurrencyLevel`")
+    * Each `Segment` contains a `HashEntry<K,V>[] hashTable` whose size
+      is \\(\frac{\mathrm{totalSize}_{(1^{st}param)}}{\mathrm{numSegments}_{(3^{rd}param)}}\\)
+* When you go to write it, you *first* hash into the correct `Segment` and
+  *only lock that one*
+
+#### Refs
+
+1. [Java2Blog Tutorial][chm tut]
+2. [Oracle's Package Concurrent Summary][Java ccrt]
+3. [ConcurrentHashMaps on Jamex][chmj]
+
+[Java ccrt]: http://docs.oracle.com/javase/1.5.0/docs/api/java/util/concurrent/package-summary.html
+[chm tut]: http://www.java2blog.com/2014/12/concurrenthashmap-in-java.html
+[chmj]: http://www.javamex.com/tutorials/synchronization_concurrency_8_hashmap2.shtml
+
+### Collections.synchronized(Collection|List|Map|Set|SortedMap|SortedSet)()
+
+* See table nearby for comparison with `ConcurrentHashMap`
+* Wrapping a `Map` with Collections.synchronizedMap(myMap) makes it *safe* to
+  access the map concurrently: each call to `get()`, `put()`, `size()`,
+  `containsKey()` etc will synchronize on the map during the call
+* Note that **this doesn't make updates to the `Map` *atomic***, but it does
+  make it *safe*. That is, concurrent calls to update will never leave the
+  `Map` in a *corrupted state*. But they might 'miss a count' from time to
+  time.
+    * For example, two threads could concurrently read a current value of,
+      say, 2 for a particular query, both independently increment it to 3, and
+      both set it to 3, when in fact two queries have been made.
+    * The same is true of the [above] `ConcurrentHashMap`, though we can fix
+      that (above)
+
+#### Refs
+
+1. [ConcurrentHashMaps Jamex][chmj]
+
 
 ## Callables, Futures, Thread Pools
 
@@ -1565,6 +1712,32 @@ It can be used to access enclosing instances from within a nested class:
 
 This is a 3rd party library for downloading and traversing Web content which
 looks quite friendly.
+
+## Snippet to search int array for available port
+
+[From Stackoverflow][find port]
+
+[find port]: http://stackoverflow.com/questions/2675362/how-to-find-an-available-port
+
+    public ServerSocket create(int[] ports) throws IOException {
+        for (int port : ports) {
+            try {
+                return new ServerSocket(port);
+            }
+            catch (IOException ex) {
+                continue; /* try next port */
+            }
+        }
+        throw new IOException("no free port found");
+    }
+
+Use it like so:
+
+    try {
+        ServerSocket s = create(new int[] { 3843, 4584, 4843 });
+        System.out.println("listening on port: " + s.getLocalPort());
+    }
+    catch (IOException ex) { System.err.println("no available ports"); }
 
 # Java from 2,000 feet
 
