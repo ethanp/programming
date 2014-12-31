@@ -113,16 +113,44 @@ latex footer:   mmd-memoir-footer
           loss or data corruption)
     * Receiver responds with an ACK message as it receives the packet
     * The actual algorithm is not in these notes at this time.
+* **TCP Connection** --- 2 *sockets* (one on each end) (*sockets defined
+  below*)
 
-### Sockets & Ports
+### Sockets
+
+* **Network Socket** --- endpt of interprocess communication across a network
+* **Internet Socket** --- unique combination of
+
+        localSocketAddress + remoteSocketAddress + protocol
+* **Socket Address** --- `ipAddress + port`
+* **Socket descriptor** --- `int` that references the socket within the OS
+    * The OS uses this to strip the routing info and forward the data to the
+      stream-reader object within the application
+* The normal **socket API** is based on the **Berkeley sockets** standard
+    * This is the origin of such actions as
+        * `socket()` --- construct socket and allocate OS resources to it
+          (e.g. slot in descriptor table)
+        * `bind()` (server side) --- associate socket with IP addr + port
+        * `listen()` (server side) --- TCP socket enters "listening" state
+        * `connect()` (client side) --- associate socket to local port number;
+          and for TCP, attempt to establish TCP connection
+        * `accept()` (server side) --- accept attempt to create a new TCP
+          connection, and create a new socket for it
+        * `send() recv() write() read()` etc. --- self-explanatory
+        * `close()` --- release resources allocated to socket; for TCP close
+          connection
+        * `gethostbyname() gethostbyaddr()` --- resolve host names and
+          addresses
+        * `select()` --- wait for one or more provided sockets to be ready to
+          read or write or retrieve errors from
+        * `poll()` --- test if socket can be read from, written to, or if
+          there are errors to retrieve
+        * `get`/`setsockopt()` --- get/set socket options
+
+#### Ports
 
 * Ports have a number between 1 and 65,535 (2 bytes)
 * Ports up to 1023 are reserved for *well-known services*
-* **TCP Socket** --- endpoint of a Connection
-    * `(IP-Address) + (Port Number)`
-    * An application can shove a message into it, or receive a message from it
-* **TCP Port** --- *location* to which packets are shipped
-* **TCP Connection** --- 2 sockets (one on each end)
 * Each connection between a client and server requires its own unique socket.
 * You can send a message to a server by sending to it's **IP adress**,
 * You append a **port number** to make sure your message gets "demultiplexed"
@@ -356,6 +384,15 @@ From 1968, an unencrypted-but-otherwise-SSH-like protocol
 * Generally uses UDP and not TCP
 
 ## Miscellaneous
+
+### Overlay Network
+
+* A network built on top another network
+* A link between 2 nodes in the overlay may require multiple links in the underlying network
+* The Internet was originally an overlay upon the telephone network.  Today,
+  VoIP is the vice-versa.
+* Distributed systems such as peer-to-peer networks and client-server
+  applications are overlays over the Internet
 
 ### Router vs. Switch
 

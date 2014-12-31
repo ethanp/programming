@@ -86,6 +86,39 @@ understand that
 4. `Peer` downloads a file from *two* seeders
 5. Using my two laptops and 2+ school computers, time-test it against `rsync`
 
+## Other notes on how BitTorrent works
+
+### Torrent File
+
+* No actual content, just *metadata*
+* Tracker, filenames, sizes, folder structure, cryptographic hashes for
+  verifying file integrity (specifically SHA-1)
+* Then client asks trackers about who the peers in the swarm for this file are
+
+Format
+
+    {
+        'announce': 'trackerurl',
+        'info':
+        {
+            'name': 'outermost-dir-name',
+            'piece length': total-number-of-bytes,
+            'files':
+            [
+                {'path': ['path/to/file.txt'], 'length': numBytes},
+                {'path': ...}
+            ],
+            'pieces': 'cryptographic-hash-of-everything'
+        }
+    }
+
+### Operation
+
+* Segments are downloaded in a random or "rarest-first" order, ensuring high
+  availability
+* There are a number of *policies* for deciding how much bandwidth to use for
+  each seeder/leecher pairing
+
 ## References
 
 1. **[Computer Networks Class Project][figueroa's project]**
@@ -96,7 +129,11 @@ understand that
    "IMing"
 4. When the time comes, there's a bunch of great-looking papers in the
    [*Harvard* **P2P Systems** Course][harvard p2p]
+5. [Final official standard specification][spec]
+6. [Longer-winded specification explanation][spec wiki]
 
+[spec wiki]: https://wiki.theory.org/BitTorrentSpecification
+[spec]:http://bittorrent.org/beps/bep_0003.html
 [figueroa's project]: https://github.com/ethanp/p2p-downloader
 [toal's tut]: http://cs.lmu.edu/~ray/notes/javanetexamples/#chat
 [harvard p2p]: http://www.eecs.harvard.edu/~mema/courses/cs264/cs264.html
