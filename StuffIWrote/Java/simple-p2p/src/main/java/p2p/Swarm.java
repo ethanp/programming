@@ -3,12 +3,13 @@ package p2p;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.net.InetSocketAddress;
-import java.net.SocketAddress;
 import java.util.HashSet;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
- * One of these is held for each P2PFile maintained by a Tracker
+ * - One of these is held for each P2PFile maintained by a Tracker
+ *
+ * - When a peer wants to download,
+ *   he receives the addresses of all the seeders contained within
  */
 public class Swarm {
     /* this is where the DHT will live */

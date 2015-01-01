@@ -3,11 +3,10 @@ package p2p;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.HashMap;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ConcurrentSkipListSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -25,11 +24,9 @@ public class PeerTest {
     public void setUp() throws Exception {
         tracker = new Tracker();
         tracker.start();
-        InetSocketAddress trackerAddr = tracker.getInetSocketAddr();
-
         peer = new Peer();
+        InetSocketAddress trackerAddr = tracker.getInetSocketAddr();
         peer.setTracker(trackerAddr);
-
         sampleP2PFile = new P2PFile(SAMPLE_FILENAME, trackerAddr);
     }
 
@@ -75,5 +72,20 @@ public class PeerTest {
         assertEquals(1, sampleSwarm.seeders.size());
         P2PFileMetadata savedMeta = sampleSwarm.pFileMetadata;
         assertEquals(trueMeta, savedMeta);
+
+
+        // TODO (at some point, figure out whether to fix this)
+        // this fails because saved IP is "internal" vrsn
+        // I'm not sure whether to hack some fix to this or not because
+        // it really depends on whether the tracker's socket.getRemoteAddress()
+        // in some sort of "production" environment would see the internal or
+        // external address, and I have no idea what happens in that situation.
+
+//        InetAddress myExternalIPAddr = Common.findMyIP();
+//        Iterator<InetSocketAddress> it = sampleSwarm.seeders.iterator();
+//        InetSocketAddress savedSockAddrOfPeerInSwarm = it.next();
+//        InetAddress savedIPAddrOfPeerInSwarm = savedSockAddrOfPeerInSwarm.getAddress();
+
+//        assertEquals(myExternalIPAddr, savedIPAddrOfPeerInSwarm);
     }
 }

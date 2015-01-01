@@ -20,8 +20,15 @@ public class Tracker extends Thread {
 
     // allocation parameters suggested here:
     //  ria101.wordpress.com/2011/12/12/concurrenthashmap-avoid-a-common-misuse/
+    //
+    // The first one        is for how big you think it'll get
+    // The second           is for how often it'll grow?? Not really sure.
+    // The third/last one   is for how many concurrent writers you think you'll have
+    //
     ConcurrentHashMap<String, Swarm> swarmsByFilename
             = new ConcurrentHashMap<>(8, 0.9f, 1);
+
+    InetAddress localIPAddr = Common.findMyIP();
 
     public boolean isTrackingFilename(String filename) {
         return swarmsByFilename.containsKey(filename);
@@ -30,17 +37,13 @@ public class Tracker extends Thread {
     ServerSocket listener;
 
     public InetSocketAddress getInetSocketAddr() {
-
-        InetAddress ia   = listener.getInetAddress();
-        int         port = listener.getLocalPort();
-
-        return new InetSocketAddress(ia, port);
+        return new InetSocketAddress(localIPAddr, listener.getLocalPort());
     }
 
     ExecutorService pool = Executors.newFixedThreadPool(5);
 
     public Tracker() {
-        try { listener = new ServerSocket(0); }
+        try { listener = new ServerSocket(3456); } // 3000-3500 go to me
         catch (IOException ex) {
             System.err.println("Couldn't start server");
             System.err.println(ex.getMessage());
@@ -70,9 +73,7 @@ public class Tracker extends Thread {
         PrintWriter out;
 
         public InetSocketAddress getInetSocketAddr() {
-            InetAddress ia   = socket.getInetAddress();
-            int         port = socket.getLocalPort();
-            return new InetSocketAddress(ia, port);
+            return new InetSocketAddress(localIPAddr, listener.getLocalPort());
         }
 
         TrackTask(Socket socket) {
@@ -94,13 +95,14 @@ public class Tracker extends Thread {
                 switch (command) {
                     case Common.ADD_FILE_CMD: {
                         P2PFileMetadata rcvdMeta = readMetadataFromSocket();
-                        InetSocketAddress addr = socket.getRemoteSocketAddress();
+                        SocketAddress peerAddr = socket.getRemoteSocketAddress();
+                        InetSocketAddress peerIPAddr = (InetSocketAddress) peerAddr;
                         String filename = rcvdMeta.filename;
                         System.out.println("received add file cmd for "+filename);
                         if (swarmsByFilename.containsKey(filename)) {
                             Swarm swarm = swarmsByFilename.get(filename);
                             if (swarm.pFileMetadata.equals(rcvdMeta)) {
-                                swarm.addSeeder(addr);
+                                swarm.addSeeder(peerIPAddr);
                             }
                             else {
                                 throw new SecurityException("metadata didn't match");
@@ -109,15 +111,18 @@ public class Tracker extends Thread {
                         else { /* no existing swarm for this filename */
 
                             try {
-                                Swarm swarm = new Swarm(addr, rcvdMeta);
+                                Swarm swarm = new Swarm(peerIPAddr, rcvdMeta);
                                 swarmsByFilename.put(filename, swarm);
                                 System.out.println("put finished");
+
+                                // TODO this is for testing, what should I do about it?
                                 synchronized (swarmsByFilename) {
                                     swarmsByFilename.notifyAll();
                                 }
                             } catch (Exception e) {
                                 System.err.println(e.getMessage());
-                                System.err.println("Huhh?");
+                                System.err.println("Huh?");
+                                System.exit(Common.StatusCodes.NO_INTERNET.ordinal());
                             }
                         }
                         break;

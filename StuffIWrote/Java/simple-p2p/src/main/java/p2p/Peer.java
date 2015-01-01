@@ -11,6 +11,7 @@ import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -27,9 +28,9 @@ import java.util.concurrent.Executors;
  */
 public class Peer {
 
-    /** FIELDS **/
+    /** FIELDS * */
 
-    InetAddress ipAddr;
+    InetAddress ipAddr = Common.findMyIP();
     Path localDir;
 
     InetSocketAddress trkAddr;
@@ -42,7 +43,6 @@ public class Peer {
 
     Peer(String dirString) {
         localDir = Paths.get(dirString);
-        findMyIP();
     }
 
     Peer() {
@@ -72,29 +72,10 @@ public class Peer {
             out.println(file2Share.filenameString());
             out.println(file2Share.base64Digest());
         }
-        catch (IOException e) { e.printStackTrace(); }
-    }
-
-
-    void findMyIP() {
-        URL aws = null;
-        try { aws = new URL("http://checkip.amazonaws.com"); }
-        catch (MalformedURLException e) { e.printStackTrace(); }
-        BufferedReader in = null;
-        try {
-            if (aws != null) {
-                in = new BufferedReader(new InputStreamReader(aws.openStream()));
-                String ip = in.readLine();
-                ipAddr = InetAddress.getByName(ip);
-            }
+        catch (UnknownHostException e) {
+            System.err.println("Peer ");
         }
         catch (IOException e) { e.printStackTrace(); }
-        finally {
-            if (in != null) {
-                try { in.close(); }
-                catch (IOException e) { e.printStackTrace(); }
-            }
-        }
     }
 
     static class PeerListener extends Thread {
@@ -104,15 +85,17 @@ public class Peer {
             ExecutorService threadPool = Executors.newFixedThreadPool(50);
 
             // "0" finds a free port: stackoverflow.com/questions/2675362
-            try (ServerSocket listener = new ServerSocket(0)) {
+            // and I was using that, but I just set my router to forward 3-3.5K to me
+            try (ServerSocket listener = new ServerSocket(3242)) {
                 while (true) {
                     Socket conn = listener.accept();
                     threadPool.submit(new PeerServeTask(conn));
                 }
             }
             catch (IOException e) {
-                System.err.println("Couldn't start server");
+                System.err.println("Peer not connected to Internet: can't contact tracker");
                 e.printStackTrace();
+                System.exit(Common.StatusCodes.NO_INTERNET.ordinal());
             }
         }
 
