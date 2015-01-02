@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.InetSocketAddress;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -97,20 +98,34 @@ public class PeerTest {
     @Test
     public void peer1SharePeer2List() throws Exception {
         shareSampleFile();
-        SortedSet<String> receivedFileList = peer2.listTracker();
-        SortedSet<String> trueFileList = new TreeSet<>();
-        trueFileList.add(SAMPLE_FILENAME+" 1");
+        SortedSet<P2PFileMetadata> receivedFileList = peer2.listSavedTracker();
+        SortedSet<P2PFileMetadata> trueFileList = new TreeSet<>();
+        trueFileList.add(sampleP2PFile.metadata);
         assertEquals(trueFileList, receivedFileList);
+    }
+
+    @Test
+    public void testGetSeedersForFile() throws Exception {
+        shareSampleFile();
+        Set<InetSocketAddress> peerIPs =
+                peer2.getSeedersForFile(sampleP2PFile.metadata, peer2.trkAddr);
+        InetSocketAddress peerAddr = peer.
+        System.out.println(peerIPs);
     }
 
     // TODO write this test and implement the functionality
     @Test
     public void peer1SharePeer2Download() throws Exception {
-
-        // peer 1 shares file
         shareSampleFile();
+        P2PFile dldFile = peer2.downloadFromSavedTracker(sampleP2PFile.metadata);
+        assertEquals(sampleP2PFile, dldFile);
+    }
 
-        // create peer 2
-
+    @Test
+    public void peer1SharePeer2ListThenDownload() throws Exception {
+        shareSampleFile();
+        SortedSet<P2PFileMetadata> receivedFileList = peer2.listSavedTracker();
+        P2PFile dldFile = peer2.downloadFromSavedTracker(receivedFileList.first());
+        assertEquals(sampleP2PFile, dldFile);
     }
 }

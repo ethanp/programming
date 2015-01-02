@@ -1,11 +1,15 @@
 package p2p;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.EOFException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -73,44 +77,106 @@ public class Peer {
     /**
      * list "filename numSeeders" for each file of this peer's default tracker
      */
-    public SortedSet<String> listTracker() {
+    public SortedSet<P2PFileMetadata> listSavedTracker() {
         return listTracker(trkAddr);
     }
 
     /**
      * list "filename numSeeders" for each file of the tracker at the given address
      */
-    public SortedSet<String> listTracker(InetSocketAddress trackerAddr) {
-        SortedSet<String> theListing = new TreeSet<>();
+    public SortedSet<P2PFileMetadata> listTracker(InetSocketAddress trackerAddr) {
+        SortedSet<P2PFileMetadata> theListing = new TreeSet<>();
         try (Socket trkr = new Socket(trackerAddr.getAddress(), trkAddr.getPort())) {
             PrintWriter out = Common.printWriter(trkr);
-            BufferedReader in = Common.bufferedReader(trkr);
-            out.println(Common.LIST_FILES_CMD);
 
-            // I thinks basically this will keep reading until
-            // the connection is closed BY THE SERVER
-            String line;
-            while ((line = in.readLine()) != null) {
-                log.info("List File Item: "+line);
-                theListing.add(line);
+            /* we *must* create an OOS *before* an OIS
+             * stackoverflow.com/questions/5658089 */
+            out.println(Common.LIST_FILES_CMD);
+            ObjectOutputStream objOut = new ObjectOutputStream(trkr.getOutputStream());
+            objOut.flush();
+            ObjectInputStream objIn = new ObjectInputStream(trkr.getInputStream());
+
+            P2PFileMetadata metadata;
+            int numPeers;
+            /* we *must* catch EOFException for flow-control on readObject()
+             * stackoverflow.com/questions/12684072 */
+            while (true) {
+                metadata = (P2PFileMetadata) objIn.readObject();
+                log.debug(objIn.available());
+                numPeers = objIn.readInt();
+
+                // LowPriorityTODO: should I do something with the numPeers var?
+
+                log.printf(Level.INFO,
+                           "List File Item: %s; %d peer(s)\n",
+                           metadata.filename, numPeers);
+
+                theListing.add(metadata);
             }
         }
-        catch (IOException e) { e.printStackTrace(); }
+        catch (EOFException e) {
+            log.info("done receiving file list");
+        }
+        catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
         return theListing;
+    }
+
+    /**
+     * Download P2PFile from this Peer's saved Tracker.
+     * @param fileMetadata a metadata object corresponding to the file to request
+     * @return the P2PFile corresponding to filename
+     */
+    public P2PFile downloadFromSavedTracker(P2PFileMetadata fileMetadata) {
+        return download(fileMetadata, trkAddr);
+    }
+
+    /**
+     * @param fileMetadata a metadata object corresponding to the file to request
+     * @param trackerAddr the IPAddr:Port of the Tracker from which to download
+     * @return the P2PFile corresponding to "filename"
+     */
+    public P2PFile download(P2PFileMetadata fileMetadata,
+                            InetSocketAddress trackerAddr) {
+        Set<InetSocketAddress> seeders = getSeedersForFile(fileMetadata, trackerAddr);
+        return null;
     }
 
 
     /** PRIVATE METHODS **/
 
+    // package-local so it can be tested
+    Set<InetSocketAddress> getSeedersForFile(P2PFileMetadata fileMetadata,
+                                             InetSocketAddress trackerAddr) {
+        Set<InetSocketAddress> toRet = null;
+        try (Socket trkrS = Common.socketAtAddr(trackerAddr)) {
+            PrintWriter writer = Common.printWriter(trkrS);
+            writer.println(Common.GET_SEEDERS_CMD);
+            ObjectOutputStream oos = Common.objectOStream(trkrS);
+            ObjectInputStream ois = Common.objectIStream(trkrS);
+            oos.writeObject(fileMetadata);
+            Object obj = ois.readObject();
+            if (obj instanceof Common.StatusCodes) {
+                Common.StatusCodes status = (Common.StatusCodes) obj;
+                if (status.equals(Common.StatusCodes.SWARM_NOT_FOUND)) {
+
+                }
+                if (status.equals(Common.StatusCodes.METADATA_MISMATCH)) {
+
+                }
+            }
+            toRet = (Set<InetSocketAddress>) obj;
+
+        }
+        catch (ClassNotFoundException | IOException e) { e.printStackTrace(); }
+        return toRet;
+    }
+
     private void informTrackerAboutFile(P2PFile file2Share) {
-        try (Socket trkr = new Socket(trkAddr.getAddress(), trkAddr.getPort())) {
+        try (Socket trkr = Common.socketAtAddr(trkAddr)) {
             PrintWriter out = Common.printWriter(trkr);
             out.println(Common.ADD_FILE_CMD);
             out.println(file2Share.filenameString());
             out.println(file2Share.base64Digest());
-        }
-        catch (UnknownHostException e) {
-            log.error("Peer ");
         }
         catch (IOException e) { e.printStackTrace(); }
     }

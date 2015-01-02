@@ -6,6 +6,8 @@ import org.apache.logging.log4j.Logger;
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -30,6 +32,9 @@ public class Tracker extends Thread {
     // The first one        is for how big you think it'll get
     // The second           is for how often it'll grow?? Not really sure.
     // The third/last one   is for how many concurrent writers you think you'll have
+    //
+    // LowPriorityTODO note this structure means we can have at most one swarm for each filename
+    //                  this is probably a GOOD THING though
     //
     ConcurrentHashMap<String, Swarm> swarmsByFilename
             = new ConcurrentHashMap<>(8, 0.9f, 1);
@@ -98,13 +103,15 @@ public class Tracker extends Thread {
                     throw new RuntimeException("null command");
                 }
 
+                log.info("received command: "+command);
+
                 switch (command) {
+                    /* TODO maybe each of these case blocks should be a separate method */
                     case Common.ADD_FILE_CMD: {
                         P2PFileMetadata rcvdMeta = readMetadataFromSocket();
                         SocketAddress peerAddr = socket.getRemoteSocketAddress();
                         InetSocketAddress peerIPAddr = (InetSocketAddress) peerAddr;
                         String filename = rcvdMeta.filename;
-                        log.info("received add file cmd for "+filename);
                         if (swarmsByFilename.containsKey(filename)) {
                             Swarm swarm = swarmsByFilename.get(filename);
                             if (swarm.pFileMetadata.equals(rcvdMeta)) {
@@ -119,9 +126,9 @@ public class Tracker extends Thread {
                             try {
                                 Swarm swarm = new Swarm(peerIPAddr, rcvdMeta);
                                 swarmsByFilename.put(filename, swarm);
-                                log.info("put finished");
 
                                 // TODO this is for testing, what should I do about it?
+                                // TODO see if the test passes WITHOUT this now
                                 synchronized (swarmsByFilename) {
                                     swarmsByFilename.notifyAll();
                                 }
@@ -134,29 +141,42 @@ public class Tracker extends Thread {
                         break;
                     }
                     case Common.LIST_FILES_CMD: {
+                        ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
+                        objOut.flush();
                         for (Map.Entry<String, Swarm> entry : swarmsByFilename.entrySet()) {
-                            String filename = entry.getKey();
+                            objOut.writeObject(entry.getValue().pFileMetadata);
                             int swarmSize = entry.getValue().numSeeders();
-                            out.printf("%s %d\n", filename, swarmSize);
+                            objOut.writeInt(swarmSize);
+                            objOut.flush(); // otw writeInt isn't written for some reason.
                         }
                         break;
                     }
                     case Common.GET_SEEDERS_CMD: {
-                        P2PFileMetadata rcvdMeta = readMetadataFromSocket();
-                        SocketAddress addr = socket.getRemoteSocketAddress();
+
+                        /**
+                         * read a P2PFileMetadata object
+                         * return SWARM_NOT_FOUND -- if it's name doesn't match any known swarm
+                         * return METADATA_MISMATCH -- if the metadata itself is incorrect for this file name
+                         * return Set<InetSocketAddress> -- otw
+                         */
+
+                        ObjectOutputStream objOut = Common.objectOStream(socket);
+                        ObjectInputStream objIn = Common.objectIStream(socket);
+                        P2PFileMetadata rcvdMeta = (P2PFileMetadata) objIn.readObject();
                         String filename = rcvdMeta.filename;
-                        if (swarmsByFilename.containsKey(filename)) {
-                            Swarm swarm = swarmsByFilename.get(filename);
-                            if (swarm.pFileMetadata.equals(rcvdMeta)) {
-                                // TODO (...something...)
-                            }
-                            else {
-                                throw new SecurityException("hash didn't match");
-                            }
+                        Swarm swarm = swarmsByFilename.get(filename);
+
+                        if (swarm == null) {
+                            objOut.writeObject(Common.StatusCodes.SWARM_NOT_FOUND);
+                            break;
                         }
-                        else {
-                            out.println("swarm not found");
+
+                        if (!swarm.pFileMetadata.equals(rcvdMeta)) {
+                            objOut.writeObject(Common.StatusCodes.METADATA_MISMATCH);
+                            break;
                         }
+
+                        objOut.writeObject(swarm.getSeeders());
                         break;
                     }
                     default:
@@ -165,6 +185,7 @@ public class Tracker extends Thread {
 
             }
             catch (IOException ex) { log.error(ex.getMessage()); }
+            catch (ClassNotFoundException e) { e.printStackTrace(); }
             finally {
                 try { socket.close(); }
                 catch (IOException e) { log.error(e.getMessage());} }

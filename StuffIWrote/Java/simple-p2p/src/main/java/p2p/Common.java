@@ -7,9 +7,12 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
 import java.net.Socket;
 import java.net.URL;
@@ -23,7 +26,11 @@ public class Common {
 
     public enum StatusCodes {
         SUCCESS,
-        NO_INTERNET
+        NO_INTERNET,
+        SWARM_FOUND,
+        SWARM_NOT_FOUND,
+        METADATA_MISMATCH,
+        METADATA_MATCH
     }
 
     static final String ADD_FILE_CMD = "add file";
@@ -48,6 +55,15 @@ public class Common {
         return null;
     }
 
+    static ObjectOutputStream objectOStream(Socket s) throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
+        oos.flush();
+        return oos;
+    }
+
+    static ObjectInputStream objectIStream(Socket s) throws IOException {
+        return new ObjectInputStream(s.getInputStream());
+    }
 
     static InetAddress findMyIP() {
         URL aws = null;
@@ -72,5 +88,11 @@ public class Common {
             }
         }
         return toRet;
+    }
+
+    static Socket socketAtAddr(InetSocketAddress addr) {
+        try { return new Socket(addr.getAddress(), addr.getPort()); }
+        catch (IOException e) { e.printStackTrace(); }
+        return null;
     }
 }

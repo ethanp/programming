@@ -9,6 +9,7 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.security.MessageDigest;
@@ -103,7 +104,7 @@ class Chunk {
     }
 }
 
-class P2PFileMetadata implements Comparable<P2PFileMetadata> {
+class P2PFileMetadata implements Comparable<P2PFileMetadata>, Serializable {
 
     static final Logger log = LogManager.getLogger(P2PFileMetadata.class.getName());
 
