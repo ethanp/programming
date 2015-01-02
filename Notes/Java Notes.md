@@ -125,7 +125,16 @@ Here is an example (tested) configuration
         </Loggers>
     </Configuration>
 
+#### Usage
 
+Make a field in the class like
+
+    static final Logger log = LogManager.getLogger(MyClassName.class.getName());
+
+Then use it like
+
+    log.info("I've come back now to release this info")
+    log.error("brah, you messed up.")
 
 # Collections
 

@@ -86,13 +86,12 @@ public class Peer {
             PrintWriter out = Common.printWriter(trkr);
             BufferedReader in = Common.bufferedReader(trkr);
             out.println(Common.LIST_FILES_CMD);
-            out.close();
 
             // I thinks basically this will keep reading until
             // the connection is closed BY THE SERVER
             String line;
             while ((line = in.readLine()) != null) {
-                log.info("Gettin jiggy wit "+line);
+                log.info("List File Item: "+line);
                 theListing.add(line);
             }
         }

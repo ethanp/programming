@@ -3,13 +3,12 @@ package p2p;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.Iterator;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 public class PeerTest {
@@ -98,7 +97,10 @@ public class PeerTest {
     @Test
     public void peer1SharePeer2List() throws Exception {
         shareSampleFile();
-        peer2.listTracker();
+        SortedSet<String> receivedFileList = peer2.listTracker();
+        SortedSet<String> trueFileList = new TreeSet<>();
+        trueFileList.add(SAMPLE_FILENAME+" 1");
+        assertEquals(trueFileList, receivedFileList);
     }
 
     // TODO write this test and implement the functionality
