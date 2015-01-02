@@ -16,7 +16,7 @@ public class PeerTest {
 
     static final String SAMPLE_FILENAME = "asdfile";
 
-    Peer peer;
+    Peer peer, peer2;
     Tracker tracker;
     P2PFile sampleP2PFile;
 
@@ -24,9 +24,15 @@ public class PeerTest {
     public void setUp() throws Exception {
         tracker = new Tracker();
         tracker.start();
-        peer = new Peer();
+
         InetSocketAddress trackerAddr = tracker.getInetSocketAddr();
+
+        peer = new Peer();
         peer.setTracker(trackerAddr);
+
+        peer2 = new Peer();
+        peer2.setTracker(trackerAddr);
+
         sampleP2PFile = new P2PFile(SAMPLE_FILENAME, trackerAddr);
     }
 
@@ -69,7 +75,7 @@ public class PeerTest {
         }
         assertEquals(1, swarmMap.size());
         Swarm sampleSwarm = swarmMap.get(SAMPLE_FILENAME);
-        assertEquals(1, sampleSwarm.seeders.size());
+        assertEquals(1, sampleSwarm.numSeeders());
         P2PFileMetadata savedMeta = sampleSwarm.pFileMetadata;
         assertEquals(trueMeta, savedMeta);
 
@@ -87,5 +93,22 @@ public class PeerTest {
 //        InetAddress savedIPAddrOfPeerInSwarm = savedSockAddrOfPeerInSwarm.getAddress();
 
 //        assertEquals(myExternalIPAddr, savedIPAddrOfPeerInSwarm);
+    }
+
+    @Test
+    public void peer1SharePeer2List() throws Exception {
+        shareSampleFile();
+        peer2.listTracker();
+    }
+
+    // TODO write this test and implement the functionality
+    @Test
+    public void peer1SharePeer2Download() throws Exception {
+
+        // peer 1 shares file
+        shareSampleFile();
+
+        // create peer 2
+
     }
 }

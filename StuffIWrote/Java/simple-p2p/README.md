@@ -26,11 +26,11 @@ whole file.
 
 ## Fun-looking next-steps
 
-* Performance experiments
+1. Performance experiments
     * Find the bottlenecks in different scenarios
         * When is the tracker-server the bottleneck?
     * TCP vs UDP
-* **DHT** -- note that this would *replace* the *"tracker"* system, making it
+2. **DHT** -- note that this would *replace* the *"tracker"* system, making it
   fully *decentralized (!)*
     * BitTorrent uses *Mainline DHT*
         * [Wikipedia](http://en.wikipedia.org/wiki/Mainline_DHT)
@@ -39,15 +39,17 @@ whole file.
         * [Wikipedia](http://en.wikipedia.org/wiki/Kademlia)
         * [Research article](http://www.cs.rice.edu/Conferences/IPTPS02/109.pdf)
     * Makes use of *magnet links*
-* Enhance a `P2PFile` to allow
+3. Enhance a `P2PFile` to allow
     * a directory rather than just a file
     * download using multiple trackers (field `List<Tracker>` instead of
       `Tracker`)
     * Cryptographic hash values for verifying file integrity
-* Swappable algorithms, optimizations
-* Secure connection (SSL?), secure transfer (hashed chunks?), encrypted file
+4. Swappable algorithms, optimizations
+5. Secure connection (SSL?), secure transfer (hashed chunks?), encrypted file
   chunks ("pieces")
-* Java has an API for *"watching"* a directory for changes, use that.
+6. Java has an API for *"watching"* a directory for changes, use that.
+7. Use JDBC or something to have the Tracker class store swarms in a *"real"*
+  DB rather than hash tables
 
 ## Glossary Mapping
 

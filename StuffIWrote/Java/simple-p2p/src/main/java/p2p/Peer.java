@@ -1,20 +1,22 @@
 package p2p;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -27,6 +29,8 @@ import java.util.concurrent.Executors;
  *      Servers for seeding
  */
 public class Peer {
+
+    static final Logger log = LogManager.getLogger(Peer.class.getName());
 
     /** FIELDS * */
 
@@ -42,6 +46,7 @@ public class Peer {
     /** CONSTRUCTORS **/
 
     Peer(String dirString) {
+        log.info("creating peer");
         localDir = Paths.get(dirString);
     }
 
@@ -64,6 +69,39 @@ public class Peer {
     public void setTracker(InetSocketAddress trackerAddr) {
         this.trkAddr = trackerAddr;
     }
+
+    /**
+     * list "filename numSeeders" for each file of this peer's default tracker
+     */
+    public SortedSet<String> listTracker() {
+        return listTracker(trkAddr);
+    }
+
+    /**
+     * list "filename numSeeders" for each file of the tracker at the given address
+     */
+    public SortedSet<String> listTracker(InetSocketAddress trackerAddr) {
+        SortedSet<String> theListing = new TreeSet<>();
+        try (Socket trkr = new Socket(trackerAddr.getAddress(), trkAddr.getPort())) {
+            PrintWriter out = Common.printWriter(trkr);
+            BufferedReader in = Common.bufferedReader(trkr);
+            out.println(Common.LIST_FILES_CMD);
+            out.close();
+
+            // I thinks basically this will keep reading until
+            // the connection is closed BY THE SERVER
+            String line;
+            while ((line = in.readLine()) != null) {
+                System.out.println("Gettin jiggy wit "+line);
+                theListing.add(line);
+            }
+        }
+        catch (IOException e) { e.printStackTrace(); }
+        return theListing;
+    }
+
+
+    /** PRIVATE METHODS **/
 
     private void informTrackerAboutFile(P2PFile file2Share) {
         try (Socket trkr = new Socket(trkAddr.getAddress(), trkAddr.getPort())) {

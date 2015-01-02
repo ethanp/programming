@@ -22,7 +22,8 @@ public class Common {
     }
 
     static final String ADD_FILE_CMD = "add file";
-    static final String LOCATE_CMD = "locate";
+    static final String LIST_FILES_CMD = "list tracked files";
+    static final String GET_SEEDERS_CMD = "get seeders for file";
 
     static BufferedReader bufferedReader(Socket s) {
         try { return new BufferedReader(new InputStreamReader(s.getInputStream())); }

@@ -1,5 +1,8 @@
 package p2p;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.xml.bind.DatatypeConverter;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,6 +12,7 @@ import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketAddress;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +21,8 @@ import java.util.concurrent.Executors;
  * Ethan Petuchowski 12/29/14
  */
 public class Tracker extends Thread {
+
+    static final Logger log = LogManager.getLogger(Tracker.class.getName());
 
     // allocation parameters suggested here:
     //  ria101.wordpress.com/2011/12/12/concurrenthashmap-avoid-a-common-misuse/
@@ -127,14 +133,22 @@ public class Tracker extends Thread {
                         }
                         break;
                     }
-                    case "locate": {
+                    case Common.LIST_FILES_CMD: {
+                        for (Map.Entry<String, Swarm> entry : swarmsByFilename.entrySet()) {
+                            String filename = entry.getKey();
+                            int swarmSize = entry.getValue().numSeeders();
+                            out.printf("%s %d\n", filename, swarmSize);
+                        }
+                        break;
+                    }
+                    case Common.GET_SEEDERS_CMD: {
                         P2PFileMetadata rcvdMeta = readMetadataFromSocket();
                         SocketAddress addr = socket.getRemoteSocketAddress();
                         String filename = rcvdMeta.filename;
                         if (swarmsByFilename.containsKey(filename)) {
                             Swarm swarm = swarmsByFilename.get(filename);
                             if (swarm.pFileMetadata.equals(rcvdMeta)) {
-                                // TODO send the swarm.seedersByChunk (somehow...)
+                                // TODO (...something...)
                             }
                             else {
                                 throw new SecurityException("hash didn't match");
@@ -171,5 +185,3 @@ public class Tracker extends Thread {
         }
     }
 }
-
-
