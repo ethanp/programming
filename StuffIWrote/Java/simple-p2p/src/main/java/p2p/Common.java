@@ -1,5 +1,8 @@
 package p2p;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,6 +18,8 @@ import java.net.URL;
  * Ethan Petuchowski 12/29/14
  */
 public class Common {
+
+    static final Logger log = LogManager.getLogger(Common.class.getName());
 
     public enum StatusCodes {
         SUCCESS,
@@ -58,7 +63,7 @@ public class Common {
             }
         }
         catch (IOException e) {
-            System.err.println("Peer not connected to Internet: can't find its IP");
+            log.error("Peer not connected to Internet: can't find its IP");
         }
         finally {
             if (in != null) {

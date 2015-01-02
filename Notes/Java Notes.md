@@ -38,7 +38,9 @@ From the [Github Wiki & Tutorial][]
 [JUnit Homepage]: http://junit.org/
 [Github Wiki & Tutorial]: https://github.com/junit-team/junit/wiki
 
-## Logger
+## Logging
+
+### Java Standard Logger
 
 1. Has different settable *levels*
     1. SEVERE, WARNING, INFO, CONFIG, FINE, FINER, FINEST
@@ -46,7 +48,7 @@ From the [Github Wiki & Tutorial][]
 3. An app can have multiple loggers
 4. By default logging configuration is done in a configuration file
 
-### Simple Usage
+#### Simple Usage
 
 For example executing
 
@@ -64,7 +66,7 @@ Calling
 before executing any log statements from the Global Logger would suppress all
 logging.
 
-### Next Level
+#### Next Level
 
 Define your own logger
 
@@ -82,6 +84,48 @@ You log at a particular level with
 
 There's more to it, but I've never wished I knew anything more than what's
 already written above.
+
+### Log4J-2
+
+#### Components
+
+1. **logger** --- logs the messages
+2. **appender** --- publishes messages to outputs
+    1. **RollingFileAppender** --- the basic appender that writes log messages
+       to *files* following a configured rollover (??) strategy
+3. **layout** --- formats log messages
+
+#### Configuration
+
+Configure *components* [above] in `log4j2.xml` in `src/main/resources`.
+
+Possible log-levels are (most to least logging)
+
+    ALL, DEBUG, INFO, WARN, ERROR, FATAL, OFF
+
+Here is an example (tested) configuration
+
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!-- if you turn this to ALL you'll get a LOT of msgs from random crap -->
+    <Configuration status="WARN">
+        <Appenders>
+            <Console name="CONSOLE" target="SYSTEM_OUT">
+                <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+            </Console>
+        </Appenders>
+        <Loggers>
+            <Root level="error">
+                <AppenderRef ref="Console" />
+            </Root>
+            <!-- NOTE! name="full.package.name" -->
+            <logger name="p2p" level="ALL" />
+            <Root level="ERROR">
+                <AppenderRef ref="CONSOLE"/>
+            </Root>
+        </Loggers>
+    </Configuration>
+
+
 
 # Collections
 

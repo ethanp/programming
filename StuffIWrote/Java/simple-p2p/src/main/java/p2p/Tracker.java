@@ -51,22 +51,22 @@ public class Tracker extends Thread {
     public Tracker() {
         try { listener = new ServerSocket(3456); } // 3000-3500 go to me
         catch (IOException ex) {
-            System.err.println("Couldn't start server");
-            System.err.println(ex.getMessage());
+            log.error("Couldn't start server");
+            log.error(ex.getMessage());
         }
     }
 
     @Override
     public void run() {
-        System.out.println("Starting tracker/index server"); // TODO create a Logger
+        log.info("Starting tracker/index server"); // TODO create a Logger
         while (true) {
             try {
                 Socket connection = listener.accept();
                 pool.submit(new TrackTask(connection));
             }
             catch (IOException ex) {
-                System.err.println("Exception in tracker server main listen-loop");
-                System.err.println(ex.getMessage());
+                log.error("Exception in tracker server main listen-loop");
+                log.error(ex.getMessage());
             }
         }
     }
@@ -104,7 +104,7 @@ public class Tracker extends Thread {
                         SocketAddress peerAddr = socket.getRemoteSocketAddress();
                         InetSocketAddress peerIPAddr = (InetSocketAddress) peerAddr;
                         String filename = rcvdMeta.filename;
-                        System.out.println("received add file cmd for "+filename);
+                        log.info("received add file cmd for "+filename);
                         if (swarmsByFilename.containsKey(filename)) {
                             Swarm swarm = swarmsByFilename.get(filename);
                             if (swarm.pFileMetadata.equals(rcvdMeta)) {
@@ -119,15 +119,15 @@ public class Tracker extends Thread {
                             try {
                                 Swarm swarm = new Swarm(peerIPAddr, rcvdMeta);
                                 swarmsByFilename.put(filename, swarm);
-                                System.out.println("put finished");
+                                log.info("put finished");
 
                                 // TODO this is for testing, what should I do about it?
                                 synchronized (swarmsByFilename) {
                                     swarmsByFilename.notifyAll();
                                 }
                             } catch (Exception e) {
-                                System.err.println(e.getMessage());
-                                System.err.println("Huh?");
+                                log.error(e.getMessage());
+                                log.error("Huh?");
                                 System.exit(Common.StatusCodes.NO_INTERNET.ordinal());
                             }
                         }
@@ -164,10 +164,10 @@ public class Tracker extends Thread {
                 }
 
             }
-            catch (IOException ex) { System.err.println(ex.getMessage()); }
+            catch (IOException ex) { log.error(ex.getMessage()); }
             finally {
                 try { socket.close(); }
-                catch (IOException e) { System.err.println(e.getMessage());} }
+                catch (IOException e) { log.error(e.getMessage());} }
         }
 
         P2PFileMetadata readMetadataFromSocket() {

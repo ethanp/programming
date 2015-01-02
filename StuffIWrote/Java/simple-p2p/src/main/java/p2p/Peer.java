@@ -92,7 +92,7 @@ public class Peer {
             // the connection is closed BY THE SERVER
             String line;
             while ((line = in.readLine()) != null) {
-                System.out.println("Gettin jiggy wit "+line);
+                log.info("Gettin jiggy wit "+line);
                 theListing.add(line);
             }
         }
@@ -111,7 +111,7 @@ public class Peer {
             out.println(file2Share.base64Digest());
         }
         catch (UnknownHostException e) {
-            System.err.println("Peer ");
+            log.error("Peer ");
         }
         catch (IOException e) { e.printStackTrace(); }
     }
@@ -131,7 +131,7 @@ public class Peer {
                 }
             }
             catch (IOException e) {
-                System.err.println("Peer not connected to Internet: can't contact tracker");
+                log.error("Peer not connected to Internet: can't contact tracker");
                 e.printStackTrace();
                 System.exit(Common.StatusCodes.NO_INTERNET.ordinal());
             }
@@ -158,7 +158,7 @@ public class Peer {
                 while (true) {
                     try {
                         String msg = "Received: "+in.readLine();
-                        System.out.println(msg);
+                        log.info(msg);
                         out.write(msg);
                         out.newLine();
                         out.flush();

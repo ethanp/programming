@@ -1,5 +1,7 @@
 package p2p;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.net.Socket;
@@ -16,6 +18,9 @@ import java.util.concurrent.TimeoutException;
  * TODO should this extend Thread or Callable<T> (e.g. Boolean?) or something?
  */
 public class P2PTransfer {
+
+        static final Logger log = LogManager.getLogger(P2PTransfer.class.getName());
+
 
     /* I'n not sure if Collection is the right thing here */
     Collection<Integer> chunkIdcs;

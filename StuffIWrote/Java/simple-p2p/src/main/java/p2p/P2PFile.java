@@ -1,5 +1,7 @@
 package p2p;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.xml.bind.DatatypeConverter;
@@ -17,6 +19,9 @@ import java.util.Arrays;
  * Ethan Petuchowski 12/29/14
  */
 public class P2PFile implements Comparable<P2PFile> {
+
+    static final Logger log = LogManager.getLogger(P2PFile.class.getName());
+
 
     /* Allowing P2PFile to be a Directory full of files is "future work",
      * as in I've never dealt with entire directories before so I'm leaving
@@ -99,6 +104,9 @@ class Chunk {
 }
 
 class P2PFileMetadata implements Comparable<P2PFileMetadata> {
+
+    static final Logger log = LogManager.getLogger(P2PFileMetadata.class.getName());
+
     String filename;
 
     /* Allowing for multiple tracker URLs is probably easy, and left for future work */
