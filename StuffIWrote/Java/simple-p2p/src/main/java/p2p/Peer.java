@@ -15,7 +15,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -38,7 +37,7 @@ public class Peer {
 
     /** FIELDS * */
 
-    InetAddress ipAddr = Common.findMyIP();
+    InetAddress externalIPAddr = Common.findMyIP();
     Path localDir;
 
     InetSocketAddress trkAddr;
@@ -46,12 +45,15 @@ public class Peer {
     Set<P2PTransfer> ongoingTransfers = new ConcurrentSkipListSet<>();
     Set<P2PFile> completeAndSeeding = new ConcurrentSkipListSet<>();
 
+    PeerListener listenerThread;
 
     /** CONSTRUCTORS **/
 
     Peer(String dirString) {
         log.info("creating peer");
         localDir = Paths.get(dirString);
+        listenerThread = new PeerListener();
+        new Thread(listenerThread).start();
     }
 
     Peer() {
@@ -72,6 +74,10 @@ public class Peer {
 
     public void setTracker(InetSocketAddress trackerAddr) {
         this.trkAddr = trackerAddr;
+    }
+
+    public int getListeningPort() {
+        return listenerThread.listeningPort;
     }
 
     /**
@@ -175,21 +181,28 @@ public class Peer {
         try (Socket trkr = Common.socketAtAddr(trkAddr)) {
             PrintWriter out = Common.printWriter(trkr);
             out.println(Common.ADD_FILE_CMD);
-            out.println(file2Share.filenameString());
-            out.println(file2Share.base64Digest());
+            ObjectOutputStream oos = Common.objectOStream(trkr);
+            ObjectInputStream ois = Common.objectIStream(trkr);
+            oos.writeObject(new InetSocketAddress(externalIPAddr,
+                                                  listenerThread.listeningPort));
+            oos.writeObject(file2Share.metadata);
         }
         catch (IOException e) { e.printStackTrace(); }
     }
 
     static class PeerListener extends Thread {
 
+        int listeningPort;
+
         @Override
         public void run() {
+
             ExecutorService threadPool = Executors.newFixedThreadPool(50);
 
             // "0" finds a free port: stackoverflow.com/questions/2675362
             // and I was using that, but I just set my router to forward 3-3.5K to me
-            try (ServerSocket listener = new ServerSocket(3242)) {
+            try (ServerSocket listener = Common.socketPortInRange(Common.PORT_MIN, Common.PORT_MAX)) {
+                listeningPort = listener.getLocalPort();
                 while (true) {
                     Socket conn = listener.accept();
                     threadPool.submit(new PeerServeTask(conn));

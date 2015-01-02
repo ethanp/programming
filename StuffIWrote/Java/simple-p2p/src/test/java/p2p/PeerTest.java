@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.net.InetSocketAddress;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -58,6 +59,9 @@ public class PeerTest {
     @Test
     public void testShareFileTrackerTrackingName() throws Exception {
         shareSampleFile();
+        synchronized (tracker.swarmsByFilename) {
+            tracker.swarmsByFilename.wait();
+        }
         assertTrue(tracker.isTrackingFilename(SAMPLE_FILENAME));
     }
 
@@ -109,8 +113,11 @@ public class PeerTest {
         shareSampleFile();
         Set<InetSocketAddress> peerIPs =
                 peer2.getSeedersForFile(sampleP2PFile.metadata, peer2.trkAddr);
-        InetSocketAddress peerAddr = peer.
-        System.out.println(peerIPs);
+        InetSocketAddress peerSocketAddr =
+                new InetSocketAddress(peer.externalIPAddr, peer.getListeningPort());
+        Set<InetSocketAddress> trueSet = new HashSet<>();
+        trueSet.add(peerSocketAddr);
+        assertEquals(trueSet, peerIPs);
     }
 
     // TODO write this test and implement the functionality

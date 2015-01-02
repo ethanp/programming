@@ -13,7 +13,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketAddress;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -54,7 +53,7 @@ public class Tracker extends Thread {
     ExecutorService pool = Executors.newFixedThreadPool(5);
 
     public Tracker() {
-        try { listener = new ServerSocket(3456); } // 3000-3500 go to me
+        try { listener = Common.socketPortInRange(Common.PORT_MIN, Common.PORT_MAX); }
         catch (IOException ex) {
             log.error("Couldn't start server");
             log.error(ex.getMessage());
@@ -108,10 +107,13 @@ public class Tracker extends Thread {
                 switch (command) {
                     /* TODO maybe each of these case blocks should be a separate method */
                     case Common.ADD_FILE_CMD: {
-                        P2PFileMetadata rcvdMeta = readMetadataFromSocket();
-                        SocketAddress peerAddr = socket.getRemoteSocketAddress();
-                        InetSocketAddress peerIPAddr = (InetSocketAddress) peerAddr;
+
+                        ObjectOutputStream objOut = Common.objectOStream(socket);
+                        ObjectInputStream objIn = Common.objectIStream(socket);
+                        InetSocketAddress peerIPAddr = (InetSocketAddress) objIn.readObject();
+                        P2PFileMetadata rcvdMeta = (P2PFileMetadata) objIn.readObject();
                         String filename = rcvdMeta.filename;
+
                         if (swarmsByFilename.containsKey(filename)) {
                             Swarm swarm = swarmsByFilename.get(filename);
                             if (swarm.pFileMetadata.equals(rcvdMeta)) {
@@ -189,20 +191,6 @@ public class Tracker extends Thread {
             finally {
                 try { socket.close(); }
                 catch (IOException e) { log.error(e.getMessage());} }
-        }
-
-        P2PFileMetadata readMetadataFromSocket() {
-            // can't use try-with-resources with String
-            // because it doesn't implement `AutoCloseable`
-            String filename = null;
-            String base64Digest = null;
-            try {
-                filename = in.readLine();
-                base64Digest = in.readLine();
-            }
-            catch (IOException e) { e.printStackTrace(); }
-            byte[] rcvdDigest = DatatypeConverter.parseBase64Binary(base64Digest);
-            return new P2PFileMetadata(filename, getInetSocketAddr(), rcvdDigest);
         }
     }
 }

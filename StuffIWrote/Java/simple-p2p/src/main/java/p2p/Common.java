@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.MalformedURLException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
 
@@ -36,6 +37,9 @@ public class Common {
     static final String ADD_FILE_CMD = "add file";
     static final String LIST_FILES_CMD = "list tracked files";
     static final String GET_SEEDERS_CMD = "get seeders for file";
+
+    static final int PORT_MIN = 3000;
+    static final int PORT_MAX = 3500;
 
     static BufferedReader bufferedReader(Socket s) {
         try { return new BufferedReader(new InputStreamReader(s.getInputStream())); }
@@ -94,5 +98,27 @@ public class Common {
         try { return new Socket(addr.getAddress(), addr.getPort()); }
         catch (IOException e) { e.printStackTrace(); }
         return null;
+    }
+
+    /**
+     * the range is CLOSED on BOTH ends
+     */
+    static ServerSocket socketPortInRange(int start, int end) throws IOException {
+        int[] ports = new int[end-start+1];
+        for (int i = 0; i <= end-start; i++)
+            ports[i] = i+start;
+        return socketPortFromOptions(ports);
+    }
+
+    static ServerSocket socketPortFromOptions(int[] ports) throws IOException {
+        for (int port : ports) {
+            try {
+                return new ServerSocket(port);
+            }
+            catch (IOException ex) {
+                continue; /* try next port */
+            }
+        }
+        throw new IOException("no free port found");
     }
 }
