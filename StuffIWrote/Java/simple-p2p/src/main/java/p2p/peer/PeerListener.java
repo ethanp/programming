@@ -3,7 +3,7 @@ package p2p.peer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import p2p.Common;
-import p2p.P2PTransfer;
+import p2p.download.P2PDownload;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -42,7 +42,7 @@ public class PeerListener extends Thread {
 
     class PeerServeTask extends Thread {
 
-        P2PTransfer xfer;
+        P2PDownload xfer;
         Socket socket;
         BufferedReader in;
         BufferedWriter out;

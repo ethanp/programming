@@ -23,13 +23,9 @@ public class Swarm {
     P2PFileMetadata pFileMetadata;
     private HashSet<InetSocketAddress> seeders = new HashSet<>();
 
-    int numSeeders() {
-        return seeders.size();
-    }
-
-    Set<InetSocketAddress> getSeeders() {
-        return seeders;
-    }
+    public P2PFileMetadata getFileMetadata() { return pFileMetadata; }
+    public int numSeeders() { return seeders.size(); }
+    Set<InetSocketAddress> getSeeders() { return seeders; }
 
     Swarm(InetSocketAddress initialSeederAddress, P2PFileMetadata pFileMetadata) {
         this.pFileMetadata = pFileMetadata;

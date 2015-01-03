@@ -36,7 +36,7 @@ public class Tracker extends Thread {
      * So we are limited to a SINGLE Swarm per Filename, which is probably a GOOD thing
      *
      */
-    ConcurrentHashMap<String, Swarm> swarmsByFilename
+    public ConcurrentHashMap<String, Swarm> swarmsByFilename
             = new ConcurrentHashMap<>(8, 0.9f, 1);
 
     InetAddress localIPAddr = Common.findMyIP();

@@ -4,7 +4,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import p2p.Common;
-import p2p.P2PTransfer;
+import p2p.download.P2PDownload;
 import p2p.exceptions.MetadataMismatchException;
 import p2p.exceptions.P2PException;
 import p2p.exceptions.SwarmNotFoundException;
@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.Future;
 
 /**
  * Ethan Petuchowski 12/29/14
@@ -44,17 +45,17 @@ public class Peer {
 
     /** FIELDS * */
 
-    InetAddress externalIPAddr = Common.findMyIP();
+    public InetAddress externalIPAddr = Common.findMyIP();
     Path localDir;
 
-    InetSocketAddress trkAddr;
+    public InetSocketAddress trkAddr;
 
-    Set<P2PTransfer> ongoingTransfers = new ConcurrentSkipListSet<>();
+    Set<P2PDownload> ongoingTransfers = new ConcurrentSkipListSet<>();
     Set<P2PFile> completeAndSeeding = new ConcurrentSkipListSet<>();
 
     PeerListener listenerThread;
 
-    /** CONSTRUCTORS * */
+    /** CONSTRUCTORS **/
 
     Peer(String dirString) {
         log.info("creating peer");
@@ -63,7 +64,7 @@ public class Peer {
         new Thread(listenerThread).start();
     }
 
-    Peer() {
+    public Peer() {
         this(".");
     }
 
@@ -140,7 +141,7 @@ public class Peer {
      * @return the P2PFile corresponding to filename
      */
     public P2PFile downloadFromSavedTracker(P2PFileMetadata fileMetadata)
-            throws P2PException {
+            throws Exception {
         return download(fileMetadata, trkAddr);
     }
 
@@ -152,71 +153,15 @@ public class Peer {
      * @return the P2PFile corresponding to "filename"
      */
     public P2PFile download(P2PFileMetadata fileMetadata,
-                            InetSocketAddress trackerAddr) throws P2PException {
-        int chunkCt = fileMetadata.getNumChunks();
-        Set<InetSocketAddress> seeders = getSeedersForFile(fileMetadata, trackerAddr);
-        List<ChunkAvailability> chunkAvlbtyCts = ChunkAvailability.createList(chunkCt);
+                            InetSocketAddress trackerAddr) throws Exception {
 
-        for (InetSocketAddress seederAddr : seeders) {
-            BitSet hostedChunks = requestChunkListing(seederAddr);
-            addCts(hostedChunks, chunkAvlbtyCts, seederAddr);
-        }
 
-        Queue<ChunkAvailability> pq = new PriorityQueue<>(chunkAvlbtyCts);
-
-        // TODO use a ThreadPool to submit P2PTransfer Tasks 10 at a time?
-
-        while (!pq.isEmpty()) {
-
-        }
-
-        return null;
+        P2PFile downloadedFile = new P2PDownload(this, fileMetadata, trackerAddr).call();
+        return downloadedFile;
     }
 
 
     /** PRIVATE METHODS * */
-
-    void addCts(BitSet bitSet, List<ChunkAvailability> ctArr, InetSocketAddress addr) {
-        for (int i = 0; i < ctArr.size(); i++)
-            if (bitSet.get(i))
-                ctArr.get(i).addOwner(addr);
-    }
-
-    BitSet requestChunkListing(InetSocketAddress seederAddr) {
-        return null;
-    }
-
-    // package-local so it can be tested
-    Set<InetSocketAddress> getSeedersForFile(
-            P2PFileMetadata fileMetadata, InetSocketAddress trackerAddr)
-            throws P2PException {
-        Set<InetSocketAddress> toRet = null;
-        try (Socket trkrS = Common.socketAtAddr(trackerAddr)) {
-            PrintWriter writer = Common.printWriter(trkrS);
-            writer.println(Common.GET_SEEDERS_CMD);
-            ObjectOutputStream oos = Common.objectOStream(trkrS);
-            ObjectInputStream ois = Common.objectIStream(trkrS);
-            oos.writeObject(fileMetadata);
-            Object obj = ois.readObject();
-            if (obj instanceof Common.StatusCodes) {
-                Common.StatusCodes status = (Common.StatusCodes) obj;
-                if (status.equals(Common.StatusCodes.SWARM_NOT_FOUND)) {
-                    throw new SwarmNotFoundException();
-                }
-                if (status.equals(Common.StatusCodes.METADATA_MISMATCH)) {
-                    throw new MetadataMismatchException();
-                }
-                else {
-                    Common.StatusCodes code = (Common.StatusCodes) obj;
-                    throw new RuntimeException("unknown status code: "+code.toString());
-                }
-            }
-            toRet = (Set<InetSocketAddress>) obj;
-
-        }
-        catch (ClassNotFoundException | IOException e) { e.printStackTrace(); }
-        return toRet;
-    }
 
     private void informTrackerAboutFile(P2PFile file2Share) {
         try (Socket trkr = Common.socketAtAddr(trkAddr)) {
