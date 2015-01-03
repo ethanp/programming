@@ -6,6 +6,8 @@ import org.apache.logging.log4j.LogManager;
 import p2p.exceptions.MetadataMismatchException;
 import p2p.exceptions.P2PException;
 import p2p.exceptions.SwarmNotFoundException;
+import p2p.file.P2PFile;
+import p2p.file.P2PFileMetadata;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -118,7 +120,7 @@ public class Peer {
 
                 log.printf(Level.INFO,
                            "List File Item: %s; %d peer(s)\n",
-                           metadata.filename, numPeers);
+                           metadata.getFilename(), numPeers);
 
                 theListing.add(metadata);
             }

@@ -2,6 +2,7 @@ package p2p;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import p2p.file.P2PFile;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.net.Socket;

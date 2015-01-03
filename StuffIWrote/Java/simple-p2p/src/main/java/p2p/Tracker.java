@@ -2,6 +2,7 @@ package p2p;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import p2p.file.P2PFileMetadata;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -111,7 +112,7 @@ public class Tracker extends Thread {
                         ObjectInputStream objIn = Common.objectIStream(socket);
                         InetSocketAddress peerIPAddr = (InetSocketAddress) objIn.readObject();
                         P2PFileMetadata rcvdMeta = (P2PFileMetadata) objIn.readObject();
-                        String filename = rcvdMeta.filename;
+                        String filename = rcvdMeta.getFilename();
 
                         if (swarmsByFilename.containsKey(filename)) {
                             Swarm swarm = swarmsByFilename.get(filename);
@@ -164,7 +165,7 @@ public class Tracker extends Thread {
                         ObjectOutputStream objOut = Common.objectOStream(socket);
                         ObjectInputStream objIn = Common.objectIStream(socket);
                         P2PFileMetadata rcvdMeta = (P2PFileMetadata) objIn.readObject();
-                        String filename = rcvdMeta.filename;
+                        String filename = rcvdMeta.getFilename();
                         Swarm swarm = swarmsByFilename.get(filename);
 
                         if (swarm == null) {

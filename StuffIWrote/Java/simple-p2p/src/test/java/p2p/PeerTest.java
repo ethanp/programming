@@ -6,9 +6,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import p2p.exceptions.MetadataMismatchException;
 import p2p.exceptions.SwarmNotFoundException;
+import p2p.file.P2PFile;
+import p2p.file.P2PFileMetadata;
 
 import java.net.InetSocketAddress;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -135,33 +136,21 @@ public class PeerTest {
         thrown.expect(MetadataMismatchException.class);
         shareSampleFile();
 
-        P2PFileMetadata m = sampleP2PFile.metadata;
-        byte[] badDigest = Arrays.copyOf(m.sha256Digest, m.sha256Digest.length);
-        badDigest[2] = (byte) 232;
-
-        P2PFileMetadata badMeta =
-                new P2PFileMetadata(
-                        m.filename,
-                        m.trackerAddr,
-                        badDigest);
-
-        peer2.getSeedersForFile(badMeta, peer2.trkAddr);
+        P2PFileMetadata m = sampleP2PFile.metadata.clone();
+        m.getSha2Digest()[2] = (byte) 234;
+        peer2.getSeedersForFile(m, peer2.trkAddr);
     }
 
     @Test
     public void testGetSeederIPsForUnknownFilename() throws Exception {
         thrown.expect(SwarmNotFoundException.class);
         shareSampleFile();
-        P2PFileMetadata m = sampleP2PFile.metadata;
-        P2PFileMetadata badMeta =
-                new P2PFileMetadata(
-                        "non-existent filename",
-                        m.trackerAddr,
-                        m.sha256Digest);
-        peer2.getSeedersForFile(badMeta, peer2.trkAddr);
+        P2PFileMetadata m = sampleP2PFile.metadata.clone();
+        m.setFilename("non-existent file");
+        peer2.getSeedersForFile(m, peer2.trkAddr);
     }
 
-    // TODO write this test and implement the functionality
+    // TODO implement the functionality
     @Test
     public void peer1SharePeer2Download() throws Exception {
         shareSampleFile();
