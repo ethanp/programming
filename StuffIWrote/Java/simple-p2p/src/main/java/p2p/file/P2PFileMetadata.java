@@ -21,13 +21,15 @@ public class P2PFileMetadata implements Comparable<P2PFileMetadata>, Serializabl
     byte[] sha2Digest;
 
     /* not used for metadata equality */
-    int numBytes = -1; // TODO fill these in
+    long numBytes = -1;
     int numChunks = -1;
 
     public String getFilename() { return filename; }
     public void setFilename(String filename) { this.filename = filename; }
     public byte[] getSha2Digest() { return sha2Digest; }
     public void setSha2Digest(byte[] sha2Digest) { this.sha2Digest = sha2Digest; }
+    public long getNumBytes() { return numBytes; }
+    public int getNumChunks() { return numChunks; }
 
     P2PFileMetadata(String filename,
                     InetSocketAddress trackerAddr,
@@ -59,6 +61,9 @@ public class P2PFileMetadata implements Comparable<P2PFileMetadata>, Serializabl
         if (trackerAddr != null ? !trackerAddr.equals(that.trackerAddr)
                                 : that.trackerAddr != null)
             return false;
+        if (numBytes != that.numBytes) return false;
+        if (numChunks != that.numChunks) return false;
+
         return true;
     }
 

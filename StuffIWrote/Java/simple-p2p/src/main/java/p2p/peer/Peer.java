@@ -1,40 +1,42 @@
-package p2p;
+package p2p.peer;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import p2p.Common;
+import p2p.P2PTransfer;
 import p2p.exceptions.MetadataMismatchException;
 import p2p.exceptions.P2PException;
 import p2p.exceptions.SwarmNotFoundException;
+import p2p.file.ChunkAvailability;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.EOFException;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.FileSystemException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.BitSet;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Ethan Petuchowski 12/29/14
- *
- * Peers act as
- *      Clients for leeching
- *      Servers for seeding
+ * <p/>
+ * Peers act as Clients for leeching Servers for seeding
  */
 public class Peer {
 
@@ -52,7 +54,7 @@ public class Peer {
 
     PeerListener listenerThread;
 
-    /** CONSTRUCTORS **/
+    /** CONSTRUCTORS * */
 
     Peer(String dirString) {
         log.info("creating peer");
@@ -71,7 +73,7 @@ public class Peer {
     /**
      * @param pathString location of file to share
      */
-    public void shareFile(String pathString) {
+    public void shareFile(String pathString) throws FileNotFoundException, FileSystemException {
         P2PFile sharedFile = new P2PFile(pathString, trkAddr);
         completeAndSeeding.add(sharedFile);
         informTrackerAboutFile(sharedFile);
@@ -138,24 +140,51 @@ public class Peer {
      * @return the P2PFile corresponding to filename
      */
     public P2PFile downloadFromSavedTracker(P2PFileMetadata fileMetadata)
-            throws P2PException
-    {
+            throws P2PException {
         return download(fileMetadata, trkAddr);
     }
 
     /**
+     * Maybe at the some point we could put a DownloadPolicy via Dependency
+     * Injection
      * @param fileMetadata a metadata object corresponding to the file to request
-     * @param trackerAddr the IPAddr:Port of the Tracker from which to download
+     * @param trackerAddr  the IPAddr:Port of the Tracker from which to download
      * @return the P2PFile corresponding to "filename"
      */
     public P2PFile download(P2PFileMetadata fileMetadata,
                             InetSocketAddress trackerAddr) throws P2PException {
+        int chunkCt = fileMetadata.getNumChunks();
         Set<InetSocketAddress> seeders = getSeedersForFile(fileMetadata, trackerAddr);
+        List<ChunkAvailability> chunkAvlbtyCts = ChunkAvailability.createList(chunkCt);
+
+        for (InetSocketAddress seederAddr : seeders) {
+            BitSet hostedChunks = requestChunkListing(seederAddr);
+            addCts(hostedChunks, chunkAvlbtyCts, seederAddr);
+        }
+
+        Queue<ChunkAvailability> pq = new PriorityQueue<>(chunkAvlbtyCts);
+
+        // TODO use a ThreadPool to submit P2PTransfer Tasks 10 at a time?
+
+        while (!pq.isEmpty()) {
+
+        }
+
         return null;
     }
 
 
-    /** PRIVATE METHODS **/
+    /** PRIVATE METHODS * */
+
+    void addCts(BitSet bitSet, List<ChunkAvailability> ctArr, InetSocketAddress addr) {
+        for (int i = 0; i < ctArr.size(); i++)
+            if (bitSet.get(i))
+                ctArr.get(i).addOwner(addr);
+    }
+
+    BitSet requestChunkListing(InetSocketAddress seederAddr) {
+        return null;
+    }
 
     // package-local so it can be tested
     Set<InetSocketAddress> getSeedersForFile(
@@ -201,62 +230,5 @@ public class Peer {
         }
         catch (IOException e) { e.printStackTrace(); }
     }
-
-    static class PeerListener extends Thread {
-
-        int listeningPort;
-
-        @Override
-        public void run() {
-
-            ExecutorService threadPool = Executors.newFixedThreadPool(50);
-
-            // "0" finds a free port: stackoverflow.com/questions/2675362
-            // and I was using that, but I just set my router to forward 3-3.5K to me
-            try (ServerSocket listener = Common.socketPortInRange(Common.PORT_MIN, Common.PORT_MAX)) {
-                listeningPort = listener.getLocalPort();
-                while (true) {
-                    Socket conn = listener.accept();
-                    threadPool.submit(new PeerServeTask(conn));
-                }
-            }
-            catch (IOException e) {
-                log.error("Peer not connected to Internet: can't contact tracker");
-                e.printStackTrace();
-                System.exit(Common.StatusCodes.NO_INTERNET.ordinal());
-            }
-        }
-
-        static class PeerServeTask extends Thread {
-
-            P2PTransfer xfer;
-            Socket socket;
-            BufferedReader in;
-            BufferedWriter out;
-
-            PeerServeTask(Socket socket) {
-                this.socket = socket;
-                in = Common.bufferedReader(socket);
-                out = Common.bufferedWriter(socket);
-            }
-
-            @Override
-            public void run() {
-
-                // TODO no this is not supposed to just be an echo server
-
-                while (true) {
-                    try {
-                        String msg = "Received: "+in.readLine();
-                        log.info(msg);
-                        out.write(msg);
-                        out.newLine();
-                        out.flush();
-                    }
-                    catch (IOException e) { e.printStackTrace(); }
-                    finally { try { socket.close(); } catch (IOException e) {} }
-                }
-            }
-        }
-    }
 }
+

@@ -25,16 +25,17 @@ public class Tracker extends Thread {
 
     static final Logger log = LogManager.getLogger(Tracker.class.getName());
 
-    // allocation parameters suggested here:
-    //  ria101.wordpress.com/2011/12/12/concurrenthashmap-avoid-a-common-misuse/
-    //
-    // The first one        is for how big you think it'll get
-    // The second           is for how often it'll grow?? Not really sure.
-    // The third/last one   is for how many concurrent writers you think you'll have
-    //
-    // LowPriorityTODO note this structure means we can have at most one swarm for each filename
-    //                  this is probably a GOOD THING though
-    //
+    /*
+     * allocation parameters suggested here:
+     *   ria101.wordpress.com/2011/12/12/concurrenthashmap-avoid-a-common-misuse/
+     *
+     * The first one        is for how big you think it'll get
+     * The second           is for how often it'll grow?? Not really sure.
+     * The third/last one   is for how many concurrent writers you think you'll have
+     *
+     * So we are limited to a SINGLE Swarm per Filename, which is probably a GOOD thing
+     *
+     */
     ConcurrentHashMap<String, Swarm> swarmsByFilename
             = new ConcurrentHashMap<>(8, 0.9f, 1);
 
@@ -62,7 +63,7 @@ public class Tracker extends Thread {
 
     @Override
     public void run() {
-        log.info("Starting tracker/index server"); // TODO create a Logger
+        log.info("Starting tracker/index server");
         while (true) {
             try {
                 Socket connection = listener.accept();
@@ -129,8 +130,7 @@ public class Tracker extends Thread {
                                 Swarm swarm = new Swarm(peerIPAddr, rcvdMeta);
                                 swarmsByFilename.put(filename, swarm);
 
-                                // TODO this is for testing, what should I do about it?
-                                // TODO see if the test passes WITHOUT this now
+                                // this is for synchronization while running on one machine
                                 synchronized (swarmsByFilename) {
                                     swarmsByFilename.notifyAll();
                                 }

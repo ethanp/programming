@@ -14,7 +14,7 @@ latex footer:		mmd-memoir-footer
 
 This project is about making the simplest possible P2P network and *learning
 as I go.*  Currently, I don't really know much about file sharing or P2P.  I
-will be using a tracker-file, which is apparently the way BitTorrent tracks
+will be using a tracker-server, which is apparently the way BitTorrent tracks
 files.
 
 ## Download algorithm

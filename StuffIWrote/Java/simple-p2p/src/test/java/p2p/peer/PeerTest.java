@@ -1,15 +1,19 @@
-package p2p;
+package p2p.peer;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import p2p.Swarm;
+import p2p.Tracker;
 import p2p.exceptions.MetadataMismatchException;
 import p2p.exceptions.SwarmNotFoundException;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 
+import java.io.FileNotFoundException;
 import java.net.InetSocketAddress;
+import java.nio.file.FileSystemException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -52,7 +56,8 @@ public class PeerTest {
      * register sample file with tracker
      */
     void shareSampleFile() {
-        peer.shareFile(SAMPLE_FILENAME);
+        try { peer.shareFile(SAMPLE_FILENAME); }
+        catch (FileNotFoundException | FileSystemException e) { e.printStackTrace(); }
     }
 
     /**
@@ -85,9 +90,9 @@ public class PeerTest {
         P2PFileMetadata trueMeta = sampleP2PFile.metadata;
         ConcurrentHashMap<String, Swarm> swarmMap = tracker.swarmsByFilename;
 
-        synchronized (swarmMap) {
-            swarmMap.wait();
-        }
+        // wait for the tracker to create a swarm in the map
+        synchronized (swarmMap) { swarmMap.wait(); }
+
         assertEquals(1, swarmMap.size());
         Swarm sampleSwarm = swarmMap.get(SAMPLE_FILENAME);
         assertEquals(1, sampleSwarm.numSeeders());
@@ -95,7 +100,7 @@ public class PeerTest {
         assertEquals(trueMeta, savedMeta);
 
 
-        // TODO (at some point, figure out whether to fix this)
+        // LowPriorityTODO (at some point, figure out whether to fix this)
         // this fails because saved IP is "internal" vrsn
         // I'm not sure whether to hack some fix to this or not because
         // it really depends on whether the tracker's socket.getRemoteAddress()

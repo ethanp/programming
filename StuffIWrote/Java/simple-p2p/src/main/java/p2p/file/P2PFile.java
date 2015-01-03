@@ -5,10 +5,12 @@ import org.apache.logging.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.file.FileSystemException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -47,9 +49,42 @@ public class P2PFile implements Comparable<P2PFile> {
         return dataChunks.length;
     }
 
-    public P2PFile(String filename, InetSocketAddress trackerAddr) {
+    public P2PFile(String filename, InetSocketAddress trackerAddr)
+            throws FileSystemException, FileNotFoundException {
         byte[] shaDigest = P2PFile.getSha256(filename);
         metadata = new P2PFileMetadata(filename, trackerAddr, shaDigest);
+
+        // TODO read the file in and create Chunks, etc.
+
+        File fileRef = new File(filename);
+        if (!fileRef.exists())
+            throw new FileSystemException("file doesn't exist");
+        if (fileRef.isDirectory())
+            throw new FileSystemException("directories are not supported at this time");
+        if (!fileRef.canRead())
+            throw new FileSystemException("file doesn't have read permissions");
+
+        metadata.numBytes = fileRef.length();
+        metadata.numChunks = (int) Math.ceil((double)
+                metadata.numBytes / Chunk.BYTES_PER_CHUNK);
+        dataChunks = new Chunk[metadata.numChunks];
+
+        BufferedInputStream fileIn =
+                new BufferedInputStream(
+                        new FileInputStream(fileRef));
+
+        try {
+            int chunkNum = 0;
+            byte[] chunkData = new byte[Chunk.BYTES_PER_CHUNK];
+            while (fileIn.available() > 0) {
+                int size = fileIn.read(chunkData, 0, Chunk.BYTES_PER_CHUNK);
+                dataChunks[chunkNum++] = new Chunk(chunkData, size);
+            }
+
+            if (chunkNum != dataChunks.length)
+                throw new RuntimeException("file->chunk[] didn't work properly");
+        }
+        catch (IOException e) { e.printStackTrace(); }
     }
 
     static byte[] getSha256(String filename) {

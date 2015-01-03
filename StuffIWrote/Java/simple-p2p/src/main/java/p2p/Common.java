@@ -34,42 +34,42 @@ public class Common {
         METADATA_MATCH
     }
 
-    static final String ADD_FILE_CMD = "add file";
-    static final String LIST_FILES_CMD = "list tracked files";
-    static final String GET_SEEDERS_CMD = "get seeders for file";
+    public static final String ADD_FILE_CMD = "add file";
+    public static final String LIST_FILES_CMD = "list tracked files";
+    public static final String GET_SEEDERS_CMD = "get seeders for file";
 
-    static final int PORT_MIN = 3000;
-    static final int PORT_MAX = 3500;
+    public static final int PORT_MIN = 3000;
+    public static final int PORT_MAX = 3500;
 
-    static BufferedReader bufferedReader(Socket s) {
+    public static BufferedReader bufferedReader(Socket s) {
         try { return new BufferedReader(new InputStreamReader(s.getInputStream())); }
         catch (IOException e) { e.printStackTrace(); }
         return null;
     }
 
-    static BufferedWriter bufferedWriter(Socket s) {
+    public static BufferedWriter bufferedWriter(Socket s) {
         try { return new BufferedWriter(new OutputStreamWriter(s.getOutputStream())); }
         catch (IOException e) { e.printStackTrace(); }
         return null;
     }
 
-    static PrintWriter printWriter(Socket s) {
+    public static PrintWriter printWriter(Socket s) {
         try { return new PrintWriter(s.getOutputStream(), true); }
         catch (IOException e) { e.printStackTrace(); }
         return null;
     }
 
-    static ObjectOutputStream objectOStream(Socket s) throws IOException {
+    public static ObjectOutputStream objectOStream(Socket s) throws IOException {
         ObjectOutputStream oos = new ObjectOutputStream(s.getOutputStream());
         oos.flush();
         return oos;
     }
 
-    static ObjectInputStream objectIStream(Socket s) throws IOException {
+    public static ObjectInputStream objectIStream(Socket s) throws IOException {
         return new ObjectInputStream(s.getInputStream());
     }
 
-    static InetAddress findMyIP() {
+    public static InetAddress findMyIP() {
         URL aws = null;
         InetAddress toRet = null;
         try { aws = new URL("http://checkip.amazonaws.com"); }
@@ -94,7 +94,7 @@ public class Common {
         return toRet;
     }
 
-    static Socket socketAtAddr(InetSocketAddress addr) {
+    public static Socket socketAtAddr(InetSocketAddress addr) {
         try { return new Socket(addr.getAddress(), addr.getPort()); }
         catch (IOException e) { e.printStackTrace(); }
         return null;
@@ -103,7 +103,7 @@ public class Common {
     /**
      * the range is CLOSED on BOTH ends
      */
-    static ServerSocket socketPortInRange(int start, int end) throws IOException {
+    public static ServerSocket socketPortInRange(int start, int end) throws IOException {
         int[] ports = new int[end-start+1];
         for (int i = 0; i <= end-start; i++)
             ports[i] = i+start;
