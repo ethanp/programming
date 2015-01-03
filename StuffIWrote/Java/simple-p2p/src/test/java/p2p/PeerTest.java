@@ -1,9 +1,14 @@
 package p2p;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import p2p.exceptions.MetadataMismatchException;
+import p2p.exceptions.SwarmNotFoundException;
 
 import java.net.InetSocketAddress;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -20,6 +25,11 @@ public class PeerTest {
     Peer peer, peer2;
     Tracker tracker;
     P2PFile sampleP2PFile;
+
+    /* "The ExpectedException rule allows you to verify
+        that your code throws a specific exception."    */
+    @Rule
+    public ExpectedException thrown= ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -109,7 +119,7 @@ public class PeerTest {
     }
 
     @Test
-    public void testGetSeedersForFile() throws Exception {
+    public void testGetSeederIPsForFile() throws Exception {
         shareSampleFile();
         Set<InetSocketAddress> peerIPs =
                 peer2.getSeedersForFile(sampleP2PFile.metadata, peer2.trkAddr);
@@ -118,6 +128,37 @@ public class PeerTest {
         Set<InetSocketAddress> trueSet = new HashSet<>();
         trueSet.add(peerSocketAddr);
         assertEquals(trueSet, peerIPs);
+    }
+
+    @Test
+    public void testGetSeederIPsForIncorrectDigest() throws Exception {
+        thrown.expect(MetadataMismatchException.class);
+        shareSampleFile();
+
+        P2PFileMetadata m = sampleP2PFile.metadata;
+        byte[] badDigest = Arrays.copyOf(m.sha256Digest, m.sha256Digest.length);
+        badDigest[2] = (byte) 232;
+
+        P2PFileMetadata badMeta =
+                new P2PFileMetadata(
+                        m.filename,
+                        m.trackerAddr,
+                        badDigest);
+
+        peer2.getSeedersForFile(badMeta, peer2.trkAddr);
+    }
+
+    @Test
+    public void testGetSeederIPsForUnknownFilename() throws Exception {
+        thrown.expect(SwarmNotFoundException.class);
+        shareSampleFile();
+        P2PFileMetadata m = sampleP2PFile.metadata;
+        P2PFileMetadata badMeta =
+                new P2PFileMetadata(
+                        "non-existent filename",
+                        m.trackerAddr,
+                        m.sha256Digest);
+        peer2.getSeedersForFile(badMeta, peer2.trkAddr);
     }
 
     // TODO write this test and implement the functionality

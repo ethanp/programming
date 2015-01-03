@@ -3,6 +3,9 @@ package p2p;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import p2p.exceptions.MetadataMismatchException;
+import p2p.exceptions.P2PException;
+import p2p.exceptions.SwarmNotFoundException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -132,7 +135,9 @@ public class Peer {
      * @param fileMetadata a metadata object corresponding to the file to request
      * @return the P2PFile corresponding to filename
      */
-    public P2PFile downloadFromSavedTracker(P2PFileMetadata fileMetadata) {
+    public P2PFile downloadFromSavedTracker(P2PFileMetadata fileMetadata)
+            throws P2PException
+    {
         return download(fileMetadata, trkAddr);
     }
 
@@ -142,7 +147,7 @@ public class Peer {
      * @return the P2PFile corresponding to "filename"
      */
     public P2PFile download(P2PFileMetadata fileMetadata,
-                            InetSocketAddress trackerAddr) {
+                            InetSocketAddress trackerAddr) throws P2PException {
         Set<InetSocketAddress> seeders = getSeedersForFile(fileMetadata, trackerAddr);
         return null;
     }
@@ -151,8 +156,9 @@ public class Peer {
     /** PRIVATE METHODS **/
 
     // package-local so it can be tested
-    Set<InetSocketAddress> getSeedersForFile(P2PFileMetadata fileMetadata,
-                                             InetSocketAddress trackerAddr) {
+    Set<InetSocketAddress> getSeedersForFile(
+            P2PFileMetadata fileMetadata, InetSocketAddress trackerAddr)
+            throws P2PException {
         Set<InetSocketAddress> toRet = null;
         try (Socket trkrS = Common.socketAtAddr(trackerAddr)) {
             PrintWriter writer = Common.printWriter(trkrS);
@@ -164,10 +170,14 @@ public class Peer {
             if (obj instanceof Common.StatusCodes) {
                 Common.StatusCodes status = (Common.StatusCodes) obj;
                 if (status.equals(Common.StatusCodes.SWARM_NOT_FOUND)) {
-
+                    throw new SwarmNotFoundException();
                 }
                 if (status.equals(Common.StatusCodes.METADATA_MISMATCH)) {
-
+                    throw new MetadataMismatchException();
+                }
+                else {
+                    Common.StatusCodes code = (Common.StatusCodes) obj;
+                    throw new RuntimeException("unknown status code: "+code.toString());
                 }
             }
             toRet = (Set<InetSocketAddress>) obj;

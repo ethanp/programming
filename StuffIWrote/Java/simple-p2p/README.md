@@ -17,12 +17,34 @@ as I go.*  Currently, I don't really know much about file sharing or P2P.  I
 will be using a tracker-file, which is apparently the way BitTorrent tracks
 files.
 
-## New Route
+## Download algorithm
 
-I'm going back to having the Tracker simply maintain a list of seeders, rather
-than seeders-by-chunk.  Then (eventually) the Client will have to query
-Seeders about which chunks are available, but for now Seeders will have the
-whole file.
+My algorithm will be a modified version of the original; probably simpler, and
+much easier to implement.  As in the [spec wiki][], we'll use the term
+*client* to mean the one downloading a file, and *peers* to mean the seeders
+who contain some subset of chunks available for download by the client.
+
+First, some "Origin-Peer" reads a file-system file into a `P2PFile` and
+informs a Tracker of its Metadata.
+
+Now, sometime in the not-so-distant future a Client:
+
+1. (Somehow) obtains Metadata file with
+    * Filename, File size, Num chunks, File crypto-digest
+    * One way to obtain it is to invoke the `list` command on the Tracker, and
+      retrieve all of the Tracker's metadata files
+2. Uses Metadata to ask Tracker for a list of seeder-addresses
+3. Asks all Peers for bit-vectors denoting which Chunks they have available
+4. Organizes Chunks in order from *least* to *most* available (i.e. *replicated*)
+5. Requests Chunks in that order
+    * At this point, I'm just planning to request Chunks one-by-one
+    * Originally, I was going to request a *range* of Chunks in a single
+      request, but it seems much simpler *not* to do that, and I don't even
+      see any advantage to doing that
+6. After some *interval* of time (algorithm yet-to-be-determined) it
+    re-requests the availability of the files from all Peers
+    * Note that this includes Peers who are already known to have *all* Chunks
+      because they may have *left the Network* and that would be good to know
 
 ## Fun-looking next-steps
 
@@ -59,7 +81,7 @@ understand that
 | **My Name**   | **BitTorrent Name**               |
 | ------------: | :-------------------------------- |
 | `Tracker`     | fills both roles tracker & index  |
-| file chunk    | piece                             |
+| `Chunk`       | piece                             |
 | `P2PFile`     | torrent                           |
 
 ## The Basic Layout
