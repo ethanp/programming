@@ -40,12 +40,13 @@ public class Tracker extends Thread {
             = new ConcurrentHashMap<>(8, 0.9f, 1);
 
     InetAddress localIPAddr = Common.findMyIP();
+    ServerSocket listener;
+
 
     public boolean isTrackingFilename(String filename) {
         return swarmsByFilename.containsKey(filename);
     }
 
-    ServerSocket listener;
 
     public InetSocketAddress getInetSocketAddr() {
         return new InetSocketAddress(localIPAddr, listener.getLocalPort());
@@ -117,7 +118,8 @@ public class Tracker extends Thread {
             catch (ClassNotFoundException e) { e.printStackTrace(); }
             finally {
                 try { socket.close(); }
-                catch (IOException e) { log.error(e.getMessage());} }
+                catch (IOException e) { log.error(e.getMessage());}
+            }
         }
 
         void receiveFileToTrack() throws IOException, ClassNotFoundException {

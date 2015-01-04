@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 import p2p.Common;
 import p2p.download.P2PDownload;
 import p2p.file.Chunk;
-import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 
 import java.io.FileNotFoundException;
@@ -22,7 +21,9 @@ public class PeerListener extends Thread {
 
     static final Logger log = LogManager.getLogger(PeerListener.class.getName());
     int listeningPort;
+    ServerSocket listener;
     Peer thisPeer;
+
 
     public PeerListener(Peer thisPeer) { this.thisPeer = thisPeer; }
 
@@ -33,8 +34,10 @@ public class PeerListener extends Thread {
 
         // "0" finds a free port: stackoverflow.com/questions/2675362
         // and I was using that, but I just set my router to forward 3-3.5K to me
-        try (ServerSocket listener = Common.socketPortInRange(Common.PORT_MIN, Common.PORT_MAX)) {
+        try {
+            listener = Common.socketPortInRange(Common.PORT_MIN, Common.PORT_MAX);
             listeningPort = listener.getLocalPort();
+            thisPeer.informConsoleOfIPAddr();
             while (true) {
                 Socket conn = listener.accept();
                 // TODO or maybe it should be submit(new P2PTransfer(conn))??

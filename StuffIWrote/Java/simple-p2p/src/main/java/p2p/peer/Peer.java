@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import p2p.Common;
+import p2p.P2PConsole;
 import p2p.download.P2PDownload;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
@@ -44,7 +45,9 @@ public class Peer {
     Set<P2PDownload> ongoingTransfers = new ConcurrentSkipListSet<>();
     Set<P2PFile> completeAndSeeding = new ConcurrentSkipListSet<>();
 
-    PeerListener listenerThread;
+    public PeerListener listenerThread;
+
+    P2PConsole console;
 
     /** CONSTRUCTORS **/
 
@@ -59,8 +62,13 @@ public class Peer {
         this(".");
     }
 
+    public Peer(P2PConsole console) {
+        this();
+        this.console = console;
+    }
+
     public Peer(InetSocketAddress trackerAddr) {
-        this(".");
+        this();
         this.trkAddr = trackerAddr;
     }
 
@@ -184,6 +192,13 @@ public class Peer {
             oos.writeObject(file2Share.metadata);
         }
         catch (IOException e) { e.printStackTrace(); }
+        return this;
+    }
+
+    public Peer informConsoleOfIPAddr() {
+        if (console != null) {
+            console.putIPAddr(externalIPAddr, getListeningPort());
+        }
         return this;
     }
 }
