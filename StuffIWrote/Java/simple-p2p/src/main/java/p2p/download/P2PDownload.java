@@ -14,6 +14,7 @@ import p2p.file.P2PFileMetadata;
 import p2p.peer.Peer;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -141,7 +142,7 @@ public class P2PDownload implements Callable<P2PFile> {
         /* really no good reason to do it this way... */
         for (int i = 0; i < 10; i++) {
             List<Chunk> done = downloadFor(3/*seconds*/);
-            ofFile.addAll(ofFile);
+            ofFile.addAll(done);
             for (Chunk c : done) chunksComplete.set(c.idx, true);
             if (ofFile.size() == numChunks) break;
         }
@@ -152,10 +153,21 @@ public class P2PDownload implements Callable<P2PFile> {
         return new P2PFile(meta, ofFile);
     }
 
+    /**
+     * download chunks for specified duration then cancel any pending transfers
+     * Surely this is an AWFUL way of going about this, but for now I just want
+     * to transfer a file, THEN I'll think about how BEST to do that.
+     *
+     * @param seconds how long to download chunks for before cancelling
+     * @return a List of finished Chunks
+     */
     List<Chunk> downloadFor(int seconds)
             throws P2PException, ExecutionException, InterruptedException
     {
+        /* figure out what chunks to get and how to prioritize them */
         Queue<ChunkAvailability> pq = getChunkAvailabilityQueue();
+
+        /* start downloading the chunks */
         List<Future<Chunk>> futureChunks = new ArrayList<>();
         while (!pq.isEmpty()) {
             ChunkAvailability ck = pq.remove();
@@ -164,14 +176,13 @@ public class P2PDownload implements Callable<P2PFile> {
             futureChunks.add(futChunk);
         }
 
-        List<Chunk> completeChunks = new ArrayList<>();
-
         /* check after 3 seconds for finished chunks
          *
          * NOTE: there's really no good reason to do it this way
          * except that it may help in debugging across multiple machines
          */
         Thread.sleep(seconds*1000); // milliseconds
+        List<Chunk> completeChunks = new ArrayList<>();
         int numRcvd = 0;
         for (Future<Chunk> chunkFuture : futureChunks) {
             if (chunkFuture.isDone()) {
@@ -180,7 +191,7 @@ public class P2PDownload implements Callable<P2PFile> {
 
                 log.printf(Level.INFO,
                         "Chunk %d of \"%s\" received. %d of %d chunks so far.\n",
-                        doneChunk.idx, ++numRcvd, numChunks);
+                        doneChunk.idx, meta.getFilename(), ++numRcvd, numChunks);
             }
         }
 
@@ -195,20 +206,34 @@ public class P2PDownload implements Callable<P2PFile> {
         List<ChunkAvailability> chunkAvlbtyCts =
                 ChunkAvailability.createList(chunksComplete, numChunks);
 
-        /* LowPriorityTODO this is for later
-                (prioritize chunk order by lower availability)
-
         Set<InetSocketAddress> seeders = getSeedersForFile(meta, trackerAddr);
         for (InetSocketAddress seederAddr : seeders) {
             BitSet chunkBools = requestChunkListing(seederAddr);
             addCts(chunkBools, chunkAvlbtyCts, seederAddr);
         }
-        */
         return new PriorityQueue<>(chunkAvlbtyCts);
     }
 
-    // LowPriorityTODO for later implementation
+    /**
+     * this will be much more useful when it is NOT the case that every owner
+     * has the ENTIRE file
+     */
     BitSet requestChunkListing(InetSocketAddress seederAddr) {
+        try (Socket socket = Common.socketAtAddr(seederAddr)) {
+            ObjectOutputStream oos = Common.objectOStream(socket);
+            ObjectInputStream ois = Common.objectIStream(socket);
+            oos.writeObject(Common.CHUNK_BITSET_CMD);
+            oos.writeObject(meta);
+            Object response = ois.readObject();
+            if (response instanceof Common.StatusCodes) {
+                Common.StatusCodes code = (Common.StatusCodes) response;
+                if (code.equals(Common.StatusCodes.FILE_NOT_FOUND))
+                    throw new FileNotFoundException("requested "+meta.getFilename());
+                else throw new RuntimeException("Unknown status code "+code);
+            }
+            return (BitSet) response;
+        }
+        catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
         return null;
     }
 
@@ -217,5 +242,4 @@ public class P2PDownload implements Callable<P2PFile> {
             if (bitSet.get(i))
                 ctArr.get(i).addOwner(addr);
     }
-
 }

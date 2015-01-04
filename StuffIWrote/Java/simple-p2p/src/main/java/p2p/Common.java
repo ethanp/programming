@@ -31,13 +31,15 @@ public class Common {
         SWARM_FOUND,
         SWARM_NOT_FOUND,
         METADATA_MISMATCH,
-        METADATA_MATCH
+        METADATA_MATCH,
+        FILE_NOT_FOUND
     }
 
     public static final String ADD_FILE_CMD = "add file";
     public static final String LIST_FILES_CMD = "list tracked files";
     public static final String GET_SEEDERS_CMD = "get seeders for file";
     public static final String DL_CHUNK_CMD = "download chunk request";
+    public static final String CHUNK_BITSET_CMD = "get BitSet of available chunks";
 
     public static final int PORT_MIN = 3000;
     public static final int PORT_MAX = 3500;

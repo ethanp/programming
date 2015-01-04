@@ -5,13 +5,16 @@ import org.apache.logging.log4j.Logger;
 import p2p.Common;
 import p2p.download.P2PDownload;
 import p2p.file.Chunk;
+import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.BitSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -66,12 +69,31 @@ public class PeerListener extends Thread {
                 String command = (String)ois.readObject();
                 log.info("received command: "+command);
                 switch (command) {
+                    case Common.CHUNK_BITSET_CMD: sendAvlbtyToPeer(); break;
                     case Common.DL_CHUNK_CMD: sendChunkToPeer(); break;
                     default: throw new RuntimeException("UNKNOWN COMMAND: "+command);
                 }
             }
             catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
             finally { try { socket.close(); } catch (IOException e) {} }
+        }
+
+        void sendAvlbtyToPeer() throws IOException, ClassNotFoundException {
+            /* listen for which File Peer wants info about */
+            P2PFileMetadata meta = (P2PFileMetadata) ois.readObject();
+
+            /* create BitVector */
+            // at this point this listener simply has ALL chunks, so we
+            // don't even have to check, but that should change eventually
+            try {
+                thisPeer.getSeedingFile(meta);
+                BitSet bitSet = new BitSet(meta.getNumChunks());
+                for (int i = 0; i < meta.getNumChunks(); i++)
+                    bitSet.set(i, true);
+                oos.writeObject(bitSet);
+            } catch (FileNotFoundException e) {
+                oos.writeObject(Common.StatusCodes.FILE_NOT_FOUND);
+            }
         }
 
         void sendChunkToPeer() throws IOException, ClassNotFoundException {
