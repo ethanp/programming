@@ -8,6 +8,7 @@ import p2p.exceptions.SwarmNotFoundException;
 import p2p.file.Chunk;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
+import p2p.peer.Peer;
 
 import java.net.InetSocketAddress;
 import java.util.HashSet;
@@ -76,6 +77,16 @@ public class P2PDownloadTest extends BaseTest {
     @Test
     public void testBigFileDownload() throws Exception {
         P2PFile oFile = shareLargeFile();
+        P2PFile dFile = new P2PDownload(peer2, oFile.metadata, peer2.trkAddr).call();
+        assertEquals(oFile, dFile);
+    }
+
+    @Test
+    public void testBigFileDLMultiplePeers() throws Exception {
+        P2PFile oFile = shareLargeFile();
+        Peer peer3 = new Peer(tracker.getInetSocketAddr());
+        peer3.shareFile(VIRGINIA_FILENAME);
+
         P2PFile dFile = new P2PDownload(peer2, oFile.metadata, peer2.trkAddr).call();
         assertEquals(oFile, dFile);
     }

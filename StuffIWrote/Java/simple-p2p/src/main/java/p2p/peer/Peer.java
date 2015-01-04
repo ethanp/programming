@@ -59,6 +59,11 @@ public class Peer {
         this(".");
     }
 
+    public Peer(InetSocketAddress trackerAddr) {
+        this(".");
+        this.trkAddr = trackerAddr;
+    }
+
 
     /** PUBLIC INTERFACE **/
 
@@ -77,14 +82,16 @@ public class Peer {
     /**
      * @param pathString location of file to share
      */
-    public void shareFile(String pathString) throws FileNotFoundException, FileSystemException {
+    public Peer shareFile(String pathString) throws FileNotFoundException, FileSystemException {
         P2PFile sharedFile = new P2PFile(pathString, trkAddr);
         completeAndSeeding.add(sharedFile);
         informTrackerAboutFile(sharedFile);
+        return this;
     }
 
-    public void setTracker(InetSocketAddress trackerAddr) {
+    public Peer setTracker(InetSocketAddress trackerAddr) {
         this.trkAddr = trackerAddr;
+        return this;
     }
 
     public int getListeningPort() {
@@ -166,7 +173,7 @@ public class Peer {
 
     /** PRIVATE METHODS * */
 
-    private void informTrackerAboutFile(P2PFile file2Share) {
+    private Peer informTrackerAboutFile(P2PFile file2Share) {
         try (Socket trkr = Common.socketAtAddr(trkAddr)) {
             PrintWriter out = Common.printWriter(trkr);
             out.println(Common.ADD_FILE_CMD);
@@ -177,6 +184,7 @@ public class Peer {
             oos.writeObject(file2Share.metadata);
         }
         catch (IOException e) { e.printStackTrace(); }
+        return this;
     }
 }
 
