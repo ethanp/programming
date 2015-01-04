@@ -23,7 +23,11 @@ import java.util.concurrent.Executors;
  */
 public class Tracker extends Thread {
 
+    /* LOGGER */
+
     static final Logger log = LogManager.getLogger(Tracker.class.getName());
+
+    /* FIELDS */
 
     /*
      * allocation parameters suggested here:
@@ -41,7 +45,26 @@ public class Tracker extends Thread {
 
     InetAddress localIPAddr = Common.findMyIP();
     ServerSocket listener;
+    ExecutorService pool = Executors.newFixedThreadPool(5);
+    P2PConsole console;
 
+    /* CONSTRUCTORS */
+
+    public Tracker() {
+        try { listener = Common.socketPortInRange(Common.PORT_MIN, Common.PORT_MAX); }
+        catch (IOException ex) {
+            log.error("Couldn't start server");
+            log.error(ex.getMessage());
+        }
+    }
+
+    public Tracker(P2PConsole console) {
+        this();
+        this.console = console;
+        console.putIPAddr(localIPAddr, listener.getLocalPort());
+    }
+
+    /* METHODS */
 
     public boolean isTrackingFilename(String filename) {
         return swarmsByFilename.containsKey(filename);
@@ -52,15 +75,7 @@ public class Tracker extends Thread {
         return new InetSocketAddress(localIPAddr, listener.getLocalPort());
     }
 
-    ExecutorService pool = Executors.newFixedThreadPool(5);
-
-    public Tracker() {
-        try { listener = Common.socketPortInRange(Common.PORT_MIN, Common.PORT_MAX); }
-        catch (IOException ex) {
-            log.error("Couldn't start server");
-            log.error(ex.getMessage());
-        }
-    }
+    /* RUN */
 
     @Override
     public void run() {
