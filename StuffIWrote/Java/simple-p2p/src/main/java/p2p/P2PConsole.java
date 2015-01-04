@@ -32,7 +32,7 @@ public class P2PConsole {
     Scanner scanner;
     Peer peer;
     Tracker tracker;
-    List<P2PFileMetadata> trackerListing;
+    List<P2PFileMetadata> trkrLstg;
 
     public static void main(String[] args) {
         new P2PConsole();
@@ -103,14 +103,14 @@ public class P2PConsole {
                     continue;
                 }
                 try {
-                    trackerListing = peer.listSavedTracker();
+                    trkrLstg = peer.listSavedTracker();
                 }
                 catch (ConnectException e) {
                     System.out.println("connection to tracker refused! " +
                                        "try a different address.");
                     continue;
                 }
-                printListResult(trackerListing);
+                printListResult(trkrLstg);
             }
             else if (uploadCmd(cmd)) {
                 if (parts.length != 2) {
@@ -118,7 +118,29 @@ public class P2PConsole {
                     continue;
                 }
                 try {
-                    peer.shareFile(parts[1]);
+                    Common.StatusCodes status = peer.shareFile(parts[1]);
+                    switch (status) {
+                        case ALREADY_LISTED:
+                            System.out.println("You were already listed as a seeder");
+                            break;
+                        case ADDR_ADDED:
+                            System.out.println(
+                                    "File already tracked, added to seeder list");
+                            break;
+                        case METADATA_MISMATCH:
+                            System.out.println(
+                                    "Addition unsuccessful, filename already tracked " +
+                                    "with differing associated metadata");
+                            break;
+                        case SWARM_CREATED:
+                            System.out.println("Swarm created with you as seeder");
+                            break;
+                        case SERVER_EXCEPTION:
+                            System.out.println("Failed due to exception on server");
+                            break;
+                        default:
+                            throw new RuntimeException("Unknown status code response");
+                    }
                 }
                 catch (FileNotFoundException | FileSystemException e) {
                     System.out.println(e.getMessage());
@@ -129,9 +151,24 @@ public class P2PConsole {
                     System.out.println("wrong format, try again");
                     continue;
                 }
-                System.out.printf(
-                        "Downloading \"%s\"\n",
-                        trackerListing.get(Integer.parseInt(parts[1])));
+                if (trkrLstg == null) {
+                    System.out.println("can't download until after listing a tracker");
+                    continue;
+                }
+                if (trkrLstg.isEmpty()) {
+                    System.out.println("sorry, there are no listed files at this time");
+                    continue;
+                }
+                int idx = Integer.parseInt(parts[1])-1;
+                if (idx < 0 || idx >= trkrLstg.size()) {
+                    System.out.println("index out of bounds," +
+                                       "choose a value between 1 - "+trkrLstg.size());
+                    continue;
+                }
+                System.out.printf("Downloading \"%s\"\n",
+                                  trkrLstg.get(idx).getFilename());
+
+                // TODO actually DOWNLOAD the darn thing
             }
             else if (quitCmd(cmd)) {
                 System.out.println("exiting");

@@ -76,10 +76,20 @@ public class Peer {
     }
 
 
-    /** PUBLIC INTERFACE **/
+    /** GETTERS & SETTERS **/
 
     public InetSocketAddress getAddr() {
         return new InetSocketAddress(externalIPAddr, getListeningPort());
+    }
+
+
+    public Peer setTracker(InetSocketAddress trackerAddr) {
+        this.trkAddr = trackerAddr;
+        return this;
+    }
+
+    public int getListeningPort() {
+        return listenerThread.listeningPort;
     }
 
     public P2PFile getSeedingFile(P2PFileMetadata meta) throws FileNotFoundException {
@@ -90,23 +100,22 @@ public class Peer {
         throw new FileNotFoundException("metadata didn't match any known files");
     }
 
+    /** PEER-TO-PEER METHODS **/
+
     /**
+     * Inform saved Tracker that this Peer is seeding the file with the given name.
+     * A P2PFile instance will be created and saved at the Peer from the filename.
+     * The P2PFile's Metadata instance will be transmitted to the Tracker.
      * @param pathString location of file to share
+     * @return the server's Common.StatusCodes response
      */
-    public Peer shareFile(String pathString) throws FileNotFoundException, FileSystemException {
+    public Common.StatusCodes shareFile(String pathString)
+            throws FileNotFoundException, FileSystemException
+    {
         P2PFile sharedFile = new P2PFile(pathString, trkAddr);
         completeAndSeeding.add(sharedFile);
-        informTrackerAboutFile(sharedFile);
-        return this;
-    }
-
-    public Peer setTracker(InetSocketAddress trackerAddr) {
-        this.trkAddr = trackerAddr;
-        return this;
-    }
-
-    public int getListeningPort() {
-        return listenerThread.listeningPort;
+        Common.StatusCodes status = informTrackerAboutFile(sharedFile);
+        return status;
     }
 
     /**
@@ -191,9 +200,9 @@ public class Peer {
     }
 
 
-    /** PRIVATE METHODS * */
+    /** NON-INTERFACE METHODS **/
 
-    private Peer informTrackerAboutFile(P2PFile file2Share) {
+    private Common.StatusCodes informTrackerAboutFile(P2PFile file2Share) {
         try (Socket trkr = Common.socketAtAddr(trkAddr)) {
             PrintWriter out = Common.printWriter(trkr);
             out.println(Common.ADD_FILE_CMD);
@@ -202,12 +211,14 @@ public class Peer {
             oos.writeObject(new InetSocketAddress(externalIPAddr,
                                                   listenerThread.listeningPort));
             oos.writeObject(file2Share.metadata);
+            Common.StatusCodes status = (Common.StatusCodes) ois.readObject();
+            return status;
         }
-        catch (IOException e) { e.printStackTrace(); }
-        return this;
+        catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
+        return null;
     }
 
-    public Peer informConsoleOfIPAddr() {
+    Peer informConsoleOfIPAddr() {
         if (console != null) {
             console.putIPAddr(externalIPAddr, getListeningPort());
             console.runPeerConsole();

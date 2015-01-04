@@ -1792,6 +1792,32 @@ Use it like so:
     }
     catch (IOException ex) { System.err.println("no available ports"); }
 
+## Awesome snippet for dispatching from enum instead of using switch statement
+
+[From Stackoverflow](http://stackoverflow.com/a/6392518/1959155)
+
+    enum MyEnum {
+        SOME_ENUM_CONSTANT {
+            @Override
+            public void method() {
+                System.out.println("first enum constant behavior!");
+            }
+        },
+        ANOTHER_ENUM_CONSTANT {
+            @Override
+            public void method() {
+                System.out.println("second enum constant behavior!");
+            }
+        }; // note the semi-colon after the final constant, not just a comma!
+        public abstract void method(); // could also be in an interface that MyEnum implements
+    }
+
+    void aMethodSomewhere(final MyEnum e) {
+        doSomeStuff();
+        e.method(); // here is where the switch would be, now it's one line of code!
+        doSomeOtherStuff();
+    }
+
 # Java from 2,000 feet
 
 This stuff is largely from *Horstmann, Cay S.; Cornell, Gary (2012-11-27).

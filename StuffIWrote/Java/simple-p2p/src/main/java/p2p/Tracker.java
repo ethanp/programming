@@ -40,7 +40,7 @@ public class Tracker extends Thread {
      * So we are limited to a SINGLE Swarm per Filename, which is probably a GOOD thing
      *
      */
-    public ConcurrentHashMap<String, Swarm> swarmsByFilename
+    public final ConcurrentHashMap<String, Swarm> swarmsByFilename
             = new ConcurrentHashMap<>(8, 0.9f, 1);
 
     InetAddress localIPAddr = Common.findMyIP();
@@ -144,15 +144,20 @@ public class Tracker extends Thread {
             P2PFileMetadata rcvdMeta = (P2PFileMetadata) objIn.readObject();
             String filename = rcvdMeta.getFilename();
 
+            // TODO these status codes ought to be unit tested
+
             if (swarmsByFilename.containsKey(filename)) {
                 Swarm swarm = swarmsByFilename.get(filename);
                 if (swarm.pFileMetadata.equals(rcvdMeta)) {
-                    swarm.addSeeder(peerIPAddr);
+                    if (swarm.getSeeders().contains(peerIPAddr)) {
+                        objOut.writeObject(Common.StatusCodes.ALREADY_LISTED);
+                    } else {
+                        swarm.addSeeder(peerIPAddr);
+                        objOut.writeObject(Common.StatusCodes.ADDR_ADDED);
+                    }
                 }
                 else {
-                    // TODO this should be a error-code response not a server-side exception
-                    // TODO this case should have a test associated with it
-                    throw new SecurityException("metadata didn't match");
+                    objOut.writeObject(Common.StatusCodes.METADATA_MISMATCH);
                 }
             }
             else { /* no existing swarm for this filename */
@@ -165,8 +170,12 @@ public class Tracker extends Thread {
                     synchronized (swarmsByFilename) {
                         swarmsByFilename.notifyAll();
                     }
+                    objOut.writeObject(Common.StatusCodes.SWARM_CREATED);
                 }
-                catch (Exception e) { log.error(e.getMessage()); }
+                catch (Exception e) {
+                    log.error(e.getMessage());
+                    objOut.writeObject(Common.StatusCodes.SERVER_EXCEPTION);
+                }
             }
         }
 

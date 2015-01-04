@@ -31,9 +31,13 @@ public class Common {
         NO_INTERNET,
         SWARM_FOUND,
         SWARM_NOT_FOUND,
+        SWARM_CREATED,
         METADATA_MISMATCH,
         METADATA_MATCH,
-        FILE_NOT_FOUND
+        FILE_NOT_FOUND,
+        ALREADY_LISTED,
+        ADDR_ADDED,
+        SERVER_EXCEPTION
     }
 
     public static final String ADD_FILE_CMD = "add file";

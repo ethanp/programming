@@ -3,6 +3,7 @@ package p2p.peer;
 import org.junit.Test;
 import p2p.BaseTest;
 import p2p.Swarm;
+import p2p.Tracker;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 
@@ -74,7 +75,6 @@ public class PeerTest extends BaseTest {
         assertEquals(trueFileList, receivedFileList);
     }
 
-    // TODO implement the functionality
     @Test
     public void peer1SharePeer2Download() throws Exception {
         P2PFile dldFile = peer2.downloadFromSavedTracker(sampleMeta);
@@ -86,5 +86,13 @@ public class PeerTest extends BaseTest {
         List<P2PFileMetadata> receivedFileList = peer2.listSavedTracker();
         P2PFile dldFile = peer2.downloadFromSavedTracker(receivedFileList.get(0));
         assertEquals(sampleP2PFile, dldFile);
+    }
+
+    @Test
+    public void listEmptyTracker() throws Exception {
+        Tracker tracker1 = new Tracker();
+        tracker1.start();
+        List<P2PFileMetadata> list = peer.listTracker(tracker1.getInetSocketAddr());
+        assertTrue(list.isEmpty());
     }
 }
