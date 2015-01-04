@@ -73,7 +73,9 @@ public class P2PFile implements Comparable<P2PFile> {
 
     public P2PFile(P2PFileMetadata meta, Collection<Chunk> chunks) {
         metadata = meta;
-        dataChunks = chunks.toArray(new Chunk[chunks.size()]);
+        dataChunks = new Chunk[meta.numChunks];
+        for (Chunk c : chunks)
+            dataChunks[c.idx] = c;
     }
 
     static byte[] getSha256(String filename) {
@@ -100,9 +102,9 @@ public class P2PFile implements Comparable<P2PFile> {
         if (!(o instanceof P2PFile)) return false;
         P2PFile p2PFile = (P2PFile) o;
 
-        return Arrays.equals(dataChunks, p2PFile.dataChunks)
-            && !(metadata != null ? !metadata.equals(p2PFile.metadata)
-                                  : p2PFile.metadata != null);
+        if (!Arrays.equals(dataChunks, p2PFile.dataChunks)) return false;
+        if (metadata == null) return p2PFile.metadata == null;
+        return metadata.equals(p2PFile.metadata);
     }
 
     @Override

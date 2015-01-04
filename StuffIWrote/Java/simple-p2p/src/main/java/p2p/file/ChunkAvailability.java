@@ -23,7 +23,7 @@ public class ChunkAvailability implements Comparable<ChunkAvailability> {
     public static List<ChunkAvailability> createList(BitSet completeChunks, int totalChunks) {
         int numChunksLeft = totalChunks - completeChunks.cardinality();
         List<ChunkAvailability> arr = new ArrayList<>(numChunksLeft);
-        for (int i = 0; i < numChunksLeft; i++)
+        for (int i = 0; i < totalChunks; i++)
             if (!completeChunks.get(i))
                 arr.add(new ChunkAvailability(i));
         return arr;

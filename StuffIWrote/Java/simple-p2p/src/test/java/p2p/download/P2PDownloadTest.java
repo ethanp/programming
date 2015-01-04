@@ -68,8 +68,15 @@ public class P2PDownloadTest extends BaseTest {
     }
 
     @Test
-    public void testDownloadFile() throws Exception {
+    public void testSimpleFileDownload() throws Exception {
         P2PFile pFile = new P2PDownload(peer2, sampleMeta, peer2.trkAddr).call();
         assertEquals(sampleP2PFile, pFile);
+    }
+
+    @Test
+    public void testBigFileDownload() throws Exception {
+        P2PFile oFile = shareLargeFile();
+        P2PFile dFile = new P2PDownload(peer2, oFile.metadata, peer2.trkAddr).call();
+        assertEquals(oFile, dFile);
     }
 }

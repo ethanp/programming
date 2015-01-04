@@ -12,7 +12,6 @@ import p2p.file.ChunkAvailability;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 import p2p.peer.Peer;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -46,31 +45,13 @@ public class P2PDownload implements Callable<P2PFile> {
 
     static final Logger log = LogManager.getLogger(P2PDownload.class.getName());
 
-
-    /* I'n not sure if Collection is the right thing here */
-    Collection<Integer> chunkIdcs;
-
-    /* I'm not sure if Socket is the right thing here */
-    Socket from;
-    Socket to;
-    P2PFile pFile;
+    /* FIELDS */
     Peer downloadingPeer;
     P2PFileMetadata meta;
     InetSocketAddress trackerAddr;
-    ExecutorService threadPool = Executors.newFixedThreadPool(10);
+    ExecutorService threadPool = Executors.newFixedThreadPool(30);
     BitSet chunksComplete;
     int numChunks;
-
-    Set<InetSocketAddress> hostPeerAddrs;
-
-
-    /* we can create the sockets in here, and Sockets have a configurable timeout parameter
-     * when you call
-     *
-     *      mySocket.connect(SocketAddress, Timeout)
-     *
-     */
-    Timer timeoutTimer; // if connection times-out raise an Exception
 
     public P2PDownload(Peer downloadingPeer,
                        P2PFileMetadata fileMetadata,
@@ -183,14 +164,14 @@ public class P2PDownload implements Callable<P2PFile> {
          */
         Thread.sleep(seconds*1000); // milliseconds
         List<Chunk> completeChunks = new ArrayList<>();
-        int numRcvd = 0;
+        int numRcvd = chunksComplete.cardinality();
         for (Future<Chunk> chunkFuture : futureChunks) {
             if (chunkFuture.isDone()) {
                 Chunk doneChunk = chunkFuture.get();
                 completeChunks.add(doneChunk);
 
                 log.printf(Level.INFO,
-                        "Chunk %d of \"%s\" received. %d of %d chunks so far.\n",
+                        "Chunk idx %d of \"%s\" received. %d of %d chunks so far.",
                         doneChunk.idx, meta.getFilename(), ++numRcvd, numChunks);
             }
         }

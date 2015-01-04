@@ -16,6 +16,7 @@ import java.nio.file.FileSystemException;
  */
 public class BaseTest {
     protected static final String SAMPLE_FILENAME = "asdfile";
+    protected static final String VIRGINIA_FILENAME = "West Virginia.m4a";
 
     protected Peer peer;
     protected Peer peer2;
@@ -47,5 +48,14 @@ public class BaseTest {
         sampleMeta = sampleP2PFile.metadata;
         try { peer.shareFile(SAMPLE_FILENAME); }
         catch (FileNotFoundException | FileSystemException e) { e.printStackTrace(); }
+    }
+
+    public P2PFile shareLargeFile() {
+        try {
+            peer.shareFile(VIRGINIA_FILENAME);
+            return new P2PFile(VIRGINIA_FILENAME, peer.trkAddr);
+        }
+        catch (FileNotFoundException | FileSystemException e) { e.printStackTrace(); }
+        return null;
     }
 }
