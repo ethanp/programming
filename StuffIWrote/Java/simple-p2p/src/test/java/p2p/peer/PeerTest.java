@@ -1,14 +1,13 @@
 package p2p.peer;
 
-import org.junit.Before;
 import org.junit.Test;
 import p2p.BaseTest;
 import p2p.Swarm;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -69,8 +68,8 @@ public class PeerTest extends BaseTest {
 
     @Test
     public void peer1SharePeer2List() throws Exception {
-        SortedSet<P2PFileMetadata> receivedFileList = peer2.listSavedTracker();
-        SortedSet<P2PFileMetadata> trueFileList = new TreeSet<>();
+        List<P2PFileMetadata> receivedFileList = peer2.listSavedTracker();
+        List<P2PFileMetadata> trueFileList = new ArrayList<>();
         trueFileList.add(sampleMeta);
         assertEquals(trueFileList, receivedFileList);
     }
@@ -84,8 +83,8 @@ public class PeerTest extends BaseTest {
 
     @Test
     public void peer1SharePeer2ListThenDownload() throws Exception {
-        SortedSet<P2PFileMetadata> receivedFileList = peer2.listSavedTracker();
-        P2PFile dldFile = peer2.downloadFromSavedTracker(receivedFileList.first());
+        List<P2PFileMetadata> receivedFileList = peer2.listSavedTracker();
+        P2PFile dldFile = peer2.downloadFromSavedTracker(receivedFileList.get(0));
         assertEquals(sampleP2PFile, dldFile);
     }
 }

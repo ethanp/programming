@@ -3,11 +3,14 @@ package p2p;
 import p2p.file.P2PFileMetadata;
 import p2p.peer.Peer;
 
+import java.io.FileNotFoundException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.nio.file.FileSystemException;
+import java.util.List;
 import java.util.Scanner;
-import java.util.SortedSet;
 
 /**
  * Ethan Petuchowski 1/4/15
@@ -20,17 +23,16 @@ public class P2PConsole {
 
     static final String peerString =
             "\nCommands:\n" +
-            "trackerIPs become [optional] if you first 'set tracker ip'\n\n" +
             "set tracker <trackerIP>\n" +
-            "list [<trackerIP>]\n" +
-            "upload <file> [<trackerIP>]\n" +
-            "download <filename> [<trackerIP>]\n" +
+            "list\n" +
+            "upload <filename>\n" +
+            "download <listNo>\n" +
             "quit\n";
 
     Scanner scanner;
     Peer peer;
     Tracker tracker;
-    SortedSet<P2PFileMetadata> trackerListResult;
+    List<P2PFileMetadata> trackerListing;
 
     public static void main(String[] args) {
         new P2PConsole();
@@ -66,6 +68,7 @@ public class P2PConsole {
     void startTracker() {
         System.out.println("starting tracker...");
         tracker = new Tracker(this);
+        tracker.start();
     }
 
     public P2PConsole putIPAddr(InetAddress ipAddr, int portNo) {
@@ -90,43 +93,48 @@ public class P2PConsole {
                 }
                 catch (UnknownHostException e) {
                     System.out.println("unknown host! please try again.");
+                    continue;
                 }
+                System.out.println("tracker set successfully");
             }
             else if (listCmd(cmd)) {
-                if (optTrk(parts, 2)) {
+                if (parts.length != 1) {
                     System.out.println("wrong format, try again");
                     continue;
                 }
-                if (parts.length == 2) {
-                    InetSocketAddress addr;
-                    try {
-                        addr = Common.addrFromString(parts[1]);
-                        trackerListResult = peer.listTracker(addr);
-                    }
-                    catch (UnknownHostException e) {
-                        System.out.println("unknown host! please try again.");
-                        continue;
-                    }
+                try {
+                    trackerListing = peer.listSavedTracker();
                 }
-                else {
-                    trackerListResult = peer.listSavedTracker();
+                catch (ConnectException e) {
+                    System.out.println("connection to tracker refused! " +
+                                       "try a different address.");
+                    continue;
                 }
-
+                printListResult(trackerListing);
             }
             else if (uploadCmd(cmd)) {
-                if (optTrk(parts, 3)) {
+                if (parts.length != 2) {
                     System.out.println("wrong format, try again");
                     continue;
+                }
+                try {
+                    peer.shareFile(parts[1]);
+                }
+                catch (FileNotFoundException | FileSystemException e) {
+                    System.out.println(e.getMessage());
                 }
             }
             else if (downloadCmd(cmd)) {
-                if (optTrk(parts, 3)) {
+                if (parts.length != 2) {
                     System.out.println("wrong format, try again");
                     continue;
                 }
-
+                System.out.printf(
+                        "Downloading \"%s\"\n",
+                        trackerListing.get(Integer.parseInt(parts[1])));
             }
             else if (quitCmd(cmd)) {
+                System.out.println("exiting");
                 System.exit(0);
             }
         }
@@ -141,5 +149,19 @@ public class P2PConsole {
     boolean optTrk(String[] arr, int b) {
         return peer.trkAddr == null ? arr.length != b
                                     : !in(arr.length, b-1, b);
+    }
+
+    void printListResult(List<P2PFileMetadata> metaList) {
+        if (metaList.isEmpty()) {
+            System.out.println("It appears the tracker is empty");
+        } else {
+            System.out.println("The requested tracker lists the following files:");
+            int i = 0;
+            for (P2PFileMetadata meta : metaList) {
+                ++i;
+                System.out.printf("%d) \"%s\" %d B\n",
+                                  i, meta.getFilename(), meta.getNumBytes());
+            }
+        }
     }
 }

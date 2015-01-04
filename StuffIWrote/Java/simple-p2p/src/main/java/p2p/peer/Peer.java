@@ -15,12 +15,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.file.FileSystemException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -109,49 +112,60 @@ public class Peer {
     /**
      * list "filename numSeeders" for each file of this peer's default tracker
      */
-    public SortedSet<P2PFileMetadata> listSavedTracker() {
+    public List<P2PFileMetadata> listSavedTracker() throws ConnectException {
         return listTracker(trkAddr);
     }
 
     /**
      * list "filename numSeeders" for each file of the tracker at the given address
      */
-    public SortedSet<P2PFileMetadata> listTracker(InetSocketAddress trackerAddr) {
-        SortedSet<P2PFileMetadata> theListing = new TreeSet<>();
-        try (Socket trkr = new Socket(trackerAddr.getAddress(), trkAddr.getPort())) {
+    public List<P2PFileMetadata> listTracker(InetSocketAddress trackerAddr) throws ConnectException {
+        List<P2PFileMetadata> theListing = new ArrayList<>();
+        try (Socket trkr = new Socket(trackerAddr.getAddress(), trackerAddr.getPort())) {
             PrintWriter out = Common.printWriter(trkr);
 
             /* we *must* create an OOS *before* an OIS
              * stackoverflow.com/questions/5658089 */
             out.println(Common.LIST_FILES_CMD);
-            ObjectOutputStream objOut = new ObjectOutputStream(trkr.getOutputStream());
-            objOut.flush();
-            ObjectInputStream objIn = new ObjectInputStream(trkr.getInputStream());
+            ObjectOutputStream objOut = Common.objectOStream(trkr);
+            ObjectInputStream objIn = Common.objectIStream(trkr);
 
-            P2PFileMetadata metadata;
-            int numPeers;
             /* we *must* catch EOFException for flow-control on readObject()
              * stackoverflow.com/questions/12684072 */
             while (true) {
-                metadata = (P2PFileMetadata) objIn.readObject();
-                log.debug(objIn.available());
-                numPeers = objIn.readInt();
+                final Object trnsmt = objIn.readObject();
+                if (trnsmt instanceof String) {
+                    String msg = (String) trnsmt;
+                    if (msg.equals(Common.EMPTY_SWARMS)) {
+                        log.info(msg);
+                    } else {
+                        throw new RuntimeException("Unknown message: "+msg);
+                    }
+                }
+                else if (trnsmt instanceof P2PFileMetadata) {
+                    P2PFileMetadata metadata = (P2PFileMetadata) trnsmt;
+                    log.debug(objIn.available());
+                    int numPeers = objIn.readInt();
 
-                // LowPriorityTODO: should I do something with the numPeers var?
+                    log.printf(Level.INFO,
+                               "List File Item: %s; %d peer(s)\n",
+                               metadata.getFilename(), numPeers);
 
-                log.printf(Level.INFO,
-                           "List File Item: %s; %d peer(s)\n",
-                           metadata.getFilename(), numPeers);
-
-                theListing.add(metadata);
+                    theListing.add(metadata);
+                }
+                else {
+                    throw new RuntimeException(
+                            "Unknown transmission type: "+trnsmt.getClass());
+                }
             }
         }
         catch (EOFException e) {
             log.info("done receiving file list");
         }
-        catch (IOException | ClassNotFoundException e) { e.printStackTrace(); }
-        return theListing;
-    }
+        catch (ConnectException e) { throw e; }
+        catch(IOException | ClassNotFoundException e){ e.printStackTrace(); }
+            return theListing;
+        }
 
     /**
      * Download P2PFile from this Peer's saved Tracker.
@@ -172,8 +186,6 @@ public class Peer {
      */
     public P2PFile download(P2PFileMetadata fileMetadata,
                             InetSocketAddress trackerAddr) throws Exception {
-
-
         P2PFile downloadedFile = new P2PDownload(this, fileMetadata, trackerAddr).call();
         return downloadedFile;
     }

@@ -173,11 +173,16 @@ public class Tracker extends Thread {
         void listFiles() throws IOException {
             ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
             objOut.flush();
-            for (Map.Entry<String, Swarm> entry : swarmsByFilename.entrySet()) {
-                objOut.writeObject(entry.getValue().pFileMetadata);
-                int swarmSize = entry.getValue().numSeeders();
-                objOut.writeInt(swarmSize);
-                objOut.flush(); // otw writeInt isn't written for some reason.
+            if (swarmsByFilename.isEmpty()) {
+                objOut.writeObject(Common.EMPTY_SWARMS);
+            }
+            else {
+                for (Map.Entry<String, Swarm> entry : swarmsByFilename.entrySet()) {
+                    objOut.writeObject(entry.getValue().pFileMetadata);
+                    int swarmSize = entry.getValue().numSeeders();
+                    objOut.writeInt(swarmSize);
+                    objOut.flush(); // otw writeInt isn't written for some reason.
+                }
             }
         }
 

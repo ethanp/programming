@@ -42,6 +42,8 @@ public class Common {
     public static final String DL_CHUNK_CMD = "download chunk request";
     public static final String CHUNK_BITSET_CMD = "get BitSet of available chunks";
 
+    public static final String EMPTY_SWARMS = "this tracker is empty";
+
     public static final int PORT_MIN = 3000;
     public static final int PORT_MAX = 3500;
 
