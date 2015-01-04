@@ -106,83 +106,10 @@ public class Tracker extends Thread {
                 log.info("received command: "+command);
 
                 switch (command) {
-                    /* TODO maybe each of these case blocks should be a separate method */
-                    case Common.ADD_FILE_CMD: {
-
-                        ObjectOutputStream objOut = Common.objectOStream(socket);
-                        ObjectInputStream objIn = Common.objectIStream(socket);
-                        InetSocketAddress peerIPAddr = (InetSocketAddress) objIn.readObject();
-                        P2PFileMetadata rcvdMeta = (P2PFileMetadata) objIn.readObject();
-                        String filename = rcvdMeta.getFilename();
-
-                        if (swarmsByFilename.containsKey(filename)) {
-                            Swarm swarm = swarmsByFilename.get(filename);
-                            if (swarm.pFileMetadata.equals(rcvdMeta)) {
-                                swarm.addSeeder(peerIPAddr);
-                            }
-                            else {
-                                throw new SecurityException("metadata didn't match");
-                            }
-                        }
-                        else { /* no existing swarm for this filename */
-
-                            try {
-                                Swarm swarm = new Swarm(peerIPAddr, rcvdMeta);
-                                swarmsByFilename.put(filename, swarm);
-
-                                // this is for synchronization while running on one machine
-                                synchronized (swarmsByFilename) {
-                                    swarmsByFilename.notifyAll();
-                                }
-                            } catch (Exception e) {
-                                log.error(e.getMessage());
-                                log.error("Huh?");
-                                System.exit(Common.StatusCodes.NO_INTERNET.ordinal());
-                            }
-                        }
-                        break;
-                    }
-                    case Common.LIST_FILES_CMD: {
-                        ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
-                        objOut.flush();
-                        for (Map.Entry<String, Swarm> entry : swarmsByFilename.entrySet()) {
-                            objOut.writeObject(entry.getValue().pFileMetadata);
-                            int swarmSize = entry.getValue().numSeeders();
-                            objOut.writeInt(swarmSize);
-                            objOut.flush(); // otw writeInt isn't written for some reason.
-                        }
-                        break;
-                    }
-                    case Common.GET_SEEDERS_CMD: {
-
-                        /**
-                         * read a P2PFileMetadata object
-                         * return SWARM_NOT_FOUND -- if it's name doesn't match any known swarm
-                         * return METADATA_MISMATCH -- if the metadata itself is incorrect for this file name
-                         * return Set<InetSocketAddress> -- otw
-                         */
-
-                        ObjectOutputStream objOut = Common.objectOStream(socket);
-                        ObjectInputStream objIn = Common.objectIStream(socket);
-                        P2PFileMetadata rcvdMeta = (P2PFileMetadata) objIn.readObject();
-                        String filename = rcvdMeta.getFilename();
-                        Swarm swarm = swarmsByFilename.get(filename);
-
-                        if (swarm == null) {
-                            objOut.writeObject(Common.StatusCodes.SWARM_NOT_FOUND);
-                            break;
-                        }
-
-                        if (!swarm.pFileMetadata.equals(rcvdMeta)) {
-                            objOut.writeObject(Common.StatusCodes.METADATA_MISMATCH);
-                            break;
-                        }
-
-                        objOut.writeObject(swarm.getSeeders());
-                        break;
-                    }
-                    default:
-                        throw new RuntimeException("UNKNOWN COMMAND: "+command);
+                    case Common.ADD_FILE_CMD: receiveFileToTrack(); break;
+                    case Common.LIST_FILES_CMD: listFiles(); break;
+                    case Common.GET_SEEDERS_CMD: sendSeeders(); break;
+                    default: throw new RuntimeException("UNKNOWN COMMAND: "+command);
                 }
 
             }
@@ -191,6 +118,76 @@ public class Tracker extends Thread {
             finally {
                 try { socket.close(); }
                 catch (IOException e) { log.error(e.getMessage());} }
+        }
+
+        void receiveFileToTrack() throws IOException, ClassNotFoundException {
+            ObjectOutputStream objOut = Common.objectOStream(socket);
+            ObjectInputStream objIn = Common.objectIStream(socket);
+            InetSocketAddress peerIPAddr = (InetSocketAddress) objIn.readObject();
+            P2PFileMetadata rcvdMeta = (P2PFileMetadata) objIn.readObject();
+            String filename = rcvdMeta.getFilename();
+
+            if (swarmsByFilename.containsKey(filename)) {
+                Swarm swarm = swarmsByFilename.get(filename);
+                if (swarm.pFileMetadata.equals(rcvdMeta)) {
+                    swarm.addSeeder(peerIPAddr);
+                }
+                else {
+                    // TODO this should be a error-code response not a server-side exception
+                    // TODO this case should have a test associated with it
+                    throw new SecurityException("metadata didn't match");
+                }
+            }
+            else { /* no existing swarm for this filename */
+
+                try {
+                    Swarm swarm = new Swarm(peerIPAddr, rcvdMeta);
+                    swarmsByFilename.put(filename, swarm);
+
+                    // this is for synchronization while running on one machine
+                    synchronized (swarmsByFilename) {
+                        swarmsByFilename.notifyAll();
+                    }
+                }
+                catch (Exception e) { log.error(e.getMessage()); }
+            }
+        }
+
+        void listFiles() throws IOException {
+            ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
+            objOut.flush();
+            for (Map.Entry<String, Swarm> entry : swarmsByFilename.entrySet()) {
+                objOut.writeObject(entry.getValue().pFileMetadata);
+                int swarmSize = entry.getValue().numSeeders();
+                objOut.writeInt(swarmSize);
+                objOut.flush(); // otw writeInt isn't written for some reason.
+            }
+        }
+
+        /**
+         * read a P2PFileMetadata object
+         * return SWARM_NOT_FOUND -- if it's name doesn't match any known swarm
+         * return METADATA_MISMATCH -- if the metadata itself is incorrect for this file name
+         * return Set<InetSocketAddress> -- otw
+         */
+        void sendSeeders() throws IOException, ClassNotFoundException {
+            ObjectOutputStream objOut = Common.objectOStream(socket);
+            ObjectInputStream objIn = Common.objectIStream(socket);
+            P2PFileMetadata rcvdMeta = (P2PFileMetadata) objIn.readObject();
+            String filename = rcvdMeta.getFilename();
+            Swarm swarm = swarmsByFilename.get(filename);
+
+            if (swarm == null) {
+                objOut.writeObject(Common.StatusCodes.SWARM_NOT_FOUND);
+                return;
+            }
+
+            if (!swarm.pFileMetadata.equals(rcvdMeta)) {
+                objOut.writeObject(Common.StatusCodes.METADATA_MISMATCH);
+                return;
+            }
+
+            objOut.writeObject(swarm.getSeeders());
         }
     }
 }

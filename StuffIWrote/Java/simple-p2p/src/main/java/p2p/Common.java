@@ -37,6 +37,7 @@ public class Common {
     public static final String ADD_FILE_CMD = "add file";
     public static final String LIST_FILES_CMD = "list tracked files";
     public static final String GET_SEEDERS_CMD = "get seeders for file";
+    public static final String DL_CHUNK_CMD = "download chunk request";
 
     public static final int PORT_MIN = 3000;
     public static final int PORT_MAX = 3500;

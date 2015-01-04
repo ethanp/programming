@@ -2,16 +2,16 @@ package p2p.file;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Ethan Petuchowski 1/3/15
  */
 public class ChunkAvailability implements Comparable<ChunkAvailability> {
     public int chunkIdx;
-    public Set<InetSocketAddress> ownerAddrs = new HashSet<>();
+    public Set<InetSocketAddress> ownerAddrs = new TreeSet<>();
 
     public int numOwners() { return ownerAddrs.size(); }
     public void addOwner(InetSocketAddress addr) { ownerAddrs.add(addr); }

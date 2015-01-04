@@ -5,10 +5,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import p2p.Common;
 import p2p.download.P2PDownload;
-import p2p.exceptions.MetadataMismatchException;
-import p2p.exceptions.P2PException;
-import p2p.exceptions.SwarmNotFoundException;
-import p2p.file.ChunkAvailability;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 
@@ -24,15 +20,10 @@ import java.net.Socket;
 import java.nio.file.FileSystemException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.BitSet;
-import java.util.List;
-import java.util.PriorityQueue;
-import java.util.Queue;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.Future;
 
 /**
  * Ethan Petuchowski 12/29/14
@@ -53,6 +44,15 @@ public class Peer {
     Set<P2PDownload> ongoingTransfers = new ConcurrentSkipListSet<>();
     Set<P2PFile> completeAndSeeding = new ConcurrentSkipListSet<>();
 
+    // LowPriorityTODO this should be able to pull from ongoingTransfers as well
+    public P2PFile getFile(P2PFileMetadata meta) throws FileNotFoundException {
+        // LowPriorityTODO to be more efficient, completeAndSeeding should be a Map<P2PMetadata,P2PFile>
+        for (P2PFile pFile : completeAndSeeding)
+            if (pFile.metadata.equals(meta))
+                return pFile;
+        throw new FileNotFoundException("metadata didn't match any known files");
+    }
+
     PeerListener listenerThread;
 
     /** CONSTRUCTORS **/
@@ -60,7 +60,7 @@ public class Peer {
     Peer(String dirString) {
         log.info("creating peer");
         localDir = Paths.get(dirString);
-        listenerThread = new PeerListener();
+        listenerThread = new PeerListener(this);
         new Thread(listenerThread).start();
     }
 

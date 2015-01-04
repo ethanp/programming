@@ -26,12 +26,8 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Timer;
 import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Ethan Petuchowski 12/29/14
@@ -129,24 +125,11 @@ public class P2PDownload implements Callable<P2PFile> {
     @Override
     public P2PFile call() throws Exception {
 
+        /* initialize */
         ExecutorService threadPool = Executors.newFixedThreadPool(10);
-
-        int chunkCt = fileMetadata.getNumChunks();
-        Set<InetSocketAddress> seeders = getSeedersForFile(fileMetadata, trackerAddr);
-        List<ChunkAvailability> chunkAvlbtyCts = ChunkAvailability.createList(chunkCt);
-
-        for (InetSocketAddress seederAddr : seeders) {
-            BitSet hostedChunks = requestChunkListing(seederAddr);
-            addCts(hostedChunks, chunkAvlbtyCts, seederAddr);
-        }
-
-        Queue<ChunkAvailability> pq = new PriorityQueue<>(chunkAvlbtyCts);
-
-        // TODO use a ThreadPool to submit P2PTransfer Tasks 10 at a time?
-
+        Queue<ChunkAvailability> pq = getChunkAvailabilityQueue();
         while (!pq.isEmpty()) {
-            ChunkAvailability head = pq.remove();
-
+            ChunkAvailability leastAvlbChunk = pq.remove();
         }
 
         // start the timeoutTimer
@@ -157,6 +140,17 @@ public class P2PDownload implements Callable<P2PFile> {
         // if the Timer runs out, throw a TimeoutException
 
         throw new NotImplementedException();
+    }
+
+    Queue<ChunkAvailability> getChunkAvailabilityQueue() throws P2PException {
+        int chunkCt = fileMetadata.getNumChunks();
+        Set<InetSocketAddress> seeders = getSeedersForFile(fileMetadata, trackerAddr);
+        List<ChunkAvailability> chunkAvlbtyCts = ChunkAvailability.createList(chunkCt);
+        for (InetSocketAddress seederAddr : seeders) {
+            BitSet chunkBools = requestChunkListing(seederAddr);
+            addCts(chunkBools, chunkAvlbtyCts, seederAddr);
+        }
+        return new PriorityQueue<>(chunkAvlbtyCts);
     }
 
     BitSet requestChunkListing(InetSocketAddress seederAddr) {

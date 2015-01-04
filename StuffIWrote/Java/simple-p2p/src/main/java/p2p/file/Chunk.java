@@ -1,10 +1,11 @@
 package p2p.file;
 
+import java.io.Serializable;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 
-public class Chunk {
+public class Chunk implements Serializable {
     static final int BYTES_PER_CHUNK = 1 << 10; // 1KB
     byte[] data;
     int numBytes;
@@ -13,16 +14,16 @@ public class Chunk {
     Chunk(byte[] data, int len) {
         this.data = data;
         numBytes = len;
-        makeDigest();
+        chunkDigest = makeDigest();
     }
 
-    void makeDigest() {
+    byte[] makeDigest() {
         MessageDigest digest = null;
         try { digest = MessageDigest.getInstance("SHA-256"); }
         catch (NoSuchAlgorithmException e) { e.printStackTrace(); }
-        if (digest == null) return;
+        assert digest != null;
         digest.update(data, 0, numBytes);
-        chunkDigest = digest.digest();
+        return digest.digest();
     }
 
     @Override
@@ -42,5 +43,13 @@ public class Chunk {
         result = 31*result+numBytes;
         result = 31*result+Arrays.hashCode(chunkDigest);
         return result;
+    }
+
+    public boolean verifyDigest() {
+        /* a Chunk should always have a digest */
+        if (chunkDigest == null) return false;
+
+        /* the digest should match the data */
+        return Arrays.equals(chunkDigest, makeDigest());
     }
 }

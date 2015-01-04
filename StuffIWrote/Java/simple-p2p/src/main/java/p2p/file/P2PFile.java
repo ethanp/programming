@@ -2,7 +2,6 @@ package p2p.file;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -33,21 +32,10 @@ public class P2PFile implements Comparable<P2PFile> {
 
     Chunk[] dataChunks;
 
-    public String filenameString() {
-        return metadata.filename.toString();
-    }
-
-    public String base64Digest() {
-        return metadata.base64Digest();
-    }
-
-    Chunk getChunkNum(int chunkNum) {
-        throw new NotImplementedException();
-    }
-
-    int numChunks() {
-        return dataChunks.length;
-    }
+    public String filenameString()          { return metadata.filename.toString(); }
+    public String base64Digest()            { return metadata.base64Digest(); }
+    public Chunk getChunkNum(int chunkNum)  { return dataChunks[chunkNum]; }
+    public int numChunks()                  { return dataChunks.length; }
 
     public P2PFile(String filename, InetSocketAddress trackerAddr)
             throws FileSystemException, FileNotFoundException {

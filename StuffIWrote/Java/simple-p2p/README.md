@@ -72,6 +72,8 @@ Now, sometime in the not-so-distant future a Client:
 6. Java has an API for *"watching"* a directory for changes, use that.
 7. Use JDBC or something to have the Tracker class store swarms in a *"real"*
   DB rather than hash tables
+8. Use Dependency Injection for downloading algorithm
+9. Prefer downloading from peers who in the past have had fast download times
 
 ## Glossary Mapping
 

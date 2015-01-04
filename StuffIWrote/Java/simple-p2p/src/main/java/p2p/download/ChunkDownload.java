@@ -1,9 +1,16 @@
 package p2p.download;
 
+import p2p.Common;
 import p2p.file.Chunk;
+import p2p.file.P2PFileMetadata;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -13,11 +20,21 @@ import java.util.concurrent.Callable;
 public class ChunkDownload implements Callable<Chunk> {
 
     Set<InetSocketAddress> hostPeers = new HashSet<>();
+    static Random random = new Random();
+    P2PFileMetadata meta;
+    int chunkIdx;
 
-    P2PDownload p2pDownload;
-
-    ChunkDownload(Set<InetSocketAddress> peers) {
+    ChunkDownload(P2PFileMetadata pFileMetadata,
+                  int chunkIdx,
+                  Set<InetSocketAddress> peers)
+    {
+        meta = pFileMetadata;
+        this.chunkIdx = chunkIdx;
         hostPeers = peers;
+    }
+
+    public InetSocketAddress randomHost() {
+        return new ArrayList<>(hostPeers).get(random.nextInt(hostPeers.size()));
     }
 
     /**
@@ -29,10 +46,16 @@ public class ChunkDownload implements Callable<Chunk> {
     @Override
     public Chunk call() throws Exception {
 
-        // open a Socket to the "addr" with an ObjectStream pair
+        InetSocketAddress hostAddr = randomHost();
 
-        // download a Chunk (with timeout)
-        Chunk chunk;
-        return null;
+        try (Socket socket = Common.socketAtAddr(hostAddr)) {
+            ObjectOutputStream oos = Common.objectOStream(socket);
+            ObjectInputStream ois = Common.objectIStream(socket);
+            oos.writeObject(Common.DL_CHUNK_CMD);
+            oos.writeInt(chunkIdx);
+            oos.writeObject(meta);
+            Chunk rcvdChunk = (Chunk) ois.readObject();
+            return rcvdChunk;
+        }
     }
 }
