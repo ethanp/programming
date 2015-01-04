@@ -17,6 +17,7 @@ import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
+import java.net.UnknownHostException;
 
 /**
  * Ethan Petuchowski 12/29/14
@@ -101,6 +102,15 @@ public class Common {
         try { return new Socket(addr.getAddress(), addr.getPort()); }
         catch (IOException e) { e.printStackTrace(); }
         return null;
+    }
+
+    public static InetSocketAddress addrFromString(String addrStr)
+            throws UnknownHostException
+    {
+        String[] pieces = addrStr.split(":");
+        InetAddress ipAddr = InetAddress.getByName(pieces[0]);
+        int portNo = Integer.parseInt(pieces[1]);
+        return new InetSocketAddress(ipAddr, portNo);
     }
 
     /**

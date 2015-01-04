@@ -198,6 +198,7 @@ public class Peer {
     public Peer informConsoleOfIPAddr() {
         if (console != null) {
             console.putIPAddr(externalIPAddr, getListeningPort());
+            console.runPeerConsole();
         }
         return this;
     }
