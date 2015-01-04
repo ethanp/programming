@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 import p2p.file.P2PFile;
+import p2p.file.P2PFileMetadata;
 import p2p.peer.Peer;
 
 import java.io.FileNotFoundException;
@@ -18,8 +19,11 @@ public class BaseTest {
 
     protected Peer peer;
     protected Peer peer2;
+
     protected Tracker tracker;
+
     protected P2PFile sampleP2PFile;
+    protected P2PFileMetadata sampleMeta;
 
     /* "The ExpectedException rule allows you to verify
         that your code throws a specific exception."    */
@@ -40,6 +44,7 @@ public class BaseTest {
         peer2.setTracker(trackerAddr);
 
         sampleP2PFile = new P2PFile(SAMPLE_FILENAME, trackerAddr);
+        sampleMeta = sampleP2PFile.metadata;
         try { peer.shareFile(SAMPLE_FILENAME); }
         catch (FileNotFoundException | FileSystemException e) { e.printStackTrace(); }
     }

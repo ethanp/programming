@@ -2,6 +2,7 @@ package p2p.file;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -18,10 +19,12 @@ public class ChunkAvailability implements Comparable<ChunkAvailability> {
     public void removeOwner(InetSocketAddress addr) { ownerAddrs.remove(addr); }
     public ChunkAvailability(int idx) { chunkIdx = idx; }
 
-    public static List<ChunkAvailability> createList(int ct) {
-        List<ChunkAvailability> arr = new ArrayList<>(ct);
-        for (int i = 0; i < ct; i++)
-            arr.add(new ChunkAvailability(i));
+    public static List<ChunkAvailability> createList(BitSet completeChunks, int totalChunks) {
+        int numChunksLeft = totalChunks - completeChunks.cardinality();
+        List<ChunkAvailability> arr = new ArrayList<>(numChunksLeft);
+        for (int i = 0; totalChunks< numChunksLeft; i++)
+            if (!completeChunks.get(i))
+                arr.add(new ChunkAvailability(i));
         return arr;
     }
 

@@ -13,25 +13,22 @@ import java.nio.file.FileSystemException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Collection;
 
 /**
  * Ethan Petuchowski 12/29/14
+ *
+ * Allowing P2PFile to be a Directory full of files is "future work"
  */
 public class P2PFile implements Comparable<P2PFile> {
 
     static final Logger log = LogManager.getLogger(P2PFile.class.getName());
 
-
-    /* Allowing P2PFile to be a Directory full of files is "future work",
-     * as in I've never dealt with entire directories before so I'm leaving
-     * it alone for now.  Part of it would likely entail using a
-     * Collection<Path> instead of a single Path.
-     */
-
+    /* FIELDS */
     public P2PFileMetadata metadata;
-
     Chunk[] dataChunks;
 
+    /* GETTERS */
     public String filenameString()          { return metadata.filename.toString(); }
     public String base64Digest()            { return metadata.base64Digest(); }
     public Chunk getChunkNum(int chunkNum)  { return dataChunks[chunkNum]; }
@@ -66,13 +63,19 @@ public class P2PFile implements Comparable<P2PFile> {
             byte[] chunkData = new byte[Chunk.BYTES_PER_CHUNK];
             while (fileIn.available() > 0) {
                 int size = fileIn.read(chunkData, 0, Chunk.BYTES_PER_CHUNK);
-                dataChunks[chunkNum++] = new Chunk(chunkData, size);
+                dataChunks[chunkNum] = new Chunk(chunkData, size, chunkNum);
+                chunkNum++;
             }
 
             if (chunkNum != dataChunks.length)
                 throw new RuntimeException("file->chunk[] didn't work properly");
         }
         catch (IOException e) { e.printStackTrace(); }
+    }
+
+    public P2PFile(P2PFileMetadata meta, Collection<Chunk> chunks) {
+        metadata = meta;
+        dataChunks = (Chunk[]) chunks.toArray();
     }
 
     static byte[] getSha256(String filename) {

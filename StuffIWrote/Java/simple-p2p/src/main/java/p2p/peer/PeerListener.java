@@ -7,8 +7,6 @@ import p2p.download.P2PDownload;
 import p2p.file.Chunk;
 import p2p.file.P2PFileMetadata;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -85,7 +83,7 @@ public class PeerListener extends Thread {
             P2PFileMetadata meta = (P2PFileMetadata) ois.readObject();
 
             /* send the Chunk to the receiver */
-            Chunk toSend = thisPeer.getFile(meta).getChunkNum(chunkIdx);
+            Chunk toSend = thisPeer.getSeedingFile(meta).getChunkNum(chunkIdx);
             oos.writeObject(toSend);
         }
     }

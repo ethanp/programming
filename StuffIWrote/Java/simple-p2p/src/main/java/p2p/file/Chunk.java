@@ -9,10 +9,12 @@ public class Chunk implements Serializable {
     static final int BYTES_PER_CHUNK = 1 << 10; // 1KB
     byte[] data;
     int numBytes;
+    public int idx;
     byte[] chunkDigest;
 
-    Chunk(byte[] data, int len) {
+    Chunk(byte[] data, int len, int idxWithinFile) {
         this.data = data;
+        idx = idxWithinFile;
         numBytes = len;
         chunkDigest = makeDigest();
     }
@@ -31,10 +33,11 @@ public class Chunk implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Chunk)) return false;
         Chunk chunk = (Chunk) o;
-        if (numBytes != chunk.numBytes) return false;
-        if (!Arrays.equals(chunkDigest, chunk.chunkDigest)) return false;
-        if (!Arrays.equals(data, chunk.data)) return false;
-        return true;
+
+        return numBytes == chunk.numBytes
+            && idx == chunk.idx
+            && Arrays.equals(chunkDigest, chunk.chunkDigest)
+            && Arrays.equals(data, chunk.data);
     }
 
     @Override
@@ -46,10 +49,7 @@ public class Chunk implements Serializable {
     }
 
     public boolean verifyDigest() {
-        /* a Chunk should always have a digest */
-        if (chunkDigest == null) return false;
-
-        /* the digest should match the data */
-        return Arrays.equals(chunkDigest, makeDigest());
+        return chunkDigest != null
+            && Arrays.equals(chunkDigest, makeDigest());
     }
 }

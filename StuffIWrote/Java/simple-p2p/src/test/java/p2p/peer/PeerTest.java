@@ -40,7 +40,6 @@ public class PeerTest extends BaseTest {
      */
     @Test
     public void testShareFileTrackerSwarm() throws Exception {
-        P2PFileMetadata trueMeta = sampleP2PFile.metadata;
         ConcurrentHashMap<String, Swarm> swarmMap = tracker.swarmsByFilename;
 
         // wait for the tracker to create a swarm in the map
@@ -50,7 +49,7 @@ public class PeerTest extends BaseTest {
         Swarm sampleSwarm = swarmMap.get(SAMPLE_FILENAME);
         assertEquals(1, sampleSwarm.numSeeders());
         P2PFileMetadata savedMeta = sampleSwarm.getFileMetadata();
-        assertEquals(trueMeta, savedMeta);
+        assertEquals(sampleMeta, savedMeta);
 
 
         // LowPriorityTODO (at some point, figure out whether to fix this)
@@ -72,14 +71,14 @@ public class PeerTest extends BaseTest {
     public void peer1SharePeer2List() throws Exception {
         SortedSet<P2PFileMetadata> receivedFileList = peer2.listSavedTracker();
         SortedSet<P2PFileMetadata> trueFileList = new TreeSet<>();
-        trueFileList.add(sampleP2PFile.metadata);
+        trueFileList.add(sampleMeta);
         assertEquals(trueFileList, receivedFileList);
     }
 
     // TODO implement the functionality
     @Test
     public void peer1SharePeer2Download() throws Exception {
-        P2PFile dldFile = peer2.downloadFromSavedTracker(sampleP2PFile.metadata);
+        P2PFile dldFile = peer2.downloadFromSavedTracker(sampleMeta);
         assertEquals(sampleP2PFile, dldFile);
     }
 

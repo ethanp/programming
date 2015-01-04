@@ -1,11 +1,13 @@
 package p2p.download;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import p2p.Common;
 import p2p.exceptions.MetadataMismatchException;
 import p2p.exceptions.P2PException;
 import p2p.exceptions.SwarmNotFoundException;
+import p2p.file.Chunk;
 import p2p.file.ChunkAvailability;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
@@ -18,6 +20,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.Collection;
 import java.util.List;
@@ -26,8 +29,11 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.Timer;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Ethan Petuchowski 12/29/14
@@ -48,8 +54,11 @@ public class P2PDownload implements Callable<P2PFile> {
     Socket to;
     P2PFile pFile;
     Peer downloadingPeer;
-    P2PFileMetadata fileMetadata;
+    P2PFileMetadata meta;
     InetSocketAddress trackerAddr;
+    ExecutorService threadPool = Executors.newFixedThreadPool(10);
+    BitSet chunksComplete;
+    int numChunks;
 
     Set<InetSocketAddress> hostPeerAddrs;
 
@@ -67,8 +76,10 @@ public class P2PDownload implements Callable<P2PFile> {
                        InetSocketAddress trackerAddr)
     {
         this.downloadingPeer = downloadingPeer;
-        this.fileMetadata = fileMetadata;
+        this.meta = fileMetadata;
         this.trackerAddr = trackerAddr;
+        this.numChunks = meta.getNumChunks();
+        this.chunksComplete = new BitSet(numChunks);
     }
 
     Set<InetSocketAddress> getSeedersForFile
@@ -119,40 +130,84 @@ public class P2PDownload implements Callable<P2PFile> {
     /**
      * Downloads a P2PFile or throws an Exception if unable to do so.
      * @return downloaded P2PFile
-     * @throws Exception if unable to compute a result
+     * @throws Exception                             if unable to compute a result
      * @throws java.util.concurrent.TimeoutException if transfer times-out
      */
     @Override
     public P2PFile call() throws Exception {
 
-        /* initialize */
-        ExecutorService threadPool = Executors.newFixedThreadPool(10);
-        Queue<ChunkAvailability> pq = getChunkAvailabilityQueue();
-        while (!pq.isEmpty()) {
-            ChunkAvailability leastAvlbChunk = pq.remove();
+        List<Chunk> ofFile = new ArrayList<>();
+
+        /* really no good reason to do it this way... */
+        for (int i = 0; i < 10; i++) {
+            List<Chunk> done = downloadFor(3/*seconds*/);
+            ofFile.addAll(ofFile);
+            for (Chunk c : done) chunksComplete.set(c.idx, true);
+            if (ofFile.size() == numChunks) break;
         }
 
-        // start the timeoutTimer
+        if (ofFile.size() != numChunks)
+            throw new TimeoutException();
 
-        // open a Socket between the Client and the Host-Peer
-        // pump the Chunk through it using an Object-Stream
+        return new P2PFile(meta, ofFile);
+    }
 
-        // if the Timer runs out, throw a TimeoutException
+    List<Chunk> downloadFor(int seconds)
+            throws P2PException, ExecutionException, InterruptedException
+    {
+        Queue<ChunkAvailability> pq = getChunkAvailabilityQueue();
+        List<Future<Chunk>> futureChunks = new ArrayList<>();
+        while (!pq.isEmpty()) {
+            ChunkAvailability ck = pq.remove();
+            Callable<Chunk> dl = new ChunkDownload(meta, ck.chunkIdx, ck.ownerAddrs);
+            Future<Chunk> futChunk = threadPool.submit(dl);
+            futureChunks.add(futChunk);
+        }
 
-        throw new NotImplementedException();
+        List<Chunk> completeChunks = new ArrayList<>();
+
+        /* check after 3 seconds for finished chunks
+         *
+         * NOTE: there's really no good reason to do it this way
+         * except that it may help in debugging across multiple machines
+         */
+        Thread.sleep(seconds*1000); // milliseconds
+        int numRcvd = 0;
+        for (Future<Chunk> chunkFuture : futureChunks) {
+            if (chunkFuture.isDone()) {
+                Chunk doneChunk = chunkFuture.get();
+                completeChunks.add(doneChunk);
+
+                log.printf(Level.INFO,
+                        "Chunk %d of \"%s\" received. %d of %d chunks so far.\n",
+                        doneChunk.idx, ++numRcvd, numChunks);
+            }
+        }
+
+        /* cancel any transfers that haven't finished */
+        for (Future<Chunk> chunkFuture : futureChunks)
+            chunkFuture.cancel(true); // doesn't affect completed tasks
+
+        return completeChunks;
     }
 
     Queue<ChunkAvailability> getChunkAvailabilityQueue() throws P2PException {
-        int chunkCt = fileMetadata.getNumChunks();
-        Set<InetSocketAddress> seeders = getSeedersForFile(fileMetadata, trackerAddr);
-        List<ChunkAvailability> chunkAvlbtyCts = ChunkAvailability.createList(chunkCt);
+        List<ChunkAvailability> chunkAvlbtyCts =
+                ChunkAvailability.createList(chunksComplete, numChunks);
+
+        /* LowPriorityTODO this is for later
+                (prioritize chunk order by lower availability)
+
+        Set<InetSocketAddress> seeders = getSeedersForFile(meta, trackerAddr);
         for (InetSocketAddress seederAddr : seeders) {
             BitSet chunkBools = requestChunkListing(seederAddr);
             addCts(chunkBools, chunkAvlbtyCts, seederAddr);
         }
+        */
         return new PriorityQueue<>(chunkAvlbtyCts);
     }
 
+    // LowPriorityTODO for later implementation
     BitSet requestChunkListing(InetSocketAddress seederAddr) {
         return null;
     }

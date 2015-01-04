@@ -44,15 +44,6 @@ public class Peer {
     Set<P2PDownload> ongoingTransfers = new ConcurrentSkipListSet<>();
     Set<P2PFile> completeAndSeeding = new ConcurrentSkipListSet<>();
 
-    // LowPriorityTODO this should be able to pull from ongoingTransfers as well
-    public P2PFile getFile(P2PFileMetadata meta) throws FileNotFoundException {
-        // LowPriorityTODO to be more efficient, completeAndSeeding should be a Map<P2PMetadata,P2PFile>
-        for (P2PFile pFile : completeAndSeeding)
-            if (pFile.metadata.equals(meta))
-                return pFile;
-        throw new FileNotFoundException("metadata didn't match any known files");
-    }
-
     PeerListener listenerThread;
 
     /** CONSTRUCTORS **/
@@ -70,6 +61,18 @@ public class Peer {
 
 
     /** PUBLIC INTERFACE **/
+
+    public InetSocketAddress getAddr() {
+        return new InetSocketAddress(externalIPAddr, getListeningPort());
+    }
+
+    public P2PFile getSeedingFile(P2PFileMetadata meta) throws FileNotFoundException {
+        // LowPriorityTODO to be more efficient, completeAndSeeding should be a Map<P2PMetadata,P2PFile>
+        for (P2PFile pFile : completeAndSeeding)
+            if (pFile.metadata.equals(meta))
+                return pFile;
+        throw new FileNotFoundException("metadata didn't match any known files");
+    }
 
     /**
      * @param pathString location of file to share
