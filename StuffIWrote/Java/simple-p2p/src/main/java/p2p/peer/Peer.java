@@ -4,7 +4,8 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import p2p.Common;
-import p2p.P2PConsole;
+import p2p.console.P2PConsole;
+import p2p.console.PeerConsole;
 import p2p.download.P2PDownload;
 import p2p.exceptions.MetadataMismatchException;
 import p2p.exceptions.SwarmNotFoundException;
@@ -143,33 +144,20 @@ public class Peer {
             ObjectOutputStream objOut = Common.objectOStream(trkr);
             ObjectInputStream objIn = Common.objectIStream(trkr);
 
+            int numSwarms = objIn.readInt();
+
             /* we *must* catch EOFException for flow-control on readObject()
              * stackoverflow.com/questions/12684072 */
-            while (true) {
-                final Object trnsmt = objIn.readObject();
-                if (trnsmt instanceof String) {
-                    String msg = (String) trnsmt;
-                    if (msg.equals(Common.EMPTY_SWARMS)) {
-                        log.info(msg);
-                    } else {
-                        throw new RuntimeException("Unknown message: "+msg);
-                    }
-                }
-                else if (trnsmt instanceof P2PFileMetadata) {
-                    P2PFileMetadata metadata = (P2PFileMetadata) trnsmt;
-                    log.debug(objIn.available());
-                    int numPeers = objIn.readInt();
+            for (int i = 0; i < numSwarms; i++) {
+                P2PFileMetadata metadata = (P2PFileMetadata) objIn.readObject();
+                log.debug(objIn.available());
+                int numPeers = objIn.readInt();
 
-                    log.printf(Level.INFO,
-                               "List File Item: %s; %d peer(s)\n",
-                               metadata.getFilename(), numPeers);
+                log.printf(Level.INFO,
+                           "List File Item: %s; %d peer(s)\n",
+                           metadata.getFilename(), numPeers);
 
-                    theListing.add(metadata);
-                }
-                else {
-                    throw new RuntimeException(
-                            "Unknown transmission type: "+trnsmt.getClass());
-                }
+                theListing.add(metadata);
             }
         }
         catch (EOFException e) {
@@ -230,12 +218,11 @@ public class Peer {
         return null;
     }
 
-    Peer informConsoleOfIPAddr() {
+    void startPeerConsole() {
         if (console != null) {
-            console.putIPAddr(externalIPAddr, getListeningPort());
-            console.runPeerConsole();
+            Common.putIPAddr(externalIPAddr, getListeningPort());
+            new PeerConsole(this).start();
         }
-        return this;
     }
 }
 

@@ -134,3 +134,6 @@ Educational/C++/PaxosLab/code/*
 # except its makdefile and the code I have to write
 !Educational/C++/PaxosLab/code/Makefile
 !Educational/C++/PaxosLab/code/paxos_exec.cpp
+
+# ignore files "downloaded" in developing simple-p2p
+StuffIWrote/Java/simple-p2p/downloads

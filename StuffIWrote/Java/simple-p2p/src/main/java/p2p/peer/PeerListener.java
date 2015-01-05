@@ -37,7 +37,8 @@ public class PeerListener extends Thread {
         try {
             listener = Common.socketPortInRange(Common.PORT_MIN, Common.PORT_MAX);
             listeningPort = listener.getLocalPort();
-            thisPeer.informConsoleOfIPAddr();
+
+            thisPeer.startPeerConsole();
             while (true) {
                 Socket conn = listener.accept();
                 // TODO or maybe it should be submit(new P2PTransfer(conn))??

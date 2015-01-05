@@ -21,11 +21,11 @@ public class Swarm {
     /* this is where the DHT will live */
 
     P2PFileMetadata pFileMetadata;
-    private HashSet<InetSocketAddress> seeders = new HashSet<>();
+    private Set<InetSocketAddress> seeders = new HashSet<>();
 
     public P2PFileMetadata getFileMetadata() { return pFileMetadata; }
     public int numSeeders() { return seeders.size(); }
-    Set<InetSocketAddress> getSeeders() { return seeders; }
+    public Set<InetSocketAddress> getSeeders() { return seeders; }
 
     Swarm(InetSocketAddress initialSeederAddress, P2PFileMetadata pFileMetadata) {
         this.pFileMetadata = pFileMetadata;

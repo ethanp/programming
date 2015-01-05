@@ -140,4 +140,8 @@ public class Common {
         }
         throw new IOException("no free port found");
     }
+
+    public static void putIPAddr(InetAddress ipAddr, int portNo) {
+        System.out.println("listening at address "+ipAddr.toString().substring(1)+":"+portNo);
+    }
 }

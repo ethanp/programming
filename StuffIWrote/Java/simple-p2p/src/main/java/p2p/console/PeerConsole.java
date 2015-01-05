@@ -1,5 +1,6 @@
-package p2p;
+package p2p.console;
 
+import p2p.Common;
 import p2p.exceptions.MetadataMismatchException;
 import p2p.exceptions.SwarmNotFoundException;
 import p2p.file.P2PFile;
@@ -8,7 +9,6 @@ import p2p.peer.Peer;
 
 import java.io.FileNotFoundException;
 import java.net.ConnectException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.nio.file.FileSystemException;
@@ -18,13 +18,18 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 /**
- * Ethan Petuchowski 1/4/15
+ * Ethan Petuchowski 1/5/15
  */
-public class P2PConsole {
-    static final String startString =
-            "\nEnter 'peer' or 'tracker'\n" +
-            "Note that there must be at least one tracker instance running" +
-            "for this to work.\n";
+public class PeerConsole extends Thread {
+
+    Peer peer;
+    List<P2PFileMetadata> trkrLstg;
+    Scanner scanner;
+
+    public PeerConsole(Peer ownerPeer) {
+        peer = ownerPeer;
+        scanner = new Scanner(System.in);
+    }
 
     static final String peerString =
             "\nCommands:\n" +
@@ -34,59 +39,17 @@ public class P2PConsole {
             "download <listNo>\n" +
             "quit\n";
 
-    Scanner scanner;
-    Peer peer;
-    Tracker tracker;
-    List<P2PFileMetadata> trkrLstg;
-
-    public static void main(String[] args) {
-        new P2PConsole();
-    }
-
-    P2PConsole() {
-        System.out.println(startString);
-        scanner = new Scanner(System.in);
-        boolean deployed = false;
-        while (!deployed) {
-            String type = scanner.nextLine();
-            switch (type) {
-                case "peer":
-                    deployed = true;
-                    startPeer();
-                    break;
-                case "tracker":
-                    deployed = true;
-                    startTracker();
-                    break;
-                default:
-                    System.out.println("Command not recognized!\n"+startString);
-                    break;
-            }
-        }
-    }
-
-    void startPeer() {
-        System.out.println("starting peer...");
-        peer = new Peer(this);
-    }
-
-    void startTracker() {
-        System.out.println("starting tracker...");
-        tracker = new Tracker(this);
-        tracker.start();
-    }
-
-    public P2PConsole putIPAddr(InetAddress ipAddr, int portNo) {
-        System.out.println("listening at address "+ipAddr.toString().substring(1)+":"+portNo);
-        return this;
-    }
-
-    public void runPeerConsole() {
+    @Override
+    public void run() {
         while (true) {
             System.out.println(peerString);
             String cmd = scanner.nextLine();
             String[] parts = cmd.split(" ");
-            if (setTrackerCmd(cmd)) {
+            if (quitCmd(cmd)) {
+                System.out.println("exiting");
+                System.exit(0);
+            }
+            else if (setTrackerCmd(cmd)) {
                 if (parts.length != 3) {
                     System.out.println("wrong format, try again");
                     continue;
@@ -100,6 +63,9 @@ public class P2PConsole {
                     continue;
                 }
                 System.out.println("tracker set successfully");
+            }
+            else if (peer.trkAddr == null) {
+                System.out.println("actions require a tracker to be set");
             }
             else if (listCmd(cmd)) {
                 if (parts.length != 1) {
@@ -200,10 +166,6 @@ public class P2PConsole {
                     e.printStackTrace();
                 }
             }
-            else if (quitCmd(cmd)) {
-                System.out.println("exiting");
-                System.exit(0);
-            }
         }
     }
 
@@ -213,10 +175,6 @@ public class P2PConsole {
     boolean downloadCmd(String cmd)   { return cmd.startsWith("download");    }
     boolean quitCmd(String cmd)       { return cmd.startsWith("quit");        }
     boolean in(int v, int s, int l)   { return s <= v && v <= l;              }
-    boolean optTrk(String[] arr, int b) {
-        return peer.trkAddr == null ? arr.length != b
-                                    : !in(arr.length, b-1, b);
-    }
 
     void printListResult(List<P2PFileMetadata> metaList) {
         if (metaList.isEmpty()) {

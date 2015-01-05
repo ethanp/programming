@@ -2,12 +2,16 @@ package p2p.peer;
 
 import org.junit.Test;
 import p2p.BaseTest;
+import p2p.Common;
 import p2p.Swarm;
 import p2p.Tracker;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -29,9 +33,13 @@ public class PeerTest extends BaseTest {
      */
     @Test
     public void testShareFileTrackerTrackingName() throws Exception {
-        synchronized (tracker.swarmsByFilename) {
-            tracker.swarmsByFilename.wait();
-        }
+        /* I'm not sure why the listing seems to now be "ordered before" this wait and it used to not?
+         * But maybe I should be using a ConditionVariable instead of wait() because the
+         * situation I'm having is that the file gets listed and we get notify()d before
+         * we begin to wait() here, so if we wait(), we wait for ever because the notify()cation
+         * already passed us up
+         */
+//        synchronized (tracker.swarmsByFilename) { tracker.swarmsByFilename.wait(); }
         assertTrue(tracker.isTrackingFilename(SAMPLE_FILENAME));
     }
 
@@ -41,30 +49,17 @@ public class PeerTest extends BaseTest {
     @Test
     public void testShareFileTrackerSwarm() throws Exception {
         ConcurrentHashMap<String, Swarm> swarmMap = tracker.swarmsByFilename;
-
-        // wait for the tracker to create a swarm in the map
-        synchronized (swarmMap) { swarmMap.wait(); }
-
+//        synchronized (swarmMap) { swarmMap.wait(); } /* see above for note about synchronization*/
         assertEquals(1, swarmMap.size());
+
         Swarm sampleSwarm = swarmMap.get(SAMPLE_FILENAME);
         assertEquals(1, sampleSwarm.numSeeders());
-        P2PFileMetadata savedMeta = sampleSwarm.getFileMetadata();
-        assertEquals(sampleMeta, savedMeta);
+        assertEquals(sampleMeta, sampleSwarm.getFileMetadata());
 
-
-        // LowPriorityTODO (at some point, figure out whether to fix this)
-        // this fails because saved IP is "internal" vrsn
-        // I'm not sure whether to hack some fix to this or not because
-        // it really depends on whether the tracker's socket.getRemoteAddress()
-        // in some sort of "production" environment would see the internal or
-        // external address, and I have no idea what happens in that situation.
-
-//        InetAddress myExternalIPAddr = Common.findMyIP();
-//        Iterator<InetSocketAddress> it = sampleSwarm.seeders.iterator();
-//        InetSocketAddress savedSockAddrOfPeerInSwarm = it.next();
-//        InetAddress savedIPAddrOfPeerInSwarm = savedSockAddrOfPeerInSwarm.getAddress();
-
-//        assertEquals(myExternalIPAddr, savedIPAddrOfPeerInSwarm);
+        InetAddress myExternalIPAddr = Common.findMyIP();
+        Iterator<InetSocketAddress> it = sampleSwarm.getSeeders().iterator();
+        InetSocketAddress savedSockAddrOfPeerInSwarm = it.next();
+        assertEquals(myExternalIPAddr, savedSockAddrOfPeerInSwarm.getAddress());
     }
 
     @Test

@@ -2,6 +2,7 @@ package p2p;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import p2p.console.P2PConsole;
 import p2p.file.P2PFileMetadata;
 
 import java.io.BufferedReader;
@@ -61,7 +62,7 @@ public class Tracker extends Thread {
     public Tracker(P2PConsole console) {
         this();
         this.console = console;
-        console.putIPAddr(localIPAddr, listener.getLocalPort());
+        Common.putIPAddr(localIPAddr, listener.getLocalPort());
     }
 
     /* METHODS */
@@ -180,18 +181,14 @@ public class Tracker extends Thread {
         }
 
         void listFiles() throws IOException {
-            ObjectOutputStream objOut = new ObjectOutputStream(socket.getOutputStream());
-            objOut.flush();
-            if (swarmsByFilename.isEmpty()) {
-                objOut.writeObject(Common.EMPTY_SWARMS);
-            }
-            else {
-                for (Map.Entry<String, Swarm> entry : swarmsByFilename.entrySet()) {
-                    objOut.writeObject(entry.getValue().pFileMetadata);
-                    int swarmSize = entry.getValue().numSeeders();
-                    objOut.writeInt(swarmSize);
-                    objOut.flush(); // otw writeInt isn't written for some reason.
-                }
+            ObjectOutputStream objOut = Common.objectOStream(socket);
+            ObjectInputStream objIn = Common.objectIStream(socket);
+            objOut.writeInt(swarmsByFilename.size());
+            for (Map.Entry<String, Swarm> entry : swarmsByFilename.entrySet()) {
+                objOut.writeObject(entry.getValue().pFileMetadata);
+                int swarmSize = entry.getValue().numSeeders();
+                objOut.writeInt(swarmSize);
+                objOut.flush(); // otw writeInt isn't written for some reason.
             }
         }
 
