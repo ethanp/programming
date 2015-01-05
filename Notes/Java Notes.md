@@ -449,10 +449,31 @@ E.g.
 * You construct the `PipedInputStream` by passing it your instance of the
   `PipedOutputStream`
 
-## Other
+## Files and Paths
 
-* `Files` --- remove, rename, create directory find `mtime`, file-system stuff
-* `Path` --- object representing the system absolute path to a resource
+### class File
+
+* "An abstract representation of file and directory **pathnames**."
+* Its instances are *immutable* --- i.e. once created, the abstract pathname
+  represented by a `File` object will never change
+* Remove, rename, create directory find `mtime`, file-system stuff
+* Can be *"relative"* or *"absolute"*
+* Consists of two components
+    1. A *prefix string* (e.g. "`/`" on Unix)
+        * *"Relative"* pathnames have *no prefix*
+    2. A *sequence* of zero or more *names*
+* By default the classes in the `java.io` package always resolve *relative*
+  pathnames against the *current user directory*.  This directory is named by
+  the *system property* `user.dir`, and is typically the directory in which
+  the *Java virtual machine* was *invoked*.
+
+### interface Path
+
+* Object representing the system absolute path to a resource
+* You can't really *do* anything with this except manipulate the *path*, but
+  you can do `toFile()` to turn it into a `File` object
+
+## Other
 
 ### Memory-mapping files
 
@@ -469,7 +490,6 @@ E.g.
 
         for (int byteIWant : bytesIWant)
             bytesIWanted.add( buffer.get(byteIWant) );
-
     }
 
 ## GSON

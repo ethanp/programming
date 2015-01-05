@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import p2p.Common;
 import p2p.exceptions.MetadataMismatchException;
-import p2p.exceptions.P2PException;
 import p2p.exceptions.SwarmNotFoundException;
 import p2p.file.Chunk;
 import p2p.file.ChunkAvailability;
@@ -64,7 +63,7 @@ public class P2PDownload implements Callable<P2PFile> {
 
     Set<InetSocketAddress> getSeedersForFile
     (P2PFileMetadata fileMetadata, InetSocketAddress trackerAddr)
-            throws P2PException
+            throws SwarmNotFoundException, MetadataMismatchException
     {
         Set<InetSocketAddress> hostAddrs = null;
 
@@ -114,7 +113,10 @@ public class P2PDownload implements Callable<P2PFile> {
      * @throws java.util.concurrent.TimeoutException if transfer times-out
      */
     @Override
-    public P2PFile call() throws Exception {
+    public P2PFile call()
+            throws TimeoutException, InterruptedException, ExecutionException,
+                   SwarmNotFoundException, MetadataMismatchException
+    {
 
         List<Chunk> ofFile = new ArrayList<>();
 
@@ -141,7 +143,8 @@ public class P2PDownload implements Callable<P2PFile> {
      * @return a List of finished Chunks
      */
     List<Chunk> downloadFor(int seconds)
-            throws P2PException, ExecutionException, InterruptedException
+            throws SwarmNotFoundException, MetadataMismatchException,
+                   ExecutionException, InterruptedException
     {
         /* figure out what chunks to get and how to prioritize them */
         Queue<ChunkAvailability> pq = getChunkAvailabilityQueue();
@@ -181,7 +184,9 @@ public class P2PDownload implements Callable<P2PFile> {
         return completeChunks;
     }
 
-    Queue<ChunkAvailability> getChunkAvailabilityQueue() throws P2PException {
+    Queue<ChunkAvailability> getChunkAvailabilityQueue()
+            throws SwarmNotFoundException, MetadataMismatchException
+    {
         List<ChunkAvailability> chunkAvlbtyCts =
                 ChunkAvailability.createList(chunksComplete, numChunks);
 

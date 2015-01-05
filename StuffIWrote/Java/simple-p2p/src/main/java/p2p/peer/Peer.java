@@ -1,11 +1,13 @@
 package p2p.peer;
 
 import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import p2p.Common;
 import p2p.P2PConsole;
 import p2p.download.P2PDownload;
+import p2p.exceptions.MetadataMismatchException;
+import p2p.exceptions.SwarmNotFoundException;
 import p2p.file.P2PFile;
 import p2p.file.P2PFileMetadata;
 
@@ -25,9 +27,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Ethan Petuchowski 12/29/14
@@ -45,7 +47,9 @@ public class Peer {
 
     public InetSocketAddress trkAddr;
 
+    // LowPriorityTODO: ongoingTransfers
     Set<P2PDownload> ongoingTransfers = new ConcurrentSkipListSet<>();
+
     Set<P2PFile> completeAndSeeding = new ConcurrentSkipListSet<>();
 
     public PeerListener listenerThread;
@@ -182,7 +186,10 @@ public class Peer {
      * @return the P2PFile corresponding to filename
      */
     public P2PFile downloadFromSavedTracker(P2PFileMetadata fileMetadata)
-            throws Exception {
+            throws InterruptedException, ExecutionException,
+                   TimeoutException, SwarmNotFoundException,
+                   MetadataMismatchException
+    {
         return download(fileMetadata, trkAddr);
     }
 
@@ -194,8 +201,13 @@ public class Peer {
      * @return the P2PFile corresponding to "filename"
      */
     public P2PFile download(P2PFileMetadata fileMetadata,
-                            InetSocketAddress trackerAddr) throws Exception {
-        P2PFile downloadedFile = new P2PDownload(this, fileMetadata, trackerAddr).call();
+                            InetSocketAddress trackerAddr)
+            throws InterruptedException, ExecutionException,
+                   TimeoutException, SwarmNotFoundException,
+                   MetadataMismatchException
+    {
+        P2PFile downloadedFile =
+                new P2PDownload(this, fileMetadata, trackerAddr).call();
         return downloadedFile;
     }
 

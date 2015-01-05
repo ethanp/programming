@@ -1,15 +1,19 @@
 package p2p.file;
 
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.FileSystemException;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -24,18 +28,25 @@ public class P2PFile implements Comparable<P2PFile> {
 
     static final Logger log = LogManager.getLogger(P2PFile.class.getName());
 
-    /* FIELDS */
+    /** FIELDS **/
+
     public P2PFileMetadata metadata;
     Chunk[] dataChunks;
 
-    /* GETTERS */
-    public String filenameString()          { return metadata.filename.toString(); }
-    public String base64Digest()            { return metadata.base64Digest(); }
-    public Chunk getChunkNum(int chunkNum)  { return dataChunks[chunkNum]; }
-    public int numChunks()                  { return dataChunks.length; }
+
+    /** GETTERS **/
+
+    public String filenameString()      { return metadata.filename.toString();  }
+    public String base64Digest()        { return metadata.base64Digest();       }
+    public Chunk getChunkNum(int idx)   { return dataChunks[idx];               }
+    public int numChunks()              { return dataChunks.length;             }
+
+
+    /** CONSTRUCTORS **/
 
     public P2PFile(String filename, InetSocketAddress trackerAddr)
-            throws FileSystemException, FileNotFoundException {
+            throws FileSystemException, FileNotFoundException
+    {
         byte[] shaDigest = P2PFile.getSha256(filename);
         metadata = new P2PFileMetadata(filename, trackerAddr, shaDigest);
 
@@ -48,13 +59,10 @@ public class P2PFile implements Comparable<P2PFile> {
             throw new FileSystemException("file doesn't have read permissions");
 
         metadata.numBytes = fileRef.length();
-        metadata.numChunks = (int) Math.ceil((double)
-                metadata.numBytes / Chunk.BYTES_PER_CHUNK);
+        metadata.numChunks = (int) Math.ceil((double) metadata.numBytes / Chunk.BYTES_PER_CHUNK);
         dataChunks = new Chunk[metadata.numChunks];
 
-        BufferedInputStream fileIn =
-                new BufferedInputStream(
-                        new FileInputStream(fileRef));
+        BufferedInputStream fileIn = new BufferedInputStream(new FileInputStream(fileRef));
 
         try {
             int chunkNum = 0;
@@ -77,6 +85,57 @@ public class P2PFile implements Comparable<P2PFile> {
         for (Chunk c : chunks)
             dataChunks[c.idx] = c;
     }
+
+
+    /** PUBLIC INTERFACE **/
+
+    public boolean writeToDiskInDir(String relativeDir) {
+        File holdingDir = new File(relativeDir);
+
+        log.printf(Level.INFO, "writing %s to dir %s",
+                   filenameString(), holdingDir.getAbsolutePath());
+
+        if (!holdingDir.exists()) {
+            /* "Creates the directory named by this abstract pathname,
+                including any necessary but nonexistent parent directories." */
+            boolean created = holdingDir.mkdirs();
+            if (!created) {
+                log.debug("directory was not created");
+                return false;
+            } else {
+                log.info("created directory "+holdingDir.getAbsolutePath());
+            }
+        } else {
+            if (!holdingDir.isDirectory()) {
+                log.info("Failed: given location is not a directory");
+                return false;
+            }
+            if (!holdingDir.canWrite()) {
+                log.info("Failed: need write permissions on directory");
+                return false;
+            }
+            log.info("directory "+holdingDir.getAbsolutePath()+" already exists, that's fine");
+        }
+
+        final File dld = new File(holdingDir, filenameString());
+        if (dld.exists()) {
+            log.info("Failed: file already exists");
+            return false;
+        }
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(dld))) {
+            for (Chunk c : dataChunks)
+                bos.write(c.data);
+        }
+        catch (IOException e) {
+            log.error("write failed\n"+e.getMessage());
+            e.printStackTrace();
+        }
+
+        return true;
+    }
+
+
+    /** UTILITY METHODS **/
 
     static byte[] getSha256(String filename) {
         byte[] buffer = new byte[1024];
