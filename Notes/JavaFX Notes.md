@@ -50,7 +50,10 @@ web multimedia, self-contained application deployment model, animation.
    *state*
 4. **Nodes** may be --- (2D & 3D), images, media, **embedded web browser**, text,
    UI controls, charts, groups, containers
-5. etc.
+5. "Pulses" are events, throttled to 60 frames per second, telling the scene
+   graph to synchronize with the "Prism" renderer. They are scheduled whenever
+   the scene graph changes.
+
 
 ## Beginner Classes
 
@@ -101,6 +104,19 @@ From [Oracle's Binding Tutorial][obt]
    but it is not actually recalculated until someone calls `getValue()`
     * You can install a listener on `invalidated()`
         * Further changes to an invalid property will *not* trigger the listener again
+
+## Other features
+
+### Multimedia
+
+1. Support via `javafx.scene.media` APIs for video (FLV) and audio (MP3, AIFF, WAV)
+
+### Web Browser
+
+1. Via "Web Component", based on Webkit, provides full browser via API,
+   supporting HTML5, CSS, JavaScript, DOM, and SVG, Back/Forward navigation,
+   etc.
+2. Use the `WebEngine` and a `WebView`
 
 ## Refs
 
