@@ -1,7 +1,6 @@
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
@@ -24,19 +23,14 @@ public class Main extends Application {
     public void start(final Stage stage) {
         stage.setTitle("File Copier"); // window title
 
-        /* configured later */
+        /* seems to default to last location used by a FileChooser (probably system-wide) */
         final FileChooser fileChooser = new FileChooser();
 
-        /* added to the grid later */
+        /* added to the grid later, but onAction set now */
         final Button openButton = new Button("Choose file to copy");
 
         /* what to do when the openButton Button is buttoned */
         openButton.setOnAction(e -> {
-
-            fileChooser.setTitle("View Files");
-            fileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-            fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Everythang", "*.*"));
 
             /* receive the user's selected File */
             File srcFile = fileChooser.showOpenDialog(stage);
@@ -44,29 +38,20 @@ public class Main extends Application {
 
                 /* obtain which directory to save to */
                 File saveDir = new DirectoryChooser().showDialog(stage);
-
-                File destFile = new File(saveDir, srcFile.getName());
-                copyFile(srcFile, destFile);
+                copyFileInto(srcFile, saveDir);
             }
         });
 
-        /* grid onto which the buttons shall be placed */
-        final GridPane inputGridPane = new GridPane();
-
-        /* puts the button in col-0, row-1 */
-        GridPane.setConstraints(openButton, 0, 1);
-
-        inputGridPane.getChildren().addAll(openButton);
-
         /* pane onto which the button-grid shall be placed */
         final Pane rootGroup = new VBox(12);
-        rootGroup.getChildren().addAll(inputGridPane);
+        rootGroup.getChildren().add(openButton);
 
         stage.setScene(new Scene(rootGroup));
         stage.show();
     }
 
-    private void copyFile(File srcFile, File destFile) {
+    private void copyFileInto(File srcFile, File saveDir) {
+        final File destFile = new File(saveDir, srcFile.getName());
         try {
             BufferedInputStream in = new BufferedInputStream(new FileInputStream(srcFile));
             BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(destFile));

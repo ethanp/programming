@@ -26,13 +26,17 @@ From [Oracle's Getting Started Tutorial][ogst]
 
 1. Look & feel customizable with CSS
 2. FXML scripting language optional for UI presentation development
-3. JavaFX Scene Builder for designing UIs without writing code, generates editable FXML
+3. JavaFX Scene Builder for designing UIs without writing code, generates
+   editable FXML
 4. Cross-platform compatibility, consistent maintenance ensured by Oracle
 5. API designed to be friendly with Scala
 6. It is possible to integrate with JavaScript and HTML5 via WebView
 7. You can embed Swing content into JavaFX applications
-8. I believe the whole system was **written in vanilla Java!** (that's the coolest part yet)
+8. I believe the whole system was **written in vanilla Java!** (that's the
+   coolest part yet)
 9. Only a subset of the whole framework is actually Public API
+10. It allows drag-and-drop and everything else you wish was easier in
+    JavaScript
 
 ### Libraries & APIs
 
@@ -105,18 +109,84 @@ From [Oracle's Binding Tutorial][obt]
     * You can install a listener on `invalidated()`
         * Further changes to an invalid property will *not* trigger the listener again
 
+## Concurrency
+
+[From Oracle's Concurrency Docs][ocd]
+
+[ocd]: http://docs.oracle.com/javase/8/javafx/interoperability-tutorial/concurrency.htm
+
+1. Look at `javafx.concurrent` as opposed to the standard Java `Runnable`
+2. Keep the interface responsive by backgrounding time-consuming tasks
+3. The JavaFX scene graph is *not thread-safe* and hence can only be accessed
+   & modified from the UI thread called "JavaFX Application thread"
+    * You must keep this thread un-clogged from long tasks
+4. `interface Worker` --- provides APIs for background worker to communicate
+   with the UI
+    1. `class Task` --- fully *observable*, for doing work on a background thread
+    2. `class Service` --- *executes* `Task`s
+5. A `WorkerStateEvent` fires when a `Worker` changes state, both `Task` and
+   `Service` can listen for these.
+    1. See the **worker states** listed in the **table** (likely somewhere below here)
+6. `Worker` progress can be obtained via `totalWork`, `workDone`, and `progress`
+7. Here's what it looks like
+
+        Task<Integer> task = new Task<Integer>() {
+            @Override protected Integer call() throws Exception {
+                int iterations;
+                // ...
+                return iterations;
+            }
+        };
+8. Don't try to modify the an active scene graph from `call()`---you will
+   throw a `RuntimeException`
+9. You can call `updateProgress`, `updateMessage` (this is a *property* on
+   `Worker` potentially useful to the UI thread, and `updateTitle` (similar to
+   `message` property) as appropriate
+10. Start it via `task.start()` or `ExecutorService.submit(task)`
+11. You're supposed to check `isCancelled()` every now and then and stop
+    processing if `true`
+12. To have a progressBar you'd call `updateProgress(...)` *inside* the
+    `Task`, and then roughly the following
+
+        new ProgressBar().progressProperty().bind(task.progressProperty());
+13. `Service` facilitates interaction between background threads and the UI thread
+14. So what you do is the following
+
+        class MyService extends Service<String> {
+            @Override protected Task<String> createTask() {
+                return new Task<String>() {
+                    @Override protected String call() {
+                        return "Hello, World!";
+                    }
+
+                    // optional...
+                    @Override protected void succeeded() {...}
+                    @Override protected void cancelled() {...}
+                    @Override protected void failed() {...}
+                }
+            }
+        }
+15. Now you can start the service with an `Executor` or a daemon thread, and
+    restart it automatically by using a `ScheduledService` which allows a
+    `backoffStrategy` and a `maximumFailureCount`
+
+| **Worker state**  | **When** |
+| ---------------:  | :------- |
+| `READY`           | when just starting out                |
+| `SCHEDULED`       | after being scheduled for execution   |
+| `RUNNING`         | while executing                       |
+| `SUCCEEDED`       | successfully completed; `value` set to *result* |
+| `FAILED`          | threw exception; `exception` set to exception type |
+| `CANCELLED`       | if it gets inturrupted via `cancel()` |
+
 ## Other features
 
-### Multimedia
-
-1. Support via `javafx.scene.media` APIs for video (FLV) and audio (MP3, AIFF, WAV)
-
-### Web Browser
-
-1. Via "Web Component", based on Webkit, provides full browser via API,
-   supporting HTML5, CSS, JavaScript, DOM, and SVG, Back/Forward navigation,
-   etc.
-2. Use the `WebEngine` and a `WebView`
+1. Multimedia support via `javafx.scene.media` APIs for video (FLV) and audio (MP3, AIFF, WAV)
+2. Web Browser
+    1. Via "Web Component", based on Webkit, provides full browser via API,
+       supporting HTML5, CSS, JavaScript, DOM, and SVG, Back/Forward
+       navigation, etc.
+    2. Use the `WebEngine` and a `WebView`
 
 ## Refs
 
