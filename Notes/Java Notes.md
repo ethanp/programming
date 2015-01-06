@@ -1551,7 +1551,6 @@ Exception { ... }`
 6. For dates, use the `GregorianCalendar` class instead of `Date`
 
 ## Initialization
-**5/24/14**
 
 [Javaworld description](http://www.javaworld.com/article/2076614/core-java/object-initialization-in-java.html)
 
@@ -1564,6 +1563,33 @@ Exception { ... }`
 
 3. The Java compiler will not let you use the value of an uninitialized
    variable
+
+### Initialization Blocks
+
+[I got this from Stack Overflow](http://stackoverflow.com/questions/3987428)
+
+1. **Static initialization block** --- **runs *once***, when the class is
+   *initialized*
+2. **Instance initialization block** --- **runs before the constructor** every
+   time you instantiate an object
+3. I'm pretty sure you can have as many of either type of block as you want
+
+#### Example
+
+    public class InitializationBlocks {
+        static int staticVar;
+        int instanceVar;
+
+        // 1. Static initialization block
+        static {
+            staticVar = 5;
+        }
+
+        // 2. Instance initialization block
+        {
+            instanceVar = 7;
+        }
+    }
 
 ## JAR
 **5/20/14**
