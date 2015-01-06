@@ -137,3 +137,6 @@ Educational/C++/PaxosLab/code/*
 
 # ignore files "downloaded" in developing simple-p2p
 StuffIWrote/Java/simple-p2p/downloads
+
+# ignore JavaFX class files from tutorial
+Educational/Java/JavaFX/MarcoJakobTutorial/out
