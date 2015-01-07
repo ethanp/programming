@@ -213,6 +213,16 @@ From [Oracle's Binding Tutorial][obt]
    by selecting the element in the SceneBuilder element Hierarchy, going to
    \\(Code \rightarrow Identity \rightarrow fx:id\\) in the right pane and
    selecting the Controller's field name
+10. To hook a `Button` in the UI up to a *handler* in the `Controller`
+    1. Create the handler method
+
+            @FXML private void handleDeletePerson() {
+                int selectedIndex = personTable.getSelectionModel().getSelectedIndex();
+                personTable.getItems().remove(selectedIndex);
+            }
+    2. Select the UI elementin the SceneBuilder, and on the right pane go to
+       \\(Code \rightarrow Main \rightarrow On Action\\) and select the
+       `handleDeletePerson` method from the dropdown selector
 
 ## Other features
 
