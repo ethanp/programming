@@ -1,5 +1,6 @@
 package address.model;
 
+import address.util.LocalDateAdapter;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -7,6 +8,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 
 /**
@@ -29,9 +31,11 @@ public class Person {
     public String getCity() { return city.get(); }
     public StringProperty cityProperty() { return city; }
     public void setCity(String city) { this.city.set(city); }
-    public LocalDate getBirthday() { return birthday.get(); }
     public ObjectProperty<LocalDate> birthdayProperty() { return birthday; }
     public void setBirthday(LocalDate birthday) { this.birthday.set(birthday); }
+
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
+    public LocalDate getBirthday() { return birthday.get(); }
 
     private final StringProperty firstName;
     private final StringProperty lastName;

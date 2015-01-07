@@ -100,8 +100,7 @@ public class PersonOverviewController {
         Person selectedPerson = personTable.getSelectionModel().getSelectedItem();
         if (selectedPerson != null) {
             boolean okClicked = mainApp.showPersonEditDialog(selectedPerson);
-            if (okClicked)
-                showPersonDetails(selectedPerson);
+            if (okClicked) showPersonDetails(selectedPerson);
         }
         else {
             Dialogs.create()
