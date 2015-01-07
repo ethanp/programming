@@ -44,15 +44,12 @@ public class Person {
     private final StringProperty city;
     private final ObjectProperty<LocalDate> birthday; /* Compat: LocalDate is JDK 8 */
 
-    public Person() {
-        this(null, null);
-    }
-
+    public Person() { this(null, null); }
     public Person(String firstName, String lastName) {
         this.firstName = new SimpleStringProperty(firstName);
         this.lastName = new SimpleStringProperty(lastName);
 
-        // dummy data for testing
+        // the default data before you fill in the real values
         this.street = new SimpleStringProperty("some street");
         this.postalCode = new SimpleIntegerProperty(1234);
         this.city = new SimpleStringProperty("some city");
