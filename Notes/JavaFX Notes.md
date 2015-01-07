@@ -179,6 +179,41 @@ From [Oracle's Binding Tutorial][obt]
 | `FAILED`          | threw exception; `exception` set to exception type |
 | `CANCELLED`       | if it gets inturrupted via `cancel()` |
 
+## Scene Builder 2.0
+
+[From an incredible tutorial](http://code.makery.ch/java/javafx-8-tutorial-part2/)
+
+### To hook code into the view created in scene builder
+
+1. Say in package `view` you use Scene Builder to create a view called
+   `PersonOverview.fxml`
+2. Now *in that same package*, create the file `PersonOverviewController.java`
+3. All private fields & methods to be accessed in the fxml file must have the
+   `@FXML` annotation
+4. The `@FXML private void initialize(){...}` method will be automatically
+   called after the fxml file has been loaded, at which point the FXML fields
+   should have been already initialized
+5. In the tutorial, the controller has a field
+
+        @FXML private TableColumn<Person, String> lastNameColumn;
+    which requires that we provide a way to map given `Person` instances to `String`.
+    We provide this in the `initialize()` method mentioned above via a *Lambda*
+
+        lastNameColumn.setCellValueFactory(
+            cellData -> cellData.getValue().lastNameProperty());
+6. We load the controller into the main Application class via the `Loader`
+   which points to the `view` package
+
+        PersonOverviewController controller = loader.getController();
+        controller.setMainApp(this);
+7. We hook the view to the controller by selecting the proper Java class from
+   the dropdown in SceneBuilder under \\(Document \rightarrow Controller
+   \rightarrow Controller class\\) in the left pane
+9. We hook each of the UI elements into their corresponding Controller fields
+   by selecting the element in the SceneBuilder element Hierarchy, going to
+   \\(Code \rightarrow Identity \rightarrow fx:id\\) in the right pane and
+   selecting the Controller's field name
+
 ## Other features
 
 1. Multimedia support via `javafx.scene.media` APIs for video (FLV) and audio (MP3, AIFF, WAV)
