@@ -2,6 +2,7 @@ package address;
 
 import address.model.Person;
 import address.model.PersonListWrapper;
+import address.view.BirthdayStatisticsController;
 import address.view.PersonEditDialogController;
 import address.view.PersonOverviewController;
 import address.view.RootLayoutController;
@@ -214,11 +215,26 @@ public class MainApp extends Application {
         }
     }
 
-    public Stage getPrimaryStage() {
-        return primaryStage;
+    /** open a dialog that shows birthday statistics */
+    public void showBirthdayStatistics() {
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainApp.class.getResource("view/BirthdayStatistics.fxml"));
+            AnchorPane page = loader.load();
+            Stage dialogStage = new Stage();
+            dialogStage.setTitle("Birthday Statistics");
+            dialogStage.initModality(Modality.WINDOW_MODAL);
+            dialogStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            dialogStage.setScene(scene);
+
+            BirthdayStatisticsController controller = loader.getController();
+            controller.setPersonData(personData);
+            dialogStage.show();
+        }
+        catch (IOException e) { e.printStackTrace(); }
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    public Stage getPrimaryStage() { return primaryStage; }
+    public static void main(String[] args) { launch(args); }
 }

@@ -63,6 +63,9 @@ public class RootLayoutController {
                .showInformation();
     }
 
+    /** open the birthday statistics graph modal window */
+    @FXML private void handleShowBirthdayStatistics() { mainApp.showBirthdayStatistics(); }
+
     /** quit the applciation */
     @FXML private void handleExit() { System.exit(0); }
 }
