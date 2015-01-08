@@ -1,4 +1,4 @@
-package algorithms.dynamicPrograming.easy;
+package algorithms.dynamicPrograming.moderate;
 
 import java.util.Arrays;
 import java.util.Scanner;
