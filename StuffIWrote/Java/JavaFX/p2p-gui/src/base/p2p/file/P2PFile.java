@@ -4,12 +4,16 @@ import base.p2p.tracker.Tracker;
 import base.p2p.transfer.Transfer;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
+import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleLongProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -20,27 +24,58 @@ import java.nio.file.Path;
 public abstract class P2PFile {
 
     // TODO maybe the filename & File object should be listening to each other
-    private final ObjectProperty<File> localFile;
-    private final StringProperty filename;
-    private final ListProperty<Tracker> trackers;
-    private final ListProperty<Chunk> chunks;
-    private final ListProperty<Transfer> ongoingTransfers;
-    private final IntegerProperty filesizeBytes;
+    protected final ObjectProperty<File> localFile;
+    public File getLocalFile() { return localFile.get(); }
+    public ObjectProperty<File> localFileProperty() { return localFile; }
+    public void setLocalFile(File localFile) { this.localFile.set(localFile); }
 
-    public P2PFile(File baseFile)
+    protected final StringProperty filename;
+    public String getFilename() { return filename.get(); }
+    public StringProperty filenameProperty() { return filename; }
+    public void setFilename(String filename) { this.filename.set(filename); }
+
+    protected final ListProperty<Tracker> trackers;
+    public ObservableList<Tracker> getTrackers() { return trackers.get(); }
+    public ListProperty<Tracker> trackersProperty() { return trackers; }
+    public void setTrackers(ObservableList<Tracker> trackers) { this.trackers.set(trackers); }
+
+    protected final ListProperty<Chunk> chunks;
+    public ObservableList<Chunk> getChunks() { return chunks.get(); }
+    public ListProperty<Chunk> chunksProperty() { return chunks; }
+    public void setChunks(ObservableList<Chunk> chunks) { this.chunks.set(chunks); }
+
+    protected final ListProperty<Transfer> ongoingTransfers;
+    public ObservableList<Transfer> getOngoingTransfers() { return ongoingTransfers.get(); }
+    public ListProperty<Transfer> ongoingTransfersProperty() { return ongoingTransfers; }
+    public void setOngoingTransfers(ObservableList<Transfer> ongoingTransfers) {
+        this.ongoingTransfers.set(ongoingTransfers);
+    }
+
+    protected final IntegerProperty percentComplete;
+    public int getPercentComplete() { return percentComplete.get(); }
+    public IntegerProperty percentCompleteProperty() { return percentComplete; }
+    public void setPercentComplete(int percentComplete){this.percentComplete.set(percentComplete);}
+
+    protected final LongProperty filesizeBytes;
+    public long getFilesizeBytes() { return filesizeBytes.get(); }
+    public LongProperty filesizeBytesProperty() { return filesizeBytes; }
+    public void setFilesizeBytes(long filesizeBytes) { this.filesizeBytes.set(filesizeBytes); }
+
+
+    public P2PFile(File baseFile, long filesize)
     {
-        localFile = new SimpleObjectProperty<File>(baseFile);
-        filename = new SimpleStringProperty(localFile.getName());
-        trackers = new SimpleListProperty<Tracker>();
-        chunks = new SimpleListProperty<Chunk>();
-        ongoingTransfers = new SimpleListProperty<Transfer>();
-        filesizeBytes = new SimpleIntegerProperty(-1);
+        localFile = new SimpleObjectProperty<>(baseFile);
+        filename = new SimpleStringProperty(baseFile.getName());
+        trackers = new SimpleListProperty<Tracker>(FXCollections.<Tracker>observableArrayList());
+        chunks = new SimpleListProperty<Chunk>(FXCollections.<Chunk>observableArrayList());
+        ongoingTransfers = new SimpleListProperty<Transfer>(
+                FXCollections.<Transfer>observableArrayList());
+        filesizeBytes = new SimpleLongProperty(filesize);
+        percentComplete = new SimpleIntegerProperty(0);
     }
     public P2PFile(Path filePath) {
-        this(filePath.toFile());
+        this(filePath.toFile(), filePath.toFile().length());
     }
-
-    public abstract int getSize();
 
     public P2PFile addTracker(Tracker tracker) {
         trackers.add(tracker);

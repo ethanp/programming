@@ -63,11 +63,11 @@
                            <children>
                               <TitledPane layoutX="8.0" layoutY="-43.0" prefHeight="179.0" prefWidth="266.0" text="My Files" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                  <content>
-                                    <TableView prefHeight="200.0" prefWidth="200.0">
+                                    <TableView fx:id="localFileTable" prefHeight="200.0" prefWidth="200.0">
                                       <columns>
-                                        <TableColumn prefWidth="132.0" text="File" />
-                                        <TableColumn prefWidth="84.0" text="Size" />
-                                          <TableColumn prefWidth="83.0" text="\%Complete" />
+                                        <TableColumn fx:id="localFileNameColumn" prefWidth="132.0" text="File" />
+                                        <TableColumn fx:id="localFileSizeColumn" prefWidth="84.0" text="Size" />
+                                          <TableColumn fx:id="percentCompleteColumn" prefWidth="83.0" text="\%Complete" />
                                       </columns>
                                     </TableView>
                                  </content></TitledPane>
@@ -89,7 +89,7 @@
                                        <children>
                                           <TableView layoutX="14.0" layoutY="1.0" prefHeight="201.0" prefWidth="191.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                              <TableColumn prefWidth="75.0" text="Piece #" />
+                                              <TableColumn prefWidth="75.0" text="Chunk #" />
                                               <TableColumn prefWidth="90.00000762939453" text="Progress" />
                                             </columns>
                                           </TableView>

@@ -6,8 +6,8 @@ package base.p2p.file;
 public abstract class Chunk {
 
     /* until I have a reason to change it */
-    static final int CHUNK_SIZE = 1 << 15;
+    public static final int CHUNK_SIZE = 1 << 15;
 
     /* Should this be a "property"?  Would that add a ton of space overhead? */
-    byte[] data;
+    protected byte[] data;
 }

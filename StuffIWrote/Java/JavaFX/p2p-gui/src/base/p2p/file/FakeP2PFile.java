@@ -2,8 +2,6 @@ package base.p2p.file;
 
 import base.p2p.tracker.FakeTracker;
 import base.p2p.tracker.Tracker;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 
 import java.io.File;
 import java.util.Random;
@@ -17,9 +15,6 @@ public class FakeP2PFile extends P2PFile {
     static Random random = new Random();
     static File containerFolder = new File("/Users/Ethan/Desktop/FakeP2PFiles");
 
-    private final IntegerProperty size;
-    @Override public int getSize() { return size.get(); }
-
     static {
         if (!containerFolder.exists()) {
             if (!containerFolder.mkdirs()) {
@@ -29,17 +24,17 @@ public class FakeP2PFile extends P2PFile {
     }
 
     public static FakeP2PFile genFakeFile() {
-        File fakeFile = new File(containerFolder, "fakeFile-"+random.nextInt());
-        int randomFilesize = random.nextInt();
+        File fakeFile = new File(containerFolder, "fakeFile-"+random.nextInt(500));
+        long randomFilesize = random.nextInt(5_000_000);
         FakeTracker defaultFakeTracker = FakeTracker.getDefaultFakeTracker();
         return new FakeP2PFile(fakeFile, randomFilesize, defaultFakeTracker);
     }
 
-    public FakeP2PFile(File file, int filesize, Tracker tracker) {
-        super(file);
-        size = new SimpleIntegerProperty(filesize);
+    public FakeP2PFile(File file, long filesize, Tracker tracker) {
+        super(file, filesize);
         addTracker(tracker);
         addAtMostNumFakeChunks(25);
+        setPercentComplete(random.nextInt(100));
     }
 
     private P2PFile addAtMostNumFakeChunks(int maxChunkCount) {
