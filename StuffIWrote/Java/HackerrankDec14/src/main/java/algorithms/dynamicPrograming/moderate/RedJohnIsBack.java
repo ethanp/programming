@@ -22,12 +22,19 @@ public class RedJohnIsBack {
                 continue;
             }
 
-            /* Basically I think my old solution solved the problem for a different understanding
-             * of "arrangements" because it worked perfectly up to 38 blocks which is 10794 primes!
-             * In this structure, we note that all the arrangements from one less are still possible,
-             * and also, we have a new 'sub-problem' of i-4 which (somehow??) accommodates the
-             * "combinations" possible via having a new "free block" to through between the "stacks"
-             * of "fours".
+            /**
+             * Basically I think my old solution solved the problem for a
+             * different understanding of "arrangements" because it worked
+             * perfectly up to 38 blocks which is 10794 primes! My solution
+             * was to use (I think it was) \prod_{i=1}^{n}{\frac{n+i}{i+i}}. I
+             * had derived that formula from the "enumerate a few and sit and
+             * stare at it" method of problem solving.
+             *
+             * This solution in the editorial comes from thinking about it as
+             * laying down one block at a time. We can either lay a single
+             * block vertically, leaving us with F(i-1) options for how to lay
+             * the rest down; or we can lay a set of 4 blocks horizontally,
+             * leaving us with F(i-4) ways of laying the rest down.
              */
             int[] arr = new int[N];
             arr[0] = arr[1] = arr[2] = 1;

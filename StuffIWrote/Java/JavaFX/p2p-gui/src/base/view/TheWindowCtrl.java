@@ -1,16 +1,23 @@
 package base.view;
 
 import base.Main;
+import base.p2p.file.FakeP2PFile;
 import base.p2p.file.P2PFile;
+import base.p2p.tracker.FakeTracker;
 import base.p2p.tracker.Tracker;
 import base.p2p.transfer.Transfer;
 import javafx.fxml.FXML;
+import javafx.scene.chart.Axis;
+import javafx.scene.chart.LineChart;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.FileChooser;
 import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
+import java.time.LocalDate;
 
 /**
  * Ethan Petuchowski 1/7/15
@@ -31,7 +38,16 @@ public class TheWindowCtrl {
      *************************************************************************/
 
     // automatically called after the fxml file is loaded
-    @FXML private void initialize() {}
+    @FXML private void initialize() {
+        addFakeContent();
+    }
+
+    private void addFakeContent() {
+        FakeP2PFile local1 = FakeP2PFile.genFakeFile();
+        FakeP2PFile local2 = FakeP2PFile.genFakeFile();
+        FakeP2PFile local3 = FakeP2PFile.genFakeFile();
+        FakeTracker defaultFakeTracker = FakeTracker.getDefaultFakeTracker();
+    }
 
 
     /** MENU BAR ITEMS **/
@@ -65,18 +81,31 @@ public class TheWindowCtrl {
     /** UPPER PANES **/
 
     // TODO sync this with Main's ObservableList<Tracker> knownTrackers;
+        // these TreeTableView things seem a bit "advanced" to set up
+        // I'ma save that for later
     @FXML private TreeTableView<Tracker> trackerList;
 
+
     // TODO sync this with Main's ObservableList<P2PFile> localFiles;
-    @FXML private TableView<P2PFile> fileList;
+    @FXML private TableView<P2PFile> localFileList;
+    // type1 == type of TableView, type2 == type of cell content
+    @FXML private TableColumn<P2PFile,String> localFileNameColumn;
+    @FXML private TableColumn<P2PFile,String> localFileSizeColumn;
+    @FXML private TableColumn<P2PFile,String> percentCompleteColumn;
 
     /** LOWER PANES **/
     /** Transfers (progress bars) **/
 
     // TODO sync this with Main's ObservableList<Transfer> ongoingTransfers;
     @FXML private TableView<Transfer> transfersForSelectedFile;
+    @FXML private TableColumn<Transfer,Integer> transferChunkNumCol;
+    @FXML private TableColumn<Transfer,ProgressBar> transferProgressCol;
 
     /** Bandwidth History (graph) **/
-    /** Pieces Diagram **/
+    @FXML private LineChart<LocalDate, Integer> bandwidthHistoryLineChart;
+    @FXML private Axis<LocalDate> bandwidthChartXAxis;
+    @FXML private Axis<Integer> bandwidthChartYAxis;
 
+    /** Pieces Diagram **/
+    // haven't figured out exactly what this *is* yet.
 }

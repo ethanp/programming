@@ -1,4 +1,4 @@
-package base.p2p.file;
+package base.util;
 
 import java.io.File;
 import java.net.URI;
@@ -6,8 +6,8 @@ import java.net.URI;
 /**
  * Ethan Petuchowski 1/8/15
  */
-public class FakeFile extends File {
-    public FakeFile(String fakeLoc) {
+public class FakeFSFile extends File {
+    public FakeFSFile(String fakeLoc) {
         super(".",".");
     }
 
@@ -30,7 +30,7 @@ public class FakeFile extends File {
      * @param child  The child pathname string
      * @throws NullPointerException If <code>child</code> is <code>null</code>
      */
-    public FakeFile(String parent, String child) {
+    public FakeFSFile(String parent, String child) {
         super(parent, child);
     }
 
@@ -54,7 +54,7 @@ public class FakeFile extends File {
      * @param child  The child pathname string
      * @throws NullPointerException If <code>child</code> is <code>null</code>
      */
-    public FakeFile(File parent, String child) {
+    public FakeFSFile(File parent, String child) {
         super(parent, child);
     }
 
@@ -84,7 +84,7 @@ public class FakeFile extends File {
      * @see java.net.URI
      * @since 1.4
      */
-    public FakeFile(URI uri) {
+    public FakeFSFile(URI uri) {
         super(uri);
     }
 }
