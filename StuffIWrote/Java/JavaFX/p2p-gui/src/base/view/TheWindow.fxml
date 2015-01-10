@@ -45,9 +45,9 @@
                                        <children>
                                           <TitledPane animated="false" layoutX="-14.0" layoutY="-44.0" prefHeight="177.0" prefWidth="134.0" text="Trackers" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <content>
-                                                <TreeTableView prefHeight="150.0" prefWidth="318.0">
+                                                <TreeTableView fx:id="trackerList" prefHeight="150.0" prefWidth="318.0">
                                                    <columns>
-                                                      <TreeTableColumn prefWidth="75.0" text="Tracker" />
+                                                      <TreeTableColumn fx:id="trkrIPAddrStrCol" prefWidth="75.0" text="Tracker" />
                                                       <TreeTableColumn prefWidth="75.0" text="File" />
                                                       <TreeTableColumn prefWidth="75.0" text="Size" />
                                                    </columns>
@@ -87,10 +87,10 @@
                                 <content>
                                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                                        <children>
-                                          <TableView layoutX="14.0" layoutY="1.0" prefHeight="201.0" prefWidth="191.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                          <TableView fx:id="transfersForSelectedFile" layoutX="14.0" layoutY="1.0" prefHeight="201.0" prefWidth="191.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                             <columns>
-                                              <TableColumn prefWidth="75.0" text="Chunk #" />
-                                              <TableColumn prefWidth="90.00000762939453" text="Progress" />
+                                              <TableColumn fx:id="transferChunkNumCol" prefWidth="75.0" text="Chunk #" />
+                                              <TableColumn fx:id="transferProgressCol" prefWidth="90.00000762939453" text="Progress" />
                                             </columns>
                                           </TableView>
                                        </children></AnchorPane>
@@ -117,12 +117,12 @@
                                              <content>
                                               <AnchorPane>
                                                    <children>
-                                                      <LineChart layoutX="-91.0" layoutY="81.0" prefHeight="199.0" prefWidth="281.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                      <LineChart fx:id="bandwidthHistoryLineChart" layoutX="-91.0" layoutY="81.0" prefHeight="199.0" prefWidth="281.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                         <xAxis>
-                                                          <CategoryAxis side="BOTTOM" />
+                                                          <CategoryAxis fx:id="bandwidthChartXAxis" side="BOTTOM" />
                                                         </xAxis>
                                                         <yAxis>
-                                                          <NumberAxis side="LEFT" />
+                                                          <NumberAxis fx:id="bandwidthChartYAxis" side="LEFT" />
                                                         </yAxis>
                                                       </LineChart>
                                                    </children>

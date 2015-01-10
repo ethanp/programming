@@ -1,11 +1,6 @@
 package base;
 
-import base.p2p.file.P2PFile;
-import base.p2p.tracker.Tracker;
-import base.p2p.transfer.Transfer;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -21,13 +16,7 @@ public class Main extends Application {
     private Stage primaryStage;
     private BorderPane rootLayout;
 
-    private ObservableList<P2PFile> localFiles = FXCollections.observableArrayList();
-    private ObservableList<Tracker> knownTrackers = FXCollections.observableArrayList();
-    private ObservableList<Transfer> ongoingTransfers = FXCollections.observableArrayList();
-
-    /* TODO add sample data */
-    public Main() {
-    }
+    public Main() { /* I could put stuff in here, but at this point there is no need */ }
 
     @Override public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;

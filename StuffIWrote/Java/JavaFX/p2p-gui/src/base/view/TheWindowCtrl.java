@@ -4,15 +4,18 @@ import base.Main;
 import base.p2p.file.FakeP2PFile;
 import base.p2p.file.P2PFile;
 import base.p2p.tracker.FakeTracker;
-import base.p2p.tracker.Tracker;
 import base.p2p.transfer.Transfer;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.FileChooser;
 import org.controlsfx.dialog.Dialogs;
@@ -61,18 +64,40 @@ public class TheWindowCtrl {
         FakeP2PFile local3 = FakeP2PFile.genFakeFile();
         FakeTracker defaultFakeTracker = FakeTracker.getDefaultFakeTracker();
         localFileTable.getItems().addAll(local1, local2, local3);
+
+        // TODO just make a static TreeItem<> and then make it dynamic using the FakeTracker
+        // this is from
+        //      docs.oracle.com/javase/8/javafx/user-interface-tutorial/tree-table-view.htm
+        // Creating tree items
+        final TreeItem<String> childNode1 = new TreeItem<>("Child Node 1");
+        final TreeItem<String> childNode2 = new TreeItem<>("Child Node 2");
+        final TreeItem<String> childNode3 = new TreeItem<>("Child Node 3");
+
+        // Create the root element
+        final TreeItem<String> root = new TreeItem<>("Root node");
+        root.setExpanded(true); // as in "click" the "expand" arrow
+
+        // Add tree items to the root
+        root.getChildren().setAll(childNode1, childNode2, childNode3);
+
+        // Defining cell content (using a read-only 'property' created on-the-fly)
+        trkrIPAddrStrCol.setCellValueFactory(
+                (CellDataFeatures<String, String> p) ->
+                        new ReadOnlyStringWrapper(p.getValue().getValue()));
+        trackerList.setRoot(root);
+        trackerList.setShowRoot(true); // show the "'root' tree-item"
     }
 
     private void fileWasSelected(P2PFile p2pFile) { if (p2pFile != null) {} else {} }
 
     /** UPPER PANES **/
 
-    // TODO sync this with Main's ObservableList<Tracker> knownTrackers;
-        // these TreeTableView things seem a bit "advanced" to set up
-        // I'ma save that for later
-    @FXML private TreeTableView<Tracker> trackerList;
+    // TODO SHOULD BE TYPE <TRACKER>
+    @FXML private TreeTableView<String> trackerList;
 
-    // TODO sync this with Main's ObservableList<P2PFile> localFiles;
+    // TODO should probably be type <Tracker,String>
+    @FXML private TreeTableColumn<String,String> trkrIPAddrStrCol;
+
     @FXML private TableView<P2PFile> localFileTable;
     // type1 == type of TableView, type2 == type of cell content
     @FXML private TableColumn<P2PFile,String> localFileNameColumn;
@@ -82,13 +107,14 @@ public class TheWindowCtrl {
     /** LOWER PANES **/
     /** Transfers (progress bars) **/
 
-    // TODO sync this with Main's ObservableList<Transfer> ongoingTransfers;
     @FXML private TableView<Transfer> transfersForSelectedFile;
     @FXML private TableColumn<Transfer,Integer> transferChunkNumCol;
     @FXML private TableColumn<Transfer,ProgressBar> transferProgressCol;
 
     /** Bandwidth History (graph) **/
     @FXML private LineChart<LocalDate, Integer> bandwidthHistoryLineChart;
+
+    // TODO in TheWindow this is a "category axis" which doesn't really sound like what I want
     @FXML private Axis<LocalDate> bandwidthChartXAxis;
     @FXML private Axis<Integer> bandwidthChartYAxis;
 

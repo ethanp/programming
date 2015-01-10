@@ -73,9 +73,8 @@ public abstract class P2PFile {
         filesizeBytes = new SimpleLongProperty(filesize);
         percentComplete = new SimpleIntegerProperty(0);
     }
-    public P2PFile(Path filePath) {
-        this(filePath.toFile(), filePath.toFile().length());
-    }
+
+    public P2PFile(Path filePath) { this(filePath.toFile(), filePath.toFile().length()); }
 
     public P2PFile addTracker(Tracker tracker) {
         trackers.add(tracker);
