@@ -6,9 +6,9 @@ import base.p2p.file.P2PFile;
 import base.p2p.tracker.FakeTracker;
 import base.p2p.tracker.Tracker;
 import base.p2p.transfer.Transfer;
-import com.sun.xml.internal.bind.v2.TODO;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
@@ -76,7 +76,7 @@ public class TheWindowCtrl {
         final TreeItem<String> childNode3 = new TreeItem<>("Child Node 3");
 
         // Create the root element
-        final TreeItem<String> root = new TreeItem<>("Root node");
+        final TreeItem<Tracker> root = new TreeItem<>(defaultFakeTracker);
         root.setExpanded(true); // as in "click" the "expand" arrow
 
         // Add tree items to the root
@@ -101,23 +101,20 @@ public class TheWindowCtrl {
      * ||    ...                 ||  ...      || ...  || ...  ||
      * =========================================================
      */
-    @FXML private TreeTableColumn<Tracker,String> trkrAddrAndNameStrCol;
-    @FXML private TreeTableColumn<P2PFile,String> trkrFileSizeCol;
-    @FXML private TreeTableColumn<P2PFile,String> trkrFileNumSeedersCol;
-    @FXML private TreeTableColumn<P2PFile,String> trkrFileNumLeechersCol;
+    @FXML private TreeTableColumn<SwarmTreeItem,String> trkrAddrAndNameStrCol;
+    @FXML private TreeTableColumn<SwarmTreeItem,String> trkrFileSizeCol;
+    @FXML private TreeTableColumn<SwarmTreeItem,String> trkrFileNumSeedersCol;
+    @FXML private TreeTableColumn<SwarmTreeItem,String> trkrFileNumLeechersCol;
 
-    @FXML private TreeTableView<Tracker> trkrTreeTable; {
+    @FXML private TreeTableView<SwarmTreeItem> trkrTreeTable; {
         // Defining cell content (using a read-only 'property' created on-the-fly)
-        trkrAddrAndNameStrCol.setCellValueFactory((CellDataFeatures<Tracker, String> p) ->
-                                                     new ReadOnlyStringWrapper(p.getValue()
-                                                                                .getValue()
-                                                                                .getSocketAsString()));
+        trkrAddrAndNameStrCol.setCellValueFactory(
+                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getIpPortString()));
 
         trkrFileNameCol.setCellValueFactory((CellDataFeatures<P2PFile,String> p) ->
                          new ReadOnlyObjectWrapper<>(null));
         trkrTreeTable.setShowRoot(true); // show the "'root' tree-item"
     }
-
 
     @FXML private TableView<P2PFile> localFileTable;
     // type1 == type of TableView, type2 == type of cell content

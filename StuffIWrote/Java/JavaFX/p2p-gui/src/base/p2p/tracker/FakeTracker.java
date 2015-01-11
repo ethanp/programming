@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class FakeTracker extends Tracker {
     static Random random = new Random();
-    String ipAddrAndPortString;
+    String ipPortString;
 
     static FakeTracker defaultFakeTracker = new FakeTracker("123.123.123.123:3300");
 
@@ -22,8 +22,8 @@ public class FakeTracker extends Tracker {
 
     public FakeTracker(String fakeIPAddrAndPort) {
         super(new ArrayList<>(), null);
-        ipAddrAndPortString = fakeIPAddrAndPort;
+        ipPortString = fakeIPAddrAndPort;
     }
 
-    @Override public String getSocketAsString() { return ipAddrAndPortString; }
+    @Override public String getIpPortString() { return ipPortString; }
 }

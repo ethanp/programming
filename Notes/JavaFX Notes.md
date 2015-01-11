@@ -226,30 +226,9 @@ From [Oracle's Binding Tutorial][obt]
 
 ## Tables
 
-### TreeTables
+### In General
 
-    TreeTableColumn.cellValueFactoryProperty [of type:]
-        public final ObjectProperty<
-            Callback<
-                TreeTableColumn.CellDataFeatures<S,T>,
-                OvservableValue<T>
-            >
-        >
-
-#### What does that type mean?
-
-1. `class ObjectProperty<T>` --- full implementation of a `Property<T>` (see
-   above) wrapping an arbitrary object of static type `T`
-2. `interface Callback<P,R>`
-    1. One method: `R call(P param)`
-    2. Implemented by e.g. `TreeItemPropertyValueFactory`
-    3. A reusable interface for defining APIs that require a call back
-3. `class TreeTableColumn.CellDataFeatures<S,T>`
-    1. `S` --- `TableView` type
-    2. `T` --- `TreeTableColumn` type
-    3. Immutable wrapper class type to provide all necessary information
-       for a particular `Cell`
-4. `class Cell<T>`, `T` is the type of the `itemProperty` contained within
+1. `class Cell<T>`, `T` is the type of the `itemProperty` contained within
    the cell
     1. A `Labeled` `Control` used for rendering
         1. a single "row" inside a `ListView`, `TreeView`, or `TableView`
@@ -263,11 +242,12 @@ From [Oracle's Binding Tutorial][obt]
        other UI scene `Node`, like `HBox`
     5. Extremely large data sets are actually represented using a few
        recycled `Cells`
-5. `class Control`
+2. `class Control`
     1. base class for UI controls
     2. A `Node` in the scene-graph which can be manipulated by the user
-5. `class Labeled` --- a sublcass of `Control` (above) that has textual
+3. `class Labeled` --- a sublcass of `Control` (above) that has textual
    content associated with it (e.g. a `Button`, `Label`, or `Tooltip`)
+
 
 #### Cell Factories
 
@@ -285,11 +265,105 @@ from `javafx.scene.control.Cell` docs
 3. A `CellFactory` gets called when creating a new `Cell`
 4. Cell factories create the `Cell` *and* configure it to react properly to
    changes in its state
-5.
+
+##### There Example's Pretty Good
+
+The main thing is the last line, though I have replaced their mess with a
+lambda. The `updateItem` method is called whenever the item in the cell
+changes (e.g. goes off-screen and therefore gets re-filled with a new data
+element), so there is no need to explicitly manage bindings, though you
+*could* if you want to.
+
+To format a `java.lang.Number` as a *currency*, do
+
+    public class MoneyFormatCell extends ListCell<Number> {
+        public MoneyFormatCell() {}
+        @Override protected void updateItem(Number item, boolean empty) {
+            super.updateItem(item, empty); // REQUIRED
+            setText(item == null ? "" : Util.formatMy(item));
+            if (item != null)
+                setTextFill(isSellected() ? Color.WHITE :
+                    item.doubleValue() >= 0 ? Color.BLACK : Color.RED);
+        }
+    }
+
+    ListView<Number> listView = new ListView<>(observableMoneyList);
+    listView.setCellFactory(list -> return new MoneyFormatCell());
+
+Or you could define it inline with an anomymously overridden ListCell<Number>
+factory-like piece of code like so
+
+    ListView<Number> listView = new ListView<>(observableMoneyList);
+    listView.setCellFactory(new Callback<ListView<<Number>, ListCell<Number>>() {
+        @Override public ListCell<Number> call(final ListView<Number> p) {
+            return new ListCell<Number>() {
+                @Override protected void updateItem(Number item, boolean empty) {
+                    super.updateItem(item, empty);
+                    // my update code goes here (e.g. setText("random.nextInt()"); )
+                }
+            };
+        }
+    });
+
+### TreeTableView
+
+1. A `Control` conceptually similar to `TreeView` and `TableView`
+2. Same `TreeItem` API as `TreeView`
+3. Same `TableColumn`-based approach as `TreeTableView`, using
+   `TreeTableColumn`
+4. The user can sort by multiple columns by holding the Shift key while
+   clicking on column headers
+5. The `TreeTableView` automatically *observes* its root `TreeItem` instance
+6. You can customize `class TreeTableRow<T>`, but "more often than not" [docs]
+   it is easier to customize individual cells in a row rather than the row
+   itself.
+7. `class TreeItem<T>` --- *not* a Node; supplies a hierarchy of values to a
+   `TreeView` or `TreeTableView`
+    1. You can register listeners when there is a change in the number of
+       items, their position, or value
+    2. You can specify `getChildren` like they do in the docs, I think this is
+       what I'll have to do
+
+#### cellValueFactoryProperty
+
+    TreeTableColumn.cellValueFactoryProperty [of type:]
+        public final ObjectProperty<
+            Callback<
+                TreeTableColumn.CellDataFeatures<S,T>,
+                OvservableValue<T>
+            >
+        >
+
+##### What does that type mean?
+
+1. `class ObjectProperty<T>` --- full implementation of a `Property<T>` (see
+   above) wrapping an arbitrary object of static type `T`
+2. `interface Callback<P,R>`
+    1. One method: `R call(P param)`
+    2. Implemented by e.g. `TreeItemPropertyValueFactory`
+    3. A reusable interface for defining APIs that require a call back
+3. `class TreeTableColumn.CellDataFeatures<S,T>`
+    1. `S` --- `TableView` type
+    2. `T` --- `TreeTableColumn` type
+    3. Immutable wrapper class type to provide all necessary information
+       for a particular `Cell`
+4. `class TreeItemPropertyValueFactory<S,T>` is a convenience implementation
+   of the `Callback` interface designed for use within the
+   `TreeTableColumn.cellValueFactoryProperty`. I believe it means instead of
+
+        firstNameCol.setCellValueFactory(
+                p -> p.getValue().getValue().firstNameProperty());
+    you would do
+
+        firstNameCol.setCellValueFactory(
+                new TreeItemPropertyValueFactory<Person,String>("firstName"));
+
+    It's obviously not so useful anymore, now that there are lambdas.
 
 ## Other features
 
-1. Multimedia support via `javafx.scene.media` APIs for video (FLV) and audio (MP3, AIFF, WAV)
+1. Multimedia support via `javafx.scene.media` APIs for video (FLV) and audio
+   (MP3, AIFF, WAV)
 2. Web Browser
     1. Via "Web Component", based on Webkit, provides full browser via API,
        supporting HTML5, CSS, JavaScript, DOM, and SVG, Back/Forward

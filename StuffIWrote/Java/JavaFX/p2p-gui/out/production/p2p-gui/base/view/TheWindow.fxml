@@ -35,7 +35,7 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                <children>
-                  <SplitPane dividerPositions="0.5" layoutX="188.0" layoutY="11.0" prefHeight="181.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                  <SplitPane dividerPositions="0.5545977011494253" layoutX="188.0" layoutY="11.0" prefHeight="181.0" prefWidth="598.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                            <children>
@@ -45,11 +45,12 @@
                                        <children>
                                           <TitledPane animated="false" layoutX="-14.0" layoutY="-44.0" prefHeight="177.0" prefWidth="134.0" text="Trackers" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <content>
-                                                <TreeTableView fx:id="trackerList" prefHeight="150.0" prefWidth="318.0">
+                                                <TreeTableView fx:id="trkrTreeTable" prefHeight="150.0" prefWidth="318.0">
                                                    <columns>
-                                                      <TreeTableColumn fx:id="trkrIPAddrStrCol" prefWidth="75.0" text="Tracker" />
-                                                      <TreeTableColumn prefWidth="75.0" text="File" />
-                                                      <TreeTableColumn prefWidth="75.0" text="Size" />
+                                                      <TreeTableColumn fx:id="trkrAddrAndNameStrCol" prefWidth="126.0" text="Tracker/FileName" />
+                                                      <TreeTableColumn fx:id="trkrFileSizeCol" prefWidth="42.0" text="Size" />
+                                                      <TreeTableColumn fx:id="trkrFileNumSeedersCol" prefWidth="77.0" text="#Seeders" />
+                                                      <TreeTableColumn fx:id="trkrFileNumLeechersCol" prefWidth="71.0" text="#Leechers" />
                                                    </columns>
                                                 </TreeTableView>
                                              </content></TitledPane>
