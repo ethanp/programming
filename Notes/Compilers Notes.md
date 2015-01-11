@@ -3,7 +3,7 @@ Title:          Compilers Notes
 Author:         Ethan C. Petuchowski
 Base Header Level:		1
 latex mode:     memoir
-Keywords:       algorithms, computer science, theory, grammars
+Keywords:       algorithms, computer science, theory, grammars, compilers, school, CS 375, Novak
 CSS:            http://fletcherpenney.net/css/document.css
 xhtml header:   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 copyright:      2014 Ethan Petuchowski
@@ -12,11 +12,11 @@ latex input:    mmd-article-begin-doc
 latex footer:   mmd-memoir-footer
 
 Many of these notes are from *Compilers: Principles, Techniques, and Tools*,
-Aho Sethy, Ullman, 2nd ed. 2007, as well as Wikipedia and Stack Overflow etc.
+by Aho, Lam, Sethi, and Ullman, Pearson 2nd ed. 2007; as well as Wikipedia and Stack Overflow etc.
 
 ## Introduction
 
-### §1.1.1 The Very Beginning
+### The Very Beginning
 
 1. A **compiler** turns *source code* into an executable *program* which can
    *afterwards* be used to input data is turned into output data
@@ -65,6 +65,73 @@ Aho Sethy, Ullman, 2nd ed. 2007, as well as Wikipedia and Stack Overflow etc.
 
 [rmcso]: http://stackoverflow.com/a/22890413/1959155
 
-### §1.2 The Structure of a Compiler
+### The Structure of a Compiler
 
-1. The compiler is *not* a *single box*
+1. The compiler is *not* a *single box*, macro-wise it does
+    1. **Analysis / Front End**
+        1. break source into pieces, impose a grammatic structure, produce an
+           intermediate representation, check its syntax and semantic content
+           to be well-formed, and provide informative diagnostic messages to
+           the user
+        2. pass the generated *symbol table* and *intermediate representation*
+           to the *synthesis* stage
+    2. **Synthesis / Back End** --- optimize intermediate representation and generate machine-dependent machine-optimized code
+2. There are what are called **phases**, though the compiler program itself
+   may not be so thoroughly separated
+    1. **Lexical Analyzer** --- reads *stream of **characters*** from source, and
+       groups them by *lexeme* (matched via BNF) into **token** objects  of
+       the form (**token name**, *attribute value*)
+    2. **Syntax Analyzer / Parser** --- takes the *stream of **tokens*** and
+       creates a **syntax tree**, where each interior node is an *operation*,
+       and each child is an *argument*. The ordering of operations in the tree
+       will be maintained when generating the target program. The parser can
+       be specified using a *context-free grammar* (Ch 4).
+    3. **Semantic Analyzer** (Ch 6)
+        1. checks the syntax tree for *semantic consistency* with the language
+           definition
+        2. stores type information in the parse tree or symbol table
+        3. performs *type checking*
+        4. performs permitted type-*coersions* (e.g. `inttofloat`)
+    4. **Intermediate Code Generator** (Ch 5-6) --- generates "machine-like code" for
+       an "abstract machine" where one simple operation is done per line, so
+       we can eventually assign each individual result to a register, fixing
+       the order of operations; e.g. (pg. 9) `a = b + c * 60` where `c = 3.4f`
+       might be turned into
+
+            t1 = inttofloat(60)
+            t2 = id3 * t1
+            t3 = id2 + t2
+            id1 = t3
+    5. **Machine-Independent Code Optimizer** --- goals might be faster, less
+       code, or lower power-consumption, e.g. (pg. 10)
+
+            t1 = id3 * 60.0
+            id1 = id2 + t1
+    6. **Code Generator** (Ch 8 [post-midterm])
+        1. maps intermediate code to target machine code
+        2. selects registers or memory locations for each of the variables
+        3. translates intermediate instructions into machine instructions
+    7. **Machine-Dependent Code Optimizer** ---
+    8. **Symbol Table** (Ch 2 [not on syllabus]) --- record variable & function names, collect
+       attributes such as [return] type, scope, number and types of arguments,
+       pass by reference or by value
+3. Phases are grouped into *passes* that each read the input file into an
+   output file, the front-end could be one-pass, optimization another, and the
+   back-end final code generation another
+4. Sometimes (e.g. LLVM) the same front-end can be used with different back-
+   ends for targeting different architectures, and the same back-end can be
+   used with different front-ends for different source languages
+5. Tools with specialized built-in algorithms are used to help create the code
+   for each of these stages of compilation
+    1. **Scanner generators** --- produce *lexical analyzers* from *regular
+       expressions*
+    2. **Parser generators** --- produce syntax analyzers from grammatical
+       descriptions
+    3. **Syntax-directed translation engines** --- produce routines for
+       walking the parse tree to generate intermediate code
+    4. **Code-generator generators** --- use a collection of translation rules
+       from intermediate to target machine language
+    5. **Data-flow analysis engines** --- not sure what these are
+    6. **Compiler-construction toolkits** --- integrate many of the above
+       tools
+
