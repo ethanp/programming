@@ -12,7 +12,23 @@ latex input:    mmd-article-begin-doc
 latex footer:   mmd-memoir-footer
 
 Many of these notes are from *Compilers: Principles, Techniques, and Tools*,
-by Aho, Lam, Sethi, and Ullman, Pearson 2nd ed. 2007; as well as Wikipedia and Stack Overflow etc.
+by Aho, Lam, Sethi, and Ullman, Pearson 2nd ed. 2007; as well as Wikipedia and
+Stack Overflow etc.
+
+### Some Prerequisites
+
+#### Theoretical Vocabulary terms
+
+* **Undecidable problem** --- a *decision problem* for which it is known to be
+  *impossible* to construct a *single algorithm* that *always* leads to a
+  *correct* yes-or-no answer
+* **Decision problem** --- yes-or-no question on an infinite set of inputs
+* **The Halting Problem** --- given an arbitrary program and an arbitrary
+  finite input, decide whether the program will ever terminate or not; a
+  single algorithm running on a Turing machine to decide such a question
+  necessarily cannot exist, thus this question is *undecidable* for Turing
+  machines.
+
 
 ## Introduction
 
@@ -135,3 +151,13 @@ by Aho, Lam, Sethi, and Ullman, Pearson 2nd ed. 2007; as well as Wikipedia and S
     6. **Compiler-construction toolkits** --- integrate many of the above
        tools
 
+### The Evolution of Programming Languages
+
+1. 1st generation --- machine code (1940s)
+2. 2nd generation --- assembly (early 1950s)
+3. 3rd generation --- Fortran, Cobol, Lisp (late 1950s); C, C++, C#, Java
+   (1970s-2000)
+4. 4th generation --- SQL, NOMAD (reporting), Postscript
+5. 5th generation --- constraint-based programming e.g. Prolog and OPS5
+6. The *problem* of generating the *optimal* target program from the source code
+   is *undecidable* in general
