@@ -1,5 +1,8 @@
 package base.p2p.tracker;
 
+import base.p2p.file.FakeP2PFile;
+
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -9,18 +12,18 @@ public class FakeTracker extends Tracker {
     static Random random = new Random();
     String ipAddrAndPortString;
 
-    static FakeTracker defaultFakeTracker =
-            new FakeTracker("123.123.123.123:3300");
+    static FakeTracker defaultFakeTracker = new FakeTracker("123.123.123.123:3300");
 
-    public static FakeTracker getDefaultFakeTracker() {
-        return defaultFakeTracker;
+    static {
+        defaultFakeTracker.setp2pFiles(FakeP2PFile.genFakeFile(), FakeP2PFile.genFakeFile());
     }
 
+    public static FakeTracker getDefaultFakeTracker() { return defaultFakeTracker; }
+
     public FakeTracker(String fakeIPAddrAndPort) {
+        super(new ArrayList<>(), null);
         ipAddrAndPortString = fakeIPAddrAndPort;
     }
 
-    @Override public String getIPAddrAndPortAsString() {
-        return ipAddrAndPortString;
-    }
+    @Override public String getSocketAsString() { return ipAddrAndPortString; }
 }

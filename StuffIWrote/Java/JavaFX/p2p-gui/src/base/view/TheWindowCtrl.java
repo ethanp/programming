@@ -4,7 +4,9 @@ import base.Main;
 import base.p2p.file.FakeP2PFile;
 import base.p2p.file.P2PFile;
 import base.p2p.tracker.FakeTracker;
+import base.p2p.tracker.Tracker;
 import base.p2p.transfer.Transfer;
+import com.sun.xml.internal.bind.v2.TODO;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
@@ -80,23 +82,42 @@ public class TheWindowCtrl {
         // Add tree items to the root
         root.getChildren().setAll(childNode1, childNode2, childNode3);
 
-        // Defining cell content (using a read-only 'property' created on-the-fly)
-        trkrIPAddrStrCol.setCellValueFactory(
-                (CellDataFeatures<String, String> p) ->
-                        new ReadOnlyStringWrapper(p.getValue().getValue()));
-        trackerList.setRoot(root);
-        trackerList.setShowRoot(true); // show the "'root' tree-item"
+        trkrTreeTable.setRoot(root);
     }
 
     private void fileWasSelected(P2PFile p2pFile) { if (p2pFile != null) {} else {} }
 
     /** UPPER PANES **/
 
-    // TODO SHOULD BE TYPE <TRACKER>
-    @FXML private TreeTableView<String> trackerList;
+    /* TODO I have no idea how to pull it off, but I'm thinking it will look something like this:
+     * stackoverflow.com/questions/24290072
+     * i.e.
+     * =========================================================
+     * ||   Tracker/FileName     ||  Size     || #Sd  || #Lch ||
+     * ---------------------------------------------------------
+     * || \/ 123.tra.ker.adr:523 ||           ||      ||      ||
+     * ||       file1            ||  size1 B  ||  23  ||  31  ||
+     * ||       file2            ||  size2 B  ||   6  ||   2  ||
+     * ||    ...                 ||  ...      || ...  || ...  ||
+     * =========================================================
+     */
+    @FXML private TreeTableColumn<Tracker,String> trkrAddrAndNameStrCol;
+    @FXML private TreeTableColumn<P2PFile,String> trkrFileSizeCol;
+    @FXML private TreeTableColumn<P2PFile,String> trkrFileNumSeedersCol;
+    @FXML private TreeTableColumn<P2PFile,String> trkrFileNumLeechersCol;
 
-    // TODO should probably be type <Tracker,String>
-    @FXML private TreeTableColumn<String,String> trkrIPAddrStrCol;
+    @FXML private TreeTableView<Tracker> trkrTreeTable; {
+        // Defining cell content (using a read-only 'property' created on-the-fly)
+        trkrAddrAndNameStrCol.setCellValueFactory((CellDataFeatures<Tracker, String> p) ->
+                                                     new ReadOnlyStringWrapper(p.getValue()
+                                                                                .getValue()
+                                                                                .getSocketAsString()));
+
+        trkrFileNameCol.setCellValueFactory((CellDataFeatures<P2PFile,String> p) ->
+                         new ReadOnlyObjectWrapper<>(null));
+        trkrTreeTable.setShowRoot(true); // show the "'root' tree-item"
+    }
+
 
     @FXML private TableView<P2PFile> localFileTable;
     // type1 == type of TableView, type2 == type of cell content

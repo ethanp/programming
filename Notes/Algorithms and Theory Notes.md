@@ -3,7 +3,7 @@ Title:				  Algorithms and Theory Notes
 Author:			    Ethan C. Petuchowski
 Base Header Level:		1
 latex mode:     memoir
-Keywords:			algorithms, computer science, theory, grammars
+Keywords:       algorithms, computer science, theory, grammars
 CSS:				    http://fletcherpenney.net/css/document.css
 xhtml header:		<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 copyright:		  2014 Ethan Petuchowski

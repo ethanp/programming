@@ -66,10 +66,9 @@ public abstract class P2PFile {
     {
         localFile = new SimpleObjectProperty<>(baseFile);
         filename = new SimpleStringProperty(baseFile.getName());
-        trackers = new SimpleListProperty<Tracker>(FXCollections.<Tracker>observableArrayList());
-        chunks = new SimpleListProperty<Chunk>(FXCollections.<Chunk>observableArrayList());
-        ongoingTransfers = new SimpleListProperty<Transfer>(
-                FXCollections.<Transfer>observableArrayList());
+        trackers = new SimpleListProperty<>(FXCollections.<Tracker>observableArrayList());
+        chunks = new SimpleListProperty<>(FXCollections.<Chunk>observableArrayList());
+        ongoingTransfers = new SimpleListProperty<>(FXCollections.<Transfer>observableArrayList());
         filesizeBytes = new SimpleLongProperty(filesize);
         percentComplete = new SimpleIntegerProperty(0);
     }
