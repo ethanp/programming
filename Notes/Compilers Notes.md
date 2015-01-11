@@ -28,7 +28,8 @@ Stack Overflow etc.
   single algorithm running on a Turing machine to decide such a question
   necessarily cannot exist, thus this question is *undecidable* for Turing
   machines.
-
+* The *problem* of generating the *optimal* target program from the source
+  code is *undecidable* in general
 
 ## Introduction
 
@@ -108,11 +109,11 @@ Stack Overflow etc.
         2. stores type information in the parse tree or symbol table
         3. performs *type checking*
         4. performs permitted type-*coersions* (e.g. `inttofloat`)
-    4. **Intermediate Code Generator** (Ch 5-6) --- generates "machine-like code" for
-       an "abstract machine" where one simple operation is done per line, so
-       we can eventually assign each individual result to a register, fixing
-       the order of operations; e.g. (pg. 9) `a = b + c * 60` where `c = 3.4f`
-       might be turned into
+    4. **Intermediate Code Generator** (Ch 5-6) --- generates "machine-like
+       code" for an "abstract machine" where one simple operation is done per
+       line, so we can eventually assign each individual result to a register,
+       fixing the order of operations; e.g. (pg. 9) `a = b + c * 60` (where `c
+       = 3.4f`) might be turned into
 
             t1 = inttofloat(60)
             t2 = id3 * t1
@@ -127,7 +128,7 @@ Stack Overflow etc.
         1. maps intermediate code to target machine code
         2. selects registers or memory locations for each of the variables
         3. translates intermediate instructions into machine instructions
-    7. **Machine-Dependent Code Optimizer** ---
+    7. **Machine-Dependent Code Optimizer** --- exactly like it sounds
     8. **Symbol Table** (Ch 2 [not on syllabus]) --- record variable & function names, collect
        attributes such as [return] type, scope, number and types of arguments,
        pass by reference or by value
@@ -159,5 +160,16 @@ Stack Overflow etc.
    (1970s-2000)
 4. 4th generation --- SQL, NOMAD (reporting), Postscript
 5. 5th generation --- constraint-based programming e.g. Prolog and OPS5
-6. The *problem* of generating the *optimal* target program from the source code
-   is *undecidable* in general
+
+### The Science of Building a Compiler
+
+1. Compiler theory integrates mathematical techniques into its solutions
+2. Important models include finite-state machines, regular expressions,
+   context-free grammars, and tree algorithms
+3. Compilers change to leverage optimizations that can exploit evolving
+   architectures
+4. Robust compilers cannot be built from "hacks", optimizations use graphs,
+   matrices, and linear programs, and are proved to be both correct (this is
+   most important) and produce desirable outcomes
+
+### Applications of Compiler Technology

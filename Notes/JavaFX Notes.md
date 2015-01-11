@@ -224,6 +224,69 @@ From [Oracle's Binding Tutorial][obt]
        \\(Code \rightarrow Main \rightarrow On Action\\) and select the
        `handleDeletePerson` method from the dropdown selector
 
+## Tables
+
+### TreeTables
+
+    TreeTableColumn.cellValueFactoryProperty [of type:]
+        public final ObjectProperty<
+            Callback<
+                TreeTableColumn.CellDataFeatures<S,T>,
+                OvservableValue<T>
+            >
+        >
+
+#### What does that type mean?
+
+1. `class ObjectProperty<T>` --- full implementation of a `Property<T>` (see
+   above) wrapping an arbitrary object of static type `T`
+2. `interface Callback<P,R>`
+    1. One method: `R call(P param)`
+    2. Implemented by e.g. `TreeItemPropertyValueFactory`
+    3. A reusable interface for defining APIs that require a call back
+3. `class TreeTableColumn.CellDataFeatures<S,T>`
+    1. `S` --- `TableView` type
+    2. `T` --- `TreeTableColumn` type
+    3. Immutable wrapper class type to provide all necessary information
+       for a particular `Cell`
+4. `class Cell<T>`, `T` is the type of the `itemProperty` contained within
+   the cell
+    1. A `Labeled` `Control` used for rendering
+        1. a single "row" inside a `ListView`, `TreeView`, or `TableView`
+        2. *also* used for each individual "cell" inside a `TableView`
+    2. Has an `ObjectProperty<T> itemProperty` containing the data value
+       associated with this cell (you should not set this property
+       directly)
+    3. Responsible for rendering the `itemProperty` (above), and sometimes
+       editing it
+    4. Could be text, or another control such as a `CheckBox`, or any
+       other UI scene `Node`, like `HBox`
+    5. Extremely large data sets are actually represented using a few
+       recycled `Cells`
+5. `class Control`
+    1. base class for UI controls
+    2. A `Node` in the scene-graph which can be manipulated by the user
+5. `class Labeled` --- a sublcass of `Control` (above) that has textual
+   content associated with it (e.g. a `Button`, `Label`, or `Tooltip`)
+
+#### Cell Factories
+
+from `javafx.scene.control.Cell` docs
+
+1. `Cell` items are rendered by the container's skins, e.g. by default a
+   `ListView` will convert it to a `String` and basically render that as text
+   within a `Label`
+2. To set how to render your type within your `Cell` within your *thingy*
+   (`ListView`, `TableColumn`, `TreeView`, `TableView`, or `ListView`), you
+   must provide an implementation of the `cellFactory` callback function
+   defined on the *thingy*
+
+        ObjectProperty<Callback<Thingy<T>,ThingyCell<T>> cellFactoryProperty
+3. A `CellFactory` gets called when creating a new `Cell`
+4. Cell factories create the `Cell` *and* configure it to react properly to
+   changes in its state
+5.
+
 ## Other features
 
 1. Multimedia support via `javafx.scene.media` APIs for video (FLV) and audio (MP3, AIFF, WAV)
