@@ -35,19 +35,22 @@ public class SwarmTreeRenderable {
     public int getNumLeechers() { return numLeechers.get(); }
     public IntegerProperty numLeechersProperty() { return numLeechers; }
     public void setNumLeechers(int numLeechers) { this.numLeechers.set(numLeechers); }
+    public ObservableList<Tracker> getKnownTrackers() { return knownTrackers.get(); }
+    public ListProperty<Tracker> knownTrackersProperty() { return knownTrackers; }
+    public void setKnownTrackers(ObservableList<Tracker> knownTrackers) {
+        this.knownTrackers.set(knownTrackers);
+    }
 
     /* properties */
-    protected final ListProperty<Swarm> swarms;
     protected final StringProperty name;
     protected final LongProperty size;
     protected final IntegerProperty numSeeders;
     protected final IntegerProperty numLeechers;
-
-    // TODO create getters and setters
+    protected final ListProperty<Swarm> swarms;
     protected final ListProperty<Tracker> knownTrackers;
 
     // TODO I guess all these fields have to be WATCHING their corresponding source value
-    // because otherwise they will become out-of-date
+    // because otherwise they may become out-of-date
 
     /* wrapping constructors */
     public SwarmTreeRenderable(Swarm swarm) {
