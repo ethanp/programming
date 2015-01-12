@@ -1,47 +1,50 @@
 package base.view;
 
-import base.p2p.tracker.Swarm;
-import base.p2p.tracker.Tracker;
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.LongProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleLongProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.TreeItem;
+
+import java.util.stream.Collectors;
 
 /**
- * Ethan Petuchowski 1/11/15
+ * Ethan Petuchowski 1/12/15
  */
-public class SwarmTreeItem {
-    public String getName() { return name.get(); }
-    public StringProperty nameProperty() { return name; }
-    public void setName(String name) { this.name.set(name); }
+public class SwarmTreeItem extends TreeItem<SwarmTreeRenderable> {
 
-    // TODO the rest of these should have Setters/Getters
+    public SwarmTreeItem(SwarmTreeRenderable value) { super(value); }
 
-    protected final ListProperty<Swarm> swarms;
-    protected final StringProperty name;
-    protected final LongProperty size;
-    protected final IntegerProperty numSeeders;
-    protected final IntegerProperty numLeechers;
+    /** A leaf can not be expanded by the user, and as such will not show a disclosure
+     *      node or respond to expansion requests.
+     *  This is called often, so luckily it is quite inexpensive and needn't be cached. */
+    @Override public boolean isLeaf() { return getValue().getSwarms()   == null
+                                            && getValue().knownTrackers == null; }
 
-    // TODO I guess all these fields have to be WATCHING their corresponding source value
-    // because otherwise they will become out-of-date
+    /**
+     * TODO This is called frequently, so it recommended that the returned list be cached.
+     * @return a list that contains the child TreeItems belonging to the TreeItem.
+     */
+    @Override public ObservableList<TreeItem<SwarmTreeRenderable>> getChildren() {
 
-    public SwarmTreeItem(Swarm swarm) {
-        swarms = null;
-        name = swarm.getP2pFile().filenameProperty();
-        size = new SimpleLongProperty(swarm.getP2pFile().getFilesizeBytes());
-        numSeeders = new SimpleIntegerProperty(swarm.getLeechers().size());
-        numLeechers = new SimpleIntegerProperty(swarm.getSeeders().size());
+        /* if this is the root object, its children are the known Trackers*/
+        if (getValue().knownTrackers != null) {
+            return FXCollections.observableArrayList(
+                    getValue()
+                            .knownTrackers
+                            .stream()
+                            .map(t -> new TreeItem<>(new SwarmTreeRenderable(t)))
+                            .collect(Collectors.toList()));
+        }
+
+        /* if this object represents a P2PFile, it has no children */
+        if (getValue().swarms == null)
+            return null;
+
+        /* if it represents a Tracker, it has P2PFile children
+         * which need be wrapped in SwarmTreeRenderables and rendered too */
+        return FXCollections.observableArrayList(
+                getValue().getSwarms().stream()
+                      .map(s -> new TreeItem<>(new SwarmTreeRenderable(s)))
+                      .collect(Collectors.toList()));
     }
 
-    public SwarmTreeItem(Tracker tracker) {
-        swarms = tracker.swarmsProperty();
-        name = new SimpleStringProperty(tracker.getIpPortString());
-        size = new SimpleLongProperty(tracker.swarmsProperty().size());
-        numSeeders = null;
-        numLeechers = null;
-    }
 }

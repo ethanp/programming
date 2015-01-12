@@ -4,18 +4,16 @@ import base.Main;
 import base.p2p.file.FakeP2PFile;
 import base.p2p.file.P2PFile;
 import base.p2p.tracker.FakeTracker;
-import base.p2p.tracker.Tracker;
 import base.p2p.transfer.Transfer;
+import base.util.TreeTableRoot;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.ReadOnlyStringWrapper;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
@@ -67,46 +65,45 @@ public class TheWindowCtrl {
         FakeTracker defaultFakeTracker = FakeTracker.getDefaultFakeTracker();
         localFileTable.getItems().addAll(local1, local2, local3);
 
-        // TODO just make a static TreeItem<> and then make it dynamic using the FakeTracker
-        // this is from
-        //      docs.oracle.com/javase/8/javafx/user-interface-tutorial/tree-table-view.htm
-        // Creating tree items
-        final TreeItem<String> childNode1 = new TreeItem<>("Child Node 1");
-        final TreeItem<String> childNode2 = new TreeItem<>("Child Node 2");
-        final TreeItem<String> childNode3 = new TreeItem<>("Child Node 3");
+
 
         // Create the root element
-        final TreeItem<Tracker> root = new TreeItem<>(defaultFakeTracker);
+        SwarmTreeRenderable root = new SwarmTreeRenderable(defaultFakeTracker);
         root.setExpanded(true); // as in "click" the "expand" arrow
 
-        // Add tree items to the root
-        root.getChildren().setAll(childNode1, childNode2, childNode3);
-
-        trkrTreeTable.setRoot(root);
     }
 
     private void fileWasSelected(P2PFile p2pFile) { if (p2pFile != null) {} else {} }
 
     /** UPPER PANES **/
 
-    /* TODO I have no idea how to pull it off, but I'm thinking it will look something like this:
+    /* TODO I'm thinking it will look something like this:
      * stackoverflow.com/questions/24290072
      * i.e.
-     * =========================================================
-     * ||   Tracker/FileName     ||  Size     || #Sd  || #Lch ||
-     * ---------------------------------------------------------
-     * || \/ 123.tra.ker.adr:523 ||           ||      ||      ||
-     * ||       file1            ||  size1 B  ||  23  ||  31  ||
-     * ||       file2            ||  size2 B  ||   6  ||   2  ||
-     * ||    ...                 ||  ...      || ...  || ...  ||
-     * =========================================================
+     * ===========================================================
+     * ||   Tracker/FileName       ||  Size     || #Sd  || #Lch ||
+     * -----------------------------------------------------------
+     * || \/ Trackers              ||           ||      ||      ||
+     * ||   \/ 123.tra.ker.adr:523 ||           ||      ||      ||
+     * ||       file1              ||  size1 B  ||  23  ||  31  ||
+     * ||       file2              ||  size2 B  ||   6  ||   2  ||
+     * ||   \/ 213.tra.ker.adr:412 ||           ||      ||      ||
+     * ||       file3              ||  size1 B  ||  21  ||  11  ||
+     * ||       file4              ||  size2 B  ||   7  ||   4  ||
+     * ||    ...                   ||  ...      || ...  || ...  ||
+     * ===========================================================
      */
-    @FXML private TreeTableColumn<SwarmTreeItem,String> trkrAddrAndNameStrCol;
-    @FXML private TreeTableColumn<SwarmTreeItem,String> trkrFileSizeCol;
-    @FXML private TreeTableColumn<SwarmTreeItem,String> trkrFileNumSeedersCol;
-    @FXML private TreeTableColumn<SwarmTreeItem,String> trkrFileNumLeechersCol;
 
-    @FXML private TreeTableView<SwarmTreeItem> trkrTreeTable; {
+    SwarmTreeItem treeTableRoot = new SwarmTreeItem(new SwarmTreeRenderable(new TreeTableRoot()));
+    @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrAddrAndNameStrCol;
+    @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrFileSizeCol;
+    @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrFileNumSeedersCol;
+    @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrFileNumLeechersCol;
+
+    @FXML private TreeTableView<SwarmTreeRenderable> trkrTreeTable; {
+
+        trkrTreeTable.setRoot(treeTableRoot);
+
         // Defining cell content (using a read-only 'property' created on-the-fly)
         trkrAddrAndNameStrCol.setCellValueFactory(
                 p -> new ReadOnlyStringWrapper(p.getValue().getValue().getIpPortString()));
