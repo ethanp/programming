@@ -35,7 +35,7 @@ public abstract class P2PFile {
     public void setFilename(String filename) { this.filename.set(filename); }
 
 
-    /* TODO I think this is wrong...a P2PFile cannot know its own Trackers
+    /* TODO this is wrong...a P2PFile cannot know its own Trackers
      * because the P2PFile is hosted on a Tracker, and that Tracker shouldn't have
      * be aware of or maintain which Other Trackers are tracking that File */
     protected final ListProperty<Tracker> trackers;

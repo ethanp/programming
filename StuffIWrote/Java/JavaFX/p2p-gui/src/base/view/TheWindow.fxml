@@ -47,7 +47,7 @@
                                              <content>
                                                 <TreeTableView fx:id="trkrTreeTable" prefHeight="150.0" prefWidth="318.0">
                                                    <columns>
-                                                      <TreeTableColumn fx:id="trkrIPAddrStrCol" prefWidth="126.0" text="Tracker/FileName" />
+                                                      <TreeTableColumn fx:id="trkrAddrAndNameStrCol" prefWidth="126.0" text="Tracker/FileName" />
                                                       <TreeTableColumn fx:id="trkrFileSizeCol" prefWidth="42.0" text="Size" />
                                                       <TreeTableColumn fx:id="trkrFileNumSeedersCol" prefWidth="77.0" text="#Seeders" />
                                                       <TreeTableColumn fx:id="trkrFileNumLeechersCol" prefWidth="82.0" text="#Leechers" />

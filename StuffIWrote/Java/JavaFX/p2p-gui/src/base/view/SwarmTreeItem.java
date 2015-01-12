@@ -16,7 +16,7 @@ public class SwarmTreeItem extends TreeItem<SwarmTreeRenderable> {
     /** A leaf can not be expanded by the user, and as such will not show a disclosure
      *      node or respond to expansion requests.
      *  This is called often, so luckily it is quite inexpensive and needn't be cached. */
-    @Override public boolean isLeaf() { return getValue().getSwarms()   == null
+    @Override public boolean isLeaf() { return getValue().swarmsProperty() == null
                                             && getValue().knownTrackers == null; }
 
     /**

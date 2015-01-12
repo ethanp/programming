@@ -15,7 +15,6 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableColumn;
-import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.TreeTableView;
 import javafx.stage.FileChooser;
 import org.controlsfx.dialog.Dialogs;
@@ -43,6 +42,12 @@ public class TheWindowCtrl {
 
     // automatically called after the fxml file is loaded
     @FXML private void initialize() {
+        initializeLocalFileTable();
+        initializeTrkrTreeTable();
+        addFakeContent();
+    }
+
+    private void initializeLocalFileTable() {
         localFileNameColumn.setCellValueFactory(cellData -> cellData.getValue().filenameProperty());
         // not sure if there's a better way to write this
         localFileSizeColumn.setCellValueFactory(cellData ->
@@ -54,8 +59,20 @@ public class TheWindowCtrl {
         // at this point, I'm not doing anything
         localFileTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> fileWasSelected(newValue));
+    }
 
-        addFakeContent();
+    private void initializeTrkrTreeTable() {
+        trkrTreeTable.setRoot(treeTableRoot);
+
+        // Defining cell content (using a read-only 'property' created on-the-fly)
+        trkrAddrAndNameStrCol.setCellValueFactory(
+                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getName()));
+
+        /* TODO this will not format correctly the things for trackers */
+        trkrFileSizeCol.setCellValueFactory(
+                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getSize()+" B"));
+
+        trkrTreeTable.setShowRoot(true); // show the "'root' tree-item"
     }
 
     private void addFakeContent() {
@@ -65,12 +82,10 @@ public class TheWindowCtrl {
         FakeTracker defaultFakeTracker = FakeTracker.getDefaultFakeTracker();
         localFileTable.getItems().addAll(local1, local2, local3);
 
-
-
-        // Create the root element
-        SwarmTreeRenderable root = new SwarmTreeRenderable(defaultFakeTracker);
-        root.setExpanded(true); // as in "click" the "expand" arrow
-
+        // Add the defaultFakeTracker as a child of the Tree's root
+        SwarmTreeItem trackerItem = new SwarmTreeItem(new SwarmTreeRenderable(defaultFakeTracker));
+        trackerItem.setExpanded(true); // as in "click" the "expand" arrow
+        treeTableRoot.getChildren().add(trackerItem);
     }
 
     private void fileWasSelected(P2PFile p2pFile) { if (p2pFile != null) {} else {} }
@@ -100,18 +115,7 @@ public class TheWindowCtrl {
     @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrFileNumSeedersCol;
     @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrFileNumLeechersCol;
 
-    @FXML private TreeTableView<SwarmTreeRenderable> trkrTreeTable; {
-
-        trkrTreeTable.setRoot(treeTableRoot);
-
-        // Defining cell content (using a read-only 'property' created on-the-fly)
-        trkrAddrAndNameStrCol.setCellValueFactory(
-                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getIpPortString()));
-
-        trkrFileNameCol.setCellValueFactory((CellDataFeatures<P2PFile,String> p) ->
-                         new ReadOnlyObjectWrapper<>(null));
-        trkrTreeTable.setShowRoot(true); // show the "'root' tree-item"
-    }
+    @FXML private TreeTableView<SwarmTreeRenderable> trkrTreeTable;
 
     @FXML private TableView<P2PFile> localFileTable;
     // type1 == type of TableView, type2 == type of cell content

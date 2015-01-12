@@ -4,6 +4,8 @@ import base.p2p.file.P2PFile;
 import base.p2p.peer.Peer;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ObservableList;
 
 /**
@@ -27,10 +29,9 @@ public class Swarm {
     protected final ListProperty<Peer> seeders;
     protected final ObjectProperty<P2PFile> p2pFile;
 
-    // TODO Swarm constructor
-    public Swarm() {
-        p2pFile = null;
-        seeders = null;
-        leechers = null;
+    public Swarm(P2PFile baseP2PFile) {
+        p2pFile = new SimpleObjectProperty<>(baseP2PFile);
+        seeders = new SimpleListProperty<>();
+        leechers = new SimpleListProperty<>();
     }
 }
