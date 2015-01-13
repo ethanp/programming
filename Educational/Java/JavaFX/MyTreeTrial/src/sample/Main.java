@@ -5,6 +5,7 @@ import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleLongProperty;
@@ -15,13 +16,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.ContextMenu;
-import javafx.scene.control.TextField;
-import javafx.scene.control.TreeCell;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeTableCell;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -33,44 +36,87 @@ public class Main extends Application {
     public static Image zipIcon = new Image(Main.class.getResourceAsStream("zip.png"));
     public static Image zoomIcon = new Image(Main.class.getResourceAsStream("zoom.png"));
     TreeItem<Celery> rootNode = new TreeItem<>(new Celery(new Root()));
+    static Stage primary;
 
     @Override public void start(Stage primaryStage) {
-        primaryStage.setTitle("My TreeTableView Trial");
+        primary = primaryStage;
+
+        Tracker tr1 = new Tracker(3);
+        Celery cTr1 = new Celery(tr1);
+        rootNode.getChildren().add(new TreeItem<>(cTr1));
+
+        rootNode.setExpanded(true);
+        primary.setTitle("My TreeTableView Trial");
         VBox box = new VBox();
         Scene scene = new Scene(box, 400, 300);
         scene.setFill(Color.LIGHTGREY);
 
-        TreeTableColumn<Celery, String> nameCol = new TreeTableColumn<>("Name");
-        TreeTableColumn<Celery, String> sizeCol = new TreeTableColumn<>("Size");
-        TreeTableColumn<Celery, String> seedersCol = new TreeTableColumn<>("#Seeders");
-        TreeTableColumn<Celery, String> leechersCol = new TreeTableColumn<>("#Leechers");
+        TreeTableColumn<Celery, Celery> nameCol = new TreeTableColumn<>("Name");
+        TreeTableColumn<Celery, Celery> sizeCol = new TreeTableColumn<>("Size");
+        TreeTableColumn<Celery, Celery> seedersCol = new TreeTableColumn<>("#Seeders");
+        TreeTableColumn<Celery, Celery> leechersCol = new TreeTableColumn<>("#Leechers");
 
-        nameCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("name"));
-        sizeCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("size"));
-        seedersCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("numSeeders"));
-        leechersCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("numLeechers"));
+        nameCol.setPrefWidth(110);
 
-        nameCol.setPrefWidth(85);
+        nameCol.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getValue()));
+        sizeCol.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getValue()));
+        seedersCol.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getValue()));
+        leechersCol.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getValue()));
+
+        nameCol.setCellFactory(e -> new CeleryCell(Cols.NAME));
+        sizeCol.setCellFactory(e -> new CeleryCell(Cols.SIZE));
+        seedersCol.setCellFactory(e -> new CeleryCell(Cols.NUM_SEEDERS));
+        leechersCol.setCellFactory(e -> new CeleryCell(Cols.NUM_LEECHERS));
+
+        primary.setScene(scene);
 
         TreeTableView<Celery> tree = new TreeTableView<>(rootNode);
         tree.setEditable(false);
         tree.getColumns().addAll(nameCol, sizeCol, seedersCol, leechersCol);
 
-        Tracker tr1 = new Tracker(3);
-        Celery cTr1 = new Celery(tr1);
-        rootNode.getChildren().add(new TreeItem<>(cTr1));
-        rootNode.setExpanded(true);
-
         box.getChildren().add(tree);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+
+        primary.show();
     }
 }
 
-class CeleryCell extends TreeCell<Celery> {
-    private TextField textField;
-    private ContextMenu menu = new ContextMenu();
-    
+enum Cols { NAME, SIZE, NUM_SEEDERS, NUM_LEECHERS }
+class CeleryCell extends TreeTableCell<Celery, Celery> {
+
+    private Cols col;
+    private ContextMenu contextMenu = new ContextMenu();
+
+    private String myTxt() {
+        switch (col) {
+            case NAME:          return getItem().getName();
+            case SIZE:          return getItem().getSize();
+            case NUM_SEEDERS:   return getItem().getNumSeeders();
+            case NUM_LEECHERS:  return getItem().getNumLeechers();
+        }
+        throw new RuntimeException("unreachable");
+    }
+    public CeleryCell(Cols c) {
+        col = c;
+        MenuItem addTracker = new MenuItem("Add tracker to file");
+        MenuItem remove = new MenuItem("Remove file from list");
+        contextMenu.getItems().addAll(addTracker, remove);
+
+        addTracker.setOnAction(event -> {});    // TODO
+        remove.setOnAction(event -> {});        // TODO
+
+        addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                event.consume();
+                contextMenu.show(Main.primary, event.getScreenX(), event.getScreenY());
+            }
+        });
+    }
+    @Override protected void updateItem(Celery item, boolean empty) {
+        super.updateItem(item, empty);
+        if (empty || item == null) { setText(null); return; }
+        if (col == Cols.NAME && !getItem().isFile()) setGraphic(new ImageView(getItem().getIcon()));
+        setText(myTxt());
+    }
 }
 
 class Tracker {
@@ -83,7 +129,9 @@ class Tracker {
 
     private final IntegerProperty loc;
     private final ListProperty<Swarm> swarms;
+
     private static int ctr = 1;
+
     public Tracker(int numFiles) {
         loc = new SimpleIntegerProperty(Util.nextInt(100));
         swarms = new SimpleListProperty<>(FXCollections.observableArrayList());
@@ -110,6 +158,7 @@ class Swarm {
     private final ObjectProperty<Tracker> tracker;
     private final ListProperty<Peer> seeders;
     private final ListProperty<Peer> leechers;
+
     public Swarm(String filename, Tracker trkr) {
         file = new SimpleObjectProperty<>(new P2PFile(filename));
         tracker = new SimpleObjectProperty<>(trkr);
@@ -132,6 +181,7 @@ class P2PFile {
     private final StringProperty name;
     private final LongProperty size;
     private final ListProperty<Tracker> knownTrackers;
+
     public P2PFile(String filename) {
         name = new SimpleStringProperty(filename);
         size = new SimpleLongProperty(Util.nextInt(1000));
@@ -141,6 +191,7 @@ class P2PFile {
 
 class Peer {
     private final IntegerProperty loc;
+
     public Peer() {
         loc = new SimpleIntegerProperty(Util.nextInt(1000));
     }

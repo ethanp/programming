@@ -17,17 +17,24 @@ public class Celery {
     public String getNumLeechers() { return numLeechers.get(); }
     public StringProperty numLeechersProperty() { return numLeechers; }
     public void setNumLeechers(String numLeechers) { this.numLeechers.set(numLeechers); }
+    public Image getIcon() { return icon; }
+    public void setIcon(Image icon) { this.icon = icon; }
 
     enum Type { ROOT, TRACKER, FILE }
+
     private Type type;
+
     public boolean isRoot()     { return type == Type.ROOT; }
     public boolean isTracker()  { return type == Type.TRACKER; }
     public boolean isFile()     { return type == Type.FILE; }
+
     private Image icon;
+
     private final StringProperty name;
     private final StringProperty size;
     private final StringProperty numSeeders;
     private final StringProperty numLeechers;
+
     public Celery(Root r) {
         type = Type.ROOT;
         icon = Main.zoomIcon;
@@ -36,6 +43,7 @@ public class Celery {
         numLeechers = new SimpleStringProperty("");
         numSeeders = new SimpleStringProperty("");
     }
+
     public Celery(Tracker tracker) {
         type = Type.TRACKER;
         icon = Main.zipIcon;
@@ -44,6 +52,7 @@ public class Celery {
         numLeechers = new SimpleStringProperty("");
         numSeeders = new SimpleStringProperty("");
     }
+
     public Celery(Swarm swarm) {
         type = Type.FILE;
         icon = Main.zoomIcon;
