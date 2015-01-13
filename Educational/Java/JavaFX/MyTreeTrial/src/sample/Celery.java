@@ -22,23 +22,20 @@ public class Celery {
     public Tracker getTracker() { return tracker; }
     public Swarm getSwarm() { return swarm; }
 
-
-    private final boolean root;
-    private final Tracker tracker;
-
-
-    private final Swarm swarm;
-
-    public boolean isRoot()     { return root; }
-    public boolean isTracker()  { return tracker != null; }
-    public boolean isSwarm()     { return swarm != null; }
-
-    private Image icon;
+    public boolean isRoot()    { return root; }
+    public boolean isTracker() { return tracker != null; }
+    public boolean isSwarm()   { return swarm != null; }
 
     private final StringProperty name;
     private final StringProperty size;
     private final StringProperty numSeeders;
     private final StringProperty numLeechers;
+
+    private final boolean root;
+    private final Tracker tracker;
+    private final Swarm swarm;
+
+    private Image icon;
 
     public Celery(Root r) {
         root = true;

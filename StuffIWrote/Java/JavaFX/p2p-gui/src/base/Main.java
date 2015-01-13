@@ -1,6 +1,9 @@
 package base;
 
+import base.p2p.tracker.Tracker;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
@@ -10,18 +13,18 @@ import java.io.IOException;
 import java.net.URL;
 
 public class Main extends Application {
+    public Main() { /* I could put stuff in here, but at this point there is no need */ }
     public static void main(String[] args) { launch(args); }
-    public Stage getPrimaryStage() { return primaryStage; }
-
-    private Stage primaryStage;
+    public static Stage getPrimaryStage() { return primaryStage; }
+    private static Stage primaryStage;
     private BorderPane rootLayout;
 
-    public Main() { /* I could put stuff in here, but at this point there is no need */ }
+    /** this is the list of all trackers known to the app */
+    public static ObservableList<Tracker> knownTrackers = FXCollections.observableArrayList();
 
     @Override public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
-        this.primaryStage.setTitle("p2p-gui");
-
+        Main.primaryStage = primaryStage;
+        Main.primaryStage.setTitle("p2p-gui");
         loadTheWindow();
     }
 

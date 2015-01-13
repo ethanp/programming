@@ -14,30 +14,30 @@ import java.util.logging.Logger;
 /**
  * Ethan Petuchowski 1/12/15
  */
-public class SwarmTreeItem extends TreeItem<SwarmTreeRenderable> {
+public class SwarmTreeItem extends TreeItem<Celery> {
 
     // TODO it seems I need to listen better for the expand events etc.
     //      to make the table operate properly
     // look at
 
-    public SwarmTreeItem(SwarmTreeRenderable value) {
+    public SwarmTreeItem(Celery value) {
         super(value);
         if (getValue().isRoot()) {
             getValue().getKnownTrackers().addListener(rootListener);
             for (Tracker tracker : getValue().getKnownTrackers())
-                children.add(new SwarmTreeItem(new SwarmTreeRenderable(tracker)));
+                children.add(new SwarmTreeItem(new Celery(tracker)));
         }
         else if (getValue().isTracker()) {
             getValue().getSwarms().addListener(trackerListener);
             for (Swarm swarm : getValue().getSwarms())
-                children.add(new SwarmTreeItem(new SwarmTreeRenderable(swarm)));
+                children.add(new SwarmTreeItem(new Celery(swarm)));
         }
     }
 
     /** A leaf can not be expanded by the user, and as such will not show a disclosure
      *      node or respond to expansion requests.
      *  This is called often, so luckily it is quite inexpensive and needn't be cached. */
-    @Override public boolean isLeaf() { return getValue().isFile(); }
+    @Override public boolean isLeaf() { return getValue().isSwarm(); }
 
     public SwarmTreeItem addTracker(Tracker tracker) {
         if (!getValue().isRoot()) return null;
@@ -45,13 +45,13 @@ public class SwarmTreeItem extends TreeItem<SwarmTreeRenderable> {
         return this;
     }
 
-    ObservableList<TreeItem<SwarmTreeRenderable>> children = FXCollections.observableArrayList();
+    ObservableList<TreeItem<Celery>> children = FXCollections.observableArrayList();
 
     private void updateRootChildren(List<? extends Tracker> removed,
                                     List<? extends Tracker> added) {
         for (Tracker tracker : removed) {
-            TreeItem<SwarmTreeRenderable> toRemove = null;
-            for (TreeItem<SwarmTreeRenderable> child : children) {
+            TreeItem<Celery> toRemove = null;
+            for (TreeItem<Celery> child : children) {
                 if (child.getValue().getSwarms().equals(tracker.getSwarms())) {
                     toRemove = child;
                     break;
@@ -60,14 +60,14 @@ public class SwarmTreeItem extends TreeItem<SwarmTreeRenderable> {
             if (toRemove == null) throw new RuntimeException("child wasn't found");
             children.remove(toRemove);
         }
-        for (Tracker trkr : added) children.add(new SwarmTreeItem(new SwarmTreeRenderable(trkr)));
+        for (Tracker trkr : added) children.add(new SwarmTreeItem(new Celery(trkr)));
     }
 
     private void updateTrackerChildren(List<? extends Swarm> removed,
                                        List<? extends Swarm> added) {
         for (Swarm swarm: removed) {
-            TreeItem<SwarmTreeRenderable> toRemove = null;
-            for (TreeItem<SwarmTreeRenderable> child : children) {
+            TreeItem<Celery> toRemove = null;
+            for (TreeItem<Celery> child : children) {
                 if (child.getValue().getName().equals(swarm.getP2pFile().getFilename())) {
                     toRemove = child;
                     break;
@@ -76,7 +76,7 @@ public class SwarmTreeItem extends TreeItem<SwarmTreeRenderable> {
             if (toRemove == null) throw new RuntimeException("child wasn't found");
             children.remove(toRemove);
         }
-        for (Swarm swarm : added) children.add(new SwarmTreeItem(new SwarmTreeRenderable(swarm)));
+        for (Swarm swarm : added) children.add(new SwarmTreeItem(new Celery(swarm)));
     }
 
     private final ListChangeListener<Tracker> rootListener = c -> {
@@ -103,7 +103,7 @@ public class SwarmTreeItem extends TreeItem<SwarmTreeRenderable> {
      * This is called frequently, so the returned list is cached.
      * @return a list that contains the child TreeItems belonging to the TreeItem.
      */
-    @Override public ObservableList<TreeItem<SwarmTreeRenderable>> getChildren() {
+    @Override public ObservableList<TreeItem<Celery>> getChildren() {
         Logger.getGlobal().log(Level.INFO,
                                "Getting the "+children.size()+" children " +
                                "of: "+getValue().getName());

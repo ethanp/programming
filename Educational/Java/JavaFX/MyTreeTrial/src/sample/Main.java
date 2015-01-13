@@ -41,7 +41,7 @@ public class Main extends Application {
 
     @Override public void start(Stage primaryStage) {
         primary = primaryStage;
-        knownTrackers.add(new Tracker(3));
+        knownTrackers.addAll(new Tracker(3), new Tracker(5), new Tracker(1));
 
         rootNode.setExpanded(true);
         primary.setTitle("My TreeTableView Trial");

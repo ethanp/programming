@@ -24,7 +24,6 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
@@ -137,13 +136,13 @@ public class TheWindowCtrl {
      * ===========================================================
      */
 
-    SwarmTreeItem treeTableRoot = new SwarmTreeItem(new SwarmTreeRenderable(new TreeTableRoot()));
-    @FXML private TreeTableColumn<SwarmTreeRenderable,String> treeNameCol;
-    @FXML private TreeTableColumn<SwarmTreeRenderable,String> treeSizeCol;
-    @FXML private TreeTableColumn<SwarmTreeRenderable,String> treeSeedersCol;
-    @FXML private TreeTableColumn<SwarmTreeRenderable,String> treeLeechersCol;
+    SwarmTreeItem treeTableRoot = new SwarmTreeItem(new Celery(new TreeTableRoot()));
+    @FXML private TreeTableColumn<Celery,Celery> treeNameCol;
+    @FXML private TreeTableColumn<Celery,Celery> treeSizeCol;
+    @FXML private TreeTableColumn<Celery,Celery> treeSeedersCol;
+    @FXML private TreeTableColumn<Celery,Celery> treeLeechersCol;
 
-    @FXML private TreeTableView<SwarmTreeRenderable> treeTable;
+    @FXML private TreeTableView<Celery> treeTable;
 
     @FXML private TableView<P2PFile> localFileTable;
     // type1 == type of TableView, type2 == type of cell content
@@ -173,7 +172,7 @@ public class TheWindowCtrl {
 
     @FXML private void addFile() {
         FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog(main.getPrimaryStage());
+        File file = fileChooser.showOpenDialog(Main.getPrimaryStage());
         if (file != null) {
             // TODO turn into P2PFile and add file to TableView<P2PFile> fileList
             // or maybe add it to the ObservableList<P2PFile> localFiles
