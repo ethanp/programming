@@ -1,14 +1,13 @@
 # EP: note all the custom functions and aliases are in
 # ~/.oh-my-zsh/custom/fromBashProfile.zsh
-# Try an edit
-#
+# (loaded because that's ZSH_CUSTON=$ZSH/custom)
+
 # Path to your oh-my-zsh installation.
 export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
-# Optionally, if you set this to "random", it'll load a random theme each
-# time that oh-my-zsh is loaded.
+# You can also choose "random"
 ZSH_THEME="amuse"
 
 # case-sensitive completion.
@@ -63,7 +62,6 @@ PATH+="/Applications/Anaconda/anaconda/bin:"
 PATH+="/Users/Ethan/Applications/apache-ant-1.8.4/bin:"
 PATH+="/Users/Ethan/Applications/javacc-5.0/bin:"
 PATH+="/Users/Ethan/.rbenv/shims:"
-PATH+="/usr/local/bin:"
 PATH+="/usr/bin:"
 PATH+="/bin:"
 PATH+="/usr/sbin:"
@@ -74,22 +72,6 @@ PATH+="/Users/Ethan/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools:"
 PATH+="/usr/local/share/scala-2.10.1/bin:"
 PATH+="/Users/Ethan/gsutil:"
 PATH+="/Users/Ethan/.rvm/bin:"
-PATH+="/usr/local/lib/ruby:"
-PATH+="/Applications/Anaconda/anaconda/bin:"
-PATH+="/Users/Ethan/Applications/apache-ant-1.8.4/bin:"
-PATH+="/Users/Ethan/Applications/javacc-5.0/bin:"
-PATH+="/Users/Ethan/.rbenv/shims:"
-PATH+="/usr/local/bin:"
-PATH+="/usr/bin:"
-PATH+="/bin:"
-PATH+="/usr/sbin:"
-PATH+="/sbin:"
-PATH+="/opt/X11/bin:"
-PATH+="/usr/texbin:"
-PATH+="/Users/Ethan/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools:"
-PATH+="/usr/local/share/scala-2.10.1/bin:"
-PATH+="/Users/Ethan/gsutil:"
-PATH+="/Users/Ethan/.rvm/bin"
 
 export PATH
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -112,8 +94,7 @@ source $ZSH/oh-my-zsh.sh
 # ssh
 # export SSH_KEY_PATH="~/.ssh/dsa_id"
 
-# Set personal aliases, overriding those provided by oh-my-zsh libs,
-# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# Aliases can be placed here, though oh-my-zsh
 # users are encouraged to define aliases within the ZSH_CUSTOM folder.
 # For a full list of active aliases, run `alias`.
 #

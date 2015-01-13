@@ -16,6 +16,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.TreeItemPropertyValueFactory;
 import javafx.stage.FileChooser;
 import org.controlsfx.dialog.Dialogs;
 
@@ -62,47 +63,49 @@ public class TheWindowCtrl {
     }
 
     private void initializeTrkrTreeTable() {
-        trkrTreeTable.setRoot(treeTableRoot);
+        treeTable.setRoot(treeTableRoot);
 
-        // Defining cell content (using a read-only 'property' created on-the-fly)
-        trkrAddrAndNameStrCol.setCellValueFactory(
-                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getName()));
+        // Defining how cell content is extracted from each SwarmTreeRenderable for each column
+        treeNameCol.setCellValueFactory(
 
-        /* TODO this will not format correctly the things for trackers */
-        trkrFileSizeCol.setCellValueFactory(
-                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getSize()+" B"));
+                // option 1: using a provided property value-getting class
+                new TreeItemPropertyValueFactory<>("name"));
 
-        trkrTreeTable.setShowRoot(true); // show the "'root' tree-item"
+                // option 2: using a read-only 'property' created on-the-fly
+//                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getName()));
+
+        treeSizeCol.setCellValueFactory(
+                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getSizeString()));
+
+        treeSeedersCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("numSeeders"));
+        treeLeechersCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("numLeechers"));
+
+        treeTable.setShowRoot(true); // show the "'root' tree-item"
     }
 
     private void addFakeContent() {
         FakeP2PFile local1 = FakeP2PFile.genFakeFile();
         FakeP2PFile local2 = FakeP2PFile.genFakeFile();
         FakeP2PFile local3 = FakeP2PFile.genFakeFile();
-        FakeTracker defaultFakeTracker = FakeTracker.getDefaultFakeTracker();
         localFileTable.getItems().addAll(local1, local2, local3);
 
         // Add the defaultFakeTracker as a child of the Tree's root
-        SwarmTreeItem trackerItem = new SwarmTreeItem(new SwarmTreeRenderable(defaultFakeTracker));
-        trackerItem.setExpanded(true); // as in "click" the "expand" arrow
-        treeTableRoot.getChildren().add(trackerItem);
+        treeTableRoot.addTracker(FakeTracker.getDefaultFakeTracker());
     }
 
     private void fileWasSelected(P2PFile p2pFile) { if (p2pFile != null) {} else {} }
 
     /** UPPER PANES **/
 
-    /* TODO I'm thinking it will look something like this:
-     * stackoverflow.com/questions/24290072
-     * i.e.
+    /* It looks like this:
      * ===========================================================
      * ||   Tracker/FileName       ||  Size     || #Sd  || #Lch ||
      * -----------------------------------------------------------
-     * || \/ Trackers              ||           ||      ||      ||
-     * ||   \/ 123.tra.ker.adr:523 ||           ||      ||      ||
+     * || \/ Trackers              || 2 trackers||      ||      ||
+     * ||   \/ 123.tra.ker.adr:523 || 2 files   ||      ||      ||
      * ||       file1              ||  size1 B  ||  23  ||  31  ||
      * ||       file2              ||  size2 B  ||   6  ||   2  ||
-     * ||   \/ 213.tra.ker.adr:412 ||           ||      ||      ||
+     * ||   \/ 213.tra.ker.adr:412 || 2 files   ||      ||      ||
      * ||       file3              ||  size1 B  ||  21  ||  11  ||
      * ||       file4              ||  size2 B  ||   7  ||   4  ||
      * ||    ...                   ||  ...      || ...  || ...  ||
@@ -110,12 +113,12 @@ public class TheWindowCtrl {
      */
 
     SwarmTreeItem treeTableRoot = new SwarmTreeItem(new SwarmTreeRenderable(new TreeTableRoot()));
-    @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrAddrAndNameStrCol;
-    @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrFileSizeCol;
-    @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrFileNumSeedersCol;
-    @FXML private TreeTableColumn<SwarmTreeRenderable,String> trkrFileNumLeechersCol;
+    @FXML private TreeTableColumn<SwarmTreeRenderable,String> treeNameCol;
+    @FXML private TreeTableColumn<SwarmTreeRenderable,String> treeSizeCol;
+    @FXML private TreeTableColumn<SwarmTreeRenderable,String> treeSeedersCol;
+    @FXML private TreeTableColumn<SwarmTreeRenderable,String> treeLeechersCol;
 
-    @FXML private TreeTableView<SwarmTreeRenderable> trkrTreeTable;
+    @FXML private TreeTableView<SwarmTreeRenderable> treeTable;
 
     @FXML private TableView<P2PFile> localFileTable;
     // type1 == type of TableView, type2 == type of cell content

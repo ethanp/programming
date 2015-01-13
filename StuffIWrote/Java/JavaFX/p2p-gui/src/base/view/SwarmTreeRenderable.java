@@ -2,6 +2,7 @@ package base.view;
 
 import base.p2p.tracker.Swarm;
 import base.p2p.tracker.Tracker;
+import base.util.MyFormat;
 import base.util.TreeTableRoot;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
@@ -49,6 +50,11 @@ public class SwarmTreeRenderable {
     protected final ListProperty<Swarm> swarms;
     protected final ListProperty<Tracker> knownTrackers;
 
+    /* subtype checkers */
+    public boolean isRoot()     { return knownTrackers != null; }
+    public boolean isTracker()  { return swarms != null; }
+    public boolean isFile()     { return !isRoot() && !isTracker(); }
+
     // TODO I guess all these fields have to be WATCHING their corresponding source value
     // because otherwise they may become out-of-date
 
@@ -92,5 +98,11 @@ public class SwarmTreeRenderable {
         if (knownTrackers == null) throw new NullPointerException("this is not a tracker item");
         knownTrackers.addAll(trackers);
         return this;
+    }
+
+    public String getSizeString() {
+        if (isFile()) return MyFormat.formatByteCountToString(getSize());
+        if (isTracker()) return swarms.size() + " files";
+        else return knownTrackers.size() + " trackers";
     }
 }

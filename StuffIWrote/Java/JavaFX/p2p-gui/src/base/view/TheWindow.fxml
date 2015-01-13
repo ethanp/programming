@@ -45,12 +45,12 @@
                                        <children>
                                           <TitledPane animated="false" layoutX="-14.0" layoutY="-44.0" prefHeight="177.0" prefWidth="134.0" text="Trackers" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                              <content>
-                                                <TreeTableView fx:id="trkrTreeTable" prefHeight="150.0" prefWidth="318.0">
+                                                <TreeTableView fx:id="treeTable" prefHeight="150.0" prefWidth="318.0">
                                                    <columns>
-                                                      <TreeTableColumn fx:id="trkrAddrAndNameStrCol" prefWidth="126.0" text="Tracker/FileName" />
-                                                      <TreeTableColumn fx:id="trkrFileSizeCol" prefWidth="42.0" text="Size" />
-                                                      <TreeTableColumn fx:id="trkrFileNumSeedersCol" prefWidth="77.0" text="#Seeders" />
-                                                      <TreeTableColumn fx:id="trkrFileNumLeechersCol" prefWidth="82.0" text="#Leechers" />
+                                                      <TreeTableColumn fx:id="treeNameCol" prefWidth="140.0" text="Tracker/FileName" />
+                                                      <TreeTableColumn fx:id="treeSizeCol" prefWidth="78.0" text="Size" />
+                                                      <TreeTableColumn fx:id="treeSeedersCol" prefWidth="72.0" text="#Seeders" />
+                                                      <TreeTableColumn fx:id="treeLeechersCol" prefWidth="78.0" text="#Leechers" />
                                                    </columns>
                                                 </TreeTableView>
                                              </content></TitledPane>

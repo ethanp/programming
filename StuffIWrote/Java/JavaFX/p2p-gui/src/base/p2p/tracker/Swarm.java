@@ -6,6 +6,7 @@ import javafx.beans.property.ListProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 /**
@@ -31,7 +32,7 @@ public class Swarm {
 
     public Swarm(P2PFile baseP2PFile) {
         p2pFile = new SimpleObjectProperty<>(baseP2PFile);
-        seeders = new SimpleListProperty<>();
-        leechers = new SimpleListProperty<>();
+        seeders = new SimpleListProperty<>(FXCollections.observableArrayList());
+        leechers = new SimpleListProperty<>(FXCollections.observableArrayList());
     }
 }
