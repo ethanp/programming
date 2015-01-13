@@ -2,6 +2,7 @@ package base.p2p.file;
 
 import base.p2p.tracker.Tracker;
 import base.p2p.transfer.Transfer;
+import base.util.MyFormat;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.LongProperty;
@@ -35,13 +36,12 @@ public abstract class P2PFile {
     public void setFilename(String filename) { this.filename.set(filename); }
 
 
-    /* TODO this is wrong...a P2PFile cannot know its own Trackers
-     * because the P2PFile is hosted on a Tracker, and that Tracker shouldn't have
-     * be aware of or maintain which Other Trackers are tracking that File */
-    protected final ListProperty<Tracker> trackers;
-    public ObservableList<Tracker> getTrackers() { return trackers.get(); }
-    public ListProperty<Tracker> trackersProperty() { return trackers; }
-    public void setTrackers(ObservableList<Tracker> trackers) { this.trackers.set(trackers); }
+    protected final ListProperty<Tracker> knownTrackers;
+    public ObservableList<Tracker> getKnownTrackers() { return knownTrackers.get(); }
+    public ListProperty<Tracker> knownTrackersProperty() { return knownTrackers; }
+    public void setKnownTrackers(ObservableList<Tracker> knownTrackers) {
+        this.knownTrackers.set(knownTrackers);
+    }
 
     protected final ListProperty<Chunk> chunks;
     public ObservableList<Chunk> getChunks() { return chunks.get(); }
@@ -59,18 +59,19 @@ public abstract class P2PFile {
     public int getPercentComplete() { return percentComplete.get(); }
     public IntegerProperty percentCompleteProperty() { return percentComplete; }
     public void setPercentComplete(int percentComplete){this.percentComplete.set(percentComplete);}
+    public String getCompletenessString() { return getPercentComplete()+"%"; }
 
     protected final LongProperty filesizeBytes;
     public long getFilesizeBytes() { return filesizeBytes.get(); }
     public LongProperty filesizeBytesProperty() { return filesizeBytes; }
     public void setFilesizeBytes(long filesizeBytes) { this.filesizeBytes.set(filesizeBytes); }
-
+    public String getFilesizeString() {return MyFormat.formatByteCountToString(getFilesizeBytes());}
 
     public P2PFile(File baseFile, long filesize)
     {
         localFile = new SimpleObjectProperty<>(baseFile);
         filename = new SimpleStringProperty(baseFile.getName());
-        trackers = new SimpleListProperty<>(FXCollections.<Tracker>observableArrayList());
+        knownTrackers = new SimpleListProperty<>(FXCollections.<Tracker>observableArrayList());
         chunks = new SimpleListProperty<>(FXCollections.<Chunk>observableArrayList());
         ongoingTransfers = new SimpleListProperty<>(FXCollections.<Transfer>observableArrayList());
         filesizeBytes = new SimpleLongProperty(filesize);
@@ -80,7 +81,7 @@ public abstract class P2PFile {
     public P2PFile(Path filePath) { this(filePath.toFile(), filePath.toFile().length()); }
 
     public P2PFile addTracker(Tracker tracker) {
-        trackers.add(tracker);
+        knownTrackers.add(tracker);
         return this;
     }
 

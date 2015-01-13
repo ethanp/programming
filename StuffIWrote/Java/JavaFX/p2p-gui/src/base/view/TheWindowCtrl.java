@@ -11,13 +11,20 @@ import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.fxml.FXML;
 import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
@@ -49,18 +56,36 @@ public class TheWindowCtrl {
     }
 
     private void initializeLocalFileTable() {
-        localFileNameColumn.setCellValueFactory(cellData -> cellData.getValue().filenameProperty());
+        localFileTable.setEditable(false);
+        localFileTable.setRowFactory(tv -> {
+            TableRow<P2PFile> row = new TableRow<>();
+            row.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+                if (event.getButton() == MouseButton.SECONDARY) {
+                    System.out.println("right clicked");
+                    event.consume();
+                    cm.show(stage, event.getScreenX(), event.getScreenY());
+                }
+            });
+            return row;
+        });
+        localFileNameColumn.setCellValueFactory(new PropertyValueFactory<>("filename"));
         // not sure if there's a better way to write this
         localFileSizeColumn.setCellValueFactory(cellData ->
-            new ReadOnlyObjectWrapper<>(cellData.getValue().getFilesizeBytes()+" B"));
+            new ReadOnlyObjectWrapper<>(cellData.getValue().getFilesizeString()));
+
         percentCompleteColumn.setCellValueFactory(cellData ->
-            new ReadOnlyObjectWrapper<>(cellData.getValue().getPercentComplete()+"%"));
+            new ReadOnlyObjectWrapper<>(cellData.getValue().getCompletenessString()));
 
         // TODO this says "when a selection is made in the fileTable, do whatever I want"
         // at this point, I'm not doing anything
         localFileTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> fileWasSelected(newValue));
+
+        cm.getItems().add(cmItem1);
     }
+
+    private final ContextMenu cm = new ContextMenu();
+    MenuItem cmItem1 = new MenuItem("Copy Image");
 
     private void initializeTrkrTreeTable() {
         treeTable.setRoot(treeTableRoot);

@@ -29,10 +29,12 @@ public class Swarm {
     protected final ListProperty<Peer> leechers;
     protected final ListProperty<Peer> seeders;
     protected final ObjectProperty<P2PFile> p2pFile;
+    protected final ObjectProperty<Tracker> tracker;
 
-    public Swarm(P2PFile baseP2PFile) {
+    public Swarm(P2PFile baseP2PFile, Tracker trkr) {
         p2pFile = new SimpleObjectProperty<>(baseP2PFile);
         seeders = new SimpleListProperty<>(FXCollections.observableArrayList());
         leechers = new SimpleListProperty<>(FXCollections.observableArrayList());
+        tracker = new SimpleObjectProperty<>(trkr);
     }
 }

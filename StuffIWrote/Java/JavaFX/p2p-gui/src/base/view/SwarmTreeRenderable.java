@@ -103,6 +103,6 @@ public class SwarmTreeRenderable {
     public String getSizeString() {
         if (isFile()) return MyFormat.formatByteCountToString(getSize());
         if (isTracker()) return swarms.size() + " files";
-        else return knownTrackers.size() + " trackers";
+        else return knownTrackers.size() + " knownTrackers";
     }
 }

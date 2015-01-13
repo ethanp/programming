@@ -16,6 +16,10 @@ import java.util.logging.Logger;
  */
 public class SwarmTreeItem extends TreeItem<SwarmTreeRenderable> {
 
+    // TODO it seems I need to listen better for the expand events etc.
+    //      to make the table operate properly
+    // look at
+
     public SwarmTreeItem(SwarmTreeRenderable value) {
         super(value);
         if (getValue().isRoot()) {
@@ -101,7 +105,8 @@ public class SwarmTreeItem extends TreeItem<SwarmTreeRenderable> {
      */
     @Override public ObservableList<TreeItem<SwarmTreeRenderable>> getChildren() {
         Logger.getGlobal().log(Level.INFO,
-                               "Getting the "+children.size()+" children of: "+getValue().getName());
+                               "Getting the "+children.size()+" children " +
+                               "of: "+getValue().getName());
         return children;
     }
 }
