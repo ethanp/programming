@@ -19,14 +19,19 @@ public class Celery {
     public void setNumLeechers(String numLeechers) { this.numLeechers.set(numLeechers); }
     public Image getIcon() { return icon; }
     public void setIcon(Image icon) { this.icon = icon; }
+    public Tracker getTracker() { return tracker; }
+    public Swarm getSwarm() { return swarm; }
 
-    enum Type { ROOT, TRACKER, FILE }
 
-    private Type type;
+    private final boolean root;
+    private final Tracker tracker;
 
-    public boolean isRoot()     { return type == Type.ROOT; }
-    public boolean isTracker()  { return type == Type.TRACKER; }
-    public boolean isFile()     { return type == Type.FILE; }
+
+    private final Swarm swarm;
+
+    public boolean isRoot()     { return root; }
+    public boolean isTracker()  { return tracker != null; }
+    public boolean isSwarm()     { return swarm != null; }
 
     private Image icon;
 
@@ -36,7 +41,9 @@ public class Celery {
     private final StringProperty numLeechers;
 
     public Celery(Root r) {
-        type = Type.ROOT;
+        root = true;
+        tracker = null;
+        swarm = null;
         icon = Main.zoomIcon;
         name = new SimpleStringProperty("Trackers:");
         size = new SimpleStringProperty("");
@@ -45,7 +52,9 @@ public class Celery {
     }
 
     public Celery(Tracker tracker) {
-        type = Type.TRACKER;
+        root = false;
+        this.tracker = tracker;
+        swarm = null;
         icon = Main.zipIcon;
         name = new SimpleStringProperty("trk: "+tracker.getLoc());
         size = new SimpleStringProperty(tracker.getSwarms().size()+" f");
@@ -54,7 +63,9 @@ public class Celery {
     }
 
     public Celery(Swarm swarm) {
-        type = Type.FILE;
+        root = false;
+        tracker = null;
+        this.swarm = swarm;
         icon = Main.zoomIcon;
         name = new SimpleStringProperty(swarm.getFile().getName());
         size = new SimpleStringProperty(swarm.getFile().getSize()+" B");

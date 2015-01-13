@@ -35,15 +35,13 @@ public class Main extends Application {
     public static void main(String[] args){launch(args);}
     public static Image zipIcon = new Image(Main.class.getResourceAsStream("zip.png"));
     public static Image zoomIcon = new Image(Main.class.getResourceAsStream("zoom.png"));
-    TreeItem<Celery> rootNode = new TreeItem<>(new Celery(new Root()));
+    static public ObservableList<Tracker> knownTrackers = FXCollections.observableArrayList();
+    CeleryItem rootNode = new CeleryItem(new Celery(new Root()));
     static Stage primary;
 
     @Override public void start(Stage primaryStage) {
         primary = primaryStage;
-
-        Tracker tr1 = new Tracker(3);
-        Celery cTr1 = new Celery(tr1);
-        rootNode.getChildren().add(new TreeItem<>(cTr1));
+        knownTrackers.add(new Tracker(3));
 
         rootNode.setExpanded(true);
         primary.setTitle("My TreeTableView Trial");
@@ -63,10 +61,10 @@ public class Main extends Application {
         seedersCol.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getValue()));
         leechersCol.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().getValue()));
 
-        nameCol.setCellFactory(e -> new CeleryCell(Cols.NAME));
-        sizeCol.setCellFactory(e -> new CeleryCell(Cols.SIZE));
-        seedersCol.setCellFactory(e -> new CeleryCell(Cols.NUM_SEEDERS));
-        leechersCol.setCellFactory(e -> new CeleryCell(Cols.NUM_LEECHERS));
+        nameCol.setCellFactory(e -> new CeleryCell(CeleryCell.Cols.NAME));
+        sizeCol.setCellFactory(e -> new CeleryCell(CeleryCell.Cols.SIZE));
+        seedersCol.setCellFactory(e -> new CeleryCell(CeleryCell.Cols.NUM_SEEDERS));
+        leechersCol.setCellFactory(e -> new CeleryCell(CeleryCell.Cols.NUM_LEECHERS));
 
         primary.setScene(scene);
 
@@ -80,8 +78,30 @@ public class Main extends Application {
     }
 }
 
-enum Cols { NAME, SIZE, NUM_SEEDERS, NUM_LEECHERS }
+class CeleryItem extends TreeItem<Celery> {
+
+    private boolean childrenKnown = false;
+
+    public CeleryItem(Celery item) { super(item); }
+
+    @Override public boolean isLeaf() { return getValue().isSwarm(); }
+
+    @Override public ObservableList<TreeItem<Celery>> getChildren() {
+        if (!childrenKnown) {
+            childrenKnown = true;
+            if (getValue().isTracker())
+                for (Swarm swarm : getValue().getTracker().getSwarms())
+                    super.getChildren().add(new CeleryItem(new Celery(swarm)));
+            else if (getValue().isRoot())
+                for (Tracker tracker : Main.knownTrackers)
+                    super.getChildren().add(new CeleryItem(new Celery(tracker)));
+        }
+        return super.getChildren();
+    }
+}
+
 class CeleryCell extends TreeTableCell<Celery, Celery> {
+    static enum Cols { NAME, SIZE, NUM_SEEDERS, NUM_LEECHERS }
 
     private Cols col;
     private ContextMenu contextMenu = new ContextMenu();
@@ -105,7 +125,7 @@ class CeleryCell extends TreeTableCell<Celery, Celery> {
         remove.setOnAction(event -> {});        // TODO
 
         addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
-            if (event.getButton() == MouseButton.SECONDARY) {
+            if (event.getButton() == MouseButton.SECONDARY && getItem().isSwarm()) {
                 event.consume();
                 contextMenu.show(Main.primary, event.getScreenX(), event.getScreenY());
             }
@@ -113,8 +133,9 @@ class CeleryCell extends TreeTableCell<Celery, Celery> {
     }
     @Override protected void updateItem(Celery item, boolean empty) {
         super.updateItem(item, empty);
-        if (empty || item == null) { setText(null); return; }
-        if (col == Cols.NAME && !getItem().isFile()) setGraphic(new ImageView(getItem().getIcon()));
+        if (empty || item == null) { setText(null); setGraphic(null); return; }
+        if (col == Cols.NAME && !getItem().isSwarm())
+            setGraphic(new ImageView(getItem().getIcon()));
         setText(myTxt());
     }
 }
@@ -176,7 +197,9 @@ class P2PFile {
     public void setSize(long size) { this.size.set(size); }
     public ObservableList<Tracker> getKnownTrackers() { return knownTrackers.get(); }
     public ListProperty<Tracker> knownTrackersProperty() { return knownTrackers; }
-    public void setKnownTrackers(ObservableList<Tracker> knownTrackers) { this.knownTrackers.set(knownTrackers); }
+    public void setKnownTrackers(ObservableList<Tracker> knownTrackers) {
+        this.knownTrackers.set(knownTrackers);
+    }
 
     private final StringProperty name;
     private final LongProperty size;
