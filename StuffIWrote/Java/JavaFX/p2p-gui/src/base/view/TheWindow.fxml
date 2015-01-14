@@ -41,39 +41,12 @@
                            <children>
                               <SplitPane layoutX="40.0" layoutY="14.0" prefHeight="179.0" prefWidth="322.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <items>
-                                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                                       <children>
-                                          <TitledPane animated="false" layoutX="-14.0" layoutY="-44.0" prefHeight="177.0" prefWidth="134.0" text="Trackers" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                             <content>
-                                                <TreeTableView fx:id="treeTable" prefHeight="150.0" prefWidth="318.0">
-                                                   <columns>
-                                                      <TreeTableColumn fx:id="treeNameCol" prefWidth="140.0" text="Tracker/FileName" />
-                                                      <TreeTableColumn fx:id="treeSizeCol" prefWidth="78.0" text="Size" />
-                                                      <TreeTableColumn fx:id="treeSeedersCol" prefWidth="72.0" text="#Seeders" />
-                                                      <TreeTableColumn fx:id="treeLeechersCol" prefWidth="78.0" text="#Leechers" />
-                                                   </columns>
-                                                </TreeTableView>
-                                             </content></TitledPane>
-                                       </children>
-                                    </AnchorPane>
+                                  <AnchorPane fx:id="trackersAnchor" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
                                 </items>
                               </SplitPane>
                            </children>
                         </AnchorPane>
-                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
-                           <children>
-                              <TitledPane layoutX="8.0" layoutY="-43.0" prefHeight="179.0" prefWidth="266.0" text="My Files" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                 <content>
-                                    <TableView fx:id="localFileTable" prefHeight="200.0" prefWidth="200.0">
-                                      <columns>
-                                        <TableColumn fx:id="localFileNameColumn" prefWidth="132.0" text="File" />
-                                        <TableColumn fx:id="localFileSizeColumn" prefWidth="84.0" text="Size" />
-                                          <TableColumn fx:id="percentCompleteColumn" prefWidth="83.0" text="\%Complete" />
-                                      </columns>
-                                    </TableView>
-                                 </content></TitledPane>
-                           </children>
-                        </AnchorPane>
+                      <AnchorPane fx:id="localAnchor" minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0" />
                     </items>
                   </SplitPane>
                </children>

@@ -1,4 +1,4 @@
-package base.view;
+package base.view.panes.trackers;
 
 import base.Main;
 import base.p2p.tracker.Swarm;

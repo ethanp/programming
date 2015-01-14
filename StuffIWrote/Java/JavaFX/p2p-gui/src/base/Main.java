@@ -1,11 +1,15 @@
 package base;
 
 import base.p2p.tracker.Tracker;
+import base.view.TheWindowCtrl;
+import base.view.panes.files.LocalFilesPaneCtrl;
+import base.view.panes.trackers.TrackersPaneCtrl;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -30,8 +34,36 @@ public class Main extends Application {
 
     private void loadTheWindow() {
         try {
+            /* load Base Window */
             URL fxmlLoc = Main.class.getResource("view/TheWindow.fxml");
-            rootLayout = FXMLLoader.load(fxmlLoc);
+            FXMLLoader rootLoader = new FXMLLoader();
+            rootLoader.setLocation(fxmlLoc);
+            rootLayout = rootLoader.load();
+            TheWindowCtrl windowCtrl = rootLoader.getController();
+
+            /* load Trackers Pane */
+            URL trackersLoc = Main.class.getResource("view/panes/trackers/TrackersPane.fxml");
+            FXMLLoader trackersLoader = new FXMLLoader();
+            trackersLoader.setLocation(trackersLoc);
+            TitledPane trackersRoot = trackersLoader.load();
+            TrackersPaneCtrl trackersCtrl = trackersLoader.getController();
+
+            /* load LocalFiles Pane */
+            URL localLoc = Main.class.getResource("view/panes/files/LocalFilesPane.fxml");
+            FXMLLoader localLoader = new FXMLLoader();
+            localLoader.setLocation(localLoc);
+            TitledPane localViewRoot = localLoader.load();
+            LocalFilesPaneCtrl localCtrl = localLoader.getController();
+
+            /* add Panes to main Window and make them fit properly */
+            windowCtrl.trackersAnchor.getChildren().add(trackersRoot);
+            trackersRoot.prefWidthProperty().bind(windowCtrl.trackersAnchor.widthProperty());
+            trackersRoot.prefHeightProperty().bind(windowCtrl.trackersAnchor.heightProperty());
+
+            windowCtrl.localAnchor.getChildren().add(localViewRoot);
+            localViewRoot.prefWidthProperty().bind(windowCtrl.localAnchor.widthProperty());
+            localViewRoot.prefHeightProperty().bind(windowCtrl.localAnchor.heightProperty());
+
             Scene scene = new Scene(rootLayout);
             primaryStage.setScene(scene);
             primaryStage.setTitle("p2p-gui");

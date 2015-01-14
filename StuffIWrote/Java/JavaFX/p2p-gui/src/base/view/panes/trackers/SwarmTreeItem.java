@@ -1,4 +1,4 @@
-package base.view;
+package base.view.panes.trackers;
 
 import base.p2p.tracker.Swarm;
 import base.p2p.tracker.Tracker;
@@ -22,16 +22,16 @@ public class SwarmTreeItem extends TreeItem<Celery> {
 
     public SwarmTreeItem(Celery value) {
         super(value);
-        if (getValue().isRoot()) {
-            getValue().getKnownTrackers().addListener(rootListener);
-            for (Tracker tracker : getValue().getKnownTrackers())
-                children.add(new SwarmTreeItem(new Celery(tracker)));
-        }
-        else if (getValue().isTracker()) {
-            getValue().getSwarms().addListener(trackerListener);
-            for (Swarm swarm : getValue().getSwarms())
-                children.add(new SwarmTreeItem(new Celery(swarm)));
-        }
+//        if (getValue().isRoot()) {
+//            getValue().getKnownTrackers().addListener(rootListener);
+//            for (Tracker tracker : getValue().getKnownTrackers())
+//                children.add(new SwarmTreeItem(new Celery(tracker)));
+//        }
+//        else if (getValue().isTracker()) {
+//            getValue().getSwarms().addListener(trackerListener);
+//            for (Swarm swarm : getValue().getSwarms())
+//                children.add(new SwarmTreeItem(new Celery(swarm)));
+//        }
     }
 
     /** A leaf can not be expanded by the user, and as such will not show a disclosure
@@ -41,7 +41,7 @@ public class SwarmTreeItem extends TreeItem<Celery> {
 
     public SwarmTreeItem addTracker(Tracker tracker) {
         if (!getValue().isRoot()) return null;
-        getValue().getKnownTrackers().add(tracker);
+//        getValue().getKnownTrackers().add(tracker);
         return this;
     }
 
@@ -52,10 +52,10 @@ public class SwarmTreeItem extends TreeItem<Celery> {
         for (Tracker tracker : removed) {
             TreeItem<Celery> toRemove = null;
             for (TreeItem<Celery> child : children) {
-                if (child.getValue().getSwarms().equals(tracker.getSwarms())) {
-                    toRemove = child;
-                    break;
-                }
+//                if (child.getValue().getSwarms().equals(tracker.getSwarms())) {
+//                    toRemove = child;
+//                    break;
+//                }
             }
             if (toRemove == null) throw new RuntimeException("child wasn't found");
             children.remove(toRemove);
