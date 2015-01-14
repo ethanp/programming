@@ -116,6 +116,7 @@ class CeleryCell extends TreeTableCell<Celery, Celery> {
         throw new RuntimeException("unreachable");
     }
     public CeleryCell(Cols c) {
+        super();
         col = c;
         MenuItem addTracker = new MenuItem("Add tracker to file");
         MenuItem remove = new MenuItem("Remove file from list");

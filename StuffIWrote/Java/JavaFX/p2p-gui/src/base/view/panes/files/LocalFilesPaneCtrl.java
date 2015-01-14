@@ -3,11 +3,15 @@ package base.view.panes.files;
 import base.Main;
 import base.p2p.file.P2PFile;
 import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Ethan Petuchowski 1/9/15
@@ -15,9 +19,14 @@ import javafx.scene.control.cell.PropertyValueFactory;
 public class LocalFilesPaneCtrl {
 
     @FXML private TableView<P2PFile> localFileTable;
-    @FXML private TableColumn<P2PFile,String> localFileNameColumn;
-    @FXML private TableColumn<P2PFile,String> localFileSizeColumn;
-    @FXML private TableColumn<P2PFile,String> percentCompleteColumn;
+    @FXML private TableColumn<P2PFile,P2PFile> nameCol;
+    @FXML private TableColumn<P2PFile,P2PFile> sizeCol;
+    @FXML private TableColumn<P2PFile,P2PFile> percentCol;
+
+    Callback<TableColumn.CellDataFeatures<P2PFile, P2PFile>,ObservableValue<P2PFile>>
+                valueFactory = cellData -> new ReadOnlyObjectWrapper<>(cellData.getValue());
+
+    private List<TableColumn<P2PFile,P2PFile>> tableColumns;
 
     private final ListChangeListener<P2PFile> localFilesListener = c -> {
         while (c.next()) {
@@ -47,15 +56,14 @@ public class LocalFilesPaneCtrl {
         localFileTable.setEditable(false);
         localFileTable.getItems().addAll(Main.localFiles);
         Main.localFiles.addListener(localFilesListener);
-        localFileNameColumn.setCellValueFactory(new PropertyValueFactory<>("filename"));
-        localFileSizeColumn.setCellValueFactory(cellData ->
-            new ReadOnlyObjectWrapper<>(cellData.getValue().getFilesizeString()));
+        tableColumns = Arrays.asList(nameCol, sizeCol, percentCol);
+        tableColumns.stream().forEach(c -> c.setCellValueFactory(valueFactory));
 
-        percentCompleteColumn.setCellValueFactory(cellData ->
-            new ReadOnlyObjectWrapper<>(cellData.getValue().getCompletenessString()));
+        nameCol.setCellFactory(e -> new LocalFileCell(LocalFileCell.Col.NAME));
+        sizeCol.setCellFactory(e -> new LocalFileCell(LocalFileCell.Col.SIZE));
+        percentCol.setCellFactory(e -> new LocalFileCell(LocalFileCell.Col.PERCENT));
 
-        /* this says "when a selection is made in the fileTable, do whatever I want"
-         * at this point, I'm not doing anything */
+        // this says "when a selection is made in the fileTable, do whatever I want"
         localFileTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> fileWasSelected(newValue));
 

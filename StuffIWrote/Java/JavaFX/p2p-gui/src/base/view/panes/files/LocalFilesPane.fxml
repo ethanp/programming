@@ -7,9 +7,9 @@
    <content>
       <TableView fx:id="localFileTable" prefHeight="200.0" prefWidth="200.0">
          <columns>
-            <TableColumn fx:id="localFileNameColumn" prefWidth="132.0" text="File" />
-            <TableColumn fx:id="localFileSizeColumn" prefWidth="84.0" text="Size" />
-            <TableColumn fx:id="percentCompleteColumn" prefWidth="83.0" text="\%Complete" />
+            <TableColumn fx:id="nameCol" prefWidth="132.0" text="File" />
+            <TableColumn fx:id="sizeCol" prefWidth="84.0" text="Size" />
+            <TableColumn fx:id="percentCol" prefWidth="83.0" text="\%Complete" />
          </columns>
       </TableView>
    </content>

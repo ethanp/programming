@@ -11,8 +11,12 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
@@ -85,5 +89,12 @@ public class Main extends Application {
         catch (IOException e) { e.printStackTrace(); }
     }
 
-
+    public static void showOnRightClick(Node cell, ContextMenu menu) {
+        cell.addEventFilter(MouseEvent.MOUSE_RELEASED, event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                event.consume();
+                menu.show(primaryStage, event.getScreenX(), event.getScreenY());
+            }
+        });
+    }
 }
