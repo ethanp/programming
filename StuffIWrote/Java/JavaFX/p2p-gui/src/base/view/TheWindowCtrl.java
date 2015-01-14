@@ -1,20 +1,12 @@
 package base.view;
 
 import base.Main;
-import base.p2p.file.FakeP2PFile;
-import base.p2p.transfer.Transfer;
 import javafx.fxml.FXML;
-import javafx.scene.chart.Axis;
-import javafx.scene.chart.LineChart;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import org.controlsfx.dialog.Dialogs;
 
 import java.io.File;
-import java.time.LocalDate;
 
 /**
  * Ethan Petuchowski 1/7/15
@@ -29,37 +21,10 @@ public class TheWindowCtrl {
     @FXML private void initialize() {
     }
 
-    private void addFakeContent() {
-        FakeP2PFile local1 = FakeP2PFile.genFakeFile();
-        FakeP2PFile local2 = FakeP2PFile.genFakeFile();
-        FakeP2PFile local3 = FakeP2PFile.genFakeFile();
-//        localFileTable.getItems().addAll(local1, local2, local3);
-
-        // Add the defaultFakeTracker as a child of the Tree's root
-//        treeTableRoot.addTracker(FakeTracker.getDefaultFakeTracker());
-    }
-
 
     /** UPPER PANES **/
     @FXML public AnchorPane trackersAnchor;
     @FXML public AnchorPane localAnchor;
-
-    /** LOWER PANES **/
-    /** Transfers (progress bars) **/
-
-    @FXML private TableView<Transfer> transfersForSelectedFile;
-    @FXML private TableColumn<Transfer,Integer> transferChunkNumCol;
-    @FXML private TableColumn<Transfer,ProgressBar> transferProgressCol;
-
-    /** Bandwidth History (graph) **/
-    @FXML private LineChart<LocalDate, Integer> bandwidthHistoryLineChart;
-
-    // TODO in TheWindow this is a "category axis" which doesn't really sound like what I want
-    @FXML private Axis<LocalDate> bandwidthChartXAxis;
-    @FXML private Axis<Integer> bandwidthChartYAxis;
-
-    /** Pieces Diagram **/
-    // haven't figured out exactly what this *is* yet.
 
 
     /** MENU BAR ITEMS **/

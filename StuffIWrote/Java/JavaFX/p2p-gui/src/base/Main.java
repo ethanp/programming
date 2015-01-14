@@ -1,5 +1,8 @@
 package base;
 
+import base.p2p.file.FakeP2PFile;
+import base.p2p.file.P2PFile;
+import base.p2p.tracker.FakeTracker;
 import base.p2p.tracker.Tracker;
 import base.view.TheWindowCtrl;
 import base.view.panes.files.LocalFilesPaneCtrl;
@@ -25,11 +28,21 @@ public class Main extends Application {
 
     /** this is the list of all trackers known to the app */
     public static ObservableList<Tracker> knownTrackers = FXCollections.observableArrayList();
+    public static ObservableList<P2PFile> localFiles = FXCollections.observableArrayList();
 
     @Override public void start(Stage primaryStage) throws Exception {
         Main.primaryStage = primaryStage;
         Main.primaryStage.setTitle("p2p-gui");
         loadTheWindow();
+        addFakeContent();
+    }
+
+    private void addFakeContent() {
+        FakeP2PFile pFile1 = FakeP2PFile.genFakeFile();
+        FakeP2PFile pFile2 = FakeP2PFile.genFakeFile();
+        FakeP2PFile pFile3 = FakeP2PFile.genFakeFile();
+        Main.localFiles.addAll(pFile1, pFile2, pFile3);
+        Main.knownTrackers.add(FakeTracker.getDefaultFakeTracker());
     }
 
     private void loadTheWindow() {

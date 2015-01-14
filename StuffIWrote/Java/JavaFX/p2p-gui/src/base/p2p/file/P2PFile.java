@@ -90,4 +90,23 @@ public abstract class P2PFile {
         chunks.add(chunk);
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof P2PFile)) return false;
+        P2PFile file = (P2PFile) o;
+        if (!chunks.equals(file.chunks)) return false;
+        if (!filename.equals(file.filename)) return false;
+        if (!filesizeBytes.equals(file.filesizeBytes)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = filename.hashCode();
+        result = 31*result+chunks.hashCode();
+        result = 31*result+filesizeBytes.hashCode();
+        return result;
+    }
 }
