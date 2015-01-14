@@ -1,6 +1,7 @@
 package base.view.panes.files;
 
 import base.Main;
+import base.p2p.file.FakeP2PFile;
 import base.p2p.file.P2PFile;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -10,7 +11,6 @@ import javafx.scene.control.TableCell;
  * Ethan Petuchowski 1/14/15
  */
 public class LocalFileCell extends TableCell<P2PFile, P2PFile> {
-
     enum Col { NAME, SIZE, PERCENT}
     private Col c;
     private ContextMenu contextMenu = new ContextMenu();
@@ -19,8 +19,10 @@ public class LocalFileCell extends TableCell<P2PFile, P2PFile> {
         super();
         c = column;
         MenuItem removeFile = new MenuItem("Remove file from list");
-        contextMenu.getItems().addAll(removeFile);
+        MenuItem addFakeFile = new MenuItem("Add new fake file");
+        contextMenu.getItems().addAll(removeFile, addFakeFile);
         removeFile.setOnAction(event -> Main.localFiles.remove(getItem()));
+        addFakeFile.setOnAction(event -> FakeP2PFile.addFakeLocalFile());
         Main.showOnRightClick(this, contextMenu);
     }
 

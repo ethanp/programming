@@ -1,6 +1,7 @@
 package base.view.panes.trackers;
 
 import base.Main;
+import base.p2p.tracker.FakeTracker;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TreeTableCell;
@@ -30,11 +31,17 @@ public class TrackersCell extends TreeTableCell<Celery, Celery> {
     }
 
     private void addRootContextMenu() {
-        MenuItem addTracker = new MenuItem("Add tracker");
+        MenuItem addFakeTracker = new MenuItem("Add fake tracker");
+        contextMenu.getItems().addAll(addFakeTracker);
+        addFakeTracker.setOnAction(e -> FakeTracker.addFakeTracker());
+    }
+
+    private void addTrackerMenu() {
+        MenuItem addFakeTracker = new MenuItem("Add fake tracker");
         MenuItem removeTracker = new MenuItem("Remove tracker");
-        contextMenu.getItems().addAll(addTracker, removeTracker);
-        addTracker.setOnAction(event -> {});
-        removeTracker.setOnAction(event -> {});
+        contextMenu.getItems().addAll(addFakeTracker, removeTracker);
+        addFakeTracker.setOnAction(e -> FakeTracker.addFakeTracker());
+        removeTracker.setOnAction(e -> Main.knownTrackers.remove(getItem().getTracker()));
     }
 
     private void addSwarmContextMenu() {
@@ -45,11 +52,16 @@ public class TrackersCell extends TreeTableCell<Celery, Celery> {
 
     @Override protected void updateItem(Celery item, boolean empty) {
         super.updateItem(item, empty);
-        if (empty || item == null) { setText(null); setGraphic(null); return; }
+        if (empty || item == null) {
+            setText(null);
+            setGraphic(null);
+            return;
+        }
         setText(myTxt());
         contextMenu = new ContextMenu();
         if (getItem().isRoot()) addRootContextMenu();
-        else if (getItem().isSwarm()) addSwarmContextMenu();
+        if (getItem().isTracker()) addTrackerMenu();
+        if (getItem().isSwarm()) addSwarmContextMenu();
         Main.showOnRightClick(this, contextMenu);
     }
 }

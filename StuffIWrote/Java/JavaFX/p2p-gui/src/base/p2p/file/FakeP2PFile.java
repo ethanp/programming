@@ -1,5 +1,6 @@
 package base.p2p.file;
 
+import base.Main;
 import base.p2p.tracker.FakeTracker;
 import base.p2p.tracker.Tracker;
 
@@ -35,6 +36,10 @@ public class FakeP2PFile extends P2PFile {
         addTracker(tracker);
         addAtMostNumFakeChunks(25);
         setPercentComplete(random.nextInt(100));
+    }
+
+    public static void addFakeLocalFile() {
+        Main.localFiles.add(genFakeFile());
     }
 
     private P2PFile addAtMostNumFakeChunks(int maxChunkCount) {
