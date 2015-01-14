@@ -1,10 +1,15 @@
 package base.view.panes.trackers;
 
 import base.util.TreeTableRoot;
+import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
-import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.util.Callback;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Ethan Petuchowski 1/9/15
@@ -25,35 +30,28 @@ import javafx.scene.control.cell.TreeItemPropertyValueFactory;
  */
 public class TrackersPaneCtrl {
     @FXML private TreeTableView<Celery> treeTable;
-    @FXML private TreeTableColumn<Celery,Celery> treeNameCol;
-    @FXML private TreeTableColumn<Celery,Celery> treeSizeCol;
-    @FXML private TreeTableColumn<Celery,Celery> treeSeedersCol;
-    @FXML private TreeTableColumn<Celery,Celery> treeLeechersCol;
+    @FXML private TreeTableColumn<Celery,Celery> nameCol;
+    @FXML private TreeTableColumn<Celery,Celery> sizeCol;
+    @FXML private TreeTableColumn<Celery,Celery> seedersCol;
+    @FXML private TreeTableColumn<Celery,Celery> leechersCol;
 
-    SwarmTreeItem treeTableRoot = new SwarmTreeItem(new Celery(new TreeTableRoot()));
+    private List<TreeTableColumn<Celery,Celery>> tableColumns;
+
+    TrackerTreeItem treeTableRoot = new TrackerTreeItem(new Celery(new TreeTableRoot()));
+
+
+    Callback<TreeTableColumn.CellDataFeatures<Celery, Celery>, ObservableValue<Celery>>
+            cellValueFactory = c -> new ReadOnlyObjectWrapper<>(c.getValue().getValue());
 
     @FXML private void initialize() {
-        initializeTrkrTreeTable();
-    }
-
-    public void initializeTrkrTreeTable() {
         treeTable.setRoot(treeTableRoot);
+        treeTable.setShowRoot(true);
+        tableColumns = Arrays.asList(nameCol, sizeCol, seedersCol, leechersCol);
+        tableColumns.forEach(c -> c.setCellValueFactory(cellValueFactory));
 
-        // Defining how cell content is extracted from each SwarmTreeRenderable for each column
-        treeNameCol.setCellValueFactory(
-
-                // option 1: using a provided property value-getting class
-                new TreeItemPropertyValueFactory<>("name"));
-
-                // option 2: using a read-only 'property' created on-the-fly
-//                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getName()));
-
-//        treeSizeCol.setCellValueFactory(
-//                p -> new ReadOnlyStringWrapper(p.getValue().getValue().getSizeString()));
-
-        treeSeedersCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("numSeeders"));
-        treeLeechersCol.setCellValueFactory(new TreeItemPropertyValueFactory<>("numLeechers"));
-
-        treeTable.setShowRoot(true); // show the "'root' tree-item"
+        nameCol.setCellFactory(e -> new TrackersCell(TrackersCell.Cols.NAME));
+        sizeCol.setCellFactory(e -> new TrackersCell(TrackersCell.Cols.SIZE));
+        seedersCol.setCellFactory(e -> new TrackersCell(TrackersCell.Cols.NUM_SEEDERS));
+        leechersCol.setCellFactory(e -> new TrackersCell(TrackersCell.Cols.NUM_LEECHERS));
     }
 }

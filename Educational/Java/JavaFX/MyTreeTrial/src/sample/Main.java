@@ -82,7 +82,7 @@ class CeleryItem extends TreeItem<Celery> {
 
     private boolean childrenKnown = false;
 
-    public CeleryItem(Celery item) { super(item); }
+    public CeleryItem(Celery value) { super(value); }
 
     @Override public boolean isLeaf() { return getValue().isSwarm(); }
 

@@ -12,9 +12,11 @@ import base.util.TreeTableRoot;
  * ProgrammingGit/Educational/Java/JavaFX/MyTreeTrial
  */
 public class Celery {
-
     private final Swarm swarm;
     private final Tracker tracker;
+
+    public Tracker getTracker() { return tracker; }
+    public Swarm getSwarm() { return swarm; }
 
     /* subtype checkers */
     public boolean isTracker()  { return tracker != null; }
@@ -59,5 +61,13 @@ public class Celery {
     public String getNumLeechers() {
         if (isSwarm()) return swarm.getLeechers().size()+"";
         else return "";
+    }
+
+    public boolean equalsTracker(Tracker tracker) {
+        return isTracker() && this.tracker.equals(tracker);
+    }
+
+    public boolean equalsSwarm(Swarm swarm) {
+        return isSwarm() && this.swarm.equals(swarm);
     }
 }

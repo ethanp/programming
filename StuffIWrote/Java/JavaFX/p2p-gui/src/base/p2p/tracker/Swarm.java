@@ -37,4 +37,25 @@ public class Swarm {
         leechers = new SimpleListProperty<>(FXCollections.observableArrayList());
         tracker = new SimpleObjectProperty<>(trkr);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Swarm)) return false;
+        Swarm swarm = (Swarm) o;
+        if (!leechers.equals(swarm.leechers)) return false;
+        if (!p2pFile.equals(swarm.p2pFile)) return false;
+        if (!seeders.equals(swarm.seeders)) return false;
+        if (!tracker.equals(swarm.tracker)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = leechers.hashCode();
+        result = 31*result+seeders.hashCode();
+        result = 31*result+p2pFile.hashCode();
+        result = 31*result+tracker.hashCode();
+        return result;
+    }
 }

@@ -31,4 +31,21 @@ public abstract class Tracker {
         this.swarms = new SimpleListProperty<>(FXCollections.observableArrayList(swarms));
         this.listeningSockAddr = new SimpleObjectProperty<>(addr);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tracker)) return false;
+        Tracker tracker = (Tracker) o;
+        if (!listeningSockAddr.equals(tracker.listeningSockAddr)) return false;
+        if (!swarms.equals(tracker.swarms)) return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = swarms.hashCode();
+        result = 31*result+listeningSockAddr.hashCode();
+        return result;
+    }
 }
