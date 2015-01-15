@@ -1,6 +1,6 @@
 package tracker.server;
 
-import client.p2p.tracker.Tracker;
+import p2p.tracker.Tracker;
 import javafx.beans.property.ObjectProperty;
 
 /**
@@ -27,7 +27,7 @@ public abstract class Server {
 
     /**
      * we tell a peer who wants to download a file
-     * about the existing swarm info
+     * about the existing swarm
      * so it can act accordingly
      */
     public abstract void sendSwarmInfo();
