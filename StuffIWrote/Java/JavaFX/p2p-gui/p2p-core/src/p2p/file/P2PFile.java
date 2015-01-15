@@ -14,7 +14,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import p2p.tracker.Tracker;
 import p2p.transfer.Transfer;
-import util.MyFormat;
+import util.Common;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -65,7 +65,7 @@ public abstract class P2PFile {
     public long getFilesizeBytes() { return filesizeBytes.get(); }
     public LongProperty filesizeBytesProperty() { return filesizeBytes; }
     public void setFilesizeBytes(long filesizeBytes) { this.filesizeBytes.set(filesizeBytes); }
-    public String getFilesizeString() {return MyFormat.formatByteCountToString(getFilesizeBytes());}
+    public String getFilesizeString() {return Common.formatByteCountToString(getFilesizeBytes());}
 
     public P2PFile(File baseFile, long filesize)
     {

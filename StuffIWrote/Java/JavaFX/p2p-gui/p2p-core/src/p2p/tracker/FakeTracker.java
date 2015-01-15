@@ -38,7 +38,7 @@ public class FakeTracker extends Tracker {
     }
 
     public FakeTracker(String fakeIPAddrAndPort) {
-        super(new ArrayList<>(), null);
+        super(null, new ArrayList<>());
         ipPortString = fakeIPAddrAndPort;
     }
 
