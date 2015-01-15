@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<TitledPane prefHeight="179.0" prefWidth="266.0" text="My Files" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.view.panes.files.LocalFilesPaneCtrl">
+   <content>
+      <TableView fx:id="localFileTable" prefHeight="200.0" prefWidth="200.0">
+         <columns>
+            <TableColumn fx:id="nameCol" prefWidth="132.0" text="File" />
+            <TableColumn fx:id="sizeCol" prefWidth="84.0" text="Size" />
+            <TableColumn fx:id="percentCol" prefWidth="83.0" text="\%Complete" />
+         </columns>
+      </TableView>
+   </content>
+</TitledPane>

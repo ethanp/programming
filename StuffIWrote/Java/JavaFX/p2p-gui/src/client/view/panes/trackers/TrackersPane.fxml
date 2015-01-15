@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+
+<TitledPane animated="false" prefHeight="177.0" prefWidth="377.0" text="Trackers" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.view.panes.trackers.TrackersPaneCtrl">
+   <content>
+      <TreeTableView fx:id="treeTable" prefHeight="150.0" prefWidth="318.0">
+         <columns>
+            <TreeTableColumn fx:id="nameCol" prefWidth="175.0" text="Tracker/FileName" />
+            <TreeTableColumn fx:id="sizeCol" prefWidth="68.0" text="Size" />
+            <TreeTableColumn fx:id="seedersCol" minWidth="0.0" prefWidth="42.0" text="#Seeders" />
+            <TreeTableColumn fx:id="leechersCol" prefWidth="38.0" text="#Leechers" />
+         </columns>
+      </TreeTableView>
+   </content>
+</TitledPane>
