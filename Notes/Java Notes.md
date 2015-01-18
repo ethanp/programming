@@ -1168,31 +1168,6 @@ counterintuitive, personally.
 
 `child instanceof Parent` will return **`true`**
 
-
-### The question mark wildcard type
-
-**5/9/14**
-[SO](http://stackoverflow.com/questions/3009745/what-does-the-question-mark-in-java-generics-type-parameter-mean)
-
-E.g.
-
-	List<? extends HasWord> wordList = toke.tokenize();
-
-This means we'll allow anything that extends `HasWord`, plus `null`, but we
-don't care to name the type because we'll just be calling methods that are
-specified by `HasWord`.
-
-1. Wait, but then couldn't we just say `List<HasWord>` and get the *exact*
-   same effect?
-
-**12/12/14**
-
-From *Core Java V1 Ed. 9, Section 12.8 "Wildcard Types*
-
-If we have an instance `Pair<Superclass> p` then we *cannot* assign `p = new
-Pair<Subclass>` which is not good. But we can pull this off if we declare
-`Pair<? extends Superclass> p` instead.
-
 # Useful interfaces/abstract classes
 
 ## Comparable vs. Comparator
@@ -1310,7 +1285,95 @@ And then do this
 
 # Miscellaneous language features
 
-## Generic Methods
+## Generics
+**1/18/15**
+
+### Type parameters on generic classes are not known by runtime
+
+Recall from OOP, that unlike in C++, the code
+
+    List <String> l1 = new ArrayList<String>();
+    List<Integer> l2 = new ArrayList<Integer>();
+    System.out.println(l1.getClass() == l2.getClass());
+
+prints `true` because **all instances of a generic class have the same run-
+time class, regardless of their actual type parameters**.
+
+### G<SuperType> is *not* a supertype of G<SubType>
+
+> Source: [Oracle Generics Trail][otgs]
+
+[otgs]: http://docs.oracle.com/javase/tutorial/extra/generics/subtype.html
+
+Is the following legal?
+
+    1||  List<String> ls = new ArrayList<String>();
+    2||  List<Object> lo = ls;
+
+Well consider if next you did the following?
+
+    3|| lo.add(new Object());
+    4|| String s = ls.get(0);
+
+This would be a terrible mistake, because you can't *assign* an `Object` to a
+`String`! So that's why `line 2` was actually a *compile time error*.
+
+### Introductory motivation for wildcards (`<?>`)
+
+1. [Oracle Generics Trail][otgw]
+2. *Core Java V1 Ed. 9, Section 12.8 "Wildcard Types"*
+
+[otgw]: http://docs.oracle.com/javase/tutorial/extra/generics/wildcards.html
+
+Given what we learned above---that `G<SuperType>` is *not* a supertype of
+`G<SubType>`---we know that `G<Object>` is *not* the superclass of all type-
+parameterized instances of `G`. So if we have the following method
+
+    void printCollection(Collection<Object> c) {
+        for (Object e : c) {
+            System.out.println(e);
+        }
+    }
+
+we can*not* pass in e.g. a `Collection<String>`.  So instead we must use a
+**wildcard** like so
+
+    void printCollection(Collection<?> c) {
+        ...
+    }
+
+#### Restrictions on collections of type "unknown" (wildcard)
+
+1. Methods that require *parameters* of type `T` (e.g. `void add(T e)`)
+   can*not* be called because here `T == ?` so the type can't be verified
+2. Methods that *return* objects of type `T` (e.g. `T get()`) *can* be called
+   and we can just store them in the global supertype `Object`.
+
+### Why we'd write "`Collection<? extends SuperType>`"
+
+If we have an instance `Pair<Superclass> p` then we *cannot* assign `p = new
+Pair<Subclass>` which is not good. But we can pull this off if we declare
+`Pair<? extends Superclass> p` instead.
+
+And the same goes for the `printCollection` situation above. If instead of
+simply calling `toString()` (which *everyone* can do), we call a method
+`draw()` defined by objects inheriting from `SuperType`, then we're going to
+want to allow collections type-parameterized by anything that `extends
+SuperType`, so instead of writing
+
+    public void drawAll(List<Shape> shapes) {
+        for (Shape s: shapes) {
+            s.draw(this);
+       }
+    }
+
+we must write
+
+    public void drawAll(List<? extends Shape> shapes) {
+        ...
+    }
+
+### Generic Methods
 **10/11/14**
 
 [Oracle Docs](http://docs.oracle.com/javase/tutorial/java/generics/methods.html)
