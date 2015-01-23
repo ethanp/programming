@@ -50,9 +50,6 @@ plugins=(git rails ruby brew common-aliases web-search z rails)
 
 # User configuration
 
-PATH="/Users/Ethan/.rvm/gems/ruby-2.0.0-p481/bin:"
-PATH+="/Users/Ethan/.rvm/gems/ruby-2.0.0-p481@global/bin:"
-PATH+="/Users/Ethan/.rvm/rubies/ruby-2.0.0-p481/bin:"
 PATH+="/usr/local/bin:"
 PATH+="/Users/Ethan/code/personal_project_use/code_to_base_off_of/Ruby/fuzzycd:"
 PATH+="/usr/local/Cellar/coreutils/8.23/libexec/gnubin:"
@@ -72,6 +69,7 @@ PATH+="/Users/Ethan/Dropbox/CSyStuff/Google_depot_tools_git/depot_tools:"
 PATH+="/usr/local/share/scala-2.10.1/bin:"
 PATH+="/Users/Ethan/gsutil:"
 PATH+="/Users/Ethan/.rvm/bin:"
+PATH+="/Users/Ethan/.rvm/gems/ruby-2.1.2/bin"
 
 export PATH
 # export MANPATH="/usr/local/man:$MANPATH"

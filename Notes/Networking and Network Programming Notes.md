@@ -413,3 +413,14 @@ From 1968, an unencrypted-but-otherwise-SSH-like protocol
 * Batch your transfers, and idle whenever possible
     * If you keep their radio on, you're wasting their battery life
 * Cache resources locally, only redownload if you know it changed
+
+## Distributed Systems
+
+Some notes from *"*From P2P and Grids to Services on the Web: Evolving Distributed Communities,* Taylor & Harrison, 2nd Ed. Springer: Computer Communications and Networks, 2009.
+
+### What is a "Service"
+
+> A service is a software entity that can be used to represent *resources*, and
+therefore capabilities, on a network. Services receive a reqest, and
+(optionally) return a response; similar to a function call. --- Taylor &
+Harrison, pg. 8

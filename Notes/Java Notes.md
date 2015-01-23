@@ -1164,9 +1164,13 @@ counterintuitive, personally.
 
 ### instanceof
 
-**5/9/14**
+1. Requires an object or array on left, and name of a reference type on right
+2. Returns `true` iff the left is an *instance of* the right
+3. `null instanceof Anything => false`
+4. `xx instanceof Anything` implies it is safe to do
 
-`child instanceof Parent` will return **`true`**
+        Anything yy = (Anything) xx;
+5. That's why `child instanceof Parent` will return **`true`**
 
 # Useful interfaces/abstract classes
 
@@ -1266,17 +1270,15 @@ And then do this
 
 	import java.util.Arrays;
 
-	Fruit[] fruits = new Fruit[4];
+	Fruit[] fruits = new Fruit[3];
 
 	Fruit pineappale = new Fruit("Pineapple", "Pineapple description",70);
 	Fruit apple = new Fruit("Apple", "Apple description",100);
 	Fruit orange = new Fruit("Orange", "Orange description",80);
-	Fruit banana = new Fruit("Banana", "Banana description",90);
 
 	fruits[0] = pineappale;
 	fruits[1] = apple;
 	fruits[2] = orange;
-	fruits[3] = banana;
 
 	Arrays.sort(fruits); // ClassCastException
 
@@ -1284,6 +1286,18 @@ And then do this
 
 
 # Miscellaneous language features
+
+## Asserts
+
+    assert assertion;
+    assert assertion : "error message";
+
+By default, assertions are not enabled, and don't actually do anything. To
+enablethem, run `java -ea main.package.MyMainClass`.
+
+Because hitting an assert means the program is *not performing as intended*,
+there is no plausible way to recover from an `AssertionError`, and you should
+not attempt to `catch` it.
 
 ## Generics
 **1/18/15**
@@ -1542,7 +1556,34 @@ the unit test.
 
 # Other things one simply must know about
 
-## Try with resources
+## try/catch/finally
+
+##### Reference
+Evans, Benjamin J; Flanagan, David (2014-10-16). Java in a Nutshell O'Reilly Media. Kindle Edition.
+
+### Basics
+
+The `try` block can have zero or more `catch` blocks and zero or one
+`finally` block, but it must have at least one `catch` *or* `finally`.
+
+If the method does not contain an exception handler that can handle the
+exception thrown by the `throw` statement, the interpreter stops running the
+current method and returns to the caller. Now the interpreter starts looking
+for an exception handler in the blocks of code of the calling method. If the
+exception is never caught, it propagates all the way up to the `main()` method
+of the program. If it is not handled in that method, the Java interpreter
+prints an error message, prints a stack trace to indicate where the exception
+occurred, and then exits.
+
+If control leaves the `try` block because of a `return`, `continue`, or
+`break` statement, the `finally` block is executed before control transfers to
+its new destination. If there is no local `catch` block to handle the exception,
+control transfers first to the `finally` block, and then propagates up to the
+nearest containing `catch` clause that can handle the exception. If a `finally`
+clause `throws` an exception, that exception replaces any exception that was in
+the process of being thrown.
+
+### Try with resources
 
 You used to have to do it [this way][jenkov twr]
 
