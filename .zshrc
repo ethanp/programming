@@ -46,7 +46,7 @@ ENABLE_CORRECTION="true"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git rails ruby brew common-aliases web-search z rails)
+plugins=(zsh-syntax-highlighting git rails ruby brew common-aliases web-search z rails zsh-history-substring-search)
 
 # User configuration
 

@@ -311,10 +311,67 @@ synonym for PATCH.
     * endpoint authentication
 * In addition to encrypting data over the wire (like SSL), TLS authenticates a
   server with a certificate to prevent spoofing.
+*  Uses long-term public and secret keys to exchange a short term session key
+   to encrypt the data flow between client and server
 
-### SOAP (Simple Object Access Protocol) (TODO)
+#### HTTPS (HTTP Secure)
 
-Uses XML, kind of old-school now, but I guess enterprises use it?
+* Provides **authentication** of the website and associated web server that one
+  is communicating with, which protects against *man-in-the-middle* attacks
+* Also provides **bidirectional encryption** of communications between a client
+  and server, which protects against *eavesdropping* and *tampering* with or
+  *forging* the communication's contents
+* Everything in the HTTPS message is encrypted, including the headers, and the
+  request/response load.
+* Technically, not a protocol in and of itself, but the result of layering
+  `HTTP` on `SSL`/`TLS`
+* Relies on *certificate authorities* to verify the owner of the certificate
+    * Snowden's documents revealed that this *still* allows *man-in-the-middle*
+      attacks
+* Note: a site *must* be *completely* hosted over HTTPS (without having some of
+  its contents loaded over HTTP) or the user will be vulnerable to some attacks
+  and surveillance.
+* Uses `port 443` by default (not `80`)
+* To serve over HTTPS without the client's browser showing a warning, one must
+  create a public key certificate signed by a certificate authority. This may cost $8 -- $70 per year.
+
+### SOAP (Simple Object Access Protocol)
+
+* A *protocol specification* for exchanging *structured information* in the
+  implementation of a *Web service*
+* Uses XML for its message format,
+* Relies on e.g. HTTP or SMTP for message transmission
+* Can form the foundation layer of a web services protocol stack
+* Has 3 parts
+    1. An envelope, i.e. **message structure** and how to process it
+    2. Encoding rules for application-defined **datatypes**
+    3. A convention for representing *procedure calls* and *responses*
+* Has 3 characteristics
+    1. Extensible (not sure what this means)
+    2. Neutral (doesn't care what transport protocol is used)
+    3. Independent (of programming language etc.)
+* Evolved as successor of `XML-RPC`
+* Designed in 1998 for Microsoft, became W3C recommendation (with
+  specification) in 2003
+
+#### Wikepedia's example message
+
+    POST /InStock HTTP/1.1
+    Host: www.example.org
+    Content-Type: application/soap+xml; charset=utf-8
+    Content-Length: 299
+    SOAPAction: "http://www.w3.org/2003/05/soap-envelope"
+     
+    <?xml version="1.0"?>
+    <soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope">
+      <soap:Header>
+      </soap:Header>
+      <soap:Body>
+        <m:GetStockPrice xmlns:m="http://www.example.org/stock">
+          <m:StockName>IBM</m:StockName>
+        </m:GetStockPrice>
+      </soap:Body>
+    </soap:Envelope>
 
 ### XMPP (Extensible Messaging and Presence Protocol aka "Jabber") -- 1999
 
@@ -414,13 +471,73 @@ From 1968, an unencrypted-but-otherwise-SSH-like protocol
     * If you keep their radio on, you're wasting their battery life
 * Cache resources locally, only redownload if you know it changed
 
-## Distributed Systems
+# Distributed Systems
 
-Some notes from *"*From P2P and Grids to Services on the Web: Evolving Distributed Communities,* Taylor & Harrison, 2nd Ed. Springer: Computer Communications and Networks, 2009.
+Some notes from *"*From P2P and Grids to Services on the Web: Evolving
+Distributed Communities,* Taylor & Harrison, 2nd Ed. Springer: Computer
+Communications and Networks, 2009.
 
-### What is a "Service"
+## What is a "Service"
 
 > A service is a software entity that can be used to represent *resources*, and
 therefore capabilities, on a network. Services receive a reqest, and
 (optionally) return a response; similar to a function call. --- Taylor &
 Harrison, pg. 8
+
+### Web service
+
+Some from [Wikipedia: *Web service*][wws] and other Wikipedia pages
+
+1. **a method of communication between two electronic devices**
+over a network.
+2. It is **a software function provided at a network address** over the Web
+   with the service always on as in the concept of *utility computing*.
+    * **Utility computing** --- the packaging of computing resources, such as
+      computation, storage and services, as a metered service
+3. The W3C defines a Web service generally as: *a software system designed to
+   support **interoperable** machine-to-machine interaction over a network.*
+    * **Interoperability**
+        * **Syntactic interoperability** --- when two or more systems are
+          capable of communicating and *exchanging data*. Relies on specified
+          data formats & communication protocols such as XML or SQL.
+        * **Semantic interoperability** --- the ability to automatically
+          *interpret* the information exchanged meaningfully and accurately.
+          The content of the information exchange requests are unambiguously
+          defined.
+4. **REST-compliant Web services** --- manipulate XML representations of Web
+   resources using a uniform set of stateless operations
+5. **Web Services Description Language** (**WSDL**: "wiz'-dul") --- an XML-
+   based interface definition language that is used for describing the
+   functionality offered by a web service.
+    * Filename extension `.wsdl`
+    * Provides a machine-readable description of how the service can be called,
+      what parameters it expects, and what data structures it returns,
+      basically like method signatures.
+
+[wws]: http://en.wikipedia.org/wiki/Web_service
+
+### Service Oriented Architecture (SOA)
+
+* A collection of loosely-coupled services on a network that communicate with
+  each other over well-defined interfaces.
+* Capabilities are dynamically discoverable
+* It is possible to quickly assemble impromptu computing communities without
+  human intervention
+* An SOA does *not* require using Web Services and obviously vice-versa too
+
+## Distributed Objects
+
+* E.g. in CORBA (Java, Python, C++, etc.), you instantiate an object which gets
+  serialized with its entire class hierarchy and you receive a handle to it (a
+  URI). You don't know where it actually exists on the network.
+* *Mobile agents* are little bundles of code that can travel to different hosts
+  and execute or even replicate themselves. E.g. a MapReduce program, in which
+  the algorithm travels *to* the data and returns the results to the invoker.
+
+## Grid Computing
+
+* The term is from an analogy with the electrical power grid: users can tap
+  into resources off the internet like plugging into a power outlet
+* At this time there is no one Grid, but many different types that are possibly
+  evolving, private, public, regional, global, specific in goal, generic in
+  goals, etc.

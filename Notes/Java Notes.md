@@ -428,7 +428,8 @@ Support I/O of primitive data types
 ### Object streams
 
 * Support I/O of objects
-* Objects that support serialization implement `Serializable`
+* Objects that support serialization implement `Serializable` (more in
+  "[Serialization][]")
 
 E.g.
 
@@ -472,6 +473,30 @@ E.g.
 * Object representing the system absolute path to a resource
 * You can't really *do* anything with this except manipulate the *path*, but
   you can do `toFile()` to turn it into a `File` object
+
+## Serialization
+
+To implement Java's default serialization
+
+    public class MyClass implements Serializable { ... }
+
+To exclude instance variables from serialization
+
+    transient private String dontSerialize;
+
+The default Java serialization mechanism will turn data members into a set of
+bytes in a stream, which can be passed across the network (e.g. via `Sockets`
+or `RMI`) or stored to the local filesystem.
+
+To implement a *custom* serialization policy, use
+
+    public class Myclass implements java.io.Externializable { ... }
+
+## RMI (Remote Method Invocation)
+
+You tag your objects as serializable, and then you can invoke Java methods and
+the associated argument and return objects are passed across the network by the
+RMI subsystem.
 
 ## Other
 
