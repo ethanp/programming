@@ -11,7 +11,7 @@ latex input:    mmd-natbib-plain
 latex input:    mmd-article-begin-doc
 latex footer:   mmd-memoir-footer
 
-# Distributed Computing
+# Networking
 
 ## The Akamai Network: A Platform for High-Performance Internet Applications
 

@@ -540,3 +540,70 @@ over a network.
 * At this time there is no one Grid, but many different types that are possibly
   evolving, private, public, regional, global, specific in goal, generic in
   goals, etc.
+* Condor is one example: you send the code you want to run to a resource
+  manager, who dynamically locates available processing and storage resources
+  and submits jobs to them and retrieves results which are returned to you
+
+## P2P Application Architectures
+
+### Gnutella
+
+1. No single entity can be isolated to bring down the entire network
+2. The information providers are not indexed in a central place
+3. **Servent** (peer) = **serv**er + cli**ent**
+4. Each servent only sees the (roughly 4) other servents it is directly
+   connected to
+5. **To search for a file**, a peer asks its neighbors, which is forwarded to
+   further neighbors until something is found
+    1. Done naively, this will congest the network without leaving room for
+       file transfer
+6. Requests that have already been seen are because of loops in the semi-random
+   overlay topology and are dropped (by remembering request IDs)
+7. TTL ("Gnutella horizon") for requests is 7 hops (up to 10,000 reachable
+   nodes)
+8. **To join the network and discover peers**
+    1. **Out-of-band methods** --- ask on IRC, check a handful of Web pages,
+       try ones that have worked before
+    2. **GnuCache** --- a permaent server users can connect to to find peers
+    3. **Internal Peer Discovery** --- once a single peer is known, you can
+       send it a *ping* which it forwards to its neighbors, and so on until
+       some peers send you a *pong* which means they can become your new direct
+       neighbors
+
+#### Gnutella Protocol
+
+1. Comprises of a set of descriptors (packets) and rules of exchange
+
+##### Descriptors for finding a file
+
+1. Header --- descriptor ID (16-bytes), payload type, TTL, hops, payload
+   length
+2. Payload --- one of the following types
+    1. Ping (announce) --- empty
+    2. Pong (reply to Ping) --- port, IP Addr, # files shared, # KB shared
+    3. Query (search the network) --- minimum speed, search criteria (a
+       null-terminated string)
+    4. QueryHit (reply to search) --- # of hits, port, IP Addr, speed,
+       result set (variable length), servent ID
+        1. Result set entry --- file index (file ID), file size, file name
+    5. Push (traverse firewalls) --- servent ID, file index, IP Addr, port
+
+##### Downloading a file
+
+Requesting servent issues an `HTTP GET` request
+
+    GET /get/<fileIndex>/<fileName> HTTP/1.0]\\r\\n
+    Connection: Keep-Alive\\r\\n
+    Range: bytes=0-\\r\\n
+    User-Agent: Gnutella \\r\\n
+    \\r\\n
+
+Receiving servent replies `HTTP OK`
+
+    HTTP 200 OK\\r\\n
+    Server: Gnutella\\r\\n
+    Content-type: application/binary\\r\\n
+    Content-length: 567890\\r\\n
+    \\r\\n
+
+Then the file is sent.
