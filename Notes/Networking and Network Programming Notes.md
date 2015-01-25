@@ -14,13 +14,13 @@ latex footer:   mmd-memoir-footer
 ## Internets have Layers, like an Onion
 
 * **Internet implementations** (TCP over IP) don't actually strictly follow
-  that 7-layer OSI Model
+  that **7-layer OSI Model**
     * Physical, Data Link, Network, Transport, Session, Presentation,
       Application
-* They generally follow a 4-layer abbreviation
-    * Link \\(\rightarrow\\) Internet \\(\rightarrow\\) Transport
-      \\(\rightarrow\\) Application
-* "The Internet" is the world's largest IP-based network
+* They generally follow a **4-layer abbreviation**
+    * **Link \\(\rightarrow\\) Internet \\(\rightarrow\\) Transport
+              \\(\rightarrow\\) Application**
+* **"The Internet"** --- the world's largest IP-based network
     * No one owns or controls it, it's just a bunch of nodes that know how to
       communicate with each other.
 
@@ -44,8 +44,7 @@ latex footer:   mmd-memoir-footer
     * **SMTP** (Simple Mail Transfer Protocol) -- for sending mail between
       mail servers
     * **HTTP** -- used by the WWW
-        * **SOAP**
-        * **XML-RPC**
+        * **SOAP** [or old-school XML-RPC]
         * **REST API**
     * **POP3** (Post Office Protocol Version 3) -- for retrieving email from
       mail server
@@ -473,8 +472,8 @@ From 1968, an unencrypted-but-otherwise-SSH-like protocol
 
 # Distributed Systems
 
-Some notes from *"*From P2P and Grids to Services on the Web: Evolving
-Distributed Communities,* Taylor & Harrison, 2nd Ed. Springer: Computer
+Some notes from *"From P2P and Grids to Services on the Web: Evolving
+Distributed Communities"*, Taylor & Harrison, 2nd Ed. Springer: Computer
 Communications and Networks, 2009.
 
 ## What is a "Service"

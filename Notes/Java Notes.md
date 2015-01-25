@@ -1312,6 +1312,13 @@ And then do this
 
 # Miscellaneous language features
 
+
+## Syntax
+
+1. In Java 7+, write numbers in binary with a prefix 0b (e.g. `0b1001` is 9).
+2. Also in Java 7+, you can add underscores to number literals (e.g.
+   `1_000_000`).
+
 ## Asserts
 
     assert assertion;
@@ -1881,12 +1888,6 @@ It can be used to access enclosing instances from within a nested class:
 	    }
 	}
 
-# Syntax
-
-1. In Java 7+, write numbers in binary with a prefix 0b (e.g. `0b1001` is 9).
-2. Also in Java 7+, you can add underscores to number literals (e.g.
-   `1_000_000`).
-
 # Network Programming
 
 * The *only* transport-layer protocols Java supports are TCP & UDP; for
@@ -2027,7 +2028,7 @@ overwriting memory and corrupting data.
 Java makes it extremely difficult to outwit its security mechanisms. The bugs
 found so far have been very technical and few in number.
 
-Unlike C and C + +, there are no “implementation-dependent” aspects of the
+Unlike C and C++, there are no “implementation-dependent” aspects of the
 specification. The sizes of the primitive data types are specified , as is the
 behavior of arithmetic on them. Having a fixed size for number types
 eliminates a major porting headache. Binary data is stored and transmitted in
