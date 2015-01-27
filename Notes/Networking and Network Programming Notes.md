@@ -564,7 +564,7 @@ over a network.
 8. **To join the network and discover peers**
     1. **Out-of-band methods** --- ask on IRC, check a handful of Web pages,
        try ones that have worked before
-    2. **GnuCache** --- a permaent server users can connect to to find peers
+    2. **GnuCache** --- a permanent server users can connect to to find peers
     3. **Internal Peer Discovery** --- once a single peer is known, you can
        send it a *ping* which it forwards to its neighbors, and so on until
        some peers send you a *pong* which means they can become your new direct
@@ -576,17 +576,17 @@ over a network.
 
 ##### Descriptors for finding a file
 
-1. Header --- descriptor ID (16-bytes), payload type, TTL, hops, payload
+1. __Header__ --- descriptor ID (16-bytes), payload type, TTL, hops, payload
    length
-2. Payload --- one of the following types
-    1. Ping (announce) --- empty
-    2. Pong (reply to Ping) --- port, IP Addr, # files shared, # KB shared
-    3. Query (search the network) --- minimum speed, search criteria (a
+2. __Payload__ --- one of the following types
+    1. __Ping__ (announce) --- empty
+    2. __Pong__ (reply to Ping) --- port, IP Addr, # files shared, # KB shared
+    3. __Query__ (search the network) --- minimum speed, search criteria (a
        null-terminated string)
-    4. QueryHit (reply to search) --- # of hits, port, IP Addr, speed,
+    4. __QueryHit__ (reply to search) --- # of hits, port, IP Addr, speed,
        result set (variable length), servent ID
-        1. Result set entry --- file index (file ID), file size, file name
-    5. Push (traverse firewalls) --- servent ID, file index, IP Addr, port
+        1. __Result set entry__ --- file index (file ID), file size, file name
+    5. __Push__ (traverse firewalls) --- servent ID, file index, IP Addr, port
 
 ##### Downloading a file
 
@@ -607,3 +607,35 @@ Receiving servent replies `HTTP OK`
     \\r\\n
 
 Then the file is sent.
+
+### Super peers
+
+1. Edge peers connect to a super peer who acts as a little directory, and super
+   peers connect to each other and can query each other. This makes the system
+   more scalable, because 1/4th of Gnutella's bandwidth is consumed by
+   *searches*, because everyone only knows the files that *they* themself owns
+   (bad English). So they generally have to forward requests to all their
+   friends.
+2. In the whole de/centralization feud, this is a compromise: very fault
+   tolerant, but requires less effort to locate a resource
+3. This is similar to how (empirically) social networks are organized, with
+   *bridge* people being the central connector of *lots* of normal-folk
+4. This organization is (was?) used by KaZaA and Morpheus with great success
+
+### Distributed Hash Tables / "Structured" P2P Architecture
+
+1. Map peers and resources to a hash key space
+2. Peers maintain state about their neighbors
+3. The peer owning a resource corresponding to a particular hash key can be
+   located deterministically by the algorithm
+4. Now nodes can be organized into a tree and O(log *n*) search algorithms can
+   be used, which drastically improves scalability
+5. The downside, is that the exact *name* of a key must be known by the
+   requester (which can be fixed at application level), and also it's harder to
+   handle joining/leaving peers
+6. They use **consistent hashing** for **keyspace partitioning** so that only
+   one's neighbors' assigned keyspaces are affected when someone joins/leaves
+7. A node chooses neighbors according to the DHTs connectivity policy, but for
+   all keyspace regions it is not responsible for, it should be connected to a
+   peer who is *closer* (fewer hops) to a node responsible for those keys
+8. Higher connectivity means fewer hops but greater maintenance overhead
