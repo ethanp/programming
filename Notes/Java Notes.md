@@ -909,6 +909,46 @@ Two Effects:
 
 [snc ovr]: http://www.javamex.com/tutorials/synchronization_concurrency_synchronized1.shtml
 
+### Multi-*Process* Programming
+
+Reference: `ProcessBuilder`'s Java Docs
+
+1. Use `class ProcessBuilder` to create a new process in the OS
+2. This is a child-process (in OS terms)
+3. By default it inherits the current process's environment (accessible for
+   itself via `System.getEnv()`)
+4. The working dir defaults to same as current process, but is modifiable (see
+   e.g. below)
+5. By default, `STD|IN|OUT|ERR` are redirected to the current process, and can
+   be accessed via streams obtained using methods
+   `get(Output|Input|Error)Stream()`
+6. The `Process` object does *not* get killed when there are no references to
+   it left, it just keeps executing
+7. You can wait until the process terminates with `proc.waitFor()` 
+8. To kill the `Process` via its reference: `proc.destroy()`
+
+#### Basic usage pattern
+
+    /* create the ProcessBuilder as you'd expect */
+    ProcessBuilder procBldr = new ProcessBuilder("myCmd", "arg1", "arg2");
+
+    /* modify environment variables */
+    Map<String, String> env = procBldr.environment();
+    env.put("VAR1", "value");
+
+    /* change working dir */
+    procBldr.directory(new File("a_Location/inner"));
+
+    /* redirect IO streams (makes them inaccessible to current proccess */
+    procBldr.redirectOutput(...);
+    procBldr.redirectErrorStream(...);
+
+    // make all IO locations the same as the current process
+    procBldr.inheritIO();
+
+    /* start the process */
+    Process proc = procBldr.start();
+
 ### Other
 
 * Constructors cannot be `synchronized`
