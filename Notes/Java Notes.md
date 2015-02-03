@@ -911,7 +911,7 @@ Two Effects:
 
 ### Multi-*Process* Programming
 
-Reference: `ProcessBuilder`'s Java Docs
+Based on: `ProcessBuilder`'s Java Docs
 
 1. Use `class ProcessBuilder` to create a new process in the OS
 2. This is a child-process (in OS terms)
@@ -946,8 +946,43 @@ Reference: `ProcessBuilder`'s Java Docs
     // make all IO locations the same as the current process
     procBldr.inheritIO();
 
+    /* to capture the output you can EITHER do */
+
+    // this
+    procBldr.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+
+    // or this for finer control and piping etc.
+    InputStream is = p.getInputStream();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+    String s;
+    while ((s = reader.readLine()) != null)
+        System.out.println(s);
+    is.close();
+
     /* start the process */
     Process proc = procBldr.start();
+
+#### Example of printing the output of "ls"
+
+Based on [Art of Coding][aoc ls] (and verified to work)
+
+    ProcessBuilder procBldr = new ProcessBuilder("ls");
+    Process p = procBldr.start();
+    p.waitFor();
+    System.out.println("Process exited with code = "+p.exitValue());
+    
+    // To send STDERR to STDOUT
+    procBldr.redirectErrorStream(true);
+
+    // this can be simplified, see my notes above
+    InputStream is = p.getInputStream();
+    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+    String s;
+    while ((s = reader.readLine()) != null)
+        System.out.println(s);
+    is.close();
+
+[aoc ls]: https://blog.art-of-coding.eu/executing-operating-system-commands-from-java
 
 ### Other
 
