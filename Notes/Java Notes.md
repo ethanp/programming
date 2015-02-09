@@ -314,13 +314,25 @@ Doesn't extend anything. Comments are mine.
 #### Refs
 
 * [Oracle's Java Tuts](http://docs.oracle.com/javase/tutorial/essential/io/streams.html)
-* [And more](http://docs.oracle.com/javase/tutorial/essential/io/index.html)
+* [More Oracle Tuts](http://docs.oracle.com/javase/tutorial/essential/io/index.html)
+* *Java I/O* 2nd ed., Elliotte Rusty Harold, O'Reilly, 2010.
+
+## Intro
+
+* I/O Streams handle byte-oriented I/O
+    * Streams are *not* intended for reading or writing text
+* Readers & writers handle character I/O
+    * This *are* intended for reading and writing text
+    * Readers take their input as bytes from streams, and convert it into
+      `char`s according to the specified encoding format (writers do vice-
+      versa)
 
 ## I/O Streams
 
+* A stream is an ordered sequence of bytes of indeterminate length
 * **An object from/to which we can read/write bytes** (one item at a time)
+    * E.g. a file, network, device, other program, or block of memory
 * There are **Input** and **Output** Streams
-* E.g. a file, network, device, other program, or block of memory
 * Could be any *kind* of data (bytes, primitives, objects, etc.)
 * Streams can manipulate & transform the data
 * There are 60+ stream types
@@ -341,6 +353,14 @@ Doesn't extend anything. Comments are mine.
         out.println(aLine);
         out.printf("%s%n", more);
         out.close();
+* When a stream's method says it returns or accepts `int`s, it's probably
+  assuming they're all in the range \\([0, 255]\\) and internally converting
+  them to/from `byte`s
+    * e.g. `InputStream.read()` returns an `int` which is `-1` if the end of
+      the stream is reached; but really it's reading the next `byte` of data
+    * e.g. `OutputStream.write(int)` expects an `int` *within* \\([0, 255]\\)
+        * If you pass in an `int` outside the range it ignores the top 24 high-
+          order bits
 
 ### InputStream
 
@@ -1662,6 +1682,25 @@ the unit test.
 
 
 # Other things one simply must know about
+
+## Primitive types
+
+All of the following are big-endian, two's-complement signed, integers
+
+* **byte** --- **1-byte** \\([-128, 127]\\)
+    * The addition of two `byte` variables produces an `int` as a result
+    * A single `byte` takes up 4-bytes of memory, but a `byte[]` takes up only
+      what it needs
+    * When you cast an `int` to a `byte` you're doing a `myInt & 0xFF`
+* **short** --- **2-bytes** (rarely used)
+* **int** --- **4-byte**
+* **long** --- **8-byte**
+
+But this is different
+
+* **char** --- **2-bytes**, **unsigned**, represents a character in the Unicode
+  character set (which in turn is a mapping from numbers to abstract
+  representations)
 
 ## try/catch/finally
 

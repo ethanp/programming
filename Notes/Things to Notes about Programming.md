@@ -224,23 +224,33 @@ From [Regular-Expresions.info](http://www.regular-expressions.info/lookaround.ht
   match is possible or not
 * Some regexes would be impossible without them
 
-Newlines
---------
+##Newlines
 #### 2/16/14
 
 * On **Windows**, they use carriage-return & line-feed (`"\r\n"`)
 * On **UNIX/Mac**, they use new-line, which is represented by the same ascii
   code as line-feed (`'\n'`), but does both CR-LF in one go
 
-ASCII vs. UTF-8
----------------
-#### 2/16/14
+## Character Encodings
+#### 2/4/15
 
-Both use the same number of bits, but ASCII is faster to read because it is not
-a variable-width encoding, so the interpreter doesn't need to check the width
-of each character.  UTF-8 is fully backwards-compatible to ASCII and avoids
-endianness complications.  It seems to me, basically one should always use
-UTF-8 instead of ASCII, and that is generally what people do.
+* **ASCII** --- 7-bit character set maps characters to the range [0,127]
+    * Sufficient for American English, but that's about it
+* **Latin-1** --- 8-bit strict superset of ASCII, adds a few more characters
+* **Unicode** --- space for 1m characters, 100K are used so far
+    * Since it's only a "character set" not a "character encoding", it
+      specifies what character gets mapped to each number, but it doesn't say
+      how many bytes to use or which endianness; that's why we have the
+      *encodings* UTF-8/16/32
+    * **UTF-32** --- each character is a 4-byte int
+    * **UTF-16** --- most are 2-bytes, some less common chars are 4-bytes
+    * **UTF-8** --- 1-byte for ASCII chars, 2-bytes for many other alphabets,
+      3-4-bytes for chars from Asian languages
+        * This is used by Java's `.class` files to store string literals
+* Other --- always use someone *else*'s converter to deal with other encodings
+
+### Reference
+* Java I/O 2nd ed., Elliotte Rusty Harold, 2010, O'Reilly
 
 FTP vs. HTTP
 ------------

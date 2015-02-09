@@ -126,8 +126,40 @@ latex footer:       mmd-memoir-footer
 4. Don't rely on test order
 5. Tautological tests are useless
 6. Make the tests run when your project is built by your automated build tool
+7. A good basic structure of a test is **"given, when, then"**
+8. Don't get overly complicated with your usage of doubles and so forth because
+   then when something changes, a *lot* of your test code is going to have to
+   change
+9. Again, note that these are all for verifying behavior, not implementation,
+   so make all assertions as forgiving as possible as long as the real job that
+   needs to be done gets done
 
-## Doubles / Stubs / Fakes / Mocks
+## Doubles
 
-1. They're a substitute for a class, used for testing
-2. They can make running your test code faster, and more repeatable & reliable
+1. Isolate a class from classes on which it is dependent
+2. Makes running your tests faster, repeatable, & reliable
+    * Any *one* of these may be reason enough to use a double
+    * E.g. making an API call (req's internet \\(\rightarrow\\) *slow*)
+    * E.g. your code relies on it being a particular time of day
+3. Makes it so that you don't have to expose private properties just to be able
+   to test things
+    * Making this work is made easier by using *dependency injection*,
+      typically by passing the object to depend on into the constructor.
+3. They are "the change you want to see in your code" (Koskela)
+4. Rule of thumb: *stub* queries, *mock* actions.
+
+### Types of Doubles
+1. **Stub** --- the simplest possible implementation
+    * For all methods, have no code at all or one liners returning default
+      values
+    * Can be created by mock-object generating libraries
+2. **Fake** --- acts like it's doing what the real thing does but without
+   persistence, and does it in a very dumb way
+3. **Spy** --- built to record and report back what happened to them during
+   execution, e.g. if class `A` *has-a* `B`, then you'd give `A` a `FakeB` and
+   then make sure that in the course of `myA.asMethod()`, it calls
+   `myB.bsMethod()`
+4. **Mock** --- similar to a *spy*, but more complex ("on steroids"), and you
+   use a special library for building them (e.g. for Java use `JMock` or
+   `Mockito`). I didn't understand his description of exactly what they're for
+   yet.
