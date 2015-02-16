@@ -12,7 +12,8 @@ latex input:		mmd-natbib-plain
 latex input:		mmd-article-begin-doc
 latex footer:		mmd-memoir-footer
 
-This document requires MathJax (and possibly [`MultiMarkdown`](http://fletcherpenney.net)) to be viewed properly.
+This document requires MathJax (and possibly
+[`MultiMarkdown`](http://fletcherpenney.net)) to be viewed properly.
 
 # Probability & Statistics #
 
@@ -25,11 +26,12 @@ This document requires MathJax (and possibly [`MultiMarkdown`](http://fletcherpe
 ####Explanation ###
 
 1. We know that \\(n!\\) is the number of *permutations* of *n* items
-	1. I.e. the total number of unique *orderings*
-	2. Because there are \\(n\\) options for the first slot, \\(n-1\\) for the second, and so on.
-2. But if we are only "choosing" \\(k\\) items, so we can stop the factorial after
-   computing the permutations of the first \\(k\\) items. This leaves us with
-   \\(n\cdot(n-1)\cdot(n-2)\cdots (n-k+1)=\frac{n!}{(n-k)!}\\).
+    1. I.e. the total number of unique *orderings*
+    2. Because there are \\(n\\) options for the first slot, \\(n-1\\) for the
+       second, and so on.
+2. But if we are only "choosing" \\(k\\) items, so we can stop the factorial
+   after computing the permutations of the first \\(k\\) items. This leaves us
+   with \\(n\cdot(n-1)\cdot(n-2)\cdots (n-k+1)=\frac{n!}{(n-k)!}\\).
 3. Now among these \\(k\\) items, we don't actually care about all the
    different permutations, so we can cancel them out by dividing by
    \\(k!\\), leaving us with the final formula.
@@ -38,20 +40,30 @@ This document requires MathJax (and possibly [`MultiMarkdown`](http://fletcherpe
 
 ### Bayesian Inference ###
 
-Use **Bayes' Rule** to update the probability for a hypothesis as evidence is acquired.
+Use **Bayes' Rule** to update the probability for a hypothesis as evidence is
+acquired.
 
-\\[\mathbb{P}[H|E]=\frac{\mathbb{P}[E|H]\cdot\mathbb{P}[H]}{\mathbb{P}[E]}\\]
+\\[P[H|E]=\frac{P[E|H]\cdot P[H]}{P[E]}\\]
 
-In my own words:
-> The *posterior probability* that the *hypothesis* \\(H\\) is *true* *given* the *evidence* \\(E\\), is *equal* to the *probability* of the *evidence* *given* the *hypothesis* is *true* *w.r.t.* seeing that *evidence* under *all* circumstances, multiplied by the *prior* ("overall") probability of the *hypothesis* being *true* in general.
+In my own words: > The *posterior probability* that the *hypothesis* \\(H\\) is
+*true* *given* the *evidence* \\(E\\), is *equal* to the *probability* of the
+*evidence* *given* the *hypothesis* is *true* *w.r.t.* seeing that *evidence*
+under *all* circumstances, multiplied by the *prior* ("overall") probability of
+the *hypothesis* being *true* in general.
 
 Particularly important in the *dynamic analysis* of a *sequence* of data.
 
 ### Markov Chain Monte Carlo ###
 
-A *class* of *algorithms* for *sampling* from a *probability distribution* based on constructing a *Markov chain* that has the desired distribution as its *equilibrium distribution*. We can then use the *state* of the chain after a number of *steps* as a *sample* from the desired distribution. The point is generally to calculate a *numerical approximation* of a *multi-dimensional integral*.
+A *class* of *algorithms* for *sampling* from a *probability distribution*
+based on constructing a *Markov chain* that has the desired distribution as its
+*equilibrium distribution*. We can then use the *state* of the chain after a
+number of *steps* as a *sample* from the desired distribution. The point is
+generally to calculate a *numerical approximation* of a *multi-dimensional
+integral*.
 
-Examples include *Gibbs sampling*, which requires all the *conditional distributions* of the target distribution to be sampled exactly.
+Examples include *Gibbs sampling*, which requires all the *conditional
+distributions* of the target distribution to be sampled exactly.
 
 ### Covariance Matrix ##
 #### How to Compute It ###
@@ -60,7 +72,9 @@ Examples include *Gibbs sampling*, which requires all the *conditional distribut
 
 #### Why It Matters ###
 
-Used in **Principal Component Analysis** (PCA), a technique described in Andrew Ng's *Machine Learning* course on Coursera, for reducing the *dimensionality* of a *dataset*. One might want to do this for 2 reasons:
+Used in **Principal Component Analysis** (PCA), a technique described in Andrew
+Ng's *Machine Learning* course on Coursera, for reducing the *dimensionality*
+of a *dataset*. One might want to do this for 2 reasons:
 
 1. As a form of *lossy compression*
 2. To produce *visualizations* of the data in 1, 2, or 3D
@@ -205,12 +219,14 @@ And the inverse:
 * A **signal** and a **function** are the *same thing*
 * **Analysis** -- break a signal into simpler component parts
 * **Synthesis** -- reassemble a signal from its constituent parts
-* **Complex Sinusoids** -- Phase and amplitude can be described by a single complex number.
-Plotting that point on a real-imaginary plane, the amplitude is the distance of the point from the origin.
-The phase is the angle of that line off the positive real line, so a frequency with no phase shift is
-on the real line, where the value *is* the amplitude. Otherwise we have to do some trigonometry to
-go convert between the number and the phase & amplitude.
-* **Frequency spectrum** -- representation of a signal in the *frequency domain*
+* **Complex Sinusoids** -- Phase and amplitude can be described by a single
+  complex number. Plotting that point on a real-imaginary plane, the amplitude
+  is the distance of the point from the origin. The phase is the angle of that
+  line off the positive real line, so a frequency with no phase shift is on the
+  real line, where the value *is* the amplitude. Otherwise we have to do some
+  trigonometry to go convert between the number and the phase & amplitude.
+* **Frequency spectrum** -- representation of a signal in the *frequency
+  domain*
 
 #### Euler's Formula(s) ####
 
@@ -223,8 +239,49 @@ go convert between the number and the phase & amplitude.
 
 The following summary is brilliant:
 
-> Converts a finite list of equally spaced samples of a function into the list of coefficients of a finite combination of *complex sinusoids* [see definition above], ordered by their frequencies, that has those same sample values. It can be said to convert the sampled function from its original domain (often time or position along a line) to the frequency domain.
+> Converts a finite list of equally spaced samples of a function into the list
+> of coefficients of a finite combination of *complex sinusoids* [see
+> definition above], ordered by their frequencies, that has those same sample
+> values. It can be said to convert the sampled function from its original
+> domain (often time or position along a line) to the frequency domain.
 
 ### [Fast Fourier Transform](Http://en.wikipedia.org/Wiki/Fast_Fourier_Transform) ###
 
-Using the definition of a DFT, the computation takes \\(O(n^2)\\) operations. An FFT can compute the same DFT in only \\(O(n\log n)\\) operations. It is an approximation.
+Using the definition of a DFT, the computation takes \\(O(n^2)\\) operations.
+An FFT can compute the same DFT in only \\(O(n\log n)\\) operations. It is an
+approximation.
+
+# Set Theory
+##### References
+* Wikipedia
+
+## Vocab
+
+### Binary Relation
+Wikipedia:
+
+A **binary relation** on a set \\(A\\) is a collection of *ordered pairs* of
+elements of \\(A\\). In other words it is a *subset* of the *Cartesian product*
+\\(A^2=A\times A\\). More generally, a binary relation between two sets \\(A\\)
+and \\(B\\) is a subset of \\(A\times B\\).
+
+A binary relation is the special case \\(n = 2\\) of an \\(n\\)-ary relation
+\\(R \subseteq A_1 \times \cdots \times A_n\\), that is, a set of
+\\(n\\)-tuples where the \\(j^{th}\\) component of each \\(n\\)-tuple is taken
+from the \\(j^{th}\\) domain \\(A_j\\) of the relation.
+
+### Transitive Closure
+
+Wikipedia (this is surprisingly clear and succint):
+
+In mathematics, the **transitive closure** of a *binary relation* \\(R\\) on a
+set \\(X\\) is the *transitive relation* \\(R^+\\) on set \\(X\\) such that
+\\(R^+\\) contains \\(R\\) and \\(R^+\\) is minimal (Lidl and Pilz 1998:337).
+If the binary relation *itself* is *transitive*, then the transitive closure is
+that same binary relation (i.e. \\(R^+ := R\\)); otherwise, the transitive
+closure is a different relation.
+
+For example, if \\(X\\) is a set of airports and \\(x R y\\) means "there is a
+direct flight from airport \\(x\\) to airport \\(y\\)", then the transitive
+closure of \\(R\\) on \\(X\\) is the relation \\(R^+\\): "it is possible to fly
+from \\(x\\) to \\(y\\) in one or more flights." [Or perhaps, "\\(y\\) is *reachable* from \\(x\\) by plane."]

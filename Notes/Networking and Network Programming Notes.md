@@ -625,17 +625,52 @@ Then the file is sent.
 ### Distributed Hash Tables / "Structured" P2P Architecture
 
 1. Map peers and resources to a hash key space
-2. Peers maintain state about their neighbors
-3. The peer owning a resource corresponding to a particular hash key can be
-   located deterministically by the algorithm
-4. Now nodes can be organized into a tree and O(log *n*) search algorithms can
-   be used, which drastically improves scalability
-5. The downside, is that the exact *name* of a key must be known by the
-   requester (which can be fixed at application level), and also it's harder to
-   handle joining/leaving peers
-6. They use **consistent hashing** for **keyspace partitioning** so that only
+    * E.g. \\(node.id := sha1(IpAddress)\\)
+2. **(The goal:)** The peer owning a resource corresponding to a particular
+   hash key can be located deterministically by the algorithm
+3. Peers maintain state about their neighbors
+    * *Who* their "neighbors" are differs by DHT algorithm
+4. Now nodes can be organized into a network overlay topology (e.g. a tree) for
+   allowing (e.g.) \\(O(\log n)\\) search algorithms to be used, drastically
+   improving scalability
+5. Downsides:
+    1. The *exact name* of a key must be known by the requester (which can be
+       fixed at application level)
+    2. It's harder to handle joining/leaving peers (than say the Napster model
+       with a central server)
+7. They use **consistent hashing** for **keyspace partitioning** so that only
    one's neighbors' assigned keyspaces are affected when someone joins/leaves
-7. A node chooses neighbors according to the DHTs connectivity policy, but for
+    * So that *any* incoming request can be forwarded *towards* the host node
+8. A node chooses neighbors according to the DHT's connectivity policy, but for
    all keyspace regions it is not responsible for, it should be connected to a
    peer who is *closer* (fewer hops) to a node responsible for those keys
-8. Higher connectivity means fewer hops but greater maintenance overhead
+9. Higher connectivity means fewer hops but greater maintenance overhead of who
+   is pointing to whom
+
+#### Chord
+* Created in 2001 by Ion Stoica, *Robert Morris*, David Karger, Frans Kaashoek,
+  and Hari Balakrishnan, at MIT
+* **Chord ring** --- circlular overlay network
+    * Each node points to its *successor* and *predecessor*
+    * This (without the finger table below) is enough for overall correctness,
+      but only allows lookup cost \\(O(n)\\)
+* Nodes are assigned an ID by taking the first *m* bits of `sha1(IpAddress)`
+    * This gives our overlay network \\(2^m\\) slots
+* Each node has a **finger table** with *m* entries
+    * Makes lookup cost \\(O(\log n)\\) because each query forwarding gets us
+      at least halfway toward the target node
+    * \\(node.fingerTable[i] := succNodeForKey(n + 2^{i-1})\\)
+* **Key assignment** --- each node stores data for keys \\(\{x : succ(node).id
+  < x ≤ node.id \}\\)
+* To make sure pointers stay up to date with all the "Peer churn" (coming &
+  going) each node periodically runs a **stabilization protocol** to update
+  both circle and finger pointers
+* Can be made more robust if each node maintains a list of the next (say)
+  log(*n*) nodes as a list of successors, so that if the true successor leaves,
+  an alternative is already known and the network doesn't lose reachability
+  when a node leaves
+
+##### References
+1. [Slideshare 1](http://www.slideshare.net/GertThijs/chord-presentation)
+2. [Slideshare 2](http://www.slideshare.net/did2/introduction-to-dht-with-chord?related=1)
+3. [Wikipedia](http://en.wikipedia.org/wiki/Chord_(peer-to-peer))

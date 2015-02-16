@@ -23,9 +23,7 @@ latex footer:       mmd-memoir-footer
     * Streams are *not* intended for reading or writing text
 * Readers & writers handle character I/O
     * This *are* intended for reading and writing text
-    * Readers take their input as bytes from streams, and convert it into
-      `char`s according to the specified encoding format (writers do vice-
-      versa)
+* You can redirect `System.in|out|err` using `System.set|In|Out|Err(Stream)`
 
 ## I/O Streams
 
@@ -105,6 +103,8 @@ latex footer:       mmd-memoir-footer
         }
 
     * Alternatively, you could delegate blocking calls to another thread
+    * Also, I think Java's newer NIO library is for that purpose, though I know
+      nothing about it.
 
 ### OutputStream
 
@@ -131,16 +131,6 @@ Analogous to `InputStream` above
         abstract void write(int aByte)
     }
 
-### Scanners
-
-    s = new Scanner(new BufferedReader(new FileReader("xanadu.txt")));
-
-* A `Scanner` breaks input into *tokens*
-* By default it uses whitespace to separate tokens
-* To change it to `comma with optional following whitespace`, use:
-
-        s.useDelimiter(",\\s*");
-
 ### Data streams
 
 Support I/O of primitive data types
@@ -156,19 +146,34 @@ E.g.
     out.writeObject(obj);
     Object obj = in.readObject();
 
-### Pipes
+## Pipes
 **11/11/14**
 
 > `Pipe` in Java IO provides the ability for two **threads** running *in the
 > **same JVM*** to **communicate**. You cannot use a pipe to communicate with
 > a thread in a different JVM (different process), so it is different from the
-> Unix pipe concept. [Jenkov's Tutorial][]
+> Unix pipe concept. (-- Jenkov's Tutorial)
 
 * `Output` *sends* data, `Input` *receives* data
 * In one thread, you create and write to a `PipedOutputStream`, then in
   another thread you read from that `OutputStream` using a `PipedInputStream`
 * You construct the `PipedInputStream` by passing it your instance of the
   `PipedOutputStream`
+
+## Readers and Writers
+
+* Readers take their input as bytes from streams, and convert it into `char`s
+  according to the specified encoding format (writers do vice-versa)
+
+## Scanners
+
+    s = new Scanner(new BufferedReader(new FileReader("xanadu.txt")));
+
+* A `Scanner` breaks input into *tokens*
+* By default it uses whitespace to separate tokens
+* To change it to `comma with optional following whitespace`, use:
+
+        s.useDelimiter(",\\s*");
 
 ## Files and Paths
 
