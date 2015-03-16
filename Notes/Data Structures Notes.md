@@ -201,15 +201,15 @@ and writing modified pages back to disk is practically all the cost associated
 with doing *anything* with the data on that page, so we're just trying to
 minimize those two (read and write) operations.
 
-#### Invariants / Structure / Properties
+### Invariants / Structure / Properties
 
 Choose an **"order"** \\(t ≥ 2\\). It seems everyone defines the 'order'
 differently, and this is very confusing. I'm going with the definition in
-*Cormen et al.* because the whole tree is very thoroughly and clearly
+*Cormen et al.* because the whole B-Tree is very thoroughly and clearly
 enunciated there. The Wikipedia page is pretty good too though, but uses
-Knuth's (different) definition of 'order'. Cormen calls this the "minimum
-degree" of the tree, and surely that is less ambiguous than calling it the
-'order'.
+Knuth's (different) definition of 'order'. Cormen calls this version the
+"minimum degree" of the tree, and surely that is less ambiguous than calling it
+the 'order'.
 
 1. All leaves have the same depth (viz. the tree's height)
 2. Each node has *at most* \\(2t-1\\) keys
@@ -220,11 +220,111 @@ degree" of the tree, and surely that is less ambiguous than calling it the
 7. For an internal node, in between two keys, you find a pointer to another
    node closer to accessing the data between those two key values
 
-##### E.g. when \\(t = 2\\)
+#### E.g. when \\(t = 2\\)
 
 * Each internal node has \\(t-1 ≤ x ≤ 2t-1\\) keys and \\(t ≤ x ≤ 2t\\)
   children
   * I.e. \\([1,3]\\) keys and \\([2,4]\\) children
+
+### Implementation
+
+#### Split full nodes on the way down
+One nice trick from Cormen prevents us from getting into a situation where to
+insert an item we must break up this node, but that will require us to break
+the parent node, etc. and we feel very anxious about getting it all right.
+Instead, upon searching for the node to `add` into, we `split` each *full* node
+on the way down the tree, so that a parent node is *never* full and we can
+always insert into it by splitting if we have to.
+
+#### Splitting a node (on add())
+
+    def split(nonfullParent, fullChild) {
+        median = medianElement(child)
+        medIdx = insertElement(median, parent)
+        newLeft = leftOf(median, child)
+        newRight = rightOf(median, child)
+        parent.addLink(medIdx, newLeft)
+        parent.addLink(medIdx+1, newRight)
+    }
+
+#### Deleting a key
+When we delete a key from an internal node, we have to rearrange the children.
+When a node gets too small during deletion, we must *pull up* a member of the
+child below. But now that child might be too small (uh oh, etc.).
+
+I'm thinking I'll just implement the sketch presented in prose in Cormen as an
+exercise. Maybe I should start by churning it into pseudocode.
+
+##### Pseudocode
+
+    def delete(Key k, Node xNode) {
+        // cases 1-2
+        if (k in xNode) {
+
+            // case 1
+            if (xNode is Leaf) {
+                remove k from xNode
+            }
+
+            // case 2
+            else /* xNode is Internal */ {
+                Node yChild = getChild( idxOfKey(k) )
+                Node zChild = getChild( idxOfKey(k) + 1 )
+
+                // case 2.a
+                if (yChild.numKeys ≥ t) {
+                    find predecessor k' of k and delete it
+                        (should req're only a single downward pass)
+                    keys[idxOfKey(k)] = k'
+                }
+
+                // case 2.b
+                else if (zChild.numKeys ≥ t) {
+                    find successor k' of k and delete it
+                        (should req're only a single downward pass)
+                    keys[idxOfKey(k)] = k'
+                }
+
+                // case 2.c
+                else {
+                    merge k and zChild into yChild
+                    remove both k and pointer to zChild from xNode
+                    free(zChild)
+                    delete(k, yChild) // recursive call
+                }
+            }
+        }
+
+        // case 3
+        else /* k not in xNode */ {
+            int idxForDescent = idxOfNodeFor(k)
+            Node descNode = getChild(idxForDescent)
+
+            // case 3.a-b
+            if (descNode.numKeys == t-1) {
+
+                // case 3.a
+                if (descNode has eitherSibling with ≥ t keys) {
+                    // the goal here is we're making sure that we can,
+                    // (if necc., [we don't know yet,])
+                    // remove a <key,node> from descNode
+                    // so we do something like a "rotation"
+                    move a key from xNode into descNode
+                    move a key from theSibling into xNode 
+                    move the childPointer from theSibling into descNode
+                }
+
+                // case 3.b
+                else { // merge
+                    Node mergedNode = combinedFrom(descNode, eitherSibling)
+                    move a key from xNode into mergedNode // becomes median key
+                }
+            }
+
+            delete(k, descNode) // recursive call
+        }
+    }
+    
 
 ## SkipList
 
