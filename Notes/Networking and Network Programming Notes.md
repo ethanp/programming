@@ -52,6 +52,7 @@ latex footer:   mmd-memoir-footer
       mail server
     * **DNS** (Domain Name System) -- for translating name to an IP address
       (uses UDP)
+        * More about this in its own section below
     * **ICMP** (Internet Control Message Protocol) -- provides error messages
         * *Traceroute*
         * *Ping*
@@ -77,6 +78,7 @@ latex footer:   mmd-memoir-footer
 * `127.0.0.1` is the *local loopback address* -- always points to the local
   computer (*hostname* `localhost`)
     * For IPv6 it's `0:0:...:0:1` aka `::1`
+    * Find more in its own section below
 * `255.255.255.255` is *broadcast* to everyone on the local network, and is
   used to find the local DHCP server
 * **NAT** (Network Address Translation) -- your internal IP address within
@@ -674,3 +676,15 @@ Then the file is sent.
 1. [Slideshare 1](http://www.slideshare.net/GertThijs/chord-presentation)
 2. [Slideshare 2](http://www.slideshare.net/did2/introduction-to-dht-with-chord?related=1)
 3. [Wikipedia](http://en.wikipedia.org/wiki/Chord_(peer-to-peer))
+
+## Web Hosting
+
+* **VPS (Virtual Private Server)** --- you're sharing the hardware with someone
+  else, but you're running in a VM so you may pay less than you would have for
+  a minimal website that's not tying up the resources of an entire server.
+
+### Rails Web Hosting Companies
+
+* Directly on Amazon AWS EC2
+* Digital Ocean (VPS)
+* Heroku

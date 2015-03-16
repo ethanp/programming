@@ -12,8 +12,47 @@ latex input:    mmd-natbib-plain
 latex input:    mmd-article-begin-doc
 latex footer:   mmd-memoir-footer
 
-All these Notes are from *before* I actually took the course. So maybe they're
-wrong.
+Most of these Notes are from *before* I actually took the course. So maybe
+they're wrong.
+
+## Unix System Calls
+
+### mmap
+
+3/16/15
+
+1. Implements *demand paging* (lazy page loading) --- OS copies a disk page
+   into physical memory only if an attempt to access it page-faults
+    * This is achieved using *page tables*
+2. Implements *memory-mapped file I/O* --- assigns a segment of virtual memory
+   a direct byte-for-byte correlation with some portion of a file-like resource
+   (something accessible through a *file-descriptor*), allowing applications to
+   treat the mapped portion as though it were RAM.
+3. mmaps are always aligned to the page size (usually 4KB)
+
+#### Why use it?
+
+1. mmap uses the the kernel's **page/disk cache**, a "transparent" cache of
+   disk-backed pages kept in RAM by the OS for quicker access
+    * The OS generally allocates *all* available RAM not used by applications
+      for this purpose because it would otherwise be idle and can be easily
+      reclaimed for use by applications
+    * Here, we can buffer updates, only updating the block on disk after
+      performing all updates in RAM
+2. Updating mmap'd data doesn't require a system call, saving time
+
+#### How to use it?
+
+1. In C, you just call it directly. Look up its man page
+2. In Java, you can use `nio.channels.FileChannel`
+    * `force` --- force updates to the channel's file to be written to the
+      storage device; this happens *synchronously* if the device is *local*
+    * `read`, `write`, set `position(long pos)`, `truncate(long size)`, `lock`
+    * `map(mode, pos, size)` -- creates a `nio.MappedByteBuffer`
+        * `force` data to disk
+        * `put`, `get` (these are what write/read are called here [why?])
+        * `mode` can be `READ_ONLY`, `READ_WRITE`, `PRIVATE` (COW)
+3. In Ruby and Python there are associated importable libraries
 
 ### Distributed Transactions
 

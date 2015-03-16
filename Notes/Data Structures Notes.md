@@ -189,6 +189,43 @@ Theorem: every red-black tree with *n* nodes has height ≤ 2log_2(n+1)
 
 This is what backs Java's `TreeMap<T>`
 
+## B-Tree
+
+### Intro
+We want to be able to search huge data sets that don't fit in RAM. So we want
+an index of it so we can search quickly. Both data and index should be stored
+efficiently in *pages* on disk. But if the entire index doesn't fit on a
+*page*, we'll need an index for the index (i.e. another level on the tree)
+[etc. if necessary]. In this scenario, the first access of the data in a page
+and writing modified pages back to disk is practically all the cost associated
+with doing *anything* with the data on that page, so we're just trying to
+minimize those two (read and write) operations.
+
+#### Invariants / Structure / Properties
+
+Choose an **"order"** \\(t ≥ 2\\). It seems everyone defines the 'order'
+differently, and this is very confusing. I'm going with the definition in
+*Cormen et al.* because the whole tree is very thoroughly and clearly
+enunciated there. The Wikipedia page is pretty good too though, but uses
+Knuth's (different) definition of 'order'. Cormen calls this the "minimum
+degree" of the tree, and surely that is less ambiguous than calling it the
+'order'.
+
+1. All leaves have the same depth (viz. the tree's height)
+2. Each node has *at most* \\(2t-1\\) keys
+3. Each node has *at least* \\(t-1\\) keys (except the root)
+4. The root has *at least* 1 key
+5. Key's are stored in *non-decreasing* order
+6. Each internal node has \\(numKeys+1\\) pointers to child-nodes
+7. For an internal node, in between two keys, you find a pointer to another
+   node closer to accessing the data between those two key values
+
+##### E.g. when \\(t = 2\\)
+
+* Each internal node has \\(t-1 ≤ x ≤ 2t-1\\) keys and \\(t ≤ x ≤ 2t\\)
+  children
+  * I.e. \\([1,3]\\) keys and \\([2,4]\\) children
+
 ## SkipList
 
 * Allows fast search within an ordered sequence of elements
