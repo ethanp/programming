@@ -4,21 +4,21 @@ Ethan Petuchowski
 It.py
 '''
 
-from util import print_components, Component, Function, read_from_dir
+from util import *
 
-def print_inputs(comps):
-    print 'listing inputs:'
-    i = 0
-    for comp in comps:
-        for func in comp.functions:
-            for inp in func.inputs:
-                print '%s: %s' % (i, inp)
-                i+=1
+
+def list_all(elems, names=False):
+    for idx, elem in enumerate(elems):
+        idx+=1
+        print '%d: %s' % (idx, (elem.name if names else elem))
 
 def main():
-    # parse_file()
-    components = read_from_dir()
-    print_inputs(components)
+    c = read_db()
+    f = functions(c)
+    i = inputs(c)
+    o = outputs(c)
+    print_uml(c)
+
 
 if __name__ == '__main__':
     main()
