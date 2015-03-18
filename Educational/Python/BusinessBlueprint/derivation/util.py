@@ -53,6 +53,15 @@ class Component(object):
         self.functions.append(fcn)
         os.chdir('..')
 
+    def IO(self):
+        return sorted(set(self.inputs() + self.outputs()))
+
+    def inputs(self):
+        return [i for f in self.functions for i in f.inputs]
+
+    def outputs(self):
+        return [o for f in self.functions for o in f.outputs]
+
 
 class Function(object):
     def __init__(self, name, component):
@@ -86,7 +95,7 @@ class Function(object):
 
     def read_IO_from_file(self, to_get):
         ''' requires that pwd be the exact place where these files are '''
-        return [IorO(line, self)
+        return [IorO(line.strip(), self)
                 for line in open(to_get + '.txt')
                 if line and not line.isspace()]
 
@@ -98,8 +107,20 @@ class IorO(object):
         self.name = name
         self.function = function
 
+    def component(self):
+        return self.function.component
+
     def __str__(self):
         return self.name
+
+    def __lt__(self, other):
+        return self.name < other.name
+
+    def __eq__(self, other):
+        return self.name == other.name
+
+    def __hash__(self):
+        return hash(self.name)
 
 def read_db():
     ''' read the dir structure into a Components object (returned) '''
