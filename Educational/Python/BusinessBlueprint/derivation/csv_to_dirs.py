@@ -2,9 +2,16 @@
 3/17/15, 11:37 PM
 Ethan Petuchowski
 csv_to_dirs.py
+
+Parses csv file and generates a
+directory tree based on the csv data.
+
+I used it and it did what it was supposed to do,
+but since then some of the util functions have changed,
+so I doubt it would work anymore.
 '''
-import os
-from derivation.util import print_components, Function, Component
+
+from derivation.util import *
 
 def parse_file():
     '''
@@ -37,9 +44,8 @@ def parse_file():
                 if function and not function.isspace():
                     # remove initial number and space
                     function = function.split('.')[1][1:]
-                    component.functions.append(Function(function))
+                    component.functions.append(Function(function, component))
 
-    print_components(components)
     return components
 
 def create_and_enter(dir_name):

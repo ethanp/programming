@@ -5,20 +5,31 @@ util.py
 '''
 import os
 
-def print_components(components):
-    print ''.join(map(repr, components))
+class Components(object):
+    def __init__(self):
+        self.components = []
 
-def print_uml(components):
-    print ''.join((cp.uml_str() for cp in components))
+    def print_components(self):
+        print ''.join(map(str, self.components))
 
-def functions(components):
-    return [f for c in components for f in c.functions]
+    def print_uml(self):
+        print ''.join((cp.uml_str() for cp in self.components))
 
-def inputs(components):
-    return [i for f in functions(components) for i in f.inputs]
+    def functions(self):
+        return [f for c in self.components for f in c.functions]
 
-def outputs(components):
-    return [o for f in functions(components) for o in f.outputs]
+    def inputs(self):
+        return [i for f in self.functions() for i in f.inputs]
+
+    def outputs(self):
+        return [o for f in self.functions() for o in f.outputs]
+
+    def add(self, component):
+        self.components.append(component)
+
+    def __str__(self):
+        return ''.join(map(str, self.components))
+
 
 class Component(object):
     def __init__(self, name):
@@ -29,11 +40,19 @@ class Component(object):
         return '%s\n-----------------\n%s\n\n' % (
             self.name, '\n'.join(param))
 
-    def __repr__(self):
-        return self.string_header(map(repr, self.functions))
+    def __str__(self):
+        return self.string_header(map(str, self.functions))
 
     def uml_str(self):
         return self.string_header(map(lambda x: x.uml_str(), self.functions))
+
+    def add(self, function):
+        os.chdir(function)
+        fcn = Function(function, self)
+        fcn.set_IO_from_file()
+        self.functions.append(fcn)
+        os.chdir('..')
+
 
 class Function(object):
     def __init__(self, name, component):
@@ -43,9 +62,9 @@ class Function(object):
         self.outputs = []
 
     def io_str(self, ioz, name):
-        return '\t%s:\n%s' % (name, map(
-            lambda x: '\t\t%s\n' % x, ioz
-        )) if ioz else '\tNo %s' % name
+        return '\t%s:\n%s' % (name, ''.join(map(
+            lambda x: '\t\t%s' % x, ioz
+        ))) if ioz else '\tNo %s\n' % name
 
     def inputs_string(self):
         return self.io_str(self.inputs, 'Inputs')
@@ -53,19 +72,23 @@ class Function(object):
     def outputs_string(self):
         return self.io_str(self.outputs, 'Outputs')
 
-    def __repr__(self):
-        return '%s\n%s\n%s' % (
-            self.name, self.inputs_string(), self.outputs_string()
+    def __str__(self):
+        return '%s\n%s%s' % (
+            self.name,
+            self.inputs_string(),
+            self.outputs_string()
         )
 
     def set_IO_from_file(self):
+        ''' requires that pwd be the exact place where these files are '''
         self.inputs = self.read_IO_from_file('input')
         self.outputs = self.read_IO_from_file('output')
 
     def read_IO_from_file(self, to_get):
-        return map(lambda x: IorO(x, self),
-                   [line for line in open(to_get + '.txt')
-                    if line and not line.isspace()])
+        ''' requires that pwd be the exact place where these files are '''
+        return [IorO(line, self)
+                for line in open(to_get + '.txt')
+                if line and not line.isspace()]
 
     def uml_str(self):
         return '+ %s()' % self.name
@@ -75,26 +98,18 @@ class IorO(object):
         self.name = name
         self.function = function
 
-    def __repr__(self):
+    def __str__(self):
         return self.name
 
 def read_db():
-    '''
-    :return: a list of Component's
-    '''
-    components = []
+    ''' read the dir structure into a Components object (returned) '''
+    components = Components()
     os.chdir('components')
-    comps = os.listdir('.')
-    for comp_name in comps:
+    for comp_name in os.listdir('.'):
         os.chdir(comp_name)
         component = Component(comp_name)
-        components.append(component)
-        funcs = os.listdir('.')
-        for func_name in funcs:
-            os.chdir(func_name)
-            function = Function(func_name, component)
-            component.functions.append(function)
-            function.set_IO_from_file()
-            os.chdir('..')
+        components.add(component)
+        for func_name in os.listdir('.'):
+            component.add(func_name)
         os.chdir('..')
     return components
