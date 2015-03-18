@@ -68,37 +68,40 @@ def parse_file():
         print
     return components
 
+def create_and_enter(dir_name):
+    if not os.path.exists(dir_name):
+        os.mkdir(dir_name)
+    os.chdir(dir_name)
+
 def transform_to_dir(components):
-    # create outer dir
-    if not os.path.exists('components'):
-        os.mkdir('components')
-    os.chdir('components')
+    create_and_enter('components')
     for component in components:
-        # create funcs dir
-        if not os.path.exists('functions'):
-            os.mkdir('functions')
-        os.chdir('functions')
+        create_and_enter(component.name)
         for function in component.functions:
-            # create func dir
-            if not os.path.exists(function.name):
-                os.mkdir(function.name)
-            os.chdir(function.name)
+            create_and_enter(function.name)
             # create I/O files
             in_f = open('input.txt', 'w+')
             out_f = open('output.txt', 'w+')
+
             os.chdir('..')
+
         os.chdir('..')
 
 def read_from_dir():
     '''
     :return: a list of Component's
     '''
-    for component in os.listdir('components'):
-        for func in os.listdir('/'.join(['components', component])):
+    os.chdir('components')
+    for component in os.listdir('.'):
+        os.chdir(component)
+        for func in os.listdir('.'):
+            os.chdir(func)
+
             pass
 
 def main():
     transform_to_dir(parse_file())
+    # read_from_dir()
 
 
 if __name__ == '__main__':
