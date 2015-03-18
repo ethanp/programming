@@ -8,14 +8,10 @@ Everything, and maybe move it later
 
 import os
 
-COMP = 0
-FUNC = 1
-
 class Component(object):
     def __init__(self, name):
         self.name = name
         self.functions = []
-
 
 class Function(object):
     def __init__(self, name):
@@ -25,20 +21,18 @@ class Function(object):
 
 def parse_file():
     '''
-    Returns:
-
-        components = [
-            'component1' : {
-                'function1' : {
-                    'inputs' : [input1, input2, ...],
-                    'outputs' : [output1, output2, ...]
-                },
-                'function2' : {...},
-                ...
+    Returns: components = [
+        'component1' : {
+            'function1' : {
+                'inputs' : [input1, input2, ...],
+                'outputs' : [output1, output2, ...]
             },
-            'component2' : {...},
+            'function2' : {...},
             ...
-        ]
+        },
+        'component2' : {...},
+        ...
+    ]
 
     '''
     components = []
@@ -48,23 +42,19 @@ def parse_file():
             for line in everything.split('\r'): # wtf?
                 items = line.split(',') # csv
                 if len(items) == 1: continue
-                comp = items[COMP]
-                function = items[FUNC]
-
+                comp = items[0]
+                function = items[1]
                 if comp and not comp.isspace():
                     component = Component(comp)
                     components.append(component)
-
                 if function and not function.isspace():
                     # remove initial number and space
                     function = function.split('.')[1][1:]
                     component.functions.append(Function(function))
 
     for c in components:
-        print c.name
-        print '----------------'
-        for f in c.functions:
-            print f.name
+        print c.name +'\n----------------'
+        for f in c.functions: print f.name
         print
     return components
 
@@ -79,13 +69,21 @@ def transform_to_dir(components):
         create_and_enter(component.name)
         for function in component.functions:
             create_and_enter(function.name)
-            # create I/O files
-            in_f = open('input.txt', 'w+')
-            out_f = open('output.txt', 'w+')
-
+            open('input.txt', 'w+')     # create I/O files
+            open('output.txt', 'w+')
             os.chdir('..')
-
         os.chdir('..')
+
+def print_IO(IorO):
+    p = False
+    for line in open(IorO+'.txt'):
+        if not p:
+            print '\t'+IorO+'s:'
+            p = True
+        if line and not line.isspace():
+            print '\t\t' + line
+    if not p:
+        print '\tno '+IorO+'s'
 
 def read_from_dir():
     '''
@@ -93,15 +91,19 @@ def read_from_dir():
     '''
     os.chdir('components')
     for component in os.listdir('.'):
-        os.chdir(component)
+        os.chdir(component); print component+'\n-------------------'
         for func in os.listdir('.'):
-            os.chdir(func)
+            os.chdir(func); print func
+            print_IO('input')
+            print_IO('output')
+            os.chdir('..')
+        print
+        os.chdir('..')
 
-            pass
 
 def main():
-    transform_to_dir(parse_file())
-    # read_from_dir()
+    # transform_to_dir(parse_file())
+    read_from_dir()
 
 
 if __name__ == '__main__':
