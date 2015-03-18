@@ -72,23 +72,22 @@ def transform_to_dir(components):
     # create outer dir
     if not os.path.exists('components'):
         os.mkdir('components')
+    os.chdir('components')
     for component in components:
         # create funcs dir
-        funcs_dir_name = '/'.join([component.name, 'functions'])
-        funcs_dir = os.path.dirname('functions')
-        if not os.path.exists(funcs_dir):
-            os.mkdir(funcs_dir)
+        if not os.path.exists('functions'):
+            os.mkdir('functions')
+        os.chdir('functions')
         for function in component.functions:
             # create func dir
-            func_dir_name = '/'.join([funcs_dir_name, function.name])
-            func_dir = os.path.dirname('components')
-            if not os.path.exists(func_dir):
-                os.mkdir(func_dir)
-            in_name = '/'.join([func_dir_name, 'input'])
-            out_name = '/'.join([func_dir_name, 'output'])
+            if not os.path.exists(function.name):
+                os.mkdir(function.name)
+            os.chdir(function.name)
             # create I/O files
-            in_f = open(in_name, 'w+')
-            out_f = open(out_name, 'w+')
+            in_f = open('input.txt', 'w+')
+            out_f = open('output.txt', 'w+')
+            os.chdir('..')
+        os.chdir('..')
 
 def read_from_dir():
     '''
