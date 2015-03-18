@@ -8,6 +8,8 @@ Everything, and maybe move it later
 
 import os
 
+PRINT = False
+
 class Component(object):
     def __init__(self, name):
         self.name = name
@@ -18,6 +20,29 @@ class Function(object):
         self.name = name
         self.inputs = []
         self.outputs = []
+
+def print_io(ioz, name):
+    if ioz:
+        print name
+        for io in ioz:
+            print io
+    else:
+        print '\tno '+name
+
+def print_func(func):
+    print func.name
+    print_io(func.inputs, 'inputs')
+    print_io(func.outputs, 'outputs')
+
+def print_component(comp):
+    print comp.name + '\n----------------'
+    for func in comp.functions:
+        print_func(func)
+    print
+
+def print_components(components):
+    for comp in components:
+        print_component(comp)
 
 def parse_file():
     '''
@@ -52,10 +77,7 @@ def parse_file():
                     function = function.split('.')[1][1:]
                     component.functions.append(Function(function))
 
-    for c in components:
-        print c.name +'\n----------------'
-        for f in c.functions: print f.name
-        print
+    print_components(components)
     return components
 
 def create_and_enter(dir_name):
@@ -74,35 +96,36 @@ def transform_to_dir(components):
             os.chdir('..')
         os.chdir('..')
 
-def print_IO(IorO):
-    p = False
-    for line in open(IorO+'.txt'):
-        if not p:
-            print '\t'+IorO+'s:'
-            p = True
-        if line and not line.isspace():
-            print '\t\t' + line
-    if not p:
-        print '\tno '+IorO+'s'
+def get_IO(IorO):
+    return [line for line in open(IorO+'.txt')
+            if line and not line.isspace()]
 
 def read_from_dir():
     '''
     :return: a list of Component's
     '''
+    components = []
     os.chdir('components')
-    for component in os.listdir('.'):
-        os.chdir(component); print component+'\n-------------------'
-        for func in os.listdir('.'):
-            os.chdir(func); print func
-            print_IO('input')
-            print_IO('output')
+    comps = os.listdir('.')
+    for comp_name in comps:
+        os.chdir(comp_name)
+        component = Component(comp_name)
+        components.append(component)
+        funcs = os.listdir('.')
+        for func_name in funcs:
+            os.chdir(func_name)
+            function = Function(func_name)
+            component.functions.append(function)
+            function.inputs = get_IO('input')
+            function.outputs = get_IO('output')
             os.chdir('..')
-        print
         os.chdir('..')
+    print_components(components)
+
 
 
 def main():
-    # transform_to_dir(parse_file())
+    # parse_file()
     read_from_dir()
 
 
