@@ -53,7 +53,7 @@ class Component(object):
         self.functions.append(fcn)
         os.chdir('..')
 
-    def IO(self):
+    def IO_set(self):
         return sorted(set(self.inputs() + self.outputs()))
 
     def inputs(self):
