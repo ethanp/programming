@@ -5,6 +5,34 @@ util.py
 '''
 import os
 
+class Conflict(object):
+    def __init__(self, in_func, out_func, out_comp, in_comp, io_name):
+        self.in_func = in_func
+        self.out_func = out_func
+        self.out_comp = out_comp
+        self.in_comp = in_comp
+        self.io_name = io_name
+
+    def __str__(self):
+        return '%s,%s,%s,%s,%s' % (
+            self.out_comp, # from comp
+            self.in_comp,  # to comp
+            self.in_func,  # this func [wants]
+            self.io_name,  # the input arg required
+            self.out_func # from that func
+        )
+
+    @staticmethod
+    def header():
+        return 'FROM,TO,FUNCTION,REQUIRES,FROM FUNC'
+
+    def __lt__(self, other):
+        return self.out_comp < other.out_comp   \
+            if self.out_comp != other.out_comp  \
+            else self.in_comp < other.in_comp   \
+            if self.in_comp != other.in_comp    \
+            else self.io_name < other.io_name
+
 class Components(object):
     def __init__(self):
         self.components = []
@@ -29,6 +57,40 @@ class Components(object):
 
     def __str__(self):
         return ''.join(map(str, self.components))
+
+    def con_no_con(self):
+        ''' if something DOESN'T conflict, then I guess it's "External"? '''
+        no_con, con = [], []
+        for comp in self.components:
+            for func in comp.functions:
+                for i in func.inputs:
+                    p = False
+                    for o in self.outputs():
+                        if i == o:
+                            p = True
+                            c = Conflict(
+                                func.name, o.function.name,  # functions
+                                o.component().name, comp.name,  # components
+                                i.name)  # parameter
+                            con.append(c)
+                    if not p:
+                        no_con.append(Conflict(
+                            func.name, 'external', 'external', comp.name,
+                            i.name))
+
+        return sorted(no_con), sorted(con)
+
+    def print_IO_dependencies(self):
+        no_conflicts, conflicts = self.con_no_con()
+        print 'Dependencies between components:'
+        print Conflict.header()
+        print '\n'.join(str(c) for c in conflicts if c.out_comp != c.in_comp)
+        print '\nDependencies within components:'
+        print Conflict.header()
+        print '\n'.join(str(c) for c in conflicts if c.out_comp == c.in_comp)
+        print '\nExternal dependencies:'
+        print Conflict.header()
+        print '\n'.join(str(c) for c in no_conflicts)
 
 
 class Component(object):
@@ -127,10 +189,12 @@ def read_db():
     components = Components()
     os.chdir('components')
     for comp_name in os.listdir('.'):
+        if comp_name == '.DS_Store': continue
         os.chdir(comp_name)
         component = Component(comp_name)
         components.add(component)
         for func_name in os.listdir('.'):
+            if func_name == '.DS_Store': continue
             component.add(func_name)
         os.chdir('..')
     return components
