@@ -8,6 +8,7 @@ from util import *
 
 
 def list_all(elems):
+    ''' e.g. list_all(sorted(map(str, c.outputs()))) '''
     for idx, elem in enumerate(elems):
         idx+=1
         print '%d: %s' % (idx, str(elem))
@@ -31,12 +32,14 @@ def allocation_of_functions_and_data_to_components(data, for_import=True):
 #########################################
 # c.print_IO_dependencies()
 
+#############################
+### UML DIAGRAM FUNCTIONS ###
+#############################
+# c.print_uml()
+
 def main():
     c = read_db()
-    # list_all(sorted(map(str, c.outputs())))
-    # print c
-    allocation_of_functions_and_data_to_components(c)
-    # c.print_IO_dependencies()
+    c.print_uml()
 
 if __name__ == '__main__':
     main()
