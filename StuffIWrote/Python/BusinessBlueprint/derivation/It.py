@@ -34,39 +34,49 @@ def allocation_of_functions_and_data_to_components(data, for_import=True):
 ## Coupling and Cohesion
 def coupling_and_cohesion(data):
     # IO btn components (metric 1)
+    print 'Component,In,Out,Total,' \
+          'Deps,NumFuncs,' \
+          'Num Funcs Send Within,% Funcs Send Within'
+
     for comp in data.components:
+
         deps = set() # dependent components (metric 2)
+        degree_of_cohesion = 0
 
-        # inputs (across all functions) received from another component
-        events_in = 0
-        for inp in comp.inputs():
-            for o in data.outputs():
-                if inp == o and o.component() != comp:
-                    events_in+=1
-                    deps.add(o.component())
+        for func in comp.functions:
 
-        # + outputs sent to another component
-        events_out = 0
-        for outp in comp.outputs():
-            for i in data.inputs():
-                if outp == i and i.component() != comp:
-                    events_out+=1
-                    deps.add(i.component())
+            # inputs (across all functions) received from another component
+            events_in = 0
+
+            p = False
+            for inp in func.inputs:
+                for o in data.outputs():
+                    if inp == o and o.component() != comp:
+                        p = True
+                        events_in+=1
+                        deps.add(o.component())
+
+            # + outputs sent to another component
+            events_out = 0
+            for outp in func.outputs:
+                for i in data.inputs():
+                    if outp == i and i.component() != comp:
+                        p = True
+                        events_out+=1
+                        deps.add(i.component())
+
+            if not p:
+                degree_of_cohesion += 1
 
         # Degree of cohesion
-        deg = 0.
-        # TODO
+        perc_cohesion = '%d%%' % int(
+            float(degree_of_cohesion) / len(comp.functions)*100)
 
-        # print table
-        print 'Component,In,Out,Total,Deps'
-        print '%s,%d,%d,%d,%d' % (
-            comp.name,
-            events_in, events_out,
-            events_in + events_out,
-            len(deps))
-
-
-
+        print '%s,%d,%d,%d,%d,%d,%d,%s' % (
+            comp.name, events_in, events_out, events_in + events_out,
+            len(deps), len(comp.functions),
+            degree_of_cohesion, perc_cohesion
+        )
 
 def main():
     c = read_db()
