@@ -13,9 +13,7 @@ def list_all(elems):
         idx+=1
         print '%d: %s' % (idx, str(elem))
 
-###############
-### TABLE 3 ###
-###############
+### TABLE 3
 def allocation_of_functions_and_data_to_components(data, for_import=True):
     base = '%s' if for_import else '\t%s'
     for comp in data.components:
@@ -25,21 +23,54 @@ def allocation_of_functions_and_data_to_components(data, for_import=True):
         print '\nData'
         print '\n'.join(map(lambda x: base % x.name, comp.IO_set()))
 
-#########################################
-###         TABLES 4 - 6              ###
-#   Requires a small amount of effort   #
-#           to be done by hand          #
-#########################################
+### TABLES 4 - 6
+# Requires some work by-hand
 # c.print_IO_dependencies()
 
-#############################
-### UML DIAGRAM FUNCTIONS ###
-#############################
+### UML
 # c.print_uml()
+
+### METRICS
+## Coupling and Cohesion
+def coupling_and_cohesion(data):
+    # IO btn components (metric 1)
+    for comp in data.components:
+        deps = set() # dependent components (metric 2)
+
+        # inputs (across all functions) received from another component
+        events_in = 0
+        for inp in comp.inputs():
+            for o in data.outputs():
+                if inp == o and o.component() != comp:
+                    events_in+=1
+                    deps.add(o.component())
+
+        # + outputs sent to another component
+        events_out = 0
+        for outp in comp.outputs():
+            for i in data.inputs():
+                if outp == i and i.component() != comp:
+                    events_out+=1
+                    deps.add(i.component())
+
+        # Degree of cohesion
+        deg = 0.
+        # TODO
+
+        # print table
+        print 'Component,In,Out,Total,Deps'
+        print '%s,%d,%d,%d,%d' % (
+            comp.name,
+            events_in, events_out,
+            events_in + events_out,
+            len(deps))
+
+
+
 
 def main():
     c = read_db()
-    c.print_uml()
+    coupling_and_cohesion(c)
 
 if __name__ == '__main__':
     main()
