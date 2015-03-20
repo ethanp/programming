@@ -42,11 +42,12 @@ def coupling_and_cohesion(data):
 
         deps = set() # dependent components (metric 2)
         degree_of_cohesion = 0
+        events_out = 0
+        events_in = 0
 
         for func in comp.functions:
 
             # inputs (across all functions) received from another component
-            events_in = 0
 
             p = False
             for inp in func.inputs:
@@ -57,7 +58,6 @@ def coupling_and_cohesion(data):
                         deps.add(o.component())
 
             # + outputs sent to another component
-            events_out = 0
             for outp in func.outputs:
                 for i in data.inputs():
                     if outp == i and i.component() != comp:
@@ -78,9 +78,15 @@ def coupling_and_cohesion(data):
             degree_of_cohesion, perc_cohesion
         )
 
+def total_io(data):
+    for comp in data.components:
+        print '%s: %d' % (comp.name, len(set(comp.inputs() + comp.outputs())))
+
+
 def main():
     c = read_db()
-    coupling_and_cohesion(c)
+    # coupling_and_cohesion(c)
+    total_io(c)
 
 if __name__ == '__main__':
     main()
