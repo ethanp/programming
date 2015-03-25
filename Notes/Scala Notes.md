@@ -13,34 +13,92 @@ latex footer:		mmd-memoir-footer
 
 # Language Features
 
+## self =>
+**3/24/15**
+
+I first came across this in the definition of the `Option` class:
+
+    sealed abstract class Option[+A] extends Product with Serializable {
+        self =>
+        ...
+        class WithFilter(p: A => Boolean) {
+            def map[B](f: A => B): Option[B] = self filter p map f
+            ...
+        }
+    }
+
+As pointed out [here][spl self], if we didn't have the "`self =>`", then it
+would be more difficult to access the `Option`'s `this` *inside* its inner-
+class `WithFilter`.
+
+[spl self]: http://scala-programming-language.1934581.n4.nabble.com/Beginner-question-Confused-by-self-type-syntax-td1940909.html
+
 ## Traits
 **7/15/14**
 
-From *Programming in Scala* by Martin Odersky, Lex Spoon, and Bill Venners; Chapter 12 "Traits", beginning on pg 258.
+> From *Programming in Scala* by Martin Odersky, Lex Spoon, and Bill Venners;
+> Chapter 12 "Traits", beginning on pg 258.
 
-Traits are a fundamental unit of code reuse in Scala. **A trait encapsulates method and field definitions, which can then be reused by mixing them into classes.** Unlike class inheritance, in which each class must inherit from just one superclass, **a class can mix in any number of traits.**
+Traits are a fundamental unit of code reuse in Scala. **A trait encapsulates
+method and field definitions, which can then be reused by mixing them into
+classes.** Unlike class inheritance, in which each class must inherit from just
+one superclass, **a class can mix in any number of traits.**
 
-You can do anything in a trait definition that you can do in a class definition, and the syntax looks exactly the same, with only two exceptions.
+You can do anything in a trait definition that you can do in a class
+definition, and the syntax looks exactly the same, with **two differences**.
 
-1. First, a trait cannot have any “class” parameters, i.e., parameters passed to the primary constructor of a class.
+1. A trait cannot have 'class parameters' passed to the primary constructor of
+   a class.
 
         trait NoPoint(x: Int, y: Int) // Does not compile
 
-2. The other difference between classes and traits is that whereas in classes, super calls are statically bound, in traits, they are dynamically bound. If you write “`super.toString`” in a class, you know exactly which method implementation will be invoked. When you write the same thing in a trait, however, the method implementation to invoke for the super call is undefined when you define the trait. Rather, the implementation to invoke will be determined anew each time the trait is mixed into a concrete class. This curious behavior of super is key to allowing traits to work as *stackable modifications*.
-
+2. Whereas in `classes`, `super` calls are statically bound, in `traits`, they
+   are dynamically bound, because the method implementation to invoke for the
+   `super` call is undefined when you define the `trait`. It gets determined
+   when the `trait` is mixed into a concrete `class`. This is key to allowing
+   traits to work as *stackable modifications*.
 
 Sealed classes
 --------------
 **7/15/14**
 
-From *Programming in Scala* by Martin Odersky, Lex Spoon, and Bill Venners; pgs 326-7.
+From *Programming in Scala* by Martin Odersky, Lex Spoon, and Bill Venners; pgs
+326-7.
 
-**Whenever you write a pattern match, you need to make sure you have covered all of the possible cases.** Sometimes **you can do this by adding a default case at the end of the match**, but that only applies if there is a sensible default behavior. *What do you do if there is no default? How can you ever feel safe that you covered all the cases?*In fact, you can enlist the help of the Scala compiler in detecting missing combinations of patterns in a match expression. To be able to do this, *the compiler needs to be able to tell which are the possible cases. In general, this is impossible in Scala, because new case classes can be defined at any time and in arbitrary compilation units.* For instance, nothing would prevent you from adding a fifth case class to the Expr class hierarchy in a different compilation unit from the one where the other four cases are defined.
+Whenever you write a pattern match, you need to make sure you have covered all
+of the possible cases. Sometimes you can do this by adding a default case at
+the end of the match, but you'd only do that if there is a sensible default
+behavior. What if there isn't? In general, the Scala compiler can't tell what
+all the cases are, because new case classes can be defined in arbitrary
+compilation units.
 
-The alternative is to *make the superclass of your case classes sealed*. **A sealed class cannot have any new subclasses added except the ones in the same file.** This is very useful for pattern matching, because it means you only need to worry about the subclasses you already know about. What’s more, you get better compiler support as well. *If you match against case classes that inherit from a sealed class, the compiler will flag missing combinations of patterns with a warning message.*
+The alternative is to make the superclass of your case classes sealed. A sealed
+class cannot have any new subclasses added except the ones in the same file. If
+you match against case classes that inherit from a sealed class, the compiler
+will flag missing combinations of patterns with a warning message.
 
-**Therefore, if you write a hierarchy of classes intended to be pattern matched, you should consider sealing them. Simply put the sealed keyword in front of the class at the top of the hierarchy.** Programmers using your class hierarchy will then feel confident in pattern matching against it. The sealed keyword, therefore, is often a license to pattern match. Listing 15.16 shows an example in which Expr is turned into a sealed class.
-    sealed abstract class Expr    case class Var(name: String) extends Expr    case class Number(num: Double) extends Expr    case class UnOp(operator: String, arg: Expr) extends Expr    case class BinOp(operator: String, left: Expr, right: Expr) extends Expr    Listing 15.16 · A sealed hierarchy of case classes.Now define a pattern match where some of the possible cases are left out:    def describe(e: Expr): String = e match {      case Number(_) => "a number"      case Var(_)    => "a variable"    }You will get a compiler warning like the following:    warning: match is not exhaustive!    missing combination           UnOp    missing combination          BinOp
+**Therefore, if you write a hierarchy of classes intended to be pattern matched, you should consider sealing them. Simply put the sealed keyword in front of the class at the top of the hierarchy.** The sealed keyword is to be treated like a "license to pattern match". 
+
+    sealed abstract class Expr
+    case class Var(name: String) extends Expr
+    case class Number(num: Double) extends Expr
+    case class UnOp(operator: String, arg: Expr) extends Expr
+    case class BinOp(operator: String, left: Expr, right: Expr) extends Expr
+
+    Listing 15.16 · A sealed hierarchy of case classes.
+
+Now define a pattern match where some of the possible cases are left out:
+
+    def describe(e: Expr): String = e match {
+      case Number(_) => "a number"
+      case Var(_)    => "a variable"
+    }
+
+You will get a compiler warning like the following:
+
+    warning: match is not exhaustive!
+    missing combination           UnOp
+    missing combination          BinOp
 
 
 Nested for-yield statements
@@ -49,7 +107,8 @@ Nested for-yield statements
 
 * These are supposedly super-helpful, and I'm finally starting to get it.
 * I've adapted Wikipedia's Haskell example to Scala.
-* Note that this example is also in the `Things to Notes about Programming.md` under `The Monad`.
+* Note that this example is also in the `Things to Notes about Programming.md`
+  under `The Monad`.
 
 Example
 
@@ -72,9 +131,10 @@ What's Haapnin
 * First we unwrap the options containing the ints
     * If they both exist, we add them
     * Otherwise we return `None`.
-* The `None` case comes from the *definition of the **bind** operator on `Option[T]`*
-    * We didn't have to do anything special here to take care of that 
-        * (this is, in fact, the entire point of the Option monad).
+* The `None` case comes from the *definition of the **bind** operator on
+  `Option[T]`*
+    * We didn't have to do anything special here to take care of that
+        * (this is, in fact, the entire point of the `Option` monad).
 
 
 *Vector* Seq
@@ -83,8 +143,11 @@ What's Haapnin
 
 * According to [Stack Overflow](http://stackoverflow.com/questions/20612729/how-does-scalas-vector-work),
   the `Vector` data type uses a *32-ary* **tree**
-* Each '32-way node' has a 32-element `Array` that **either** holds *references* **or** *data*
-* The tree is "balanced" such that levels `1` to `n-1` hold 100% references, and level `n` contains 100% data
+* Each '32-way node' has a 32-element `Array` that **either** holds
+  *references* **or** *data*
+* The tree is "balanced" such that levels `1` to `n-1` hold 100% references,
+  and level `n` contains 100% data
+* Sounds quite like a B-Tree
 
 
 Accessibility specifiers in class definitions
@@ -158,8 +221,10 @@ From the [Scala Docs](http://docs.scala-lang.org/overviews/core/futures.html)
 
 ### Intro
 
-* **A `Future` is a sort of a placeholder object that you can create for a result that does not exist yet**.
-* Generally, the result of the Future is computed concurrently and can be later collected.
+* **A `Future` is a sort of a placeholder object that you can create for a
+  result that does not exist yet**.
+* Generally, the result of the Future is computed concurrently and can be later
+  collected.
 * They use callbacks instead of blocking operations
 * Futures *can* be blocked on when absolutely necessary
 * Futures **can only be assigned *once***
@@ -175,7 +240,8 @@ Create a `Future[T]` with the `future` method
         session.getFriends()
     }
     
-We import the `global ExecutionContext` to give us access to the global thread-pool
+We import the `global ExecutionContext` to give us access to the global thread-
+pool
 
 We may also want to use a `Future` for tasks involving I/O
 
@@ -185,9 +251,12 @@ We may also want to use a `Future` for tasks involving I/O
     }
 
 * **We can wait** for the `Future` to arrive and then use it
-* **Or we can register for a callback** to be performed asynchronously when the `Future` arrives
+* **Or we can register for a callback** to be performed asynchronously when the
+  `Future` arrives
 
-`onComplete` takes a function of type `Try[T] => U`, where `Try[T]` is similar to `Option[T]` in that it is a monad that can either hold a *value* or an *exception*, where the exception is of type `Throwable`
+`onComplete` takes a function of type `Try[T] => U`, where `Try[T]` is similar
+to `Option[T]` in that it is a monad that can either hold a *value* or an
+*exception*, where the exception is of type `Throwable`
 
     f onComplete {
       case Success(posts) => for (post <- posts) println(post)
@@ -195,7 +264,8 @@ We may also want to use a `Future` for tasks involving I/O
     }
 
 
-Use `onSuccess` instead if you only want to handle successful results, and `onFailure` to handle failed results.
+Use `onSuccess` instead if you only want to handle successful results, and
+`onFailure` to handle failed results.
 
     f onSuccess {
       case posts => for (post <- posts) println(post)
@@ -203,18 +273,25 @@ Use `onSuccess` instead if you only want to handle successful results, and `onFa
 
 #### Registering multiple callbacks
 
-* Multiple callbacks registered on the same future are *unordered*, they may even execute concurrently
-* The callback is not necessarily called by the thread that completed the future *or* the thread which created the callback
-* In the event that some of the callbacks throw an exception, the other callbacks are executed regardless
-* Once executed, the callbacks are removed from the future object, thus being eligible for garbage collection
+* Multiple callbacks registered on the same future are *unordered*, they may
+  even execute concurrently
+* The callback is not necessarily called by the thread that completed the
+  future *or* the thread which created the callback
+* In the event that some of the callbacks throw an exception, the other
+  callbacks are executed regardless
+* Once executed, the callbacks are removed from the future object, thus being
+  eligible for garbage collection
 
 ### For Comprehensions / Combinators
 
-* Futures can be chained with the standard "combinators": `map, flatMap, filter, foreach, collect`
-* The exceptions work nicely in this situation: which ever chained Future threw the exception gets to declare the type of the exception
+* Futures can be chained with the standard "combinators": `map, flatMap,
+  filter, foreach, collect`
+* The exceptions work nicely in this situation: which ever chained Future threw
+  the exception gets to declare the type of the exception
 * These combinators allow use to use *for-comprehensions*
 
-In the following example, the `purchase` Future is only computed both required Futures have completed.
+In the following example, the `purchase` Future is only computed both required
+Futures have completed.
 
     val usdQuote = future { connection.getCurrentValue(USD) }
     val chfQuote = future { connection.getCurrentValue(CHF) }
@@ -229,7 +306,8 @@ In the following example, the `purchase` Future is only computed both required F
       case _ => println("Purchased " + amount + " CHF")
     }
     
-If we want our future to contain 0 instead of the exception, we use the `recover` combinator:
+If we want our future to contain 0 instead of the exception, we use the
+`recover` combinator:
 
     val purchase: Future[Int] = rateQuote map {
       quote => connection.buy(amount, quote)
@@ -237,7 +315,10 @@ If we want our future to contain 0 instead of the exception, we use the `recover
       case QuoteChangedException() => 0
     }
 
-Combinator `fallbackTo` creates a new future which holds the result of *this* future if it was completed successfully, or otherwise the successful result of the *argument* future. In the event that both this future and the argument future fail, the new future is completed with the exception from *this* future.
+Combinator `fallbackTo` creates a new future which holds the result of *this*
+future if it was completed successfully, or otherwise the successful result of
+the *argument* future. In the event that both this future and the argument
+future fail, the new future is completed with the exception from *this* future.
 
     val usdQuote = future {
       connection.getCurrentValue(USD)
@@ -255,7 +336,8 @@ Combinator `fallbackTo` creates a new future which holds the result of *this* fu
     
     anyQuote onSuccess { println(_) }
     
-The `andThen` combinator is used purely for side-effecting purposes. Multiple `andThen` calls are ordered.
+The `andThen` combinator is used purely for side-effecting purposes. Multiple
+`andThen` calls are ordered.
 
     val allposts = mutable.Set[String]()
     future {
@@ -271,7 +353,10 @@ The `andThen` combinator is used purely for side-effecting purposes. Multiple `a
 
 ### The "Failed" projection
 
-If the original future fails, the `failed` projection returns a future containing a value of type `Throwable`. If the original future succeeds, the `failed` projection fails with a `NoSuchElementException`. The following is an example which prints the exception to the screen:
+If the original future fails, the `failed` projection returns a future
+containing a value of type `Throwable`. If the original future succeeds, the
+`failed` projection fails with a `NoSuchElementException`. The following is an
+example which prints the exception to the screen:
 
     val f = future {
       2 / 0
@@ -306,25 +391,35 @@ Here is an example of how to block on the result of a future:
       Await.result(purchase, 0 nanos)
     }
 
-In the case that the future fails, the caller is forwarded the exception that the future is failed with.
+In the case that the future fails, the caller is forwarded the exception that
+the future is failed with.
 
-Alternatively, calling `Await.ready` waits until the future becomes completed, but does not retrieve its result. In the same way, calling `Await.ready` will not throw an exception if the future is failed.
+Alternatively, calling `Await.ready` waits until the future becomes completed,
+but does not retrieve its result. In the same way, calling `Await.ready` will
+not throw an exception if the future is failed.
 
-The `Future` trait implements the `Awaitable` trait with methods method `ready()` and `result()`. These methods **cannot** be called directly by the clients– they can only be called by the execution context.
+The `Future` trait implements the `Awaitable` trait with methods method
+`ready()` and `result()`. These methods **cannot** be called directly by the
+clients– they can only be called by the execution context.
 
-To allow clients to call 3rd party code which is potentially blocking and avoid implementing the `Awaitable` trait, the same `blocking` primitive can also be used in the following form:
+To allow clients to call 3rd party code which is potentially blocking and avoid
+implementing the `Awaitable` trait, the same `blocking` primitive can also be
+used in the following form:
 
     blocking {
       potentiallyBlockingCall()
     }
 
-The blocking code may also throw an exception. In this case, the exception is forwarded to the caller.
+The blocking code may also throw an exception. In this case, the exception is
+forwarded to the caller.
 
 
 ### Promises
 
-* A `promise` can be used to successfully complete a `future` with a value (by “completing” the promise) using the `success` method. 
-* Conversely, a `promise` can also be used to complete a `future` with an exception, using the `failure` method.
+* A `promise` can be used to successfully complete a `future` with a value (by
+  “completing” the promise) using the `success` method.
+* Conversely, a `promise` can also be used to complete a `future` with an
+  exception, using the `failure` method.
 
 Read my comments to understand what's going on
 
@@ -347,11 +442,19 @@ Read my comments to understand what's going on
       }                                   //   and can proceed to "do something"
     }
 
-To `fail` the `promise` instead, use `p failure (new MyExceptionException)` instead of `p success r`.
+To `fail` the `promise` instead, use `p failure (new MyExceptionException)`
+instead of `p success r`.
 
-> One nice property of programs written using promises with operations described so far and futures which are composed through monadic operations without side-effects is that these programs are deterministic. Deterministic here means that, given that no exception is thrown in the program, the result of the program (values observed in the futures) will always be the same, regardless of the execution schedule of the parallel program.
+> One nice property of programs written using promises with operations
+> described so far and futures which are composed through monadic operations
+> without side-effects is that these programs are deterministic. Deterministic
+> here means that, given that no exception is thrown in the program, the result
+> of the program (values observed in the futures) will always be the same,
+> regardless of the execution schedule of the parallel program.
 
-The method `completeWith` completes the promise with another future. After the future is completed, the promise gets completed with the result of that future as well. The following program prints `1`:
+The method `completeWith` completes the promise with another future. After the
+future is completed, the promise gets completed with the result of that future
+as well. The following program prints `1`:
 
     val f = future { 1 }
     val p = promise[Int]
@@ -376,7 +479,8 @@ Case classes just add to classes, they don't take away. They give you:
 2. default implementations of `equals` and `hashCode`
 3. default implementations of serialization
 4. a prettier default implementation of `toString`, and
-5. the small amount of functionality that they get from automatically inheriting from `scala.Product`.
+5. the small amount of functionality that they get from automatically
+   inheriting from `scala.Product`.
 
 Implicit Variables and Parameters
 ---------------------------------
@@ -412,8 +516,9 @@ article spells them out quite simply, and the following example is based on thei
 
 #### A convenient way to **simultaneously map and filter**.
 
-The `PartialFunction` parameter means you can use a *Pattern Matching Anonymous Function* as the argument,
-and if none of your `cases` match an element, that element gets filtered
+The `PartialFunction` parameter means you can use a *Pattern Matching Anonymous
+Function* as the argument, and if none of your `cases` match an element, that
+element gets filtered
 
 ##### E.g.
   
@@ -507,8 +612,12 @@ Example from **P09** in [Ninety-Nine Scala Problems](http://aperiodic.net/phil/s
     //     sublists.
     //
     //     Example:
-    //     scala> pack(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e, 'e, 'e))
-    //     res0: List[List[Symbol]] = List(List('a, 'a, 'a, 'a), List('b), List('c, 'c), List('a, 'a), List('d), List('e, 'e, 'e, 'e))
+    //     scala> pack(List('a, 'a, 'a, 'a, 'b, 'c, 'c, 'a, 'a, 'd, 'e, 'e))
+    //     res0: List[List[Symbol]] = List(
+    //                List('a, 'a, 'a, 'a), 
+    //                List('b), List('c, 'c), List('a, 'a), 
+    //                List('d), List('e, 'e)
+    //           )
     
     object P09 {
       def pack[A](ls: List[A]): List[List[A]] = {
@@ -539,11 +648,13 @@ Check out the following function from a nice [tutorial on Iteratees](http://blog
 
     def enumerate[E,A]: (List[E], IterV[E,A]) => IterV[E,A] = {
 
-* The **function** `enumerate` has an **input** type `E`, and a **result** type `A`.
+* The **function** `enumerate` has an **input** type `E`, and a **result** type
+  `A`.
 * It **returns** a *function* that
-    * **takes** 
+    * **takes**
          * `List` of *inputs*
-         * `Iteratee` parameterized by the same input/result types as this function
+         * `Iteratee` parameterized by the same input/result types as this
+           function
     * **returns** another `Iteratee`
 
 #### Case 1
@@ -556,8 +667,8 @@ Check out the following function from a nice [tutorial on Iteratees](http://blog
 
       case (_, i@Done(_, _)) => i
 
-* If the `Iteratee` is in the `Done` state (I think it means `isInstanceOf[Done]`),
-  return it as-is
+* If the `Iteratee` is in the `Done` state (I think it means
+  `isInstanceOf[Done]`), return it as-is
 
 #### Case 3
 
@@ -566,6 +677,6 @@ Check out the following function from a nice [tutorial on Iteratees](http://blog
 * If the `Iteratee` is in the `Cont` state, recurse on this method
     * Pass the `tail` of this `List` as the new `List`
     * For the `Iteratee`, pass that `Iteratee` obtained by creating an
-      **input** element from the `head` of the `List`, and (I think)
-      appending it to the `Iteratee` using the function `k()`
+      **input** element from the `head` of the `List`, and (I think) appending
+      it to the `Iteratee` using the function `k()`
 
