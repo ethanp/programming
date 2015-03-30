@@ -33,10 +33,11 @@ alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
 alias trracker='cs ~/Dropbox/CSyStuff/TTRails/trracker'
 alias play_activator='~/Applications/activator-1.0.10/activator ui'
 alias blog='cs ~/code/personal_project_use/libraries_to_use/Ruby/octopress/'
-PROGRAMMINGGIT=~/Dropbox/CSyStuff/ProgrammingGit
+CS=~/Dropbox/CSyStuff
+PROGRAMMINGGIT="$CS"/ProgrammingGit
 alias ca='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentAnalyzer_0'
 alias playakka='cs $PROGRAMMINGGIT/StuffIWrote/Scala/akka-redis-websockets-play-scala_translation'
-alias notes='cs $PROGRAMMINGGIT/Notes'
+alias notes='cs $CS/Notes'
 alias empat='ssh ethan@empat.csres.utexas.edu' # AOS class beastly Linux machine
 
 ######################

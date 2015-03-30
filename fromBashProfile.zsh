@@ -15,24 +15,34 @@ alias llg='ls -lh | grep'
 alias hisg='history | grep' # (hg is taken by mercurial)
 alias bug='brew update && brew upgrade'
 alias vimrc='sb ~/.vimrc'
-alias bprof='sb ~/.bash_profile'
 alias this='export PATH="${PATH}:."'
 alias sb='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -n $@'
 alias sba='/Applications/Sublime\ Text\ 2.app/Contents/SharedSupport/bin/subl -a $@'
+alias zprof='sb ~/.oh-my-zsh/custom/fromBashProfile.zsh'
 alias ut='ssh -o ServerAliveInterval=10 ethanp@almond-joy.cs.utexas.edu'
 alias utx='ssh -o ServerAliveInterval=10 -X ethanp@almond-joy.cs.utexas.edu'
 alias trracker='cs ~/Dropbox/CSyStuff/TTRails/trracker'
 alias play_activator='~/Applications/activator-1.0.10/activator ui'
 alias blog='cs ~/code/personal_project_use/libraries_to_use/Ruby/octopress/'
-PROGRAMMINGGIT=~/Dropbox/CSyStuff/ProgrammingGit
+CS=~/Dropbox/CSyStuff
+PROGRAMMINGGIT="$CS"/ProgrammingGit
 alias ca='cs $PROGRAMMINGGIT/StuffIWrote/Scala/CommentAnalyzer/CommentAnalyzer_0'
 alias playakka='cs $PROGRAMMINGGIT/StuffIWrote/Scala/akka-redis-websockets-play-scala_translation'
-alias notes='cs $PROGRAMMINGGIT/Notes'
+alias notes='cs $CS/Notes'
 alias empat='ssh ethan@empat.csres.utexas.edu' # AOS class beastly Linux machine
 # R: Let `less` use colors,
 # F: Just `cat` if it's only one screen worth of info
 # X: "Disables sending the termcap initialization strings to the terminal." (?)
 export LESS=-RFX
+
+# open bash profile with 'deprecation' warning
+function bprof {
+    echo "opening BASH profile, you use ZSH though!"
+    echo "Use 'zprof' to get where you probably want to go."
+    sleep 3
+    sb ~/.bash_profile
+}
+
 # render manpage as postscript in Preview
 function pman { man -t $1 | open -fa /Applications/Preview.app ; }
 # download movie to Movies dir
@@ -78,7 +88,7 @@ function dedir {
 # 4. ${varible%pattern} deletes the *shortest* match from the *end* of the
 #    varname and returns the rest, so ${a%.*} removes from the last period on,
 #    turning Skim.app/ into Skim
-function openApp() {
+function openApp {
     rm -f ~/.openApp.tmp
     ls /Applications/ | grep "\.app" | while read APP; do
         a=`echo $APP | sed -e s/\ //g -e s/\'//g`;

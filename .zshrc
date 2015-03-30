@@ -100,3 +100,6 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source $HOME/.zsh-fuzzy-match/fuzzy-match.zsh
+
+export FRENCH_HOUSE_GMAIL="frenchicc@gmail.com"
+export FRENCH_HOUSE_PASSWORD="frenchhouse"
