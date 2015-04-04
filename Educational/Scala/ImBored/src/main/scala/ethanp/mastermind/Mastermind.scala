@@ -22,7 +22,7 @@ object Mastermind extends App {
                 val conf = Configuration from s
                 conf match {
                     case Some(e) ⇒ processGuess(e)
-                    case None ⇒ println("invalid colors")
+                    case None    ⇒ println("invalid colors")
                 }
             case _ ⇒
                 println("require 4 colors")
@@ -46,10 +46,10 @@ object Configuration {
     def from(strings: Array[String]): Option[Configuration] = {
         val t = strings.flatMap { s ⇒
             s match {
-                case x if x equalsIgnoreCase Blue.repr ⇒ Some(Blue)
-                case x if x equalsIgnoreCase Red.repr ⇒ Some(Red)
+                case x if x equalsIgnoreCase Blue.repr   ⇒ Some(Blue)
+                case x if x equalsIgnoreCase Red.repr    ⇒ Some(Red)
                 case x if x equalsIgnoreCase Yellow.repr ⇒ Some(Yellow)
-                case x if x equalsIgnoreCase Green.repr ⇒ Some(Green)
+                case x if x equalsIgnoreCase Green.repr  ⇒ Some(Green)
                 case _ ⇒ None
             }
         }
