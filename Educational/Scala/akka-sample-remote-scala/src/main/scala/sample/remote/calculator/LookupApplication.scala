@@ -20,7 +20,14 @@ object LookupApplication {
      * whose configuration is loaded from 'main/resources/calculator.conf'
      * Note that config also loads 'common.conf', which specifies
      *    - the IP-addr
-     *    - the "actor provider" (??)
+     *    - the "actor provider", which
+     *        1) starts up the actor on a remote node, and
+     *        2) creates a RemoteActorRef representing it, which
+     *            a) is an ActorRef, which is an
+     *                * Immutable and serializable handle to an actor,
+     *                  which may or may not reside on the local host
+     *                  or inside the same ActorSystem
+     *            b) but in particular does NOT reside within the same ActorSystem (aka. "remote")
      */
     val system = ActorSystem("CalculatorSystem", ConfigFactory.load("calculator"))
 

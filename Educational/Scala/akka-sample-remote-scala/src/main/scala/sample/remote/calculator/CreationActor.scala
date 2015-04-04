@@ -1,9 +1,11 @@
 package sample.remote.calculator
 
-import akka.actor.Actor
-import akka.actor.ActorRef
-import akka.actor.Props
+import akka.actor.{Actor, Props}
 
+/**
+ * Creates a child CalculatorActor for each incoming MathOp msg.
+ * Then when it receives the result, it (async-ly) stops the CalcActor.
+ */
 class CreationActor extends Actor {
 
   def receive = {
