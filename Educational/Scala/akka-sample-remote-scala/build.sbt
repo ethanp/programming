@@ -8,6 +8,4 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-remote" % "2.3.9"
 )
 
-
-
 fork in run := true

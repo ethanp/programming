@@ -26,8 +26,7 @@ object CreationApplication {
   def startRemoteCreationSystem(): Unit = {
 
     /** In this config, we specify the (Protocol, IPAddr, Port) to deploy children
-      * of the "creationActor" created as a top-level actor in this ActorSystem.
-      */
+      * of the "creationActor" created as a top-level actor in this ActorSystem. */
     val system = ActorSystem("CreationSystem", ConfigFactory.load("remotecreation"))
     val actor = system.actorOf(Props[CreationActor], name = "creationActor")
 
