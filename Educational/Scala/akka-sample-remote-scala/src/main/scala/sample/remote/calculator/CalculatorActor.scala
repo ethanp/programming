@@ -1,8 +1,10 @@
 package sample.remote.calculator
 
-import akka.actor.Props
 import akka.actor.Actor
 
+/**
+ * "provides a service for arithmetic operations"
+ */
 class CalculatorActor extends Actor {
   def receive = {
     case Add(n1, n2) =>

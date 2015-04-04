@@ -15,18 +15,27 @@ object LookupApplication {
   }
 
   def startRemoteCalculatorSystem(): Unit = {
-    val system = ActorSystem("CalculatorSystem",
-      ConfigFactory.load("calculator"))
+    /**
+     * EP: we create an ActorSystem called 'CalculatorSystem',
+     * whose configuration is loaded from 'main/resources/calculator.conf'
+     * Note that config also loads 'common.conf', which specifies
+     *    - the IP-addr
+     *    - the "actor provider" (??)
+     */
+    val system = ActorSystem("CalculatorSystem", ConfigFactory.load("calculator"))
+
+    /**
+     * EP: init & run a CalculatorActor named "calculator" in the CalculatorSystem
+     * the port this actor listens on is specified in the config file
+     */
     system.actorOf(Props[CalculatorActor], "calculator")
 
     println("Started CalculatorSystem - waiting for messages")
   }
 
   def startRemoteLookupSystem(): Unit = {
-    val system =
-      ActorSystem("LookupSystem", ConfigFactory.load("remotelookup"))
-    val remotePath =
-      "akka.tcp://CalculatorSystem@127.0.0.1:2552/user/calculator"
+    val system = ActorSystem("LookupSystem", ConfigFactory.load("remotelookup"))
+    val remotePath = "akka.tcp://CalculatorSystem@127.0.0.1:2552/user/calculator"
     val actor = system.actorOf(Props(classOf[LookupActor], remotePath), "lookupActor")
 
     println("Started LookupSystem")
