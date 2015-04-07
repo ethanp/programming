@@ -16,4 +16,3 @@ class Master extends Actor {
         case _ ⇒ println("OK")
     }
 }
-
