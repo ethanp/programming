@@ -40,6 +40,9 @@ alias playakka='cs $PROGRAMMINGGIT/StuffIWrote/Scala/akka-redis-websockets-play-
 alias notes='cs $CS/Notes'
 alias empat='ssh ethan@empat.csres.utexas.edu' # AOS class beastly Linux machine
 
+# read non-version-controlled files
+. ~/more_configs.sh
+
 ######################
 #  Terminal Options  #
 ######################
