@@ -12,14 +12,10 @@ import com.typesafe.config.ConfigFactory
 object Server {
     def main(args: Array[String]) = {
         // Override the configuration of the port when specified as program argument
-        val port = if (args.isEmpty) "0" else args(0)
-        val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=$port").
-                // `withFallback` means -- if no (e.g.) "role" has been config'd, use the given one
-                withFallback(ConfigFactory.parseString("akka.cluster.roles = [server]")).
-                withFallback(ConfigFactory.load())
-
-        val system = ActorSystem("ClusterSystem", config)
-        system.actorOf(Props[Server], name = "server")
+        val port: String = if (args.isEmpty) "0" else args(0)
+        val name = "server"
+        val system = Common.clusterSystem(port, name)
+        system.actorOf(Props[Server], name = name)
     }
 }
 
@@ -29,7 +25,6 @@ class Server extends Actor {
      * E.P: ...by contacting the "seed nodes" spec'd in the config (repeatedly until one responds).
      *   I think this means this nodes entire ActorSystem is going to
      *     become a part of the Cluster OF Actor Systems!
-     *
      */
     val cluster = Cluster(context.system)
 
@@ -50,18 +45,6 @@ class Server extends Actor {
         // newly joined member's status has been changed to "Up"
         // the parameter type "Member" represents a cluster member node
         case MemberUp(m) => register(m)
-
-        // member is leaving, status has been changed to "Exiting"
-        case MemberExited ⇒
-
-        // member has been removed from the cluster
-        case MemberRemoved ⇒
-
-        // member has been detected as unreachable by failure detector of ≥ 1 other node
-        case UnreachableMember ⇒
-
-        // member is considered reachable again after having been unreachable
-        case ReachableMember ⇒
     }
 
     def register(member: Member): Unit =

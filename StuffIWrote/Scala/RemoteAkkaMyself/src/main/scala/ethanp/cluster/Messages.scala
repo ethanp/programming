@@ -8,3 +8,4 @@ case class ChatRequest(text: String)
 case class ChatResult(text: String)
 case class JobFailed(reason: String, job: ChatRequest)
 case object ServerRegistration
+case class ChatLog(string: String)
