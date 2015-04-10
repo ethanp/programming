@@ -51,7 +51,7 @@ class Master extends Actor with ClusterNotificationReceiver with ActorLogging {
             val str = sc.nextLine
             val brkStr = str split " "
             log.info(s"handling { $str }")
-            brkStr match {
+            brkStr.head match {
                 case "newClient" ⇒ childStreams.add(Master.createNodeProc(Client.getClass))
                 case "newServer" ⇒ childStreams.add(Master.createNodeProc(Server.getClass))
                 case "start" ⇒
