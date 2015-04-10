@@ -1,7 +1,6 @@
 package ethanp
 
 import akka.actor.{Props, Actor}
-import akka.actor.Actor.Receive
 
 /**
  * Ethan Petuchowski

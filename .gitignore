@@ -146,3 +146,6 @@ Educational/Java/JavaFX/LoadAViewIntoAnother/out
 StuffIWrote/Java/JavaFX/p2p-gui/out
 *.log
 Educational/Scala/akka-sample-remote-scala/.sbtserver
+activator
+activator.bat
+Educational/Scala/akka-sample-cluster-scala/sigar
