@@ -3,6 +3,8 @@ package ethanp.cluster
 import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor._
+import akka.cluster.Cluster
+import akka.cluster.ClusterEvent.MemberUp
 import akka.util.Timeout
 import com.typesafe.config.ConfigFactory
 import akka.pattern.ask
@@ -13,7 +15,9 @@ import scala.concurrent.duration._
  * 4/9/15
  */
 class Client extends Actor {
-
+  val cluster = Cluster(context.system)
+  override def preStart(): Unit = cluster.subscribe(self, classOf[MemberUp])
+  override def postStop(): Unit = cluster.unsubscribe(self)
   var servers = IndexedSeq.empty[ActorRef]
   var jobCounter = 0
 
@@ -25,12 +29,16 @@ class Client extends Actor {
       jobCounter += 1
       servers(jobCounter % servers.size) forward job
 
+    case MasterRegistration ⇒ sender ! ChatLog("CLIENT IS UP")
+
     case ServerRegistration if !servers.contains(sender()) =>
       context watch sender
       servers = servers :+ sender
 
     case Terminated(a) =>
       servers = servers.filterNot(_ == a)
+
+    case MemberUp(m) ⇒ println(s"member up: ${m.address.toString.take(5)}")
   }
 }
 

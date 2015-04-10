@@ -1,25 +1,25 @@
 package ethanp.cluster
 
-import akka.actor.{Actor, ActorSystem, Props, RootActorPath}
+import akka.actor._
 import akka.cluster.ClusterEvent._
 import akka.cluster.{Cluster, Member, MemberStatus}
-import com.typesafe.config.ConfigFactory
 
 /**
  * Ethan Petuchowski
  * 4/9/15
  */
 object Server {
+    val name = "server"
     def main(args: Array[String]) = {
-        // Override the configuration of the port when specified as program argument
         val port: String = if (args.isEmpty) "0" else args(0)
-        val name = "server"
-        val system = Common.clusterSystem(port, name)
-        system.actorOf(Props[Server], name = name)
+        Common.clusterSystem(port, name).actorOf(Props[Server], name = name)
     }
 }
 
-class Server extends Actor {
+/**
+ * based on the sample Cluster code from the Akka Activator
+ */
+class Server extends Actor with ActorLogging {
 
     /* O.G: "get the Cluster owning the ActorSystem that this actor belongs to"
      * E.P: ...by contacting the "seed nodes" spec'd in the config (repeatedly until one responds).
@@ -47,10 +47,13 @@ class Server extends Actor {
         case MemberUp(m) => register(m)
     }
 
-    def register(member: Member): Unit =
+    def register(m: Member): Unit = {
         // recall that a node has a SET of roles, this just checks if eg. "client" is one of them
-        if (member.hasRole("client")) {
-            context.actorSelection(RootActorPath(member.address) / "user" / "client") !
-                    ServerRegistration
+        log.info(s"server registering ${m.address}")
+
+        if (m.hasRole("client")) {
+            val clientRef = context.actorSelection(RootActorPath(m.address) / "user" / "client")
+            clientRef ! ServerRegistration
         }
+    }
 }

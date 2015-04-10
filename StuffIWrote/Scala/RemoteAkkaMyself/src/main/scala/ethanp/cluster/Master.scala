@@ -2,11 +2,12 @@ package ethanp.cluster
 
 import java.util.Scanner
 
-import akka.actor.{ActorLogging, Props, ActorSystem, Actor}
+import akka.actor._
 import akka.actor.Actor.Receive
 import akka.cluster.ClusterEvent._
-import akka.cluster.{Member, MemberStatus}
+import akka.cluster.{Cluster, Member, MemberStatus}
 import com.typesafe.config.ConfigFactory
+import sys.process._ // package with implicits for running external processes
 
 import scala.collection.mutable
 import scala.sys.process.Process
@@ -36,37 +37,53 @@ object Master extends App {
     Server.main(Array.empty)
     Client.main(Array.empty)
 
-    def createNodeProc(role: Class[_]) =
-        Process(s"sbt \"runMain ${role.getCanonicalName}} 0\"").lineStream
-}
+    // gotta love scala.
+    def createClient() = "sbt execClient".run()
+    def createServer() = "sbt execServer".run()
 
-class Master extends Actor with ClusterNotificationReceiver with ActorLogging {
-    override def receive = receiveRelevantMessage orElse receiveClusterNotification
     val sc = new Scanner(System.in)
-
-    val childStreams = mutable.Set.empty[Stream[String]]
-
+    val childProcs = mutable.Set.empty[Process]
     new Thread {
         while (sc.hasNextLine) {
             val str = sc.nextLine
             val brkStr = str split " "
-            log.info(s"handling { $str }")
+            println(s"handling { $str }")
             brkStr.head match {
-                case "newClient" ⇒ childStreams.add(Master.createNodeProc(Client.getClass))
-                case "newServer" ⇒ childStreams.add(Master.createNodeProc(Server.getClass))
+                case "newClient" ⇒ childProcs.add(Master.createClient())
+                case "newServer" ⇒ childProcs.add(Master.createServer())
                 case "start" ⇒
                 case "sendMessage" ⇒
             }
         }
+        childProcs.foreach(_.destroy())
+    }
+//    createClient()
+}
+
+class Master extends Actor with ActorLogging {
+
+    val cluster = Cluster(context.system)
+    override def preStart(): Unit = cluster.subscribe(self, classOf[MemberUp])
+    override def postStop(): Unit = cluster.unsubscribe(self)
+
+    override def receive = {
+        case ChatLog(string) ⇒ println(string)
+
+        case state: CurrentClusterState =>
+            state.members.filter(_.status == MemberStatus.Up) foreach register
+
+        case MemberUp(m) => register(m)
     }
 
-    def receiveRelevantMessage: Receive = {
-        case ChatLog(string) ⇒ println(string)
+    def register(m: Member) = {
+        log.info(s" master registering ${m.address}")
+        if (m.hasRole("client"))
+            context.actorSelection(RootActorPath(m.address)/"user"/"client") ! MasterRegistration
     }
 }
 
 /**
- * Don't know of any reason to handle these here.
+ * Don't know of any reason to handle these here (I'm not using it now).
  * The code is here so I don't forget the option to handle these events exists.
  */
 trait ClusterNotificationReceiver {
@@ -80,6 +97,8 @@ trait ClusterNotificationReceiver {
         // the parameter type "Member" represents a cluster member node
         case MemberUp(m) =>
 
+
+        /* Note: I don't think i'm currently "subscribed" to any of these */
 
         // member is leaving, status has been changed to "Exiting"
         case MemberExited(m) ⇒

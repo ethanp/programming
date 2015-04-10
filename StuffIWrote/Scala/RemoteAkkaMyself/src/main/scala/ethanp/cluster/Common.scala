@@ -1,6 +1,6 @@
 package ethanp.cluster
 
-import akka.actor.ActorSystem
+import akka.actor.{RootActorPath, ActorSelection, ActorSystem}
 import com.typesafe.config.ConfigFactory
 
 /**
