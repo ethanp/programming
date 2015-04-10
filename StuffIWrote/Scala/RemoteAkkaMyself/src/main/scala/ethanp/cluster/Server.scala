@@ -1,8 +1,8 @@
 package ethanp.cluster
 
-import akka.actor.{RootActorPath, Actor, Props, ActorSystem}
-import akka.cluster.{Member, MemberStatus, Cluster}
-import akka.cluster.ClusterEvent.{CurrentClusterState, MemberUp}
+import akka.actor.{Actor, ActorSystem, Props, RootActorPath}
+import akka.cluster.ClusterEvent._
+import akka.cluster.{Cluster, Member, MemberStatus}
 import com.typesafe.config.ConfigFactory
 
 /**
@@ -14,8 +14,9 @@ object Server {
         // Override the configuration of the port when specified as program argument
         val port = if (args.isEmpty) "0" else args(0)
         val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=$port").
-          withFallback(ConfigFactory.parseString("akka.cluster.roles = [server]")).
-          withFallback(ConfigFactory.load())
+                // `withFallback` means -- if no (e.g.) "role" has been config'd, use the given one
+                withFallback(ConfigFactory.parseString("akka.cluster.roles = [server]")).
+                withFallback(ConfigFactory.load())
 
         val system = ActorSystem("ClusterSystem", config)
         system.actorOf(Props[Server], name = "server")
@@ -24,25 +25,49 @@ object Server {
 
 class Server extends Actor {
 
-  // get the Cluster owning the ActorSystem that this actor belongs to
-  val cluster = Cluster(context.system)
+    /* O.G: "get the Cluster owning the ActorSystem that this actor belongs to"
+     * E.P: ...by contacting the "seed nodes" spec'd in the config (repeatedly until one responds).
+     *   I think this means this nodes entire ActorSystem is going to
+     *     become a part of the Cluster OF Actor Systems!
+     *
+     */
+    val cluster = Cluster(context.system)
 
-  // subscribe to cluster changes, MemberUp
-  // re-subscribe when restart
-  override def preStart(): Unit = cluster.subscribe(self, classOf[MemberUp])
-  override def postStop(): Unit = cluster.unsubscribe(self)
+    // subscribe to cluster changes, MemberUp
+    // re-subscribe when restart
+    override def preStart(): Unit = cluster.subscribe(self, classOf[MemberUp])
 
-  def receive = {
-    case ChatRequest(text) => sender ! ChatResult(text.toUpperCase)
+    override def postStop(): Unit = cluster.unsubscribe(self)
 
-    case state: CurrentClusterState =>
-      state.members.filter(_.status == MemberStatus.Up) foreach register
+    def receive = {
+        case ChatRequest(text) => sender ! ChatResult(text.toUpperCase)
 
-    case MemberUp(m) => register(m)
-  }
+        // snapshot of the full cluster state (e.g. membership)
+        // sent to the subscriber as their first message
+        case state: CurrentClusterState =>
+            state.members.filter(_.status == MemberStatus.Up) foreach register
 
-  def register(member: Member): Unit =
-    if (member.hasRole("client"))
-      context.actorSelection(RootActorPath(member.address) / "user" / "client") !
-        ServerRegistration
+        // newly joined member's status has been changed to "Up"
+        // the parameter type "Member" represents a cluster member node
+        case MemberUp(m) => register(m)
+
+        // member is leaving, status has been changed to "Exiting"
+        case MemberExited ⇒
+
+        // member has been removed from the cluster
+        case MemberRemoved ⇒
+
+        // member has been detected as unreachable by failure detector of ≥ 1 other node
+        case UnreachableMember ⇒
+
+        // member is considered reachable again after having been unreachable
+        case ReachableMember ⇒
+    }
+
+    def register(member: Member): Unit =
+        // recall that a node has a SET of roles, this just checks if eg. "client" is one of them
+        if (member.hasRole("client")) {
+            context.actorSelection(RootActorPath(member.address) / "user" / "client") !
+                    ServerRegistration
+        }
 }
