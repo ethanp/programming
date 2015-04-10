@@ -10,3 +10,5 @@ case class JobFailed(reason: String, job: ChatRequest)
 case object ServerRegistration
 case object MasterRegistration
 case class ChatLog(string: String)
+
+case class IDAssignment(id: Int)

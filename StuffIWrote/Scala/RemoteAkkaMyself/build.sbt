@@ -12,6 +12,6 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.2" % "test"
 )
 
-TaskKey[Unit]("execClient") := (runMain in Compile).toTask(" ethanp.cluster.Client 0").value
+TaskKey[Unit]("execClient") := (runMain in Compile).toTask(" ethanp.cluster.Client").value
 
-TaskKey[Unit]("execServer") := (runMain in Compile).toTask(" ethanp.cluster.Server 0").value
+TaskKey[Unit]("execServer") := (runMain in Compile).toTask(" ethanp.cluster.Server").value

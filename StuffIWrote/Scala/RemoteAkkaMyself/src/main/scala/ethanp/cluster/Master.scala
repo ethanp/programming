@@ -7,10 +7,15 @@ import akka.actor.Actor.Receive
 import akka.cluster.ClusterEvent._
 import akka.cluster.{Cluster, Member, MemberStatus}
 import com.typesafe.config.ConfigFactory
+import ethanp.cluster.IDAssignment
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 import sys.process._ // package with implicits for running external processes
+import akka.pattern.ask
 
 import scala.collection.mutable
 import scala.sys.process.Process
+import scala.concurrent.duration._
 
 /**
  * Ethan Petuchowski
@@ -25,21 +30,19 @@ object Master extends App {
 
     /* make the master the first seed node */
 
-    val port = "2551" // first seed port
-    val name = "master"
-    val system = Common.clusterSystem(port, name)
-    system.actorOf(Props[Master], name = name)
+    val master = Common.clusterSystem("2551", "master").actorOf(Props[Master], name = "master")
 
     // starting 2 clients and 3 servers (in this Process, but as separate Actors)
-    Client.main(Seq("2552").toArray) // let a client be another seed node (won't crash)
+    Client.main(Array.empty) // let a client be another seed node (won't crash)
     Server.main(Array.empty)
     Server.main(Array.empty)
     Server.main(Array.empty)
     Client.main(Array.empty)
 
     // gotta love scala.
-    def createClient() = "sbt execClient".run()
-    def createServer() = "sbt execServer".run()
+    def createClient(id: Int) = s"sbt execClient $id".run()
+    def createServer(id: Int) = s"sbt execServer $id".run()
+//    createClient()
 
     val sc = new Scanner(System.in)
     val childProcs = mutable.Set.empty[Process]
@@ -57,60 +60,58 @@ object Master extends App {
         }
         childProcs.foreach(_.destroy())
     }
-//    createClient()
 }
 
 class Master extends Actor with ActorLogging {
 
     val cluster = Cluster(context.system)
-    override def preStart(): Unit = cluster.subscribe(self, classOf[MemberUp])
+
+    override def preStart(): Unit = cluster.subscribe(self,
+                 classOf[MemberUp], classOf[MemberRemoved])
+
     override def postStop(): Unit = cluster.unsubscribe(self)
+
+    val servers = mutable.Map.empty[Int, Member]
+    val clients = mutable.Map.empty[Int, Member]
+
+    def firstFreeID(set: Set[Int]) = Stream.from(0).filterNot(set.contains).head
+    def firstFreeServerID = firstFreeID(servers.keySet.toSet)
+    def firstFreeClientID = firstFreeID(clients.keySet.toSet)
 
     override def receive = {
         case ChatLog(string) ⇒ println(string)
 
         case state: CurrentClusterState =>
-            state.members.filter(_.status == MemberStatus.Up) foreach register
+            state.members.filter(_.status == MemberStatus.Up) foreach store
 
-        case MemberUp(m) => register(m)
+        case MemberUp(m) => store(m)
+
+        /* member has been removed from the cluster
+         * time it takes to go from "unreachable" to "down" (and therefore removed)
+         * is configured by e.g. "auto-down-unreachable-after = 3s"     */
+        case MemberRemoved(m, prevStatus) ⇒ remove(m)
     }
 
-    def register(m: Member) = {
-        log.info(s" master registering ${m.address}")
-        if (m.hasRole("client"))
-            context.actorSelection(RootActorPath(m.address)/"user"/"client") ! MasterRegistration
+    def getPath(m: Member) = context.actorSelection(RootActorPath(m.address)/"user"/m.roles.head)
+
+    def store(m: Member) = {
+        m.roles.head match {
+            case "client" ⇒
+                val id: Int = firstFreeClientID
+                getPath(m) ! IDAssignment(id)
+                clients.put(id, m)
+
+            case "server" ⇒
+                val id: Int = firstFreeServerID
+                getPath(m) ! IDAssignment(id)
+                servers.put(id, m)
+        }
     }
-}
 
-/**
- * Don't know of any reason to handle these here (I'm not using it now).
- * The code is here so I don't forget the option to handle these events exists.
- */
-trait ClusterNotificationReceiver {
-    def receiveClusterNotification: Receive = {
-        // snapshot of the full cluster state (e.g. membership)
-        // sent to the subscriber as their first message
-        case state: CurrentClusterState =>
-            state.members.filter(_.status == MemberStatus.Up) foreach noteAlreadyUp
-
-        // newly joined member's status has been changed to "Up"
-        // the parameter type "Member" represents a cluster member node
-        case MemberUp(m) =>
-
-
-        /* Note: I don't think i'm currently "subscribed" to any of these */
-
-        // member is leaving, status has been changed to "Exiting"
-        case MemberExited(m) ⇒
-
-        // member has been removed from the cluster
-        case MemberRemoved(m, s) ⇒
-
-        // member has been detected as unreachable by failure detector of ≥ 1 other node
-        case UnreachableMember(m) ⇒
-
-        // member is considered reachable again after having been unreachable
-        case ReachableMember(m) ⇒
+    def remove(m: Member) = {
+        m.roles.head match {
+            case "client" ⇒ clients retain ((k,v) ⇒ m != v)
+            case "server" ⇒ servers retain ((k,v) ⇒ m != v)
+        }
     }
-    def noteAlreadyUp(member: Member): Unit = println(s"${member.address} is already up")
 }

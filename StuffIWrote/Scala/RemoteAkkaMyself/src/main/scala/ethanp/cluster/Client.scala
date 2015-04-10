@@ -20,10 +20,13 @@ class Client extends Actor {
   override def postStop(): Unit = cluster.unsubscribe(self)
   var servers = IndexedSeq.empty[ActorRef]
   var jobCounter = 0
+  var myID = -1
 
   override def receive = {
     case job: ChatRequest if servers.isEmpty =>
       sender ! JobFailed("Service unavailable, try again later", job)
+
+    case IDAssignment(id) ⇒ myID = id
 
     case job: ChatRequest =>
       jobCounter += 1
@@ -44,11 +47,8 @@ class Client extends Actor {
 
 object Client {
   def main(args: Array[String]): Unit = {
-    // Override the configuration of the port when specified as program argument
-    val port = if (args.isEmpty) "0" else args(0)
-    val name = "client"
-    val system = Common.clusterSystem(port, name)
-    val client = system.actorOf(Props[Client], name = name)
+    val system = Common.clusterSystem("client")
+    val client = system.actorOf(Props[Client], name = "client")
 
     val counter = new AtomicInteger
     import system.dispatcher

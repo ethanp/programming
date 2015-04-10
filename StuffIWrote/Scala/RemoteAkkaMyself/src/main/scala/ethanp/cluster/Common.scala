@@ -8,6 +8,7 @@ import com.typesafe.config.ConfigFactory
  * 4/10/15
  */
 object Common {
+    def clusterSystem(role: String) = clusterSystem("0", role)
     def clusterSystem(port: String, role: String) = {
         val config = ConfigFactory.parseString(s"akka.remote.netty.tcp.port=$port").
           withFallback(ConfigFactory.parseString(s"akka.cluster.roles = [$role]")).

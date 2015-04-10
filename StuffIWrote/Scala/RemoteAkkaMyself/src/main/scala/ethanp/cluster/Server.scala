@@ -9,17 +9,16 @@ import akka.cluster.{Cluster, Member, MemberStatus}
  * 4/9/15
  */
 object Server {
-    val name = "server"
-    def main(args: Array[String]) = {
-        val port: String = if (args.isEmpty) "0" else args(0)
-        Common.clusterSystem(port, name).actorOf(Props[Server], name = name)
-    }
+    def main(args: Array[String]) =
+        Common.clusterSystem("server").actorOf(Props[Server], name = "server")
 }
 
 /**
  * based on the sample Cluster code from the Akka Activator
  */
 class Server extends Actor with ActorLogging {
+
+    var myID = -1
 
     /* O.G: "get the Cluster owning the ActorSystem that this actor belongs to"
      * E.P: ...by contacting the "seed nodes" spec'd in the config (repeatedly until one responds).
@@ -34,8 +33,11 @@ class Server extends Actor with ActorLogging {
 
     override def postStop(): Unit = cluster.unsubscribe(self)
 
+
     def receive = {
         case ChatRequest(text) => sender ! ChatResult(text.toUpperCase)
+
+        case IDAssignment(id) ⇒ myID = id
 
         // snapshot of the full cluster state (e.g. membership)
         // sent to the subscriber as their first message
