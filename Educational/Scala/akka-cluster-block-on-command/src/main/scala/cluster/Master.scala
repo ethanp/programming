@@ -56,10 +56,6 @@ object Master extends App {
 
     /* THE COMMAND LINE INTERFACE */
     val sc = new Scanner(System.in)
-    new Thread {
-        if (sc hasNextLine) handleNext
-        else System exit 0
-    }
 
     /**
      * we only handle one line at a time,
