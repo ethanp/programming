@@ -20,5 +20,5 @@ class Server extends Actor with ActorLogging {
 }
 
 object Server {
-    def main(args: Array[String]) = ClusterUtil joinClusterAs "server"
+    def main(args: Array[String]): Unit = ClusterUtil joinClusterAs "server"
 }

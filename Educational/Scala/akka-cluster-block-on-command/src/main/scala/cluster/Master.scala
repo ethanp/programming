@@ -6,12 +6,7 @@ import java.util.Scanner
 import akka.actor._
 import akka.cluster.ClusterEvent._
 import akka.cluster.{Cluster, Member}
-import akka.util.Timeout
 import cluster.ClusterUtil.{NodeID, getPath, getSelection}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent._
-import scala.concurrent.duration._
 
 /**
  * Ethan Petuchowski
@@ -28,21 +23,19 @@ object Master extends App {
      * Create a new Client Actor (inside this process) that will join the macro-cluster.
      * It won't know it's console-ID yet, we'll tell it that once it joins the cluster.
      */
-    def createClient(cid: NodeID, sid: NodeID): Future[Boolean] = {
+    def createClient(cid: NodeID, sid: NodeID) {
         clientID = cid
         serverID = sid
         Client.main(Array.empty)
-        Future(true)
     }
 
     /**
      * Create a new Server Actor (inside this process) that will join the macro-cluster.
      * It won't know it's console-ID yet, we'll tell it that once it joins the cluster.
      */
-    def createServer(sid: NodeID): Future[Boolean] = {
+    def createServer(sid: NodeID) {
         serverID = sid
         Server.main(Array.empty)
-        Future(true) // TODO I want this to return a future that I have to complete later
     }
 
     /**
@@ -77,8 +70,6 @@ object Master extends App {
         println("handling next")
         handle(sc nextLine)
     }
-
-    implicit val timeout = Timeout(30 seconds)
 
     /**
      * Sends command-line commands to the Master Actor as messages.
@@ -147,6 +138,7 @@ class Master extends Actor with ActorLogging {
 
             case "master" ⇒ log.info("ignoring Master MemberUp")
         }
+        Master.handleNext
     }
 
     def remove(m: Member) { members = members filterNot { case (k, v) ⇒ m == v } }
