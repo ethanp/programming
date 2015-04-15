@@ -13,6 +13,9 @@
 		AA074A071ADDD84B00690D08 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA074A061ADDD84B00690D08 /* Images.xcassets */; };
 		AA074A0A1ADDD84B00690D08 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA074A081ADDD84B00690D08 /* LaunchScreen.xib */; };
 		AA074A161ADDD84B00690D08 /* HIIMTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA074A151ADDD84B00690D08 /* HIIMTests.swift */; };
+		AA074A201ADDDF4F00690D08 /* SessionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA074A1F1ADDDF4F00690D08 /* SessionModel.swift */; };
+		AA074A221ADDEF4C00690D08 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AA074A211ADDEF4C00690D08 /* AVFoundation.framework */; };
+		AA074A251ADDF2A200690D08 /* Bell.m4a in Resources */ = {isa = PBXBuildFile; fileRef = AA074A241ADDF2A200690D08 /* Bell.m4a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +39,9 @@
 		AA074A0F1ADDD84B00690D08 /* HIIMTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = HIIMTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA074A141ADDD84B00690D08 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		AA074A151ADDD84B00690D08 /* HIIMTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HIIMTests.swift; sourceTree = "<group>"; };
+		AA074A1F1ADDDF4F00690D08 /* SessionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionModel.swift; sourceTree = "<group>"; };
+		AA074A211ADDEF4C00690D08 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		AA074A241ADDF2A200690D08 /* Bell.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Bell.m4a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AA074A221ADDEF4C00690D08 /* AVFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -59,6 +66,7 @@
 		AA0749F11ADDD84B00690D08 = {
 			isa = PBXGroup;
 			children = (
+				AA074A211ADDEF4C00690D08 /* AVFoundation.framework */,
 				AA0749FC1ADDD84B00690D08 /* HIIM */,
 				AA074A121ADDD84B00690D08 /* HIIMTests */,
 				AA0749FB1ADDD84B00690D08 /* Products */,
@@ -78,7 +86,9 @@
 			isa = PBXGroup;
 			children = (
 				AA0749FF1ADDD84B00690D08 /* AppDelegate.swift */,
+				AA074A241ADDF2A200690D08 /* Bell.m4a */,
 				AA074A011ADDD84B00690D08 /* ViewController.swift */,
+				AA074A1F1ADDDF4F00690D08 /* SessionModel.swift */,
 				AA074A031ADDD84B00690D08 /* Main.storyboard */,
 				AA074A061ADDD84B00690D08 /* Images.xcassets */,
 				AA074A081ADDD84B00690D08 /* LaunchScreen.xib */,
@@ -195,6 +205,7 @@
 				AA074A051ADDD84B00690D08 /* Main.storyboard in Resources */,
 				AA074A0A1ADDD84B00690D08 /* LaunchScreen.xib in Resources */,
 				AA074A071ADDD84B00690D08 /* Images.xcassets in Resources */,
+				AA074A251ADDF2A200690D08 /* Bell.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,6 +225,7 @@
 			files = (
 				AA074A021ADDD84B00690D08 /* ViewController.swift in Sources */,
 				AA074A001ADDD84B00690D08 /* AppDelegate.swift in Sources */,
+				AA074A201ADDDF4F00690D08 /* SessionModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,6 +355,7 @@
 				INFOPLIST_FILE = HIIM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -353,6 +366,7 @@
 				INFOPLIST_FILE = HIIM/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
