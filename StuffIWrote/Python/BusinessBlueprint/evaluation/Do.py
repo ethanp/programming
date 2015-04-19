@@ -26,7 +26,7 @@ class Technology(Component):
         if self.CompFunc() > 0:
             return float(self.CompFuncReg(c)) / self.CompFunc()
         else:
-            return 0
+            return 1
 
     def CompFuncReg(self,c):
         return len(self.functions.intersection(c.functions))
@@ -38,7 +38,7 @@ class Technology(Component):
         if self.CompData() > 0:
             return float(self.CompDataReg(c)) / self.CompData()
         else:
-            return 0
+            return 1
 
     def CompDataReg(self,c):
         return len(self.datas.intersection(c.datas))
@@ -106,8 +106,6 @@ class DataSheet(object):
             for line in everything.split('\r'):
                 items = line.split(',')  # csv
                 a.val, b.val, c.val = items[0], items[1], items[2]
-                # print 'a = %s, b = %s, c = %s' % (a.val, b.val, c.val)
-
                 if a.do():
                     self.bb.components.append(a.comp)
                     a = ParseStruct()
@@ -124,18 +122,32 @@ class DataSheet(object):
 
 bb, db1, db2 = DataSheet().import_from_csv()
 
-print 'For DB1:'
-for tech in db1.components:
-    for d in bb.components:
-        tech.coeffsForComps(d)
-        print 'CompFuncCoeff(%s,%s) = %s' % (tech.title, d.title, tech.CompFuncCoeff(d))
-        print 'CompDataCoeff(%s,%s) = %s' % (tech.title, d.title, tech.CompDataCoeff(d))
-    print 'CompFuncBoundaryError(%s) = %s' % (tech.title, tech.CompFuncBdErr())
+def printDB(db):
+    titles = map(lambda x: x.title, bb.components)
+    print 'CompFuncCoeffs:'
+    print ',' + ','.join(titles)
+    for tech in db.components:
+        func = []
+        for d in bb.components:
+            tech.coeffsForComps(d)
+            func.append(tech.CompFuncCoeff(d))
+        print (tech.title + ',') + (','.join(map(str, func)))
 
+    print 'CompDataCoeffs:'
+    print ',' + ','.join(titles)
+    for tech in db.components:
+        data = []
+        for d in bb.components:
+            data.append(tech.CompDataCoeff(d))
+        print (tech.title + ',') + (','.join(map(str, data)))
+
+    for tech in db.components:
+        print 'CompFuncBoundaryError(%s) = %s' % (
+            tech.title, tech.CompFuncBdErr())
+
+print 'For DB1:'
+printDB(db1)
+
+print
 print 'For DB2:'
-for tech in db2.components:
-    for d in bb.components:
-        tech.coeffsForComps(d)
-        print 'CompFuncCoeff(%s,%s) = %s' % (tech.title, d.title, tech.CompFuncCoeff(d))
-        print 'CompDataCoeff(%s,%s) = %s' % (tech.title, d.title, tech.CompDataCoeff(d))
-    print 'CompFuncBoundaryError(%s) = %s' % (tech.title, tech.CompFuncBdErr())
+printDB(db2)
