@@ -4,31 +4,47 @@ Ethan Petuchowski
 Do.py
 '''
 
-class Technology(object):
+class Component(object):
     def __init__(self):
         self.title = ''
-        self.functions = []
-        self.datas = []
+        self.functions = set()
+        self.datas = set()
 
-class Component(Technology):
+class Technology(Component):
+    def __init__(self):
+        super(Technology, self).__init__()
+        self.coeffs = []
 
-    def CompFuncCoeff(self,t):
-        pass
+    def coeffsForComps(self, comp):
+        self.coeffs.append(self.CompFuncCoeff(comp))
 
-    def CompFuncReg(self,t):
-        pass
+    def CompFuncBdErr(self):
+        m = max(self.coeffs)
+        return (1 - m) + (sum(self.coeffs) - m)
+
+    def CompFuncCoeff(self,c):
+        if self.CompFunc() > 0:
+            return float(self.CompFuncReg(c)) / self.CompFunc()
+        else:
+            return 0
+
+    def CompFuncReg(self,c):
+        return len(self.functions.intersection(c.functions))
 
     def CompFunc(self):
-        pass
+        return len(self.functions)
 
-    def CompDataCoeff(self,t):
-        pass
+    def CompDataCoeff(self,c):
+        if self.CompData() > 0:
+            return float(self.CompDataReg(c)) / self.CompData()
+        else:
+            return 0
 
-    def CompDataReg(self,t):
-        pass
+    def CompDataReg(self,c):
+        return len(self.datas.intersection(c.datas))
 
     def CompData(self):
-        pass
+        return len(self.datas)
 
 class Blueprint(object):
     def __init__(self):
@@ -61,13 +77,13 @@ class ParseStruct(object):
             if self.val.strip().lower() == 'data':
                 self.state = DATA
             elif not_blank(self.val):
-                self.comp.functions.append(self.val)
+                self.comp.functions.add(self.val)
             else: # (is blank)
                 pass
 
         else: # state == DATA
             if not_blank(self.val):
-                self.comp.datas.append(self.val)
+                self.comp.datas.add(self.val)
             else: # (is blank)
                 return True
 
@@ -90,13 +106,16 @@ class DataSheet(object):
             for line in everything.split('\r'):
                 items = line.split(',')  # csv
                 a.val, b.val, c.val = items[0], items[1], items[2]
-                print 'a = %s, b = %s, c = %s' % (a.val, b.val, c.val)
+                # print 'a = %s, b = %s, c = %s' % (a.val, b.val, c.val)
+
                 if a.do():
                     self.bb.components.append(a.comp)
                     a = ParseStruct()
+
                 if b.do():
                     self.db1.components.append(b.comp)
                     b = ParseStruct(True)
+
                 if c.do():
                     self.db2.components.append(c.comp)
                     c = ParseStruct(True)
@@ -104,3 +123,19 @@ class DataSheet(object):
         return self.bb, self.db1, self.db2
 
 bb, db1, db2 = DataSheet().import_from_csv()
+
+print 'For DB1:'
+for tech in db1.components:
+    for d in bb.components:
+        tech.coeffsForComps(d)
+        print 'CompFuncCoeff(%s,%s) = %s' % (tech.title, d.title, tech.CompFuncCoeff(d))
+        print 'CompDataCoeff(%s,%s) = %s' % (tech.title, d.title, tech.CompDataCoeff(d))
+    print 'CompFuncBoundaryError(%s) = %s' % (tech.title, tech.CompFuncBdErr())
+
+print 'For DB2:'
+for tech in db2.components:
+    for d in bb.components:
+        tech.coeffsForComps(d)
+        print 'CompFuncCoeff(%s,%s) = %s' % (tech.title, d.title, tech.CompFuncCoeff(d))
+        print 'CompDataCoeff(%s,%s) = %s' % (tech.title, d.title, tech.CompDataCoeff(d))
+    print 'CompFuncBoundaryError(%s) = %s' % (tech.title, tech.CompFuncBdErr())
