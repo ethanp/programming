@@ -122,6 +122,7 @@ class Component(object):
         return [i for f in self.functions for i in f.inputs]
 
     def outputs(self):
+        """ Scala vrsn: functions flatMap (_.outputs) """
         return [o for f in self.functions for o in f.outputs]
 
 

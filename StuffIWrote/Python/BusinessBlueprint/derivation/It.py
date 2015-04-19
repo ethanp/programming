@@ -54,7 +54,7 @@ def coupling_and_cohesion(data):
                 for o in data.outputs():
                     if inp == o and o.component() != comp:
                         p = True
-                        events_in+=1
+                        events_in += 1
                         deps.add(o.component())
 
             # + outputs sent to another component
@@ -62,7 +62,7 @@ def coupling_and_cohesion(data):
                 for i in data.inputs():
                     if outp == i and i.component() != comp:
                         p = True
-                        events_out+=1
+                        events_out += 1
                         deps.add(i.component())
 
             if not p:
