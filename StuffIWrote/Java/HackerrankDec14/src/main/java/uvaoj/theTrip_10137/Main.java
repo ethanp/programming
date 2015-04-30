@@ -20,30 +20,18 @@ public class Main {
         }
     }
 
-    int[] given;
     public Main(int[] arr) {
-        given = arr;
-        int avg = getAvg();
-        int ctrU = 0;
-        int ctrD = 0;
-        for (int e : given) {
-            if (e > avg) {
-                ctrU += e - avg;
-            }
-
-            //bug -- I had neglected this piece, then googled it to realize.
-            else if (e < avg) {
-                ctrD += avg - e;
-            }
-            //\bug
+        int avg = getAvg(arr), ctrU = 0, ctrD = 0;
+        for (int e : arr) {
+            if (e > avg) ctrU += e-avg;
+            else ctrD += avg-e; //bug: I had neglected this line, then googled it to realize.
         }
-        int ctr = Math.min(ctrU, ctrD);
-        System.out.printf("$%d.%02d\n", ctr/100, ctr%100);
+        int res = Math.min(ctrU, ctrD);
+        System.out.printf("$%d.%02d\n", res/100, res%100);
     }
 
-    private int getAvg() {
-        int ctr = 0;
-        for (int e : given) ctr += e;
-        return (int)Math.round((double)ctr/given.length);
+    private int getAvg(int[] arr) {
+        int sum = 0; for (int e : arr) sum += e;
+        return (int)Math.round((double)sum/arr.length);
     }
 }
