@@ -1,0 +1,15 @@
+table, th, td {
+    border-collapse: collapse;
+    border: 4px solid black;
+}
+td {
+    height: 30px;
+    width:  30px;
+    text-align: center;
+}
+.redone {
+    background-color: red;
+}
+.food {
+    background-color: blue;
+}

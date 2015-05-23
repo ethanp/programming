@@ -6,20 +6,17 @@ stackoverflow.com/questions/231767/the-python-yield-keyword-explained
 # Note that this is a Method, Not a Class
 def createGenerator():
     mylist = range(3)
-    for i in mylist :
+    for i in mylist:
         yield i*i
-        
-mygenerator = createGenerator()
-print(mygenerator)
 
-    
-for j in mygenerator:
-    print(j)
+mygenerator = createGenerator()
+print mygenerator
+
+for j in mygenerator: print j
 
 # The generator has already been run-through once,
 #    so it no longer works
-for i in mygenerator:
-    print(i)
+for i in mygenerator: print i
 
 '''
 Python in a nutshell Generators
@@ -34,8 +31,7 @@ def updown(N):
 print '\n', updown(3), '\n'
 for i in updown(3): print i,
 
-print
-print
+print; print
 
 print sum(x * x for x in range(10))
 
