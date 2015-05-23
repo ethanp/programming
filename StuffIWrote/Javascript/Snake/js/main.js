@@ -2,7 +2,7 @@ var gridSize = 10;
 var gameOver = false;
 function randomLoc() {
     var row = Math.floor(Math.random() * gridSize);
-    var col = Math.floor( Math.random() * gridSize);
+    var col = Math.floor(Math.random() * gridSize);
     return [row, col];
 }
 function placeFood() {
@@ -18,8 +18,7 @@ function placeFood() {
 function locInSnake(loc) {
     for (var i=0; i<snakeLen; i++) {
         if (snakeLocs[i][0] == loc[0] &&
-            snakeLocs[i][1] == loc[1])
-        {
+            snakeLocs[i][1] == loc[1]) {
             return true;
         }
     }
