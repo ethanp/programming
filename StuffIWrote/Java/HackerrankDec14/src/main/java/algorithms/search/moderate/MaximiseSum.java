@@ -19,6 +19,8 @@ import java.util.Scanner;
  *      http://www.quora.com/What-is-the-logic-used-in-the-HackerRank-Maximise-Sum-problem
  *
  * But frankly I don't understand it.
+ *
+ * I gave up on it for now
  */
 public class MaximiseSum {
     static Scanner sc = new Scanner(System.in);
