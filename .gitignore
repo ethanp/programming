@@ -149,3 +149,6 @@ Educational/Scala/akka-sample-remote-scala/.sbtserver
 activator
 activator.bat
 Educational/Scala/akka-sample-cluster-scala/sigar
+*.xcworkspacedata
+*.xccheckout
+xcschememanagement.plist
