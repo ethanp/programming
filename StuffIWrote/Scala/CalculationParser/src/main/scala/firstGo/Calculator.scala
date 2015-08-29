@@ -33,6 +33,8 @@ object Calculator extends Interpreter[Double, CalculatorTokenSet] {
             case Minus.repr => Minus
             case Times.repr => Times
             case Divide.repr => Divide
+            case LeftParen.repr => LeftParen
+            case RightParen.repr => RightParen
             case x => Number(x.toDouble)
         }
     }
@@ -68,7 +70,9 @@ trait Interpreter[Output, Token <: TokenSet] {
 
     def evaluate(input: String): Output = {
         val tokens: Seq[Token] = lexicallyAnalyze(input)
+        println(s"tokens: $tokens")
         val ast: ASTNode[Token] = parser(tokens)
+        println(s"ast: $ast")
         if (!isSemanticallyCorrect(ast)) throw new IllegalStateException()
         /* My parse tree is the AST, so I don't need a code generator */
         interpret(ast)
@@ -107,4 +111,7 @@ case object RightParen extends Paren {
 case class ASTNode[T <: TokenSet] (
     value: T,
     children: Seq[ASTNode[T]]
-)
+) {
+    override def toString: String = print(new StringBuilder)
+    def print(stringBuilder: StringBuilder): String = ???
+}
