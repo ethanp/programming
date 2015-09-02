@@ -9,42 +9,61 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    // MARK: - Utilities
+    
+    func resetTimer(var timer: NSTimer, toSeconds: NSTimeInterval, selector: Selector) -> NSTimer {
+        timer.invalidate()
+        timer = NSTimer.scheduledTimerWithTimeInterval(toSeconds, target: self, selector: selector, userInfo: nil, repeats: true)
+        return timer
+    }
+    func setTitleColor(color: UIColor) {
+        left.setTitleColor(color, forState: UIControlState.Normal)
+    }
+    func increment(amount: Int) {
+        secTodo += amount
+        displaySecs()
+    }
+    func countUp() { increment(1) }
+    func countDown() { increment(-1) }
+    
+    // MARK: - Interface Elements
 
     @IBOutlet weak var stepper: UIStepper!
     @IBOutlet weak var left: UIButton!
     @IBOutlet weak var right: UILabel!
 
+    
+    // MARK: - Global Variables - (heh.)
+    
     var upTimer = NSTimer()
     var downTimer = NSTimer()
     var secTodo = 0
     var tickingDown = false
     let ONE_SECOND = 1.0
     
+    
+    // MARK: - Main Logic
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         stepper.value = 1
-        upTimer = NSTimer.scheduledTimerWithTimeInterval(stepper.value, target: self, selector: "countUp", userInfo: nil, repeats: true)
-        displaySecs()
-    }
-    
-    func countUp() {
-        secTodo++
-        displaySecs()
-    }
-    
-    func countDown() {
-        secTodo--
+        upTimer = resetTimer(upTimer, toSeconds: stepper.value, selector: "countUp")
         displaySecs()
     }
     
     func displaySecs() {
-        
         if !tickingDown {
-            left.setTitleColor(secTodo > 0 ? UIColor.redColor() : UIColor.greenColor(), forState: UIControlState.Normal)
+            setTitleColor(secTodo > 0 ?
+                  UIColor.redColor()
+                : UIColor.greenColor()
+            )
         }
         let prefix = secTodo < 0 ? "-" : ""
-        let absSec = abs(secTodo)
-        var secString = String(format: "\(prefix)%d:%02d", arguments: [absSec/60, absSec%60])
+        var secString = String(
+            format: "\(prefix)%d:%02d",
+            arguments: [abs(secTodo)/60, abs(secTodo)%60]
+        )
         left.setTitle(secString, forState: UIControlState.Normal)
     }
 
@@ -57,15 +76,14 @@ class ViewController: UIViewController {
             minutes = "Minute"
         }
         right.text = "\(Int(sender.value).description) \(minutes)"
-        upTimer.invalidate()
-        upTimer = NSTimer.scheduledTimerWithTimeInterval(sender.value, target: self, selector: "countUp", userInfo: nil, repeats: true)
+        upTimer = resetTimer(upTimer, toSeconds: sender.value, selector: "countUp")
     }
+    
     @IBAction func buttonPressed(sender: UIButton) {
         tickingDown = !tickingDown
         if tickingDown {
-            sender.setTitleColor(UIColor.blackColor(), forState: UIControlState.Normal)
-            downTimer.invalidate()
-            downTimer = NSTimer.scheduledTimerWithTimeInterval(ONE_SECOND, target: self, selector: "countDown", userInfo: nil, repeats: true)
+            setTitleColor(UIColor.blackColor())
+            downTimer = resetTimer(downTimer, toSeconds: ONE_SECOND, selector: "countDown")
         }
         else {
             downTimer.invalidate()
