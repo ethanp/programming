@@ -8,7 +8,7 @@ import java.util.Stack;
 /**
  * Ethan Petuchowski 8/29/15
  *
- * I came up with an algorithm on my whiteboard.
+ * I came up with an (efficient[!]) algorithm on my whiteboard.
  * I'm not especially in the mood to describe it in words up here at the moment.
  *
  * Clearly this is not great code, but I'm digging the algorithm....
