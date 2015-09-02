@@ -1,0 +1,424 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		AA16D3DA1B96E407003B90DA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA16D3D91B96E407003B90DA /* AppDelegate.swift */; };
+		AA16D3DC1B96E407003B90DA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA16D3DB1B96E407003B90DA /* ViewController.swift */; };
+		AA16D3DF1B96E407003B90DA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA16D3DD1B96E407003B90DA /* Main.storyboard */; };
+		AA16D3E11B96E408003B90DA /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AA16D3E01B96E408003B90DA /* Images.xcassets */; };
+		AA16D3E41B96E408003B90DA /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = AA16D3E21B96E408003B90DA /* LaunchScreen.xib */; };
+		AA16D3F01B96E408003B90DA /* PersistentTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA16D3EF1B96E408003B90DA /* PersistentTimerTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		AA16D3EA1B96E408003B90DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AA16D3CC1B96E407003B90DA /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AA16D3D31B96E407003B90DA;
+			remoteInfo = PersistentTimer;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		AA16D3D41B96E407003B90DA /* PersistentTimer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PersistentTimer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA16D3D81B96E407003B90DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA16D3D91B96E407003B90DA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		AA16D3DB1B96E407003B90DA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		AA16D3DE1B96E407003B90DA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		AA16D3E01B96E408003B90DA /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		AA16D3E31B96E408003B90DA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		AA16D3E91B96E408003B90DA /* PersistentTimerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PersistentTimerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA16D3EE1B96E408003B90DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AA16D3EF1B96E408003B90DA /* PersistentTimerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentTimerTests.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		AA16D3D11B96E407003B90DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA16D3E61B96E408003B90DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		AA16D3CB1B96E407003B90DA = {
+			isa = PBXGroup;
+			children = (
+				AA16D3D61B96E407003B90DA /* PersistentTimer */,
+				AA16D3EC1B96E408003B90DA /* PersistentTimerTests */,
+				AA16D3D51B96E407003B90DA /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		AA16D3D51B96E407003B90DA /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				AA16D3D41B96E407003B90DA /* PersistentTimer.app */,
+				AA16D3E91B96E408003B90DA /* PersistentTimerTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		AA16D3D61B96E407003B90DA /* PersistentTimer */ = {
+			isa = PBXGroup;
+			children = (
+				AA16D3D91B96E407003B90DA /* AppDelegate.swift */,
+				AA16D3DB1B96E407003B90DA /* ViewController.swift */,
+				AA16D3DD1B96E407003B90DA /* Main.storyboard */,
+				AA16D3E01B96E408003B90DA /* Images.xcassets */,
+				AA16D3E21B96E408003B90DA /* LaunchScreen.xib */,
+				AA16D3D71B96E407003B90DA /* Supporting Files */,
+			);
+			path = PersistentTimer;
+			sourceTree = "<group>";
+		};
+		AA16D3D71B96E407003B90DA /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AA16D3D81B96E407003B90DA /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		AA16D3EC1B96E408003B90DA /* PersistentTimerTests */ = {
+			isa = PBXGroup;
+			children = (
+				AA16D3EF1B96E408003B90DA /* PersistentTimerTests.swift */,
+				AA16D3ED1B96E408003B90DA /* Supporting Files */,
+			);
+			path = PersistentTimerTests;
+			sourceTree = "<group>";
+		};
+		AA16D3ED1B96E408003B90DA /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				AA16D3EE1B96E408003B90DA /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		AA16D3D31B96E407003B90DA /* PersistentTimer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA16D3F31B96E408003B90DA /* Build configuration list for PBXNativeTarget "PersistentTimer" */;
+			buildPhases = (
+				AA16D3D01B96E407003B90DA /* Sources */,
+				AA16D3D11B96E407003B90DA /* Frameworks */,
+				AA16D3D21B96E407003B90DA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PersistentTimer;
+			productName = PersistentTimer;
+			productReference = AA16D3D41B96E407003B90DA /* PersistentTimer.app */;
+			productType = "com.apple.product-type.application";
+		};
+		AA16D3E81B96E408003B90DA /* PersistentTimerTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = AA16D3F61B96E408003B90DA /* Build configuration list for PBXNativeTarget "PersistentTimerTests" */;
+			buildPhases = (
+				AA16D3E51B96E408003B90DA /* Sources */,
+				AA16D3E61B96E408003B90DA /* Frameworks */,
+				AA16D3E71B96E408003B90DA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				AA16D3EB1B96E408003B90DA /* PBXTargetDependency */,
+			);
+			name = PersistentTimerTests;
+			productName = PersistentTimerTests;
+			productReference = AA16D3E91B96E408003B90DA /* PersistentTimerTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AA16D3CC1B96E407003B90DA /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0640;
+				ORGANIZATIONNAME = Ethanp;
+				TargetAttributes = {
+					AA16D3D31B96E407003B90DA = {
+						CreatedOnToolsVersion = 6.4;
+					};
+					AA16D3E81B96E408003B90DA = {
+						CreatedOnToolsVersion = 6.4;
+						TestTargetID = AA16D3D31B96E407003B90DA;
+					};
+				};
+			};
+			buildConfigurationList = AA16D3CF1B96E407003B90DA /* Build configuration list for PBXProject "PersistentTimer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = AA16D3CB1B96E407003B90DA;
+			productRefGroup = AA16D3D51B96E407003B90DA /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				AA16D3D31B96E407003B90DA /* PersistentTimer */,
+				AA16D3E81B96E408003B90DA /* PersistentTimerTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		AA16D3D21B96E407003B90DA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA16D3DF1B96E407003B90DA /* Main.storyboard in Resources */,
+				AA16D3E41B96E408003B90DA /* LaunchScreen.xib in Resources */,
+				AA16D3E11B96E408003B90DA /* Images.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA16D3E71B96E408003B90DA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		AA16D3D01B96E407003B90DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA16D3DC1B96E407003B90DA /* ViewController.swift in Sources */,
+				AA16D3DA1B96E407003B90DA /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		AA16D3E51B96E408003B90DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AA16D3F01B96E408003B90DA /* PersistentTimerTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		AA16D3EB1B96E408003B90DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AA16D3D31B96E407003B90DA /* PersistentTimer */;
+			targetProxy = AA16D3EA1B96E408003B90DA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		AA16D3DD1B96E407003B90DA /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AA16D3DE1B96E407003B90DA /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		AA16D3E21B96E408003B90DA /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				AA16D3E31B96E408003B90DA /* Base */,
+			);
+			name = LaunchScreen.xib;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		AA16D3F11B96E408003B90DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		AA16D3F21B96E408003B90DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		AA16D3F41B96E408003B90DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = PersistentTimer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		AA16D3F51B96E408003B90DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				INFOPLIST_FILE = PersistentTimer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+		AA16D3F71B96E408003B90DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = PersistentTimerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PersistentTimer.app/PersistentTimer";
+			};
+			name = Debug;
+		};
+		AA16D3F81B96E408003B90DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = PersistentTimerTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/PersistentTimer.app/PersistentTimer";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		AA16D3CF1B96E407003B90DA /* Build configuration list for PBXProject "PersistentTimer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA16D3F11B96E408003B90DA /* Debug */,
+				AA16D3F21B96E408003B90DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		AA16D3F31B96E408003B90DA /* Build configuration list for PBXNativeTarget "PersistentTimer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA16D3F41B96E408003B90DA /* Debug */,
+				AA16D3F51B96E408003B90DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		AA16D3F61B96E408003B90DA /* Build configuration list for PBXNativeTarget "PersistentTimerTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				AA16D3F71B96E408003B90DA /* Debug */,
+				AA16D3F81B96E408003B90DA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AA16D3CC1B96E407003B90DA /* Project object */;
+}
