@@ -153,3 +153,4 @@ Educational/Scala/akka-sample-cluster-scala/sigar
 *.xccheckout
 xcschememanagement.plist
 Educational/Swift/PersistentTimer/PersistentTimer.xcodeproj
+Educational/NodeJS/Trial/node_modules

@@ -9,9 +9,9 @@
 import UIKit
 
 class ViewController: UIViewController {
-    
+
     // MARK: - Utilities
-    
+
     func resetTimer(var timer: NSTimer, toSeconds: NSTimeInterval, selector: Selector) -> NSTimer {
         timer.invalidate()
         timer = NSTimer.scheduledTimerWithTimeInterval(toSeconds, target: self, selector: selector, userInfo: nil, repeats: true)
@@ -26,32 +26,32 @@ class ViewController: UIViewController {
     }
     func countUp() { increment(1) }
     func countDown() { increment(-1) }
-    
+
     // MARK: - Interface Elements
 
     @IBOutlet weak var stepper: UIStepper!
     @IBOutlet weak var left: UIButton!
     @IBOutlet weak var right: UILabel!
 
-    
+
     // MARK: - Global Variables - (heh.)
-    
+
     var upTimer = NSTimer()
     var downTimer = NSTimer()
     var secTodo = 0
     var tickingDown = false
     let ONE_SECOND = 1.0
-    
-    
+
+
     // MARK: - Main Logic
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         stepper.value = 1
         upTimer = resetTimer(upTimer, toSeconds: stepper.value, selector: "countUp")
         displaySecs()
     }
-    
+
     func displaySecs() {
         if !tickingDown {
             setTitleColor(secTodo > 0 ?
@@ -71,23 +71,18 @@ class ViewController: UIViewController {
         if sender.value < 1 {
             sender.value = 1
         }
-        var minutes = "Minutes"
-        if sender.value == 1 {
-            minutes = "Minute"
-        }
+        let minutes = sender.value > 1 ? "Minutes" : "Minutes"
         right.text = "\(Int(sender.value).description) \(minutes)"
         upTimer = resetTimer(upTimer, toSeconds: sender.value, selector: "countUp")
     }
-    
+
     @IBAction func buttonPressed(sender: UIButton) {
         tickingDown = !tickingDown
         if tickingDown {
             setTitleColor(UIColor.blackColor())
             downTimer = resetTimer(downTimer, toSeconds: ONE_SECOND, selector: "countDown")
         }
-        else {
-            downTimer.invalidate()
-        }
+        else downTimer.invalidate()
     }
 }
 
