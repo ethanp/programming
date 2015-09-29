@@ -1,6 +1,6 @@
 package server
 
-import java.io.{InputStreamReader, BufferedReader}
+import java.io.{OutputStreamWriter, BufferedWriter, InputStreamReader, BufferedReader}
 import java.net.{Socket, ServerSocket}
 
 import scala.annotation.tailrec
@@ -8,9 +8,12 @@ import scala.annotation.tailrec
 /**
  * Ethan Petuchowski
  * 9/29/15
+ *
+ * I've been reading a bunch about HTTP,
+ * so it's about time to implement at least a piece of it...
  */
 object Basic {
-    def main(args: Array[String]) = new Basic(0)
+    def main(args: Array[String]): Unit = new Basic(0)
 }
 
 class Basic(listenPort: Int) {
@@ -25,18 +28,20 @@ class Basic(listenPort: Int) {
 
 sealed trait Method
 sealed trait Idempotent
-case object Get extends Method with Idempotent
-case object Head extends Method with Idempotent
+sealed trait HasBody
+case object Get     extends Method with Idempotent
+case object Head    extends Method with Idempotent
 case object Options extends Method with Idempotent
-case object Put extends Method with Idempotent
-case object Delete extends Method with Idempotent
-case object Trace extends Method with Idempotent
-case object Post extends Method
+case object Put     extends Method with Idempotent
+case object Delete  extends Method with Idempotent
+case object Trace   extends Method with Idempotent
+case object Post    extends Method with HasBody
 
 class Connection(conn: Socket) {
     val in = conn.getInputStream
     val out = conn.getOutputStream
-    var inRd = new BufferedReader(new InputStreamReader(in))
+    val inRd = new BufferedReader(new InputStreamReader(in))
+    val outPt = new BufferedWriter(new OutputStreamWriter(out))
 
     def parseMethod(requestLine: String): Method = {
         requestLine.takeWhile(_ != ' ') match {
@@ -55,14 +60,28 @@ class Connection(conn: Socket) {
         val method = parseMethod(requestLine)
         println(s"method: $method")
         val headers: Map[String, String] = readHeaders
-        method match {
-            case Post =>
-                val body = readBody
-                println(s"requestLine: $requestLine\nheaders: $headers\nbody: $body")
-            case _ =>
-                println(s"requestLine: $requestLine\nheaders: $headers")
-        }
-        out.write(1000)
+        val body = if (method.isInstanceOf[HasBody]) readBody else ""
+        println(s"requestLine: $requestLine\nheaders: $headers\nbody: $body")
+        val outString =
+           s"""
+              |HTTP/1.1 200 OK
+              |Content-Type: text/html; charset=UTF-8
+              |Accept-Ranges: bytes
+              |Connection: close
+              |
+              |<html>
+              |<head>
+              |  <title>An Example Page</title>
+              |</head>
+              |<body>
+              |  Hello World, this is a very simple HTML document.
+              |  ${headers.mkString(", ")}
+              |</body>
+              |</html>
+            """.stripMargin
+        outPt.write(outString)
+        outPt.flush()
+        conn.close() // this is to save from having to calculate the "Content-Length"
     }
     def readReqLine: String = inRd.readLine()
     def readHeaders: Map[String, String] = {
