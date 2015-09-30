@@ -13,27 +13,27 @@ import scala.collection.mutable
  * 9/30/15
  */
 class ClientConnection(socket: Socket) extends Actor {
+    override def receive = { case x => println(s"received something?: $x") }
     val readIn = new BufferedReader(new InputStreamReader(socket.getInputStream))
     val writeOut = new PrintStream(socket.getOutputStream)
     def readRequest(): Option[Request] = {
         println("reading request")
+
         val (method, path) = {
             val requestLine = readIn.readLine()
             if (requestLine == null) {
                 context.stop(self)
                 return None
             }
-            val method = requestLine.takeWhile(_ != ' ') match {
-                case x if x equalsIgnoreCase "Get"      => Get
-                case x if x equalsIgnoreCase "Head"     => Head
-                case x if x equalsIgnoreCase "Options"  => Options
-                case x if x equalsIgnoreCase "Put"      => Put
-                case x if x equalsIgnoreCase "Delete"   => Delete
-                case x if x equalsIgnoreCase "Trace"    => Trace
-                case x if x equalsIgnoreCase "Post"     => Post
-            }
-            val path = requestLine.dropWhile(_ != ' ').trim.takeWhile(_ != ' ')
-            method → path
+            val firstWord = requestLine.takeWhile(_ != ' ')
+            val method = Method.parse(firstWord)
+            // \s is whitespace, \S is non-whitespace
+            val pathPattern = """^\S+\s+(\S+)""".r
+            val pathOpt = pathPattern
+                .findFirstMatchIn(requestLine)
+                .map(_.group(1))
+                .getOrElse("/index.html")
+            method → pathOpt
         }
 
         val headers = {
@@ -76,10 +76,10 @@ class ClientConnection(socket: Socket) extends Actor {
         responseHeaders.addPair("Content-Length" → body.length.toString)
         val response = Seq(
             responseStatus,
-            responseHeaders.httpString + CRLF,
+            responseHeaders.httpString,
             body
         ).mkString("", CRLF, CRLF)
-//        println(response)
+        println(response)
         writeOut.print(response)
 
         // TODO maybe not so fast? (consider the effect of sending the Content-Length)
@@ -90,8 +90,6 @@ class ClientConnection(socket: Socket) extends Actor {
     respond(request)
     socket.close() // not sure how to implement persistence yet.
     context.stop(self)
-
-    override def receive = {case x => println(s"received something?: $x")}
 }
 
 object ClientConnection {
