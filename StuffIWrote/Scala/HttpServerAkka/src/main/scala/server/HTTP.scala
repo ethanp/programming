@@ -9,17 +9,11 @@ import scala.collection.mutable
 object HTTP {
 
     val CRLF = "\r\n"
-    
+
     sealed trait Method
     object Method {
-        def parse(str: String): Method = str match {
-            case x if x equalsIgnoreCase "Get"      => Get
-            case x if x equalsIgnoreCase "Head"     => Head
-            case x if x equalsIgnoreCase "Options"  => Options
-            case x if x equalsIgnoreCase "Put"      => Put
-            case x if x equalsIgnoreCase "Delete"   => Delete
-            case x if x equalsIgnoreCase "Trace"    => Trace
-            case x if x equalsIgnoreCase "Post"     => Post
+        def parse(str: String): Method = {
+            Methods.find(_.getClass.getSimpleName.init.equalsIgnoreCase(str)).get
         }
     }
     sealed trait Idempotent
@@ -31,6 +25,7 @@ object HTTP {
     case object Delete extends Method with Idempotent
     case object Trace extends Method with Idempotent
     case object Post extends Method with HasBody
+    val Methods = Seq(Get, Head, Options, Put, Delete, Trace, Post)
 
     class Headers(val headers: mutable.Map[String, String] = mutable.Map.empty[String, String]) {
         def addPair(pair: (String, String)): Unit = {
