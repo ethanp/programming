@@ -12,9 +12,7 @@ object HTTP {
 
     sealed trait Method
     object Method {
-        def parse(str: String): Method = {
-            Methods.find(_.getClass.getSimpleName.init.equalsIgnoreCase(str)).get
-        }
+        def parse(str: String) = Methods.find(_.getClass.getSimpleName.init.equalsIgnoreCase(str)).get
     }
     sealed trait Idempotent
     sealed trait HasBody
