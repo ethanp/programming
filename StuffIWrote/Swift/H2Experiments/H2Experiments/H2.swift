@@ -62,7 +62,7 @@ class HTTP2Tester {
     
     /*** PUBLIC FUNCTIONS ***/
     
-    /** 
+    /**
         Reset iOS's global shared cache of Map[NSURLRequest, NSCachedURLResponse] 
     */
     func resetHttpCache() {
