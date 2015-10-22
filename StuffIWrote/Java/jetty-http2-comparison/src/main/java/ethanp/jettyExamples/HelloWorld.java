@@ -1,4 +1,4 @@
-package ethanp;
+package ethanp.jettyExamples;
 
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
@@ -36,13 +36,37 @@ public class HelloWorld extends AbstractHandler {
         HttpServletRequest request,
         HttpServletResponse response
     ) throws IOException, ServletException {
+
+        /* since we're not deciding what to do based on the `target`, we're going to do
+         * the exact same thing for every page regardless of which path parameter they sent
+         * in their HTTP request.
+         */
+
         System.out.println("target: "+target);
         System.out.println("baseRequest:"+baseRequest.toString());
         System.out.println("request: "+request.toString());
+
+        /* this sets the `Content-Type` HEADER in the HTTP response */
         response.setContentType("text/html; charset=utf-8");
+
+        /* this sets the STATUS CODE in the HTTP response */
         response.setStatus(HttpServletResponse.SC_OK);
+
+        /* this adds the text to the BODY of the HTTP response */
         response.getWriter().println("<h1>Hello World</h1>");
+
+        /* I think this means that if we have this handler in a HandlerList, it will stop
+         * passing the request to sequential handlers in that list because this one did
+         * already handle it.
+         */
         baseRequest.setHandled(true);
+
+        /* The `Date` is automatically added as a header because the default `HttpConfiguration`
+         * does that. And the default `Server` we created, creates a default `ServerConnector`
+         * which creates a default `HttpConnectionFactory`, which creates a default
+         * `HttpConfiguration`.
+         */
+
         System.out.println("\nresponse:");
         System.out.println("==============");
         System.out.println(response.toString());
@@ -51,7 +75,10 @@ public class HelloWorld extends AbstractHandler {
 
     public static void main(String[] args) throws Exception {
         Server server = new Server(8080);
+
+        // if we set no handler, it'll just 404 for everything
         server.setHandler(new HelloWorld());
+
         server.start();
         server.join();
     }
