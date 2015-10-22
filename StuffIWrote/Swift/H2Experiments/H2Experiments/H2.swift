@@ -264,7 +264,6 @@ class HTTP2Tester {
         let semaphore = dispatch_semaphore_create(0)
         
         var duration = Double.infinity
-        
         let starttime = NSDate().timeIntervalSince1970
         
         // this is *calling* the (passed-in) `operationToMeasureBlock`
@@ -291,5 +290,18 @@ class HTTP2Tester {
         }
         
         return duration
+    }
+    
+    // TODO I need to write the data somehow
+    // this is obviously not what I want, but it's some sort of approximation
+    func saveData(response: NSData?) {
+        let path = "thePath"
+        if !NSFileManager.defaultManager().fileExistsAtPath(path) {
+            NSFileManager.defaultManager().createFileAtPath(path, contents: response, attributes: nil)
+            NSLog("file created at \(path)")
+        }
+        let fileHandle = NSFileHandle.init(forWritingAtPath: path)!
+        fileHandle.truncateFileAtOffset(fileHandle.seekToEndOfFile())
+        fileHandle.writeData(response!)
     }
 }
