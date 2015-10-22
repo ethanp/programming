@@ -25,13 +25,7 @@ class ViewController: UIViewController, HTTP2TesterDelegate {
     //
     lazy var dateFormatter: NSDateFormatter = {
         let dateFormatter = NSDateFormatter()
-        
-        // suppress outputting the date *at all*
-        dateFormatter.dateStyle = NSDateFormatterStyle.NoStyle
-        
-        // e.g. “3:30 PM”
-        dateFormatter.timeStyle = NSDateFormatterStyle.ShortStyle
-        
+        dateFormatter.dateFormat = "HH:mm:ss:SSS"
         return dateFormatter
     }(/* these parens are part of the Swift syntax! */)
     
@@ -105,7 +99,7 @@ class ViewController: UIViewController, HTTP2TesterDelegate {
         as the Label on screen, and adding it (with the current time) to the
         TextView on screen.
     */
-    func http2Tester(http2Tester: HTTP2Tester, notifiesAboutEvent msg: String) {
+    func log(http2Tester: HTTP2Tester, msg: String) {
         NSLog(msg)
         
         // do UI work on the applications main_queue
