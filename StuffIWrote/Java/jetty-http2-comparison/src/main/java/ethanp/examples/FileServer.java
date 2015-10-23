@@ -25,7 +25,7 @@ public class FileServer {
         // Being a Jetty Handler, it is suitable for chaining with other handlers.
         ResourceHandler resource_handler = new ResourceHandler();
         resource_handler.setDirectoriesListed(true);
-        resource_handler.setWelcomeFiles(new String[]{ "index.html" });
+        resource_handler.setWelcomeFiles(new String[]{"docroot/index.html"});
         resource_handler.setResourceBase(".");
 
         // Dynamically GZIP compress responses asynchronously

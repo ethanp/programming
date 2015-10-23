@@ -87,7 +87,7 @@ public class Http2EchoServer {
             response.setContentType("text/html");
             try (InputStream in = this.getClass()
                 .getClassLoader()
-                .getResourceAsStream("index.html")) {
+                .getResourceAsStream("docroot/index.html")) {
                 IOUtils.copy(in, response.getWriter());
             }
 
