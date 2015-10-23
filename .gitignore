@@ -154,3 +154,8 @@ Educational/Scala/akka-sample-cluster-scala/sigar
 xcschememanagement.plist
 Educational/Swift/PersistentTimer/PersistentTimer.xcodeproj
 Educational/NodeJS/Trial/node_modules
+StuffIWrote/Java/jetty-http2-comparison/jetty.crt
+StuffIWrote/Java/jetty-http2-comparison/jetty.csr
+StuffIWrote/Java/jetty-http2-comparison/jetty.key
+StuffIWrote/Java/jetty-http2-comparison/jetty.pkcs12
+StuffIWrote/Java/jetty-http2-comparison/keystore

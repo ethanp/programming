@@ -9,6 +9,11 @@ import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 
 /**
  * Ethan Petuchowski 10/22/15
+ *
+ * Got this from:
+ *      http://www.eclipse.org/jetty/documentation/current/embedding-jetty.html
+ *
+ * It seems to occasionally through NullPointerExceptions, but it keeps running...so IDK.
  */
 public class FileServer {
     public static void main(String[] args) throws Exception
