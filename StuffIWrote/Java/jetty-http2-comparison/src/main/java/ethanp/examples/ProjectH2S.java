@@ -20,7 +20,6 @@ import org.eclipse.jetty.servlets.PushSessionCacheFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.Servlet;
 import java.io.File;
 import java.util.EnumSet;
 
@@ -34,45 +33,13 @@ import java.util.EnumSet;
 public class ProjectH2S {
     public static void main(String... args) throws Exception {
         Server server = new Server();
-
-        // for all routes on SESSIONs, use this handler
-        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
-
-        // serve static content from this path (works!)
-        context.setResourceBase("src/main/resources/docroot");
-
-        // create an EnumSet only containing REQUEST
-        // but not containing FORWARD, INCLUDE, ASYNC, or ERROR
-        EnumSet<DispatcherType> requestEnumSet = EnumSet.of(DispatcherType.REQUEST);
-
-        // add the "optimized server-push from cache" filter to all REQUESTs
-        context.addFilter(PushSessionCacheFilter.class, "/*", requestEnumSet);
-
-        // Servlet filters can intercept HTTP requests targeted at your web application
-        context.addFilter(PushedTilesFilter.class, "/*", requestEnumSet);
-
-        // This object will organize the loading of the servlet when needed or requested.
-        ServletHolder servlet = new ServletHolder(ProjectH2S.servlet);
-
-        context.addServlet(servlet, "/test/*");
-
-        // This servlet, normally mapped to /,
-        // provides the handling for static content,
-        // as well as the OPTION and TRACE methods,
-        // for the context.
-        Class<DefaultServlet> defaultServlet = DefaultServlet.class;
-
-        context.addServlet(defaultServlet, "/").setInitParameter("maxCacheSize", "81920");
-
-        server.setHandler(context);
+        server.setHandler(createContextHandler(server));
         server.addConnector(baseHttp1Connector(server));
         server.addConnector(baseHttp2Connector(server));
         server.start();
-        //server.dumpStdErr();
+        //server.dumpStdErr(); // dumps a load of crap
         server.join();
     }
-
-    static Servlet servlet = new ProtocolDebugServlet();
 
     public static final String PASSWORD = "password";
     public static final File keystoreFile = new File("keystore");
@@ -142,5 +109,41 @@ public class ProjectH2S {
         return connector;
     }
 
+    public static ServletContextHandler createContextHandler(Server server) {
+        // for all routes on SESSIONs, use this handler
+        ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
+
+        // serve static content from this path (works!)
+        context.setResourceBase("src/main/resources/docroot");
+
+        // create an EnumSet only containing REQUEST
+        // but not containing FORWARD, INCLUDE, ASYNC, or ERROR
+        EnumSet<DispatcherType> requestsOnly = EnumSet.of(DispatcherType.REQUEST);
+
+        // add the "optimized server-push from cache" filter to REQUESTs
+        context.addFilter(PushSessionCacheFilter.class, "/*", requestsOnly);
+
+        // when an image is being pushed to the client,
+        // send them an image labeled "push" instead of a normal one
+        context.addFilter(PushedTilesFilter.class, "/*", requestsOnly);
+
+        // Responses from this servlet display brief debug info about protocol & session
+        ProtocolDebugServlet protocolDebugServlet = new ProtocolDebugServlet();
+
+        // This holder will organize the loading of the servlet when needed or requested.
+        ServletHolder debugServletHolder = new ServletHolder(protocolDebugServlet);
+
+        // plug the debugger on routes beginning with `test`
+        context.addServlet(debugServletHolder, "/test/*");
+
+        // provides the handling for static content,
+        // as well as the OPTION and TRACE methods,
+        // for the context.
+        Class<DefaultServlet> defaultServlet = DefaultServlet.class;
+
+        context.addServlet(defaultServlet, "/").setInitParameter("maxCacheSize", "81920");
+
+        return context;
+    }
 
 }
