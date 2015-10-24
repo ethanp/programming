@@ -2,14 +2,13 @@ package ethanp.examples;
 
 import org.eclipse.jetty.alpn.ALPN;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.HTTP2Cipher;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
-import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.NegotiatingServerConnectionFactory;
-import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
@@ -21,21 +20,8 @@ import org.eclipse.jetty.servlets.PushSessionCacheFilter;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.util.Date;
+import java.io.File;
 import java.util.EnumSet;
 
 /**
@@ -48,16 +34,6 @@ import java.util.EnumSet;
 public class ProjectH2S {
     public static void main(String... args) throws Exception {
         Server server = new Server();
-
-        /* An MBean is a managed Java object, similar to a JavaBeans component, that follows
-         * the design patterns set forth in the JMX specification.
-         *
-         * An MBean can represent a device, an application, or any resource that needs to be managed.
-         *
-         * MBeans can also emit notifications when certain predefined events occur.
-         */
-        MBeanContainer mbContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
-        server.addBean(mbContainer);
 
         // for all routes on SESSIONs, use this handler
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.SESSIONS);
@@ -88,9 +64,20 @@ public class ProjectH2S {
 
         context.addServlet(defaultServlet, "/").setInitParameter("maxCacheSize", "81920");
 
-        // make this ContextHandler the only handler for this server
         server.setHandler(context);
+        server.addConnector(baseHttp1Connector(server));
+        server.addConnector(baseHttp2Connector(server));
+        server.start();
+        //server.dumpStdErr();
+        server.join();
+    }
 
+    static Servlet servlet = new ProtocolDebugServlet();
+
+    public static final String PASSWORD = "password";
+    public static final File keystoreFile = new File("keystore");
+
+    public static HttpConfiguration baseHttpConfig() {
         HttpConfiguration http_config = new HttpConfiguration();
         http_config.setSecurePort(8443);
 
@@ -100,156 +87,60 @@ public class ProjectH2S {
         // send the Server header in responses
         http_config.setSendServerVersion(true);
 
-        // HTTP Connector
+        return http_config;
+    }
+
+    public static HttpConfiguration baseHttpsConfig() {
+        HttpConfiguration httpsConfig = new HttpConfiguration(baseHttpConfig());
+        httpsConfig.addCustomizer(new SecureRequestCustomizer());
+        return httpsConfig;
+    }
+
+    /**
+     * A Connection factory is responsible for instantiating and configuring a Connection instance
+     * to handle an EndPoint accepted by a Connector.
+     */
+    public static SslContextFactory basicSslContextFactory() {
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        sslContextFactory.setKeyStorePath(keystoreFile.getAbsolutePath());
+        sslContextFactory.setKeyStorePassword(PASSWORD);
+        sslContextFactory.setKeyManagerPassword(PASSWORD);
+        sslContextFactory.setCipherComparator(new HTTP2Cipher.CipherComparator());
+        return sslContextFactory;
+    }
+
+    public static ALPNServerConnectionFactory baseAlpn() {
+        NegotiatingServerConnectionFactory.checkProtocolNegotiationAvailable();
+        ALPN.debug = false;
+        ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
+        alpn.setDefaultProtocol(HttpVersion.HTTP_1_1.asString());
+        return alpn;
+    }
+
+    public static ServerConnector baseHttp1Connector(Server server) {
         ServerConnector http = new ServerConnector(
             server,
-            new HttpConnectionFactory(http_config),
-            new HTTP2CServerConnectionFactory(http_config)
+            new HttpConnectionFactory(baseHttpConfig()),
+            new HTTP2CServerConnectionFactory(baseHttpConfig())
         );
         http.setPort(8080);
-        server.addConnector(http);
-
-        // A Connection factory is responsible for instantiating and configuring
-        // a Connection instance to handle an EndPoint accepted by a Connector.
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setKeyStorePath(HttpsServer.keystoreFile.getAbsolutePath());
-        sslContextFactory.setKeyStorePassword(HttpsServer.PASSWORD);
-        sslContextFactory.setKeyManagerPassword(HttpsServer.PASSWORD);
-        sslContextFactory.setCipherComparator(new HTTP2Cipher.CipherComparator());
-
-        // HTTPS Configuration
-        HttpConfiguration httpsConfig = new HttpConfiguration(http_config);
-        httpsConfig.addCustomizer(new SecureRequestCustomizer());
-
-        // HTTP/2 Connection Factory
-        HTTP2ServerConnectionFactory h2 = new HTTP2ServerConnectionFactory(httpsConfig);
-
-        NegotiatingServerConnectionFactory.checkProtocolNegotiationAvailable();
-        ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
-        alpn.setDefaultProtocol(http.getDefaultProtocol());
-
-        SslConnectionFactory ssl = new SslConnectionFactory(
-            sslContextFactory,
-            alpn.getProtocol()
-        );
-
-        ServerConnector http2Connector = new ServerConnector(server,
-            ssl,
-            alpn,
-            h2,
-            new HttpConnectionFactory(httpsConfig)
-        );
-        http2Connector.setPort(8443);
-        server.addConnector(http2Connector);
-
-        ALPN.debug = false;
-
-        server.start();
-        //server.dumpStdErr();
-        server.join();
+        return http;
     }
 
-    // Servlet filters can intercept HTTP requests targeted at your web application
-    public static class PushedTilesFilter implements Filter {
-
-        // The servlet container calls the init method exactly once after instantiating the filter
-        @Override public void init(FilterConfig filterConfig) throws ServletException {}
-
-
-        // The doFilter method of the Filter is called by the container each time a
-        // request/response pair is passed through the chain due to a client request
-        // for a resource at the end of the chain.
-        @Override public void doFilter(
-            ServletRequest request,
-            ServletResponse response,
-            FilterChain chain
-        ) throws IOException, ServletException {
-            Request baseRequest = Request.getBaseRequest(request);
-
-            // Returns the portion of the request URI that indicates the context of the request.
-            // The context path always comes first in a request URI. The path starts with a "/"
-            // character but does not end with a "/" character. For servlets in the default (root)
-            // context, this method returns "".
-            String contextPath = baseRequest.getContextPath();
-            System.out.println("context path: "+contextPath);
-
-            // I guess if a response gets pushed, the baseRequest will be isPush
-            // to compensate for the fact that there was no _real_ request
-            if (baseRequest.isPush() && baseRequest.getRequestURI().contains("tiles")) {
-
-                String uri = baseRequest
-                    .getRequestURI()
-                    .replace("tiles", "pushed")
-                    .substring(contextPath.length());
-
-                request.getRequestDispatcher(uri).forward(request, response);
-                return;
-            }
-
-            // Causes the next filter in the chain to be invoked, or if the calling filter
-            // is the last filter in the chain, causes the resource at the end of the chain
-            // to be invoked.
-            chain.doFilter(request, response);
-        }
-
-        // This method gives the filter an opportunity to clean up any resources that are
-        // being held (for example, memory, file handles, threads) and make sure that any
-        // persistent state is synchronized with the filter's current state in memory.
-        @Override public void destroy() {}
+    public static ServerConnector baseHttp2Connector(Server server) {
+        ServerConnector connector = new ServerConnector(
+            server,
+            new SslConnectionFactory(
+                basicSslContextFactory(),
+                HttpVersion.HTTP_1_1.asString()
+            ),
+            baseAlpn(),
+            new HTTP2ServerConnectionFactory(baseHttpsConfig()),
+            new HttpConnectionFactory(baseHttpsConfig())
+        );
+        connector.setPort(8443);
+        return connector;
     }
 
-    // This is what gets hit when you go to path "/test/*"
-    //
-    // HttpServlet should be subclassed to create an HTTP servlet suitable for a Web site.
-    //
-    // Servlets handle concurrent requests, so synchronize access to shared resources.
-    //
-    static Servlet servlet = new HttpServlet() {
-        private static final long serialVersionUID = 1L;
-
-        // Receives standard HTTP requests from the public service method and dispatches them to
-        // the doXXX methods defined in this class.
-        //
-        // There's no need to override this method.
-        //  (we are here to simply & easily capture EVERY method of HTTP request coming in)
-        //
-        @Override protected void service(
-            HttpServletRequest request,
-            HttpServletResponse response
-        ) throws ServletException, IOException {
-
-            // looks for the parameter in the request
-            // returns null if the parameter doesn't exist
-            String code = request.getParameter("code");
-            if (code != null)
-                response.setStatus(Integer.parseInt(code));
-
-
-            // Get or create the current user session.
-            // The session IS lasting between requests from the local Chrome.
-            HttpSession session = request.getSession(true);
-            if (session.isNew()) {
-
-                // if it's a new user, they deserve a big Cookie
-                // (I'm not seeing this cookie show up in the browser though ?)
-                response.addCookie(
-                    new Cookie("bigcookie",
-                        "This is a test cookies that was created on "
-                            +new Date()+
-                            " and is used by the jetty http/2 test servlet.")
-                );
-            }
-            response.setHeader("Custom", "Value");
-
-            // send back some plain-text about the server response
-            response.setContentType("text/plain");
-            String content = "Hello from Jetty using "+request.getProtocol()+"\n";
-            content += "uri="+request.getRequestURI()+"\n";
-            content += "session="+session.getId()+(session.isNew() ? "(New)\n" : "\n");
-            content += "date="+new Date()+"\n";
-            response.setContentLength(content.length());
-            response.getOutputStream().print(content);
-        }
-    };
 
 }
