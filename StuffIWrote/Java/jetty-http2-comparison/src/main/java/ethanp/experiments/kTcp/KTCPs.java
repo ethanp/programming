@@ -1,4 +1,4 @@
-package ethanp.rawTcpExper;
+package ethanp.experiments.kTcp;
 
 
 import org.apache.commons.lang3.RandomUtils;
@@ -23,15 +23,17 @@ public class KTCPs {
     int numServers;
     int bytesSentPerConn;
 
-    public KTCPs(int k, int firstPort, int bytesSentPerConn) {
-        if (firstPort < 0) throw new IllegalArgumentException("can't have negative port number");
-        if (k < 1) throw new IllegalArgumentException("require at least one concurrent connection");
-        if (bytesSentPerConn < 1) throw new IllegalArgumentException("must send > 0 bytes");
-        this.numServers = k;
+    public KTCPs(int numServers, int firstPort, int bytesSentPerConn) {
+        assert firstPort >= 0 : "can't have negative port number";
+        assert numServers >= 1 : "require at least one concurrent connection";
+        assert bytesSentPerConn >= 1 : "must send > 0 bytes";
+
+        this.numServers = numServers;
         this.firstPort = firstPort;
         this.bytesSentPerConn = bytesSentPerConn;
-        this.threadPool = Executors.newFixedThreadPool(k);
-        for (int i = 0; i < k; i++) {
+
+        this.threadPool = Executors.newFixedThreadPool(numServers);
+        for (int i = 0; i < numServers; i++) {
             NonPersistent np = new NonPersistent(firstPort+i, bytesSentPerConn);
             threadPool.execute(np);
         }
