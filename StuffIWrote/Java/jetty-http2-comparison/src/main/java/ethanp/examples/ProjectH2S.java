@@ -80,7 +80,7 @@ public class ProjectH2S {
         NegotiatingServerConnectionFactory.checkProtocolNegotiationAvailable();
         ALPN.debug = false;
         ALPNServerConnectionFactory alpn = new ALPNServerConnectionFactory();
-        alpn.setDefaultProtocol(HttpVersion.HTTP_1_1.asString());
+        alpn.setDefaultProtocol(HttpVersion.HTTP_2.asString());
         return alpn;
     }
 
@@ -99,6 +99,7 @@ public class ProjectH2S {
             server,
             new SslConnectionFactory(
                 basicSslContextFactory(),
+                // TODO why does this break when it's HTTP/2 ?
                 HttpVersion.HTTP_1_1.asString()
             ),
             baseAlpn(),

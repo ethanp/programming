@@ -1,0 +1,93 @@
+package ethanp.rawTcpExper;
+
+
+import org.apache.commons.lang3.RandomUtils;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+/**
+ * Ethan Petuchowski 11/2/15
+ *
+ * The point of this class is to provide an interface to send a large file via "k" concurrent
+ * TCP connections, for any given value of "k".
+ */
+public class KTCPs {
+
+    ExecutorService threadPool;
+    int firstPort;
+    int numServers;
+    int bytesSentPerConn;
+
+    public KTCPs(int k, int firstPort, int bytesSentPerConn) {
+        if (firstPort < 0) throw new IllegalArgumentException("can't have negative port number");
+        if (k < 1) throw new IllegalArgumentException("require at least one concurrent connection");
+        if (bytesSentPerConn < 1) throw new IllegalArgumentException("must send > 0 bytes");
+        this.numServers = k;
+        this.firstPort = firstPort;
+        this.bytesSentPerConn = bytesSentPerConn;
+        this.threadPool = Executors.newFixedThreadPool(k);
+        for (int i = 0; i < k; i++) {
+            NonPersistent np = new NonPersistent(firstPort+i, bytesSentPerConn);
+            threadPool.execute(np);
+        }
+    }
+
+    /**
+     * start a server
+     * wait for a client to connect
+     * on connect, send data immediately
+     * time how long this takes (server side time taken)
+     */
+    static class NonPersistent implements Runnable {
+
+        int numBytes;
+        int port;
+        boolean isServing;
+
+        NonPersistent(int port, int numBytes) {
+            this.port = port;
+            this.numBytes = numBytes;
+        }
+
+        /**
+         * we enforce "crash failure semantics" so that there are no little
+         * errors that screw up my data without much notification to me.
+         */
+        @Override public void run() {
+            try (ServerSocket serverSocket = new ServerSocket(port)) {
+                System.out.println("serving "+numBytes+" bytes at port "+port);
+                isServing = true;
+                while (isServing) {
+                    Socket clientSocket = serverSocket.accept();
+                    long start = System.nanoTime();
+                    try (OutputStream os = clientSocket.getOutputStream()) {
+                        os.write(RandomUtils.nextBytes(numBytes));
+                    }
+                    catch (IOException e) {
+                        e.printStackTrace();
+                        System.exit(3);
+                    }
+                    long end = System.nanoTime();
+                    System.out.println("server at "+port+" took "+millis(start, end)+" ms");
+                }
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+                System.exit(2);
+            }
+        }
+
+        private static long millis(long start, long end) {
+            return (end-start)/1_000_000;
+        }
+    }
+
+    public static void main(String[] args) {
+        KTCPs a = new KTCPs(3, 2500, 25);
+    }
+}
