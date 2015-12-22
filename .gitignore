@@ -126,7 +126,6 @@ apager
 st_hello
 dpager
 segf
-CMakeLists.txt
 
 # ignore all the paxos code
 Educational/C++/PaxosLab/code/*
