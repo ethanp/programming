@@ -1,33 +1,25 @@
+/*********************************************
+ * Ethan Petuchowski                         *
+ * Dec 21 2015                               *
+ *                                           *
+ * A crappy postfix-expression evaluator.    *
+ *                                           *
+ * Works on whatever I've tried it on so far *
+ *                                           *
+ *********************************************/
+
 #include <stdio.h>
 #include <string.h>
 
 #define BAD_CHAR_ERROR 1
 #define BAD_OP_ERROR 2
 
-typedef enum { false, true } bool;
-
-bool is_op(char c) {
-    return (bool) (
-           c == '+'
-        || c == '-'
-        || c == '*'
-        || c == '/'
-        || c == '\0'
-    );
+int is_num(char c) {
+    return c >= '0' && c <= '9';
 }
 
-bool is_num(char c) {
-    return (bool)(
-           c >= '0'
-        && c <= '9'
-    );
-}
-
-bool end_input(char c) {
-    return (bool) (
-           c == '\n'
-        || c == EOF
-    );
+int end_input(char c) {
+    return c == '\n' || c == EOF;
 }
 
 int parse_char(char c) {
@@ -46,12 +38,12 @@ char to_char(int i) {
 int main() {
     char postfix_expr[80];
 
+    printf("enter the clue\n$ ");
+
     /* read input */
+    int done;
     char in;
     int i = 0;
-    bool done = false;
-
-    printf("enter the clue\n$ ");
     do {
         scanf("%c", &in);
         done = end_input(in);
@@ -61,13 +53,11 @@ int main() {
 
     printf("rcvd: %s\n", postfix_expr);
 
-
     /* evaluate */
-    while (true) {
+    while (1) {
         int loc = 0;
         while (is_num(postfix_expr[loc++]));
-        int nextLoc = loc;
-        loc--;
+        int nextLoc = loc--;
         char op = postfix_expr[loc--];
         if (op == '\0') {
             printf("evaluated: %s\n", postfix_expr);
