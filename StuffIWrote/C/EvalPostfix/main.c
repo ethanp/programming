@@ -2,10 +2,10 @@
  * Ethan Petuchowski                         *
  * Dec 21 2015                               *
  *                                           *
- * A crappy postfix-expression evaluator.    *
- *                                           *
+ * A crappy postfix-expression evaluator     *
  * Works on whatever I've tried it on so far *
  *                                           *
+ * e.g. 952+-3* ==> 6                        *
  *********************************************/
 
 #include <stdio.h>
@@ -54,7 +54,7 @@ int main() {
     printf("rcvd: %s\n", postfix_expr);
 
     /* evaluate */
-    while (1) {
+    for (;;) {
         int loc = 0;
         while (is_num(postfix_expr[loc++]));
         int nextLoc = loc--;
@@ -78,9 +78,10 @@ int main() {
             case '/': postfix_expr[loc] = to_char(l / r); break;
 
             default:
-                fprintf(stderr, "they label me as a bad character: %c", op);
+                fprintf(stderr, "I'm labeled as a bad character: %c", op);
                 return BAD_OP_ERROR;
         }
-        strcpy(&postfix_expr[++loc], &postfix_expr[nextLoc]);
+        do { postfix_expr[++loc] = postfix_expr[nextLoc]; }
+        while (postfix_expr[nextLoc++] != '\0');
     }
 }
