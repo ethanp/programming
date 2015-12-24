@@ -3,7 +3,7 @@
  *
  * "Compilers" Ex. 2.4.1.a
  *
- * Write recursive-descent parsers for the grammar
+ * Write a recursive-descent parser for the grammar
  * 
  * S -> + S S | - S S | a
  */
