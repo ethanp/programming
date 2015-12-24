@@ -1,12 +1,19 @@
-/*********************************************
- * Ethan Petuchowski                         *
- * Dec 21 2015                               *
- *                                           *
- * A crappy postfix-expression evaluator     *
- * Works on whatever I've tried it on so far *
- *                                           *
- * e.g. 952+-3* ==> 6                        *
- *********************************************/
+w/*********************************************
+ * Ethan Petuchowski
+ * Dec 21 2015
+ *
+ * A crappy postfix-expression evaluator
+ * Works on whatever I've tried it on so far
+ *
+ * e.g. 952+-3* ==> 6
+ *
+ * As stated in Compilers (ch 2), you just
+ * scan until you find the first operator,
+ * then you apply it to the previous two
+ * numbers, and repeat until there are no
+ * operators. We implement this using an
+ * endless for-loop.
+ * ********************************************/
 
 #include <stdio.h>
 #include <string.h>
