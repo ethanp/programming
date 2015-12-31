@@ -8,7 +8,8 @@ import java.util.Map;
 /**
  * Ethan Petuchowski 12/24/15
  *
- * This is code from "Compilers" (Dragon book) Chapter 2
+ * This is code from "Compilers" (Dragon book) Chapter 2, modified and extended to
+ * handle comments as assigned in one of the exercises
  */
 public class Lexer {
     public int line = 1;

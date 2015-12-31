@@ -16,7 +16,6 @@ class CoderTest extends FlatSpec with Matchers {
                 CodeTreeLeaf(1, ' ')
             )
         )
-        Coder.dump(encoded)
     }
 
     it should "also compress this" in {
@@ -31,6 +30,5 @@ class CoderTest extends FlatSpec with Matchers {
                 )
             )
         )
-        Coder.dump(encoded)
     }
 }
