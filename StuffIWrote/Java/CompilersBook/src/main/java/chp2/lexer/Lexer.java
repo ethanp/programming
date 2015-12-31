@@ -35,7 +35,7 @@ public class Lexer {
             nextChar();
             if (peek == '/') return handleLineComment();
             else if (peek == '*') return handleBlockComment();
-            else throw new ParseException("expected / or *", line);
+            else throw new ParseException("expected / or *", line); // simplified
         }
         Token t = new Token(peek);
         peek = ' ';
@@ -51,8 +51,8 @@ public class Lexer {
                     return new Comment(b.toString());
                 }
                 else {
-                    b.append('*').append(peek);
                     if (peek == '\n') line++;
+                    b.append('*').append(peek);
                 }
             }
             else {
