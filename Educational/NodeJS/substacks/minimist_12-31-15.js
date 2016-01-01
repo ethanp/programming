@@ -110,7 +110,6 @@ minimist = function (args, opts) {
 
     /* collect the arguments given after the double-dash; they'll eventually end up in '_' */
     var notFlags = [];
-
     if (args.indexOf('--') !== -1) {
         notFlags = args.slice(args.indexOf('--') + 1);
         args     = args.slice(0, args.indexOf('--'));
