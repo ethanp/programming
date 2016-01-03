@@ -7,5 +7,6 @@ scalaVersion := "2.11.0"
 scalacOptions ++= Seq("-deprecation", "-feature")
 
 libraryDependencies ++= Seq(
-    "org.scalatest" %% "scalatest" % "2.2.0" % "test"
+    "org.scalatest" %% "scalatest" % "2.2.0" % "test",
+    "edu.stanford.nlp" % "stanford-corenlp" % "3.5.2"
 )
