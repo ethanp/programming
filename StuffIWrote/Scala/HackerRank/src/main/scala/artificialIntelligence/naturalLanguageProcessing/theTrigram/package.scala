@@ -29,7 +29,7 @@ object Solution {
             dequeue add word
             if (dequeue.size() > 3) dequeue.removeFirst()
             val hashable = dequeue.toArray(new Array[String](3)).mkString(" ")
-            if (punctuation.findAllIn(hashable).isEmpty)counter(hashable) += 1
+            if (punctuation.findAllIn(hashable).isEmpty) counter(hashable) += 1
         }
 
         counter.toSeq.sortWith(_._2 > _._2) take 10 foreach println
