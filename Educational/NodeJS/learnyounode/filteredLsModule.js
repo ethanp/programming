@@ -5,6 +5,6 @@ module.exports = function(dirname, ext, cb) {
         var toRet = list.filter(function(filename) {
             return filename.endsWith('.'+ext);
         });
-        cb(null, toRet)
+        cb(null, toRet);
     })
 };
