@@ -9,7 +9,8 @@ import java.util.Scanner;
  * We must build the classic DP table.
  * Then we must print the final element of said table.
  *
- * I forgot at first that we can EITHER "delete" an element of 'a' OR an element of 'b'.
+ * I forgot at first that we can EITHER "delete" an element of
+ * 'a' OR an element of 'b'.
  */
 public class CommonChild {
     static Scanner sc = new Scanner(System.in);
