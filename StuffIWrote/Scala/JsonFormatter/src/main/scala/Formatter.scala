@@ -15,7 +15,7 @@ object Formatter {
     def curIndent = " " * (4 * indent)
 
     def main(args: Array[String]): Unit = {
-        for (i ← Seq("""{"a":"b"}""", """{"a": -234}""", "{")) {
+        for (i ← Seq("""{"a":"b"}""", """{"a": -234}""", """[234, 432, "abcd"]""")) {
             idx = 0
             indent = 0
             input = i
@@ -150,12 +150,21 @@ object Formatter {
         sb.toString()
     }
 
-    def getField(): Unit = {
-
-    }
-
     def readInsideArray(): Unit = {
         skipSpaces()
+        readValue()
+        skipSpaces()
+        curChar match {
+            case ',' ⇒
+                idx += 1
+                readInsideArray()
+            case ']' ⇒
+                idx += 1
+                return
+            case _ ⇒
+                throw new RuntimeException(
+                    s"expected , or ] but found: $curChar")
+        }
     }
 
     def skipSpaces(): Unit =
