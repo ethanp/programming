@@ -8,8 +8,6 @@ import java.io.PrintStream
   */
 object Formatter {
 
-    /* TODO print the formatted JSON */
-
     var idx = 0
     var input = """{"a":"b"}"""
     val spaces = " \t\r\n".toSet
@@ -22,10 +20,18 @@ object Formatter {
 
     def curIndent = " " * (2 * indent)
 
+    def advance(): Char = {
+        val was = curChar
+        idx += 1
+        if (idx == input.length)
+            throw new RuntimeException("unexpected end of input")
+        was
+    }
+
     def main(args: Array[String]): Unit = {
         for (i ← Seq(
-//            """[234, 432, "\"abcd"]""",
-            """[{"a":"b", "c" : [234E43, "3ed"]}, {"d": "e"}]"""
+            """{"\"fda": 234, "fa" : 432, "\"abcd" : [23]}""",
+            """[{"a":"b", "c" : [234E43, "3ed"]}, {"d": {"e": -33}}]"""
         )) {
             idx = 0
             indent = 0
@@ -48,57 +54,47 @@ object Formatter {
     }
 
     def matchObj(isValue: Boolean): Boolean = {
-        curChar match {
-            case '{' ⇒
-                if (isValue) out.println(curChar)
-                else out.println(curIndent+curChar)
-                idx += 1
-                indent += 1
-                readInsideObject()
-                true
-            case _ ⇒
-                false
+        if (curChar == '{') {
+            if (isValue) out.println(advance())
+            else out.println(curIndent + advance())
+            indent += 1
+            readInsideObject()
+            true
         }
+        else false
     }
 
     def matchArr(isValue: Boolean): Boolean = {
-        curChar match {
-            case '[' ⇒
-                if (isValue) out.println(curChar)
-                else out.println(curIndent+curChar)
-                idx += 1
-                indent += 1
-                readInsideArray()
-                true
-            case _ ⇒
-                false
+        if (curChar == '[') {
+            if (isValue) out.println(advance())
+            else out.println(curIndent + advance())
+            indent += 1
+            readInsideArray()
+            true
         }
+        else false
     }
 
     def readInsideObject(): Unit = {
         skipSpaces()
-        out.print(curIndent+readString())
+        out.print(curIndent + readString())
         skipSpaces()
-        if (curChar != ':') {
+        if (curChar != ':')
             throw new RuntimeException(
                 s"expected : but found: $curChar")
-        }
-        out.print(curChar)
-        idx += 1
+        out.print(advance()+" ")
         skipSpaces()
         readValue(inArray = false)
         skipSpaces()
         curChar match {
             case ',' ⇒
-                out.println(curChar)
-                idx += 1
+                out.println(advance())
                 readInsideObject()
             case '}' ⇒
                 out.println()
                 indent -= 1
-                out.print(curIndent+curChar)
+                out.print(curIndent + curChar)
                 idx += 1
-                return
             case _ ⇒
                 throw new RuntimeException(
                     s"expected , or } but found: $curChar")
@@ -123,8 +119,7 @@ object Formatter {
 
     def readNumber(): String = {
         val sb = new StringBuilder
-        sb.append(curChar)
-        idx += 1
+        sb.append(advance())
         val end = "}],".toSet | spaces
         val ees = "Ee".toSet
         var foundEes = false
@@ -138,8 +133,7 @@ object Formatter {
                         throw new RuntimeException(
                             "found two ees in a number")
                     foundEes = true
-                    sb.append(curChar)
-                    idx += 1
+                    sb.append(advance())
                     if (!(digits contains curChar))
                         throw new RuntimeException(
                             "'ee' must be followed by a number")
@@ -148,46 +142,29 @@ object Formatter {
                         throw new RuntimeException(
                             "found two dots in a number")
                     foundDot = true
-                    sb.append(curChar)
-                    idx += 1
+                    sb.append(advance())
                 case ch if digits contains ch ⇒
-                    sb.append(curChar)
-                    idx += 1
+                    sb.append(advance())
             }
         }
         throw new RuntimeException("unexpected end of input")
     }
 
     def readString(): String = {
-        if (idx == input.length) {
-            throw new RuntimeException(
-                "expected \" but reached end of input")
-        }
-        if (curChar != '"') {
+        if (curChar != '"')
             throw new RuntimeException(
                 s"""expected " but found: $curChar""")
-        }
-        val sb = new StringBuilder("\"")
-        idx += 1
+        val sb = new StringBuilder
+        sb.append(advance())
         while (curChar != '"') {
-            if (idx == input.length) {
-                throw new RuntimeException(
-                    "expected \" but reached end of input")
-            }
             if (curChar == '\\') {
-                val nextChar = input.charAt(idx+1)
-                if (nextChar == '\\' || nextChar == '"') {
-                    sb.append(curChar).append(input.charAt(idx+1))
-                    idx += 2
-                }
+                val nextChar = input.charAt(idx + 1)
+                if (nextChar == '\\' || nextChar == '"')
+                    sb.append(advance()).append(advance())
             }
-            else {
-                sb.append(curChar)
-                idx += 1
-            }
+            else sb.append(advance())
         }
-        sb.append(curChar)
-        idx += 1
+        sb.append(advance())
         sb.toString()
     }
 
@@ -197,15 +174,13 @@ object Formatter {
         skipSpaces()
         curChar match {
             case ',' ⇒
-                out.println(curChar)
-                idx += 1
+                out.println(advance())
                 readInsideArray()
             case ']' ⇒
                 out.println()
                 indent -= 1
-                out.print(curIndent+curChar)
+                out.print(curIndent + curChar)
                 idx += 1
-                return
             case _ ⇒
                 throw new RuntimeException(
                     s"expected , or ] but found: $curChar")
