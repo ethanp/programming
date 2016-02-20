@@ -1,3 +1,5 @@
+import java.io.PrintStream
+
 /**
   * Ethan Petuchowski
   * 2/19/16
@@ -6,19 +8,25 @@
   */
 object Formatter {
 
+    /* TODO print the formatted JSON */
+
     var idx = 0
     var input = """{"a":"b"}"""
     val spaces = " \t\r\n".toSet
     var indent = 0
     val digits = ('0' to '9').toSet
     val numberPrefixes = "+-".toSet
+    val out: PrintStream = System.out
 
     def curChar = input charAt idx
 
-    def curIndent = " " * (4 * indent)
+    def curIndent = " " * (2 * indent)
 
     def main(args: Array[String]): Unit = {
-        for (i ← Seq("""{"a":"b"}""", """{"a": -234}""", """[234, 432, "\"abcd"]""")) {
+        for (i ← Seq(
+//            """[234, 432, "\"abcd"]""",
+            """[{"a":"b", "c" : [234E43, "3ed"]}, {"d": "e"}]"""
+        )) {
             idx = 0
             indent = 0
             input = i
@@ -29,18 +37,21 @@ object Formatter {
 
     def parse(): Unit = {
         skipSpaces()
-        if (!(matchObj() || matchArr()))
+        if (!(matchObj(isValue = false) || matchArr(isValue = false)))
             throw new RuntimeException(
                 s"expected { or [ but found: $curChar")
+        out.println()
         skipSpaces()
         if (idx != input.length)
             throw new RuntimeException(
                 s"expected end of input but found: $curChar")
     }
 
-    def matchObj(): Boolean = {
+    def matchObj(isValue: Boolean): Boolean = {
         curChar match {
             case '{' ⇒
+                if (isValue) out.println(curChar)
+                else out.println(curIndent+curChar)
                 idx += 1
                 indent += 1
                 readInsideObject()
@@ -50,9 +61,11 @@ object Formatter {
         }
     }
 
-    def matchArr(): Boolean = {
+    def matchArr(isValue: Boolean): Boolean = {
         curChar match {
             case '[' ⇒
+                if (isValue) out.println(curChar)
+                else out.println(curIndent+curChar)
                 idx += 1
                 indent += 1
                 readInsideArray()
@@ -64,21 +77,26 @@ object Formatter {
 
     def readInsideObject(): Unit = {
         skipSpaces()
-        readString()
+        out.print(curIndent+readString())
         skipSpaces()
         if (curChar != ':') {
             throw new RuntimeException(
                 s"expected : but found: $curChar")
         }
+        out.print(curChar)
         idx += 1
         skipSpaces()
-        readValue()
+        readValue(inArray = false)
         skipSpaces()
         curChar match {
             case ',' ⇒
+                out.println(curChar)
                 idx += 1
                 readInsideObject()
             case '}' ⇒
+                out.println()
+                indent -= 1
+                out.print(curIndent+curChar)
                 idx += 1
                 return
             case _ ⇒
@@ -87,12 +105,16 @@ object Formatter {
         }
     }
 
-    def readValue(): Unit = {
+    def readValue(inArray: Boolean): Unit = {
         curChar match {
-            case '{' ⇒ matchObj()
-            case '[' ⇒ matchArr()
-            case ch if (digits | numberPrefixes) contains ch ⇒ readNumber()
-            case '"' ⇒ readString()
+            case '{' ⇒ matchObj(isValue = !inArray)
+            case '[' ⇒ matchArr(isValue = !inArray)
+            case ch if (digits | numberPrefixes) contains ch ⇒
+                if (inArray) out.print(curIndent)
+                out.print(readNumber())
+            case '"' ⇒
+                if (inArray) out.print(curIndent)
+                out.print(readString())
             case _ ⇒
                 throw new RuntimeException(
                     s"""expected {, [, digit, +, -, or " but found $curChar""")
@@ -171,13 +193,17 @@ object Formatter {
 
     def readInsideArray(): Unit = {
         skipSpaces()
-        readValue()
+        readValue(inArray = true)
         skipSpaces()
         curChar match {
             case ',' ⇒
+                out.println(curChar)
                 idx += 1
                 readInsideArray()
             case ']' ⇒
+                out.println()
+                indent -= 1
+                out.print(curIndent+curChar)
                 idx += 1
                 return
             case _ ⇒
