@@ -1,8 +1,11 @@
 /**
   * Ethan Petuchowski
   * 2/19/16
+  *
+  * Note: a malformed string could raise AIOOBE
   */
 object Formatter {
+
     var idx = 0
     var input = """{"a":"b"}"""
     val spaces = " \t\r\n".toSet
@@ -15,7 +18,7 @@ object Formatter {
     def curIndent = " " * (4 * indent)
 
     def main(args: Array[String]): Unit = {
-        for (i ← Seq("""{"a":"b"}""", """{"a": -234}""", """[234, 432, "abcd"]""")) {
+        for (i ← Seq("""{"a":"b"}""", """{"a": -234}""", """[234, 432, "\"abcd"]""")) {
             idx = 0
             indent = 0
             input = i
@@ -29,6 +32,10 @@ object Formatter {
         if (!(matchObj() || matchArr()))
             throw new RuntimeException(
                 s"expected { or [ but found: $curChar")
+        skipSpaces()
+        if (idx != input.length)
+            throw new RuntimeException(
+                s"expected end of input but found: $curChar")
     }
 
     def matchObj(): Boolean = {
@@ -111,6 +118,9 @@ object Formatter {
                     foundEes = true
                     sb.append(curChar)
                     idx += 1
+                    if (!(digits contains curChar))
+                        throw new RuntimeException(
+                            "'ee' must be followed by a number")
                 case '.' ⇒
                     if (foundDot)
                         throw new RuntimeException(
@@ -142,8 +152,17 @@ object Formatter {
                 throw new RuntimeException(
                     "expected \" but reached end of input")
             }
-            sb.append(curChar)
-            idx += 1
+            if (curChar == '\\') {
+                val nextChar = input.charAt(idx+1)
+                if (nextChar == '\\' || nextChar == '"') {
+                    sb.append(curChar).append(input.charAt(idx+1))
+                    idx += 2
+                }
+            }
+            else {
+                sb.append(curChar)
+                idx += 1
+            }
         }
         sb.append(curChar)
         idx += 1
@@ -167,12 +186,9 @@ object Formatter {
         }
     }
 
-    def skipSpaces(): Unit =
+    def skipSpaces(): Unit = {
         while (idx < input.length && spaces.contains(curChar)) {
             idx += 1
         }
-
-    if (idx == input.length) {
-        throw new RuntimeException("unexpectedly reached end of input")
     }
 }
