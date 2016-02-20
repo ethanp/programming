@@ -1,10 +1,7 @@
 import java.io.PrintStream
 
-/**
-  * Ethan Petuchowski
+/** Ethan Petuchowski
   * 2/19/16
-  *
-  * Note: a malformed string could raise AIOOBE
   */
 object Formatter {
 
@@ -30,7 +27,7 @@ object Formatter {
 
     def main(args: Array[String]): Unit = {
         for (i ← Seq(
-            """{"\"fda": 234, "fa" : 432, "\"abcd" : [23]}""",
+            """{"\"fda": 234, "fa" : 432, "\"abcd\ " : [23]}""",
             """[{"a":"b", "c" : [234E43, "3ed"]}, {"d": {"e": -33}}]"""
         )) {
             idx = 0
@@ -157,11 +154,9 @@ object Formatter {
         val sb = new StringBuilder
         sb.append(advance())
         while (curChar != '"') {
-            if (curChar == '\\') {
-                val nextChar = input.charAt(idx + 1)
-                if (nextChar == '\\' || nextChar == '"')
-                    sb.append(advance()).append(advance())
-            }
+            if (curChar == '\\' && (
+                input.charAt(idx + 1) == '\\' || input.charAt(idx + 1) == '"')
+            ) sb.append(advance()).append(advance())
             else sb.append(advance())
         }
         sb.append(advance())
