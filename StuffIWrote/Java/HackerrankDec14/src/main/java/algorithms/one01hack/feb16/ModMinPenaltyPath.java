@@ -62,9 +62,7 @@ public class ModMinPenaltyPath {
             if (!e.traversed) {
                 int otherNode = e.otherNode(startNode);
                 int newAcc = acc | e.cost;
-                if (otherNode == endNode) {
-                    res = newAcc;
-                }
+                if (otherNode == endNode) res = newAcc;
                 else if (newAcc < min) {
                     e.traversed = true;
                     res = dfs(otherNode, newAcc, min);
