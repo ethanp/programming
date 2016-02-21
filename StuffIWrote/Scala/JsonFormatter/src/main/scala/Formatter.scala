@@ -37,7 +37,6 @@ object Formatter {
         }
     }
 
-
     def parse(): Unit = {
         skipSpaces()
         if (!(matchObj(isValue = false) || matchArr(isValue = false)))
