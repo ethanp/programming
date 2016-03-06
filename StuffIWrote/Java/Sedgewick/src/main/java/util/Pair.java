@@ -1,10 +1,10 @@
 package util;
 
 /** this is just for the testing purpose */
-public class Pair {
-    public final int a;
-    public final int b;
-    public Pair(int a, int b) {
+public class Pair<T> {
+    public final T a;
+    public final T b;
+    public Pair(T a, T b) {
         this.a = a;
         this.b = b;
     }

@@ -1,5 +1,6 @@
 package ch2;
 
+import util.Pair;
 import util.SingleLLNode;
 
 import java.util.Arrays;
@@ -8,103 +9,122 @@ import java.util.Arrays;
  * Ethan Petuchowski 3/2/16
  *
  * Bottom-Up Linked-List Merge-Sort
+ *
+ * This was way more confusing than I expected. But I think it works properly. Since I don't know
+ * the "real" algorithm I'm not sure if this is the best way to implement it. All I know is it works
+ * on whatever inputs I've tried it on and it's a cool algorithm.
  */
-
-/* TODO this ended up being more difficult than I anticipated
- *      and I have not figured out the inner-loop yet.
- *      Aka I am downright confused at this point and need to stop.
- *      I don't think it's _that far_ from working.
- */
+@SuppressWarnings("Duplicates")
 public class BULLMerge {
     public static void main(String[] args) {
         SingleLLNode head = null;
         SingleLLNode cur = null;
-        char[] testChars = "bac".toLowerCase().toCharArray();
+        char[] testChars = "MergeSortExample".toLowerCase().toCharArray();
         for (char c : testChars) {
             if (cur == null) {
                 head = new SingleLLNode(c);
                 cur = head;
             }
             else {
-                cur.fwd = new SingleLLNode(c);
-                cur = cur.fwd;
+                cur.nxt = new SingleLLNode(c);
+                cur = cur.nxt;
             }
         }
         assert head != null;
         System.out.println(head.listString());
         head = sort(head, testChars.length);
         Arrays.sort(testChars);
-        System.out.println(Arrays.toString(testChars));
-        System.out.println(head.listString());
+        String truth = new String(testChars);
+        System.out.println(truth);
+        String actuality = head.listString();
+        System.out.println(actuality);
+        assert truth.equals(actuality);
     }
 
     private static SingleLLNode sort(SingleLLNode head, int size) {
-        for (int sz = 1; sz < size; sz *= 2) {
+        for (int sz = 1; sz <= size; sz *= 2) {
             SingleLLNode front = head;
-            SingleLLNode back = head;
-            for (int backIdx = 0; backIdx <= size-(2*sz); backIdx += sz) {
-                for (int space = 0; space < sz; space++) front = front.fwd;
-                back = merge(back, sz, front, sz);
-                if (backIdx == 0) head = back;
+            SingleLLNode last = null;
+            Pair<SingleLLNode> pair;
+            for (int frontIdx = 0; frontIdx <= size-sz; frontIdx += Math.min(2*sz, size-frontIdx)) {
+                pair = merge(front, sz, Math.min(sz, size-(frontIdx+sz)));
+                if (last == null) head = pair.a;
+                else last.nxt = pair.a;
+                last = pair.b;
+                front = last.nxt;
             }
         }
         return head;
     }
 
     /**
-     * @param a    sorted list
-     * @param lenA length of list a
-     * @param b    sorted list
-     * @param lenB length of list b
-     * @return a merged with b in sorted order
+     * @param a    first element of first list
+     * @param aLen length of first list
+     * @param bLen length of second list
+     * @return the beginning and the last node in the list. However the `len` elements of the list
+     * come back rearranged such it and the list after it (see below) are "merged", as known from
+     * the classic mergesort algorithm.
+     *
+     * We assume that there are at least len elements connected ahead of back when passed-in. And we
+     * assume that a.take(ceil(len/2)) sorted, and that a.drop(ceil(len/2)).take(floor(len/2)) is
+     * another sorted list (which we refer to as "b" in the code).
      */
-    private static SingleLLNode merge(SingleLLNode a, int lenA, SingleLLNode b, int lenB) {
-        if (lenA == 0) return b;
-        if (lenB == 0) return a;
+    private static Pair<SingleLLNode> merge(SingleLLNode a, int aLen, int bLen) {
+        if (bLen == 0 || a == null) return new Pair<>(a, a);
+
         SingleLLNode ret = null;
         SingleLLNode cur = null;
-        for (int i = 0, j = 0, k = 0; i < lenA+lenB; i++) {
-            if (j >= lenA) {
-                cur.fwd = new SingleLLNode(b.val);
-                b = b.fwd;
-                cur = cur.fwd;
+
+        SingleLLNode b = a;
+        for (int skip = 0; skip++ < aLen; )
+            b = b.nxt;
+
+        for (int i = 0, j = 0, k = 0; i < aLen+bLen; i++) {
+            if (j >= aLen) {
+                assert cur != null;
+                cur.nxt = new SingleLLNode(b.val);
+                b = b.nxt;
+                cur = cur.nxt;
                 k++;
             }
-            else if (k >= lenB) {
-                cur.fwd = new SingleLLNode(a.val);
-                a = a.fwd;
-                cur = cur.fwd;
+            else if (k >= bLen) {
+                assert cur != null;
+                cur.nxt = new SingleLLNode(a.val);
+                a = a.nxt;
+                cur = cur.nxt;
                 j++;
             }
             else if (b.val < a.val) {
-                //noinspection Duplicates
                 if (ret == null) {
                     ret = new SingleLLNode(b.val);
+                    b = b.nxt;
                     cur = ret;
                     k++;
                 }
                 else {
-                    cur.fwd = new SingleLLNode(b.val);
-                    b = b.fwd;
-                    cur = cur.fwd;
+                    cur.nxt = new SingleLLNode(b.val);
+                    b = b.nxt;
+                    cur = cur.nxt;
                     k++;
                 }
             }
             else {
-                //noinspection Duplicates
                 if (ret == null) {
                     ret = new SingleLLNode(a.val);
+                    a = a.nxt;
                     cur = ret;
                     j++;
                 }
                 else {
-                    cur.fwd = new SingleLLNode(a.val);
-                    a = a.fwd;
-                    cur = cur.fwd;
+                    cur.nxt = new SingleLLNode(a.val);
+                    a = a.nxt;
+                    cur = cur.nxt;
                     j++;
                 }
             }
         }
-        return ret;
+        assert cur != null;
+        cur.nxt = b;
+        return new Pair<>(ret, cur);
     }
 }

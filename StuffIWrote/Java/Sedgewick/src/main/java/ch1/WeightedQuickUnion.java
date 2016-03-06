@@ -78,19 +78,19 @@ public class WeightedQuickUnion implements UnionFind {
 
     public static void main(String[] args) {
         UnionFind uf = new WeightedQuickUnion(10);
-        List<Pair> pairs = new ArrayList<>();
-        pairs.add(new Pair(4, 3));
-        pairs.add(new Pair(3, 8));
-        pairs.add(new Pair(6, 5));
-        pairs.add(new Pair(9, 4));
-        pairs.add(new Pair(2, 1));
-        pairs.add(new Pair(8, 9));
-        pairs.add(new Pair(5, 0));
-        pairs.add(new Pair(7, 2));
-        pairs.add(new Pair(6, 1));
-        pairs.add(new Pair(1, 0));
-        pairs.add(new Pair(6, 7));
-        for (Pair pair : pairs) {
+        List<Pair<Integer>> pairs = new ArrayList<>();
+        pairs.add(new Pair<>(4, 3));
+        pairs.add(new Pair<>(3, 8));
+        pairs.add(new Pair<>(6, 5));
+        pairs.add(new Pair<>(9, 4));
+        pairs.add(new Pair<>(2, 1));
+        pairs.add(new Pair<>(8, 9));
+        pairs.add(new Pair<>(5, 0));
+        pairs.add(new Pair<>(7, 2));
+        pairs.add(new Pair<>(6, 1));
+        pairs.add(new Pair<>(1, 0));
+        pairs.add(new Pair<>(6, 7));
+        for (Pair<Integer> pair : pairs) {
             if (!uf.connected(pair.a, pair.b)) {
                 System.out.println(pair);
                 uf.union(pair.a, pair.b);

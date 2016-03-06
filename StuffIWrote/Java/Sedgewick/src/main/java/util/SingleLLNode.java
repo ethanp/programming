@@ -5,18 +5,22 @@ package util;
  */
 public class SingleLLNode {
     public char val;
-    public SingleLLNode fwd;
+    public SingleLLNode nxt;
 
     public SingleLLNode(char val) {
         this.val = val;
     }
 
-    public SingleLLNode(char val, SingleLLNode fwd) {
+    public SingleLLNode(char val, SingleLLNode nxt) {
         this.val = val;
-        this.fwd = fwd;
+        this.nxt = nxt;
     }
 
     public String listString() {
-        return val + (fwd == null ? "" : fwd.listString());
+        return val + (nxt == null ? "" : nxt.listString());
+    }
+
+    @Override public String toString() {
+        return String.valueOf(val);
     }
 }
