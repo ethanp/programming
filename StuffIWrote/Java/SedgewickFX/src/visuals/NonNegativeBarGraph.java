@@ -4,6 +4,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.StrokeLineCap;
 import util.Pair;
 
 import java.util.ListIterator;
@@ -36,12 +37,6 @@ public class NonNegativeBarGraph {
         redraw();
     }
 
-    public double maxValue() { return values.stream().max(Double::compare).get(); }
-
-    private void setXScale() { xScale = graphWidth/values.size(); }
-
-    private void setVerticalScale() { yScale = graphHeight/maxValue(); }
-
     private void redraw() {
         Main.clearCanvas();
         drawAxisLines();
@@ -49,17 +44,16 @@ public class NonNegativeBarGraph {
         setVerticalScale();
         drawBars();
     }
-
     private void drawBars() {
         ListIterator<Double> it = values.listIterator();
         gc.setLineWidth(30);
+        gc.setLineCap(StrokeLineCap.BUTT);
         int idx = 0;
         while (it.hasNext()) {
-            idx++;
-            double barX = idx*xScale+getLeftSide()-10;
+            double barX = ++idx*xScale+getLeftSide()-gc.getLineWidth()/2;
             double val = it.next();
             double barY = getBottomSide()-val*yScale;
-            gc.setStroke(Color.BLUE);
+            gc.setStroke(Color.DARKTURQUOISE);
             gc.strokeLine(barX, getBottomSide(), barX, barY);
         }
     }
@@ -74,6 +68,12 @@ public class NonNegativeBarGraph {
         gc.strokeLine(lowerLeftCorner.a, lowerLeftCorner.b, topLeftCorner.a, topLeftCorner.b);
     }
 
+    public double maxValue() { return values.stream().max(Double::compare).get(); }
+
+    private void setXScale() { xScale = graphWidth/values.size(); }
+
+    private void setVerticalScale() { yScale = graphHeight/maxValue(); }
+
     private Double getLeftSide() { return (totalWidth-graphWidth)/2; }
 
     private Double getRightSide() { return (totalWidth+graphWidth)/2; }
@@ -82,15 +82,9 @@ public class NonNegativeBarGraph {
 
     private Double getBottomSide() { return (totalHeight+graphHeight)/2; }
 
-    private Pair<Double> getLowerLeftCorner() {
-        return new Pair<>(getLeftSide(), getBottomSide());
-    }
+    private Pair<Double> getLowerLeftCorner() { return new Pair<>(getLeftSide(), getBottomSide()); }
 
-    private Pair<Double> getLowerRightCorner() {
-        return new Pair<>(getRightSide(), getBottomSide());
-    }
+    private Pair<Double> getLowerRightCorner() { return new Pair<>(getRightSide(), getBottomSide()); }
 
-    private Pair<Double> getTopLeftCorner() {
-        return new Pair<>(getLeftSide(), getTopSide());
-    }
+    private Pair<Double> getTopLeftCorner() { return new Pair<>(getLeftSide(), getTopSide()); }
 }
