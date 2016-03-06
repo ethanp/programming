@@ -12,4 +12,8 @@ public class Pair<T> {
     @Override public String toString() {
         return "Pair{"+a+", "+b+'}';
     }
+
+    public T getB() {
+        return b;
+    }
 }
