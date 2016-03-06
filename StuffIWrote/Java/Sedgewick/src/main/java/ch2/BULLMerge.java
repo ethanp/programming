@@ -61,13 +61,9 @@ public class BULLMerge {
      * @param a    first element of first list
      * @param aLen length of first list
      * @param bLen length of second list
-     * @return the beginning and the last node in the list. However the `len` elements of the list
-     * come back rearranged such it and the list after it (see below) are "merged", as known from
-     * the classic mergesort algorithm.
-     *
-     * We assume that there are at least len elements connected ahead of back when passed-in. And we
-     * assume that a.take(ceil(len/2)) sorted, and that a.drop(ceil(len/2)).take(floor(len/2)) is
-     * another sorted list (which we refer to as "b" in the code).
+     * @return the beginning and the last node in the list. However the elements of the list come
+     * back rearranged such that it and the "b" list after it (see below) are "merged", as known
+     * from the classic mergesort algorithm.
      */
     private static Pair<SingleLLNode> merge(SingleLLNode a, int aLen, int bLen) {
         if (bLen == 0 || a == null) return new Pair<>(a, a);
