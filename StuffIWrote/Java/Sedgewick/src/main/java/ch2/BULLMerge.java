@@ -72,8 +72,18 @@ public class BULLMerge {
         SingleLLNode cur = null;
 
         SingleLLNode b = a;
+
+        // "alreadySorted" is an optimization
+        boolean alreadySorted = false;
         for (int skip = 0; skip++ < aLen; )
-            b = b.nxt;
+            if (skip == aLen && b.val < b.nxt.val) alreadySorted = true;
+            else b = b.nxt;
+
+        if (alreadySorted) {
+            for (int skip = 0; skip++ < bLen; )
+                b = b.nxt;
+            return new Pair<>(a, b);
+        }
 
         for (int i = 0, j = 0, k = 0; i < aLen+bLen; i++) {
             if (j >= aLen) {
