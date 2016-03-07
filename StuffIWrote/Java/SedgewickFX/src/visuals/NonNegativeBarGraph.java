@@ -1,5 +1,6 @@
 package visuals;
 
+import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.canvas.GraphicsContext;
@@ -14,14 +15,21 @@ import java.util.ListIterator;
  * Ethan Petuchowski 3/5/16
  */
 public class NonNegativeBarGraph {
+
+    /* inherent to the program */
     final GraphicsContext gc;
     final double totalHeight;
     final double totalWidth;
     final double graphHeight;
     final double graphWidth;
     final double graphProportion = .8;
+    final double AXIS_WIDTH = 3;
+
+    /* potentially manipulable by the user */
     Color AXIS_COLOR = Color.RED;
     Color LABEL_COLOR = Color.WHITE;
+
+    /* based on the given dataset */
     private ObservableList<Double> values = null;
     private double xScale = 0;
     private double yScale = 0;
@@ -41,15 +49,20 @@ public class NonNegativeBarGraph {
         this.values = values;
         this.values.addListener(
             (ListChangeListener<? super Double>) c -> {
-                redraw();
+                Platform.runLater(this::redraw);
                 maxMayHaveChanged = true;
             }
         );
         redraw();
     }
 
+    private void clearCanvas() {
+        gc.setFill(Color.BLACK);
+        gc.fillRect(0, 0, gc.getCanvas().getHeight(), gc.getCanvas().getWidth());
+    }
+
     private void redraw() {
-        Main.clearCanvas();
+        clearCanvas();
         drawAxisLines();
         setXScale();
         setVerticalScale();
@@ -74,14 +87,16 @@ public class NonNegativeBarGraph {
 
         for (int tickIdx = 1; tickIdx <= numTicks; tickIdx++) {
             double tickHeight = getBottomSide()-tickIdx*heightIncrement;
+
             // draw tick
             gc.setStroke(AXIS_COLOR);
             gc.setLineWidth(1);
             gc.strokeLine(leftEnd, tickHeight, rightEnd, tickHeight);
+
             // draw label
             gc.setFill(LABEL_COLOR);
-            String tickValue = String.format("%1.2f", valueIncrement*tickIdx);
-            gc.fillText(tickValue, leftEnd-20, tickHeight, 20);
+            String labelText = String.format("%1.2f", valueIncrement*tickIdx);
+            gc.fillText(labelText, leftEnd-20, tickHeight, 20);
         }
     }
 
@@ -92,8 +107,9 @@ public class NonNegativeBarGraph {
         int idx = 0;
         while (it.hasNext()) {
             double barX = ++idx*xScale+getLeftSide()-gc.getLineWidth()/2;
-            double val = it.next();
-            double barY = getBottomSide()-val*yScale;
+            double barHeight = it.next() * yScale;
+            if (barHeight < AXIS_WIDTH) barHeight = AXIS_WIDTH;
+            double barY = getBottomSide()-barHeight;
             gc.setStroke(Color.DARKTURQUOISE);
             gc.strokeLine(barX, getBottomSide(), barX, barY);
         }
@@ -101,7 +117,7 @@ public class NonNegativeBarGraph {
 
     private void drawAxisLines() {
         gc.setStroke(AXIS_COLOR);
-        gc.setLineWidth(3);
+        gc.setLineWidth(AXIS_WIDTH);
         drawLine(getLowerLeftCorner(), getLowerRightCorner());
         drawLine(getLowerLeftCorner(), getTopLeftCorner());
     }
@@ -109,7 +125,8 @@ public class NonNegativeBarGraph {
     public double maxValue() {
         if (maxMayHaveChanged) {
             maxMayHaveChanged = false;
-            storedMax = values.stream().max(Double::compare).get();
+            if (values.isEmpty()) storedMax = 0;
+            else storedMax = values.stream().max(Double::compare).get();
         }
         return storedMax;
     }
