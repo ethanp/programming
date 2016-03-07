@@ -40,8 +40,7 @@ public class Main extends Application {
         clearCanvas();
         root.getChildren().addAll(canvas);
         ObservableList<Double> data = FXCollections.observableArrayList(
-            4.0,
-            3.0, 5.0, 2.0
+            4.0, 3.0, 5.0, 2.0
         );
         NonNegativeBarGraph lineGraph = new NonNegativeBarGraph(gc);
         lineGraph.drawBasedOn(data);

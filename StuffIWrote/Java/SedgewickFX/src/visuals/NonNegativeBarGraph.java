@@ -100,6 +100,8 @@ public class NonNegativeBarGraph {
         }
     }
 
+    // it doesn't seem to like that I set the bar"Height" to the axis"Width"
+    @SuppressWarnings("SuspiciousNameCombination")
     private void drawBars() {
         ListIterator<Double> it = values.listIterator();
         double lineWidth = Math.min(25, graphWidth/values.size()*(2.0/3));
@@ -107,7 +109,7 @@ public class NonNegativeBarGraph {
         int idx = 0;
         while (it.hasNext()) {
             double barX = ++idx*xScale+getLeftSide()-gc.getLineWidth()/2;
-            double barHeight = it.next() * yScale;
+            double barHeight = it.next()*yScale;
             if (barHeight < AXIS_WIDTH) barHeight = AXIS_WIDTH;
             double barY = getBottomSide()-barHeight;
             gc.setStroke(Color.DARKTURQUOISE);

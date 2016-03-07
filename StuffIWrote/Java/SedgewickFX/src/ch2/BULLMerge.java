@@ -15,46 +15,40 @@ import java.util.Arrays;
  * on whatever inputs I've tried it on and it's a cool algorithm.
  */
 @SuppressWarnings("Duplicates")
-public class BULLMerge {
+public class BULLMerge<T extends Comparable<T>> {
+    private SingleLLNode<T> head = null;
+
+    public SingleLLNode<T> getHead() {
+        return head;
+    }
+
+    public void setHead(SingleLLNode<T> head) {
+        this.head = head;
+    }
+
     public static void main(String[] args) {
-        SingleLLNode head = null;
-        SingleLLNode cur = null;
         char[] testChars = "MergeSortExample".toLowerCase().toCharArray();
+        SingleLLNode<Character> cur = null;
+        BULLMerge<Character> merger = new BULLMerge<>();
         for (char c : testChars) {
             if (cur == null) {
-                head = new SingleLLNode(c);
-                cur = head;
+                merger.setHead(new SingleLLNode<>(c));
+                cur = merger.getHead();
             }
             else {
-                cur.nxt = new SingleLLNode(c);
+                cur.nxt = new SingleLLNode<>(c);
                 cur = cur.nxt;
             }
         }
-        assert head != null;
-        System.out.println(head.listString());
-        head = sort(head, testChars.length);
+        assert merger.getHead() != null;
+        System.out.println(merger.getHead().listString());
+        merger.sort(testChars.length);
         Arrays.sort(testChars);
         String truth = new String(testChars);
         System.out.println(truth);
-        String actuality = head.listString();
+        String actuality = merger.getHead().listString();
         System.out.println(actuality);
         assert truth.equals(actuality);
-    }
-
-    private static SingleLLNode sort(SingleLLNode head, int size) {
-        for (int sz = 1; sz <= size; sz *= 2) {
-            SingleLLNode front = head;
-            SingleLLNode last = null;
-            Pair<SingleLLNode> pair;
-            for (int frontIdx = 0; frontIdx <= size-sz; frontIdx += Math.min(2*sz, size-frontIdx)) {
-                pair = merge(front, sz, Math.min(sz, size-(frontIdx+sz)));
-                if (last == null) head = pair.a;
-                else last.nxt = pair.a;
-                last = pair.b;
-                front = last.nxt;
-            }
-        }
-        return head;
     }
 
     /**
@@ -65,18 +59,18 @@ public class BULLMerge {
      * back rearranged such that it and the "b" list after it (see below) are "merged", as known
      * from the classic mergesort algorithm.
      */
-    private static Pair<SingleLLNode> merge(SingleLLNode a, int aLen, int bLen) {
+    private Pair<SingleLLNode<T>> merge(SingleLLNode<T> a, int aLen, int bLen) {
         if (bLen == 0 || a == null) return new Pair<>(a, a);
 
-        SingleLLNode ret = null;
-        SingleLLNode cur = null;
+        SingleLLNode<T> ret = null;
+        SingleLLNode<T> cur = null;
 
-        SingleLLNode b = a;
+        SingleLLNode<T> b = a;
 
         // "alreadySorted" is an optimization
         boolean alreadySorted = false;
         for (int skip = 0; skip++ < aLen; )
-            if (skip == aLen && b.val < b.nxt.val) alreadySorted = true;
+            if (skip == aLen && b.val.compareTo(b.nxt.val) < 0) alreadySorted = true;
             else b = b.nxt;
 
         if (alreadySorted) {
@@ -88,27 +82,27 @@ public class BULLMerge {
         for (int i = 0, j = 0, k = 0; i < aLen+bLen; i++) {
             if (j >= aLen) {
                 assert cur != null;
-                cur.nxt = new SingleLLNode(b.val);
+                cur.nxt = new SingleLLNode<>(b.val);
                 b = b.nxt;
                 cur = cur.nxt;
                 k++;
             }
             else if (k >= bLen) {
                 assert cur != null;
-                cur.nxt = new SingleLLNode(a.val);
+                cur.nxt = new SingleLLNode<>(a.val);
                 a = a.nxt;
                 cur = cur.nxt;
                 j++;
             }
-            else if (b.val < a.val) {
+            else if (b.val.compareTo(a.val) < 0) {
                 if (ret == null) {
-                    ret = new SingleLLNode(b.val);
+                    ret = new SingleLLNode<>(b.val);
                     b = b.nxt;
                     cur = ret;
                     k++;
                 }
                 else {
-                    cur.nxt = new SingleLLNode(b.val);
+                    cur.nxt = new SingleLLNode<>(b.val);
                     b = b.nxt;
                     cur = cur.nxt;
                     k++;
@@ -116,13 +110,13 @@ public class BULLMerge {
             }
             else {
                 if (ret == null) {
-                    ret = new SingleLLNode(a.val);
+                    ret = new SingleLLNode<>(a.val);
                     a = a.nxt;
                     cur = ret;
                     j++;
                 }
                 else {
-                    cur.nxt = new SingleLLNode(a.val);
+                    cur.nxt = new SingleLLNode<>(a.val);
                     a = a.nxt;
                     cur = cur.nxt;
                     j++;
@@ -132,5 +126,21 @@ public class BULLMerge {
         assert cur != null;
         cur.nxt = b;
         return new Pair<>(ret, cur);
+    }
+
+    private SingleLLNode<T> sort(int size) {
+        for (int sz = 1; sz <= size; sz *= 2) {
+            SingleLLNode<T> front = head;
+            SingleLLNode<T> last = null;
+            Pair<SingleLLNode<T>> pair;
+            for (int frontIdx = 0; frontIdx <= size-sz; frontIdx += Math.min(2*sz, size-frontIdx)) {
+                pair = merge(front, sz, Math.min(sz, size-(frontIdx+sz)));
+                if (last == null) head = pair.a;
+                else last.nxt = pair.a;
+                last = pair.b;
+                front = last.nxt;
+            }
+        }
+        return head;
     }
 }

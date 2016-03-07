@@ -1,5 +1,7 @@
 package visuals;
 
+import benchmarks.Benchmark;
+import benchmarks.TrialAnimatedBenchmark;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,10 +11,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-
-interface Benchmark {
-    void runTheBenchmarks(ObservableList<Double> results);
-}
 
 /**
  * Ethan Petuchowski 3/6/16
@@ -47,15 +45,5 @@ public class Benchmarker extends Application {
                 benchmark.runTheBenchmarks(data);
             }
         }.start();
-    }
-}
-
-class TrialAnimatedBenchmark implements Benchmark {
-    @Override public void runTheBenchmarks(ObservableList<Double> results) {
-        for (int i = 0; i < 30; i++) {
-            try { Thread.sleep(2000); }
-            catch (InterruptedException ignored) {}
-            results.add((double) i);
-        }
     }
 }
