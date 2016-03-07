@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.Font;
 import util.Pair;
 
 import java.util.ListIterator;
@@ -19,12 +20,17 @@ public class NonNegativeBarGraph {
     final double graphHeight;
     final double graphWidth;
     final double graphProportion = .8;
+    Color AXIS_COLOR = Color.RED;
+    Color LABEL_COLOR = Color.WHITE;
     private ObservableList<Double> values = null;
     private double xScale = 0;
     private double yScale = 0;
+    private boolean maxMayHaveChanged = true;
+    private double storedMax;
 
     public NonNegativeBarGraph(GraphicsContext gc) {
         this.gc = gc;
+        gc.setLineCap(StrokeLineCap.BUTT/*?*/);
         this.totalHeight = gc.getCanvas().getHeight();
         this.totalWidth = gc.getCanvas().getWidth();
         this.graphHeight = totalHeight*graphProportion;
@@ -33,7 +39,12 @@ public class NonNegativeBarGraph {
 
     public void drawBasedOn(ObservableList<Double> values) {
         this.values = values;
-        this.values.addListener((ListChangeListener<? super Double>) c -> redraw());
+        this.values.addListener(
+            (ListChangeListener<? super Double>) c -> {
+                redraw();
+                maxMayHaveChanged = true;
+            }
+        );
         redraw();
     }
 
@@ -43,11 +54,41 @@ public class NonNegativeBarGraph {
         setXScale();
         setVerticalScale();
         drawBars();
+        drawYTicksAndLabels();
     }
+
+    // SOMEDAY support logarithmic scale too
+    private void drawYTicksAndLabels() {
+        gc.setFont(Font.font(8));
+
+        // choose number of ticks (take up ≤ 1/3 of the vertical space)
+        int numTicks = (int) (graphHeight/gc.getFont().getSize()/3);
+
+        // choose increments (based on number of ticks)
+        double valueIncrement = maxValue()/numTicks;
+        double heightIncrement = graphHeight/numTicks;
+
+        double tickWidth = graphWidth/100;
+        double leftEnd = getLeftSide()-tickWidth;
+        double rightEnd = getLeftSide()+tickWidth;
+
+        for (int tickIdx = 1; tickIdx <= numTicks; tickIdx++) {
+            double tickHeight = getBottomSide()-tickIdx*heightIncrement;
+            // draw tick
+            gc.setStroke(AXIS_COLOR);
+            gc.setLineWidth(1);
+            gc.strokeLine(leftEnd, tickHeight, rightEnd, tickHeight);
+            // draw label
+            gc.setFill(LABEL_COLOR);
+            String tickValue = String.format("%1.2f", valueIncrement*tickIdx);
+            gc.fillText(tickValue, leftEnd-20, tickHeight, 20);
+        }
+    }
+
     private void drawBars() {
         ListIterator<Double> it = values.listIterator();
-        gc.setLineWidth(30);
-        gc.setLineCap(StrokeLineCap.BUTT);
+        double lineWidth = Math.min(25, graphWidth/values.size()*(2.0/3));
+        gc.setLineWidth(lineWidth);
         int idx = 0;
         while (it.hasNext()) {
             double barX = ++idx*xScale+getLeftSide()-gc.getLineWidth()/2;
@@ -59,16 +100,21 @@ public class NonNegativeBarGraph {
     }
 
     private void drawAxisLines() {
-        gc.setStroke(Color.RED);
+        gc.setStroke(AXIS_COLOR);
         gc.setLineWidth(3);
-        Pair<Double> lowerLeftCorner = getLowerLeftCorner();
-        Pair<Double> lowerRightCorner = getLowerRightCorner();
-        Pair<Double> topLeftCorner = getTopLeftCorner();
-        gc.strokeLine(lowerLeftCorner.a, lowerLeftCorner.b, lowerRightCorner.a, lowerRightCorner.b);
-        gc.strokeLine(lowerLeftCorner.a, lowerLeftCorner.b, topLeftCorner.a, topLeftCorner.b);
+        drawLine(getLowerLeftCorner(), getLowerRightCorner());
+        drawLine(getLowerLeftCorner(), getTopLeftCorner());
     }
 
-    public double maxValue() { return values.stream().max(Double::compare).get(); }
+    public double maxValue() {
+        if (maxMayHaveChanged) {
+            maxMayHaveChanged = false;
+            storedMax = values.stream().max(Double::compare).get();
+        }
+        return storedMax;
+    }
+
+    private void drawLine(Pair<Double> a, Pair<Double> b) { gc.strokeLine(a.a, a.b, b.a, b.b); }
 
     private void setXScale() { xScale = graphWidth/values.size(); }
 

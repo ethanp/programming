@@ -32,8 +32,10 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Hello World");
         StackPane root = new StackPane();
-        Scene s = new Scene(root, 400, 400, Color.BLACK);
-        final Canvas canvas = new Canvas(400, 400);
+        final int HEIGHT = 700;
+        final int WIDTH = 700;
+        Scene s = new Scene(root, WIDTH, HEIGHT, Color.BLACK);
+        final Canvas canvas = new Canvas(WIDTH, HEIGHT);
         gc = canvas.getGraphicsContext2D();
         clearCanvas();
         root.getChildren().addAll(canvas);
