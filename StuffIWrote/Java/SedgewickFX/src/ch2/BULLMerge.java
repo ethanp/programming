@@ -128,7 +128,7 @@ public class BULLMerge<T extends Comparable<T>> {
         return new Pair<>(ret, cur);
     }
 
-    private SingleLLNode<T> sort(int size) {
+    public SingleLLNode<T> sort(int size) {
         for (int sz = 1; sz <= size; sz *= 2) {
             SingleLLNode<T> front = head;
             SingleLLNode<T> last = null;

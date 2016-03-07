@@ -1,7 +1,7 @@
 package visuals;
 
 import benchmarks.Benchmark;
-import benchmarks.TrialAnimatedBenchmark;
+import benchmarks.BullMergeBenchmark;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,7 +19,7 @@ public class Benchmarker extends Application {
 
     static GraphicsContext gc;
 
-    static Benchmark benchmark = new TrialAnimatedBenchmark();
+    static Benchmark benchmark = new BullMergeBenchmark();
 
     public static void main(String[] args) {
         launch(args);
