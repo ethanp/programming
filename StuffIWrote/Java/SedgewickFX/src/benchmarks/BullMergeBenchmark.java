@@ -16,9 +16,9 @@ import java.util.Random;
 public class BullMergeBenchmark implements Benchmark {
     @Override public void runTheBenchmarks(ObservableList<Double> results) {
         Random r = new Random(1);
-        for (int len = 2; len < 1_000_000; len += len+r.nextInt(5)) {
+        for (int len = 2; len < 10_000_000; len += len+r.nextInt(5)) {
 
-            System.out.println(len);
+            System.out.print(len+",");
 
             // initialize it
             BULLMerge<Integer> merger = new BULLMerge<>();
