@@ -18,19 +18,19 @@ object Flattener {
         }
     }
 
-    def flatten(jObj: JObject): String = flatten(jObj, Vector(), Vector()).mkString("{", ",", "}")
+    def flatten(jObj: JObject): String = flatten(jObj, Vector()).mkString("{", ",", "}")
 
-    def flatten(value: JValue, soFar: Vector[String], path: Vector[String]): Vector[String] = {
+    def flatten(js: JValue, path: Vector[String]): Vector[String] = {
         def pathKey: String = s""""${path mkString "."}":"""
-        def valued(quoted: Boolean = true): String = pathKey + (if (quoted) "\"" + value.values + "\"" else value.values)
-        value match {
-            case JObject(vv) ⇒ vv.foldLeft(soFar) { case (curr, (k, v)) ⇒ curr ++ flatten(v, Vector(), path :+ k) }
-            case JArray(arr) ⇒ soFar ++ arr.zipWithIndex.foldLeft(Vector[String]()) {
-                case (c, (jv, idx)) ⇒ c ++ flatten(jv, Vector(), path :+ idx.toString)
-            }
-            case (JString(_) | JBool(_)) ⇒ soFar ++ Vector(valued())
-            case _: JsonAST.JNumber ⇒ soFar ++ Vector(valued(quoted = false))
-            case _ ⇒ throw new RuntimeException(s"found: $value")
+        def valued(quoted: Boolean = true): String = pathKey + (if (quoted) "\"" + js.values + "\"" else js.values)
+        def arrToObj(v: Vector[JValue]) = v.zipWithIndex map (x ⇒ x._2.toString → x._1)
+        def recurse(v: Vector[(String, JValue)]): Vector[String] = v flatMap { case (x, y) ⇒ flatten(y, path :+ x) }
+        js match {
+            case JObject(asdf) ⇒ recurse(asdf.toVector)
+            case JArray(arr) ⇒ recurse(arrToObj(arr.toVector))
+            case (JString(_) | JBool(_)) ⇒ Vector(valued())
+            case _: JsonAST.JNumber ⇒ Vector(valued(quoted = false))
+            case _ ⇒ throw new RuntimeException(s"found: $js")
         }
     }
 
