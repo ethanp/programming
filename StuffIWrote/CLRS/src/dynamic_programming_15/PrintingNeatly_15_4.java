@@ -36,6 +36,7 @@ public class PrintingNeatly_15_4 {
     static long[] optimalCosts;
     static int[] newlineAfter;
     static int M;
+    static int lastToFit;
 
     public static String neatify(String text, int lineLen) {
 
@@ -52,6 +53,16 @@ public class PrintingNeatly_15_4 {
             if (lengths[i] > M)
                 throw new IllegalArgumentException(
                     "This text has a word that will not fit on one line: "+words[i]);
+        }
+
+        // find earliest word where from there-on it will fit on one line
+        int lenFromBack = lengths[lengths.length-1];
+        for (int i = lengths.length-2; i >= 0; i--) {
+            lenFromBack += 1+lengths[i];
+            if (lenFromBack > M) {
+                lastToFit = i+1;
+                break;
+            }
         }
 
         // This is our cost table. It has the optimal costs after EACH WORD.
@@ -89,16 +100,9 @@ public class PrintingNeatly_15_4 {
     public static long opt(int startIdx) {
         assert startIdx <= words.length;
 
-        // no cost for empty text (right?)
-        if (startIdx == words.length) return 0;
-
-        // does 'r'emainder fit on one line?
-        int r = M;
-        for (int i = startIdx; i < words.length && r >= 0; i++)
-            r -= lengths[i];
-
-        // no cost if it does
-        if (r > 0) return 0;
+        // no cost if remainder fits on one line
+        // (includes the case of the end-of-input)
+        if (startIdx >= lastToFit) return 0;
 
         // return value if already cached
         if (optimalCosts[startIdx] >= 0) return optimalCosts[startIdx];
