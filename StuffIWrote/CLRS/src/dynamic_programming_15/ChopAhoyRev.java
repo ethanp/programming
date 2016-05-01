@@ -55,7 +55,7 @@ public class ChopAhoyRev {
             // if it is now a valid group
             if (grpSum >= prevSum) {
 
-                // count how many results we get using this as a group
+                // add count of how many results we get using this as a group
                 resultCount += topDown(grpEndIdx+1, grpSum);
             }
         }
