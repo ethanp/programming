@@ -92,6 +92,14 @@ public class PrintingNeatly_15_4 {
         // no cost for empty text (right?)
         if (startIdx == words.length) return 0;
 
+        // does 'r'emainder fit on one line?
+        int r = M;
+        for (int i = startIdx; i < words.length && r >= 0; i++)
+            r -= lengths[i];
+
+        // no cost if it does
+        if (r > 0) return 0;
+
         // return value if already cached
         if (optimalCosts[startIdx] >= 0) return optimalCosts[startIdx];
 
@@ -148,11 +156,11 @@ public class PrintingNeatly_15_4 {
 
     static void test1() { shouldBe("a b c d e", 2, "a\nb\nc\nd\ne"); }
 
-    static void test2() { shouldBe("c d e", 3, "c\nd e"); }
+    static void test2() { shouldBe("c d e", 3, "c d\ne"); }
 
     static void test3() { shouldBe("b c d e", 3, "b c\nd e"); }
 
-    static void test4() { shouldBe("a b c d e", 3, "a\nb c\nd e"); }
+    static void test4() { shouldBe("a b c d e", 3, "a b\nc d\ne"); }
 
     static void trial() {
         String text = "TensorFlow [1] is an interface for expressing machine learning "+
