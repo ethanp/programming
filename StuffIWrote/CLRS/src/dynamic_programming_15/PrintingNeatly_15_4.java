@@ -30,6 +30,8 @@ import java.util.Arrays;
  */
 public class PrintingNeatly_15_4 {
 
+    /************************ STATE **************************/
+
     static final int INFINITY = Integer.MAX_VALUE;
     static String[] words;
     static int[] lengths;
@@ -37,6 +39,9 @@ public class PrintingNeatly_15_4 {
     static int[] newlineAfter;
     static int M;
     static int lastToFit;
+
+
+    /************************ INITIALIZATION **************************/
 
     public static String neatify(String text, int lineLen) {
 
@@ -46,24 +51,8 @@ public class PrintingNeatly_15_4 {
         // split text into words
         words = text.split(" ");
 
-        // map text to word lengths
-        lengths = new int[words.length];
-        for (int i = 0; i < words.length; i++) {
-            lengths[i] = words[i].length();
-            if (lengths[i] > M)
-                throw new IllegalArgumentException(
-                    "This text has a word that will not fit on one line: "+words[i]);
-        }
-
-        // find earliest word where from there-on it will fit on one line
-        int lenFromBack = lengths[lengths.length-1];
-        for (int i = lengths.length-2; i >= 0; i--) {
-            lenFromBack += 1+lengths[i];
-            if (lenFromBack > M) {
-                lastToFit = i+1;
-                break;
-            }
-        }
+        mapWordsToLengths();
+        findIndexOfLastLine();
 
         // This is our cost table. It has the optimal costs after EACH WORD.
         optimalCosts = new long[words.length];
@@ -74,22 +63,13 @@ public class PrintingNeatly_15_4 {
         Arrays.fill(newlineAfter, -1);
 
         // run the algorithm
-        opt(0);
+        topDownFrom(0);
 
-        /* Use the optimization info to create the actual String to return */
-        StringBuilder ret = new StringBuilder();
-        for (int i = 0, nextNewline = newlineAfter[0]; i < words.length; i++) {
-            ret.append(words[i]);
-            if (nextNewline == i) {
-                if (i+1 < newlineAfter.length)
-                    nextNewline = newlineAfter[i+1];
-                ret.append('\n');
-            }
-            else ret.append(' ');
-        }
-        ret.setLength(ret.length()-1);
-        return ret.toString();
+        return createNeatifiedText();
     }
+
+
+    /************************ THE ALGORITHM **************************/
 
     /* This is quite similar to `ChopAhoyRev`, with two major differences:
      *
@@ -97,7 +77,7 @@ public class PrintingNeatly_15_4 {
      * 2) we do need to keep track of the index at which we're breaking the line
      *   (because we're going to want to recover that info for printing later).
      */
-    public static long opt(int startIdx) {
+    public static long topDownFrom(int startIdx) {
         assert startIdx <= words.length;
 
         // no cost if remainder fits on one line
@@ -124,7 +104,7 @@ public class PrintingNeatly_15_4 {
             long curLineCost = (long) Math.pow(M-charCount, 3);
 
             // suppose we went with that
-            long remainder = opt(curIdx+1);
+            long remainder = topDownFrom(curIdx+1);
             long totalCostHere = remainder+curLineCost;
 
             // store the best option for breaking up this line
@@ -139,6 +119,50 @@ public class PrintingNeatly_15_4 {
         optimalCosts[startIdx] = minCost;
         return minCost;
     }
+
+    /************************ UTILITIES **************************/
+
+    static void mapWordsToLengths() {
+        lengths = new int[words.length];
+        for (int i = 0; i < words.length; i++) {
+            lengths[i] = words[i].length();
+            if (lengths[i] > M)
+                throw new IllegalArgumentException(
+                    "This text has a word that will not fit on one line: "+words[i]);
+        }
+    }
+
+    /**
+     * Find earliest word where from there-on it will fit on one line. Defaults to 0.
+     */
+    static void findIndexOfLastLine() {
+        int lenFromBack = lengths[lengths.length-1];
+        for (int i = lengths.length-2; i >= 0; i--) {
+            lenFromBack += 1+lengths[i];
+            if (lenFromBack > M) {
+                lastToFit = i+1;
+                break;
+            }
+        }
+    }
+
+    static String createNeatifiedText() {
+        StringBuilder ret = new StringBuilder();
+        for (int i = 0, nextNewline = newlineAfter[0]; i < words.length; i++) {
+            ret.append(words[i]);
+            if (nextNewline == i) {
+                if (i+1 < newlineAfter.length)
+                    nextNewline = newlineAfter[i+1];
+                ret.append('\n');
+            }
+            else ret.append(' ');
+        }
+        ret.setLength(ret.length()-1);
+        return ret.toString();
+    }
+
+
+    /************************ TESTING **************************/
 
     public static void main(String[] args) {
         test0();
