@@ -2,6 +2,7 @@ package algorithms.implementation.moderate;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 /**
  * Ethan Petuchowski 4/24/16
@@ -42,10 +43,10 @@ public class TimeInWords {
         System.out.println(timeInWords(10, 45));
         System.out.println(timeInWords(9, 47));
         System.out.println(timeInWords(8, 28));
-//        Scanner in = new Scanner(System.in);
-//        int h = in.nextInt();
-//        int m = in.nextInt();
-//        System.out.println(timeInWords(h, m));
+        Scanner in = new Scanner(System.in);
+        int h = in.nextInt();
+        int m = in.nextInt();
+        System.out.println(timeInWords(h, m));
     }
 
     static String timeInWords(int hour, int minute) {
