@@ -26,7 +26,7 @@ public class Knapsack {
             System.out.println(max);
         }
     }
-    
+
     static int knp(int sumSoFar) {
         if (sumSoFar > k) return -1;
         if (sumSoFar == k) return k;
