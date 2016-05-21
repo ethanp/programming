@@ -74,6 +74,7 @@ public class QueueViaCircularLL extends AbstractQueue<Integer> {
     }
 
     @Override public Integer poll() {
+        if (size == 0) return null;
         size--;
         Integer removed = peek();
         if (size == 0) last = null;
@@ -91,11 +92,6 @@ public class QueueViaCircularLL extends AbstractQueue<Integer> {
 
         Node(Integer value) {
             this.value = value;
-        }
-
-        public Node(Integer value, Node next) {
-            this.value = value;
-            this.next = next;
         }
     }
 }
