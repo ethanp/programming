@@ -15,12 +15,38 @@ public class QueueViaCircularLL extends AbstractQueue<Integer> {
     private Node last;
     private int size = 0;
 
+    public static void main(String[] args) {
+        QueueViaCircularLL q = new QueueViaCircularLL();
+        q.offer(1);
+        q.offer(2);
+        System.out.println(q.size());
+        q.offer(3);
+        System.out.println(q.peek());
+        q.offer(4);
+        System.out.println(q.size());
+        System.out.println("---------------");
+        q.offer(5);
+        for (int elem : q)
+            System.out.println(elem);
+        System.out.println("---------------");
+        for (int i = 0; i < 5; i++)
+            System.out.println(q.poll());
+        System.out.println("---------------");
+        System.out.println(q.size());
+        q.offer(3);
+        System.out.println(q.poll());
+        q.offer(3);
+        System.out.println(q.poll());
+    }
+
     @Override public Iterator<Integer> iterator() {
         return new Iterator<Integer>() {
             Node cur = null;
+
             @Override public boolean hasNext() {
                 return cur != last;
             }
+
             @Override public Integer next() {
                 cur = cur == null ? last.next : cur.next;
                 return cur.value;
@@ -33,23 +59,25 @@ public class QueueViaCircularLL extends AbstractQueue<Integer> {
     }
 
     @Override public boolean offer(Integer integer) {
+        size++;
         if (last == null) {
             last = new Node(integer);
             last.next = last;
-        } else {
+        }
+        else {
             Node first = last.next;
             last.next = new Node(integer);
             last = last.next;
             last.next = first;
         }
-        size++;
         return true;
     }
 
     @Override public Integer poll() {
-        Integer removed = peek();
-        last.next = last.next.next;
         size--;
+        Integer removed = peek();
+        if (size == 0) last = null;
+        else last.next = last.next.next;
         return removed;
     }
 
@@ -69,26 +97,5 @@ public class QueueViaCircularLL extends AbstractQueue<Integer> {
             this.value = value;
             this.next = next;
         }
-    }
-
-    public static void main(String[] args) {
-        QueueViaCircularLL q = new QueueViaCircularLL();
-        q.offer(1);
-        q.offer(2);
-        System.out.println(q.size());
-        q.offer(3);
-        System.out.println(q.peek());
-        q.offer(4);
-        System.out.println(q.size());
-        System.out.println("---------------");
-        q.offer(5);
-        for (int elem : q)
-            System.out.println(elem);
-        System.out.println("---------------");
-        for (int i = 0; i < 5; i++)
-            System.out.println(q.poll());
-        System.out.println("---------------");
-        System.out.println(q.size());
-
     }
 }
