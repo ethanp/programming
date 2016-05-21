@@ -70,4 +70,25 @@ public class QueueViaCircularLL extends AbstractQueue<Integer> {
             this.next = next;
         }
     }
+
+    public static void main(String[] args) {
+        QueueViaCircularLL q = new QueueViaCircularLL();
+        q.offer(1);
+        q.offer(2);
+        System.out.println(q.size());
+        q.offer(3);
+        System.out.println(q.peek());
+        q.offer(4);
+        System.out.println(q.size());
+        System.out.println("---------------");
+        q.offer(5);
+        for (int elem : q)
+            System.out.println(elem);
+        System.out.println("---------------");
+        for (int i = 0; i < 5; i++)
+            System.out.println(q.poll());
+        System.out.println("---------------");
+        System.out.println(q.size());
+
+    }
 }
