@@ -1,36 +1,34 @@
 package visuals.gridGraph;
 
+import javafx.geometry.Point2D;
+
 /**
  * Ethan Petuchowski 5/31/16
  */
 class GraphEdge {
-    @Override public String toString() {
-        return "GraphEdge{"+fromCoords+", "+toCoords+'}';
+    private GraphNode fromNode;
+    private GraphNode toNode;
+    private GraphEdge(GraphNode fromNode, GraphNode toNode) {
+        this.fromNode = fromNode;
+        this.toNode = toNode;
     }
-    private GridCoordinates fromCoords;
-    private GridCoordinates toCoords;
-
-    private GraphEdge(GridCoordinates fromCoords, GridCoordinates toCoords) {
-        this.fromCoords = fromCoords;
-        this.toCoords = toCoords;
-    }
-    static GraphEdgeBuilder from(GridCoordinates coordinates) {
+    static GraphEdgeBuilder from(GraphNode coordinates) {
         return new GraphEdgeBuilder(coordinates);
     }
-    GridCoordinates getFromCoords() {
-        return fromCoords;
-    }
-    GridCoordinates getToCoords() {
-        return toCoords;
-    }
+    @Override public String toString() { return fromNode+" -> "+toNode; }
+    GraphNode getFromNode() { return fromNode; }
+    GraphNode getToNode() { return toNode; }
+
+    Point2D getFromCoords() { return getFromNode().getCanvasCoordinates(); }
+    Point2D getToCoords() { return getToNode().getCanvasCoordinates(); }
 
     @SuppressWarnings("WeakerAccess")
     static class GraphEdgeBuilder {
-        GridCoordinates fromCoords;
-        GraphEdgeBuilder(GridCoordinates coordinates) {
+        GraphNode fromCoords;
+        GraphEdgeBuilder(GraphNode coordinates) {
             this.fromCoords = coordinates;
         }
-        GraphEdge to(GridCoordinates toCoords) {
+        GraphEdge to(GraphNode toCoords) {
             return new GraphEdge(fromCoords, toCoords);
         }
     }

@@ -4,8 +4,8 @@ package visuals.gridGraph;
  * Ethan Petuchowski 5/30/16
  */
 class GridCoordinates {
-    private int rowNumber;
-    private int columnNumber;
+    private final int rowNumber;
+    private final int columnNumber;
 
     GridCoordinates(int rowNumber, int columnNumber) {
         this.rowNumber = rowNumber;
@@ -21,6 +21,6 @@ class GridCoordinates {
     }
 
     @Override public String toString() {
-        return "GridCoordinates{"+rowNumber+", "+columnNumber+'}';
+        return "{"+rowNumber+","+columnNumber+'}';
     }
 }

@@ -14,7 +14,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     public static void main(String[] args) {
-        // calls start() below I guess
+        // kicks off events that call start() below eventually
         /* The launch method DOES NOT RETURN until the application has exited,
          * either via a call to Platform.exit or all of the application windows
          * have been closed. */
