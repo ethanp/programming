@@ -6,7 +6,7 @@ package visuals.gridGraph;
 class GraphNode {
     private GridCoordinates coordinates;
 
-    GraphNode(GridCoordinates coordinates) {
+    private GraphNode(GridCoordinates coordinates) {
         this.coordinates = coordinates;
     }
 

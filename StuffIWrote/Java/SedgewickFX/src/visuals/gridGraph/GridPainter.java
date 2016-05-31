@@ -70,9 +70,21 @@ class GridPainter {
     @Contract(pure = true) private double topRowLoc() { return canvasHeight()*canvasMargin(); }
     @Contract(pure = true) private double leftColumnLoc() {return canvasWidth()*canvasMargin();}
 
+    void drawEdge(GraphEdge edge) {
+        Point2D g1 = canvasLocForGridCoords(edge.getFromCoords());
+        Point2D g2 = canvasLocForGridCoords(edge.getToCoords());
+        graphicsContext.setStroke(styleConfig.edgeColor);
+        graphicsContext.setLineWidth(styleConfig.edgeWidth);
+        graphicsContext.moveTo(g1.getX(), g1.getY());
+        graphicsContext.lineTo(g2.getX(), g2.getY());
+        graphicsContext.stroke();
+    }
+
     private static class GridStyleConfiguration {
-        Paint backgroundColor = Color.BEIGE;
-        Paint nodeColor = Color.AQUA;
-        int nodeSize = 15;
+        Paint backgroundColor = Color.BLACK;
+        Paint nodeColor = Color.LIGHTGRAY;
+        Paint edgeColor = Color.LIGHTBLUE;
+        int nodeSize = 35;
+        double edgeWidth = 20;
     }
 }

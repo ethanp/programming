@@ -16,15 +16,11 @@ class GridCoordinates {
         return rowNumber;
     }
 
-    public void setRowNumber(int rowNumber) {
-        this.rowNumber = rowNumber;
-    }
-
     int getColumnNumber() {
         return columnNumber;
     }
 
-    public void setColumnNumber(int columnNumber) {
-        this.columnNumber = columnNumber;
+    @Override public String toString() {
+        return "GridCoordinates{"+rowNumber+", "+columnNumber+'}';
     }
 }

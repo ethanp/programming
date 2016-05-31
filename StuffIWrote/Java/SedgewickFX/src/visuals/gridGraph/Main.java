@@ -69,8 +69,11 @@ public class Main extends Application {
         root.getChildren().add(canvas);
         GridGraph lineGraph = new GridGraph(graphicsContext);
         primaryStage.setScene(s);
+
+        // Attempts to show this Window by setting visibility to true
         primaryStage.show();
-        primaryStage.show();
+
+        lineGraph.addRandomEdges(5);
     }
 }
 
