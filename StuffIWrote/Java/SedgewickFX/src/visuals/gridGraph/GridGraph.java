@@ -2,6 +2,8 @@ package visuals.gridGraph;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import visuals.graph.GraphEdge;
+import visuals.graph.GraphNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,7 @@ class GridGraph {
     private final int numRows = 5;
     private final int numCols = 5;
     private final GridPainter gridPainter;
-    private final Graph graph = new Graph();
+    private final Graph<GridGraphNode> graph = new Graph<>();
 
     GridGraph(GraphicsContext graphicsContext) {
         graph.addNodes(createNodeGrid());
@@ -40,23 +42,30 @@ class GridGraph {
         graph.getEdges().forEach(gridPainter::drawEdge);
     }
 
-    Graph findPath(GraphEdge between) {
+    List<GraphEdge> findPath(GraphEdge between) {
         return GraphAlgos.findPath(between.getFromNode(), between.getToNode(), this.graph);
     }
 
     private static class GraphAlgos {
-        static Graph findPath(GraphNode coords, GraphNode coords1, Graph graph) {
-            return graph;
+        static List<GraphEdge> findPath(GraphNode fromNode, GraphNode toNode, Graph graph) {
+            List<GraphEdge> edges = new ArrayList<>();
+            edges.add(GraphEdge.from(fromNode).to(toNode));
+            return edges;
         }
     }
 
-    private static class Graph {
-        private final List<GridGraphNode> nodes = new ArrayList<>();
+    private static class Graph<NodeT extends GraphNode> {
+        private final List<NodeT> nodes = new ArrayList<>();
         private final List<GraphEdge> edges = new ArrayList<>();
-        GridGraphNode getRandomNode() {
+        Graph() {}
+        Graph(List<NodeT> nodes, List<GraphEdge> edges) {
+            this.nodes.addAll(nodes);
+            this.edges.addAll(edges);
+        }
+        GraphNode getRandomNode() {
             return nodes.get(new Random().nextInt(nodes.size()));
         }
-        void addNodes(List<GridGraphNode> nodes) {
+        void addNodes(List<NodeT> nodes) {
             this.nodes.addAll(nodes);
         }
         void addRandomEdges(int numEdges) {
@@ -69,7 +78,7 @@ class GridGraph {
         List<GraphEdge> getEdges() {
             return edges;
         }
-        List<GridGraphNode> getNodes() {
+        List<NodeT> getNodes() {
             return nodes;
         }
     }

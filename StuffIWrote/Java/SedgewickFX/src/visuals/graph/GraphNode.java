@@ -1,10 +1,10 @@
-package visuals.gridGraph;
+package visuals.graph;
 
 import javafx.geometry.Point2D;
 
 /**
  * Ethan Petuchowski 5/30/16
  */
-interface GraphNode {
+public interface GraphNode {
     Point2D getCanvasCoordinates();
 }

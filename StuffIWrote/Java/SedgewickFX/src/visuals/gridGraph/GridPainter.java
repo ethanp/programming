@@ -2,9 +2,9 @@ package visuals.gridGraph;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import org.jetbrains.annotations.Contract;
+import visuals.graph.GraphEdge;
+import visuals.graph.GraphStyleConfiguration;
 
 import java.util.List;
 
@@ -12,12 +12,10 @@ import java.util.List;
  * Ethan Petuchowski 5/30/16
  */
 class GridPainter {
-    private GridStyleConfiguration styleConfig = new GridStyleConfiguration();
-
-    private GraphicsContext graphicsContext;
-
-    private int numRows;
-    private int numCols;
+    private final GraphStyleConfiguration style = new GraphStyleConfiguration();
+    private final GraphicsContext graphicsContext;
+    private final int numRows;
+    private final int numCols;
 
     GridPainter(GraphicsContext graphicsContext, int numCols, int numRows) {
         this.graphicsContext = graphicsContext;
@@ -31,12 +29,12 @@ class GridPainter {
     }
 
     private void renderNode(GridGraph.GridGraphNode node) {
-        graphicsContext.setFill(styleConfig.nodeColor);
-        drawCircle(styleConfig.nodeSize, node.getCoordinates());
+        graphicsContext.setFill(style.getNodeColor());
+        drawCircle(style.getNodeSize(), node.getCoordinates());
     }
 
     private void clearCanvas() {
-        graphicsContext.setFill(styleConfig.backgroundColor);
+        graphicsContext.setFill(style.getBackgroundColor());
         graphicsContext.fillRect(0, 0, canvasHeight(), canvasWidth());
     }
 
@@ -56,8 +54,14 @@ class GridPainter {
     @Contract(pure = true) private double canvasScale() { return .8; }
     @Contract(pure = true) private double canvasMargin() {return (1-canvasScale())/2;}
 
-    @Contract(pure = true) private double canvasWidth() { return graphicsContext.getCanvas().getWidth(); }
-    @Contract(pure = true) private double canvasHeight() { return graphicsContext.getCanvas().getHeight(); }
+    @Contract(pure = true) private double canvasWidth() {
+        return graphicsContext.getCanvas()
+            .getWidth();
+    }
+    @Contract(pure = true) private double canvasHeight() {
+        return graphicsContext.getCanvas()
+            .getHeight();
+    }
 
     @Contract(pure = true) private double gridHeight() {return canvasHeight()*canvasScale();}
     @Contract(pure = true) private double gridWidth() {return canvasWidth()*canvasScale();}
@@ -71,18 +75,11 @@ class GridPainter {
     void drawEdge(GraphEdge edge) {
         Point2D g1 = edge.getFromCoords();
         Point2D g2 = edge.getToCoords();
-        graphicsContext.setStroke(styleConfig.edgeColor);
-        graphicsContext.setLineWidth(styleConfig.edgeWidth);
+        graphicsContext.setStroke(style.getEdgeColor());
+        graphicsContext.setLineWidth(style.getEdgeWidth());
         graphicsContext.moveTo(g1.getX(), g1.getY());
         graphicsContext.lineTo(g2.getX(), g2.getY());
         graphicsContext.stroke();
     }
 
-    private static class GridStyleConfiguration {
-        Paint backgroundColor = Color.BLACK;
-        Paint nodeColor = Color.LIGHTGRAY;
-        Paint edgeColor = Color.LIGHTBLUE;
-        int nodeSize = 35;
-        double edgeWidth = 20;
-    }
 }
