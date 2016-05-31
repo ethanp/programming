@@ -13,24 +13,6 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 
-    /* This class is used to issue draw calls to a Canvas using a buffer.
-     *
-     * Each call pushes the necessary parameters onto the buffer where they will be later rendered
-     * onto the image of the Canvas node by the rendering thread at the end of a pulse.
-     *
-     *  Once a Canvas node is attached to a scene, it must be modified on the JavaFX Application
-     *  Thread.
-     *
-     *  Calling any method on the GraphicsContext is considered modifying its corresponding Canvas
-     *  and is subject to the same threading rules.
-     *
-     *  A GraphicsContext also manages a stack of state objects that can be saved or restored at
-     *  anytime.
-     *
-     * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/canvas/GraphicsContext.html
-     */
-    private static GraphicsContext graphicsContext;
-
     public static void main(String[] args) {
         // calls start() below I guess
         /* The launch method DOES NOT RETURN until the application has exited,
@@ -81,7 +63,7 @@ public class Main extends Application {
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
 
         // get the single graphics context associated with this Canvas
-        graphicsContext = canvas.getGraphicsContext2D();
+        GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
 
         // put the canvas on the forefront of the stack pane
         root.getChildren().add(canvas);

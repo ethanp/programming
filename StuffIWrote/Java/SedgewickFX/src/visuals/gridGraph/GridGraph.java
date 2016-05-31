@@ -10,18 +10,19 @@ import java.util.List;
  */
 class GridGraph {
 
+    private final int numRows = 5;
+    private final int numCols = 5;
+
     GridGraph(GraphicsContext graphicsContext) {
         List<GraphNode> nodes = createNodeGrid();
-        GridPainter gridPainter = new GridPainter(graphicsContext);
+        GridPainter gridPainter = new GridPainter(graphicsContext, numRows, numCols);
         gridPainter.drawGrid(nodes);
     }
 
     private List<GraphNode> createNodeGrid() {
-        int nodeRows = 5;
-        int nodeCols = 5;
         List<GraphNode> ret = new ArrayList<>();
-        for (int row = 0; row < nodeRows; row++)
-            for (int col = 0; col < nodeCols; col++)
+        for (int row = 0; row < numRows; row++)
+            for (int col = 0; col < numCols; col++)
                 ret.add(GraphNode.at(row, col));
         return ret;
     }

@@ -4,6 +4,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import org.jetbrains.annotations.Contract;
 
 import java.util.List;
 
@@ -15,17 +16,18 @@ class GridPainter {
 
     private GraphicsContext graphicsContext;
 
-    GridPainter(GraphicsContext graphicsContext) {
+    private int numRows;
+    private int numCols;
+
+    GridPainter(GraphicsContext graphicsContext, int numCols, int numRows) {
         this.graphicsContext = graphicsContext;
+        this.numCols = numCols;
+        this.numRows = numRows;
     }
 
-    private double canvasWidth() {
-        return graphicsContext.getCanvas().getWidth();
-    }
+    private double canvasWidth() { return graphicsContext.getCanvas().getWidth(); }
 
-    private double canvasHeight() {
-        return graphicsContext.getCanvas().getHeight();
-    }
+    private double canvasHeight() { return graphicsContext.getCanvas().getHeight(); }
 
     void drawGrid(List<GraphNode> nodes) {
         setBackground();
@@ -53,14 +55,20 @@ class GridPainter {
     }
 
     private Point2D canvasLocForGridCoords(GridCoordinates coordinates) {
-        double columnWidth = -1;
-        double leftColumnLoc = -1;
-        double columnLoc = leftColumnLoc+columnWidth*coordinates.getColumnNumber();
-        double rowHeight = -1;
-        double topRowLoc = -1;
-        double rowLoc = topRowLoc+rowHeight*coordinates.getRowNumber();
+        double columnLoc = leftColumnLoc()+columnWidth()*coordinates.getColumnNumber();
+        double rowLoc = topRowLoc()+rowHeight()*coordinates.getRowNumber();
         return new Point2D(columnLoc, rowLoc);
     }
+
+    // I think the @Contract is for intellij's static analysis features
+    @Contract(pure = true) private double canvasScale() { return .8; }
+    @Contract(pure = true) private double canvasMargin() {return (1-canvasScale())/2;}
+    @Contract(pure = true) private double gridHeight() {return canvasHeight()*canvasScale();}
+    @Contract(pure = true) private double gridWidth() {return canvasWidth()*canvasScale();}
+    @Contract(pure = true) private double rowHeight() { return gridHeight()/numRows; }
+    @Contract(pure = true) private double columnWidth() {return gridWidth()/numCols;}
+    @Contract(pure = true) private double topRowLoc() { return canvasHeight()*canvasMargin(); }
+    @Contract(pure = true) private double leftColumnLoc() {return canvasWidth()*canvasMargin();}
 
     private static class GridStyleConfiguration {
         Paint backgroundColor = Color.BEIGE;
