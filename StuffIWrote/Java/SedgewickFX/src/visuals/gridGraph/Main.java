@@ -1,8 +1,6 @@
 package visuals.gridGraph;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -41,24 +39,12 @@ public class Main extends Application {
         launch(args);
     }
 
-    public static void drawStuff() {
-        graphicsContext.setFill(Color.BLUE);
-        graphicsContext.fillRect(10, 10, graphicsContext.getCanvas()
-            .getHeight(), graphicsContext.getCanvas().getWidth());
-    }
-
-    private static void clearCanvas() {
-        graphicsContext.setFill(Color.BLACK);
-        graphicsContext.fillRect(0, 0, graphicsContext.getCanvas()
-            .getHeight(), graphicsContext.getCanvas().getWidth());
-    }
-
     /* Eventually (after some stack reflection mumbo-jumbo) called by the framework on
      * line 821 of LauncherImpl.java because this is an "instanceof Application"
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Grid Graph");
 
         /* The StackPane layout pane places all of the nodes within a single stack with each new
          * node added on top of the previous node. This layout model provides an easy way to
@@ -96,15 +82,13 @@ public class Main extends Application {
 
         // get the single graphics context associated with this Canvas
         graphicsContext = canvas.getGraphicsContext2D();
-        clearCanvas();
-        root.getChildren().addAll(canvas);
-        ObservableList<Double> data = FXCollections.observableArrayList(
-            4.0, 3.0, 5.0, 2.0
-        );
-//        NonNegativeBarGraph lineGraph = new NonNegativeBarGraph(graphicsContext);
-//        lineGraph.drawBasedOn(data);
+
+        // put the canvas on the forefront of the stack pane
+        root.getChildren().add(canvas);
+        GridGraph lineGraph = new GridGraph(graphicsContext);
         primaryStage.setScene(s);
         primaryStage.show();
         primaryStage.show();
     }
 }
+
