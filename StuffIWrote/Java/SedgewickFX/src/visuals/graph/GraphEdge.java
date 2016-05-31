@@ -8,7 +8,7 @@ import javafx.geometry.Point2D;
 public class GraphEdge {
     private GraphNode fromNode;
     private GraphNode toNode;
-    private GraphEdge(GraphNode fromNode, GraphNode toNode) {
+    GraphEdge(GraphNode fromNode, GraphNode toNode) {
         this.fromNode = fromNode;
         this.toNode = toNode;
     }

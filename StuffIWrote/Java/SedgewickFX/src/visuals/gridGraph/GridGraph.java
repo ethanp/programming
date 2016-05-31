@@ -2,12 +2,13 @@ package visuals.gridGraph;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
+import visuals.graph.Graph;
+import visuals.graph.GraphAlgos;
 import visuals.graph.GraphEdge;
 import visuals.graph.GraphNode;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Ethan Petuchowski 5/30/16
@@ -46,44 +47,7 @@ class GridGraph {
         return GraphAlgos.findPath(between.getFromNode(), between.getToNode(), this.graph);
     }
 
-    private static class GraphAlgos {
-        static List<GraphEdge> findPath(GraphNode fromNode, GraphNode toNode, Graph graph) {
-            List<GraphEdge> edges = new ArrayList<>();
-            edges.add(GraphEdge.from(fromNode).to(toNode));
-            return edges;
-        }
-    }
-
-    private static class Graph<NodeT extends GraphNode> {
-        private final List<NodeT> nodes = new ArrayList<>();
-        private final List<GraphEdge> edges = new ArrayList<>();
-        Graph() {}
-        Graph(List<NodeT> nodes, List<GraphEdge> edges) {
-            this.nodes.addAll(nodes);
-            this.edges.addAll(edges);
-        }
-        GraphNode getRandomNode() {
-            return nodes.get(new Random().nextInt(nodes.size()));
-        }
-        void addNodes(List<NodeT> nodes) {
-            this.nodes.addAll(nodes);
-        }
-        void addRandomEdges(int numEdges) {
-            for (int edgeNum = 0; edgeNum < numEdges; edgeNum++) {
-                GraphEdge randomEdge = GraphEdge.from(getRandomNode()).to(getRandomNode());
-                System.out.println("adding edge: "+randomEdge);
-                edges.add(randomEdge);
-            }
-        }
-        List<GraphEdge> getEdges() {
-            return edges;
-        }
-        List<NodeT> getNodes() {
-            return nodes;
-        }
-    }
-
-    class GridGraphNode implements GraphNode {
+    class GridGraphNode extends GraphNode {
         private GridCoordinates coordinates;
 
         private GridGraphNode(int row, int col) {
@@ -97,6 +61,16 @@ class GridGraph {
         }
         @Override public Point2D getCanvasCoordinates() {
             return gridPainter.canvasLocForGridCoords(coordinates);
+        }
+        @Override public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            GridGraphNode node = (GridGraphNode) o;
+            return coordinates.equals(node.coordinates);
+
+        }
+        @Override public int hashCode() {
+            return coordinates.hashCode();
         }
     }
 
