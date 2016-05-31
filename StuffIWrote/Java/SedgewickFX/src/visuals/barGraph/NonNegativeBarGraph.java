@@ -1,4 +1,4 @@
-package visuals;
+package visuals.barGraph;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
@@ -14,20 +14,19 @@ import java.util.ListIterator;
 /**
  * Ethan Petuchowski 3/5/16
  */
-public class NonNegativeBarGraph {
+class NonNegativeBarGraph {
 
     /* inherent to the program */
-    final GraphicsContext gc;
-    final double totalHeight;
-    final double totalWidth;
-    final double graphHeight;
-    final double graphWidth;
-    final double graphProportion = .8;
-    final double AXIS_WIDTH = 3;
+    private final GraphicsContext gc;
+    private final double totalHeight;
+    private final double totalWidth;
+    private final double graphHeight;
+    private final double graphWidth;
+    private final double AXIS_WIDTH = 3;
 
     /* potentially manipulable by the user */
-    Color AXIS_COLOR = Color.RED;
-    Color LABEL_COLOR = Color.WHITE;
+    private Color AXIS_COLOR = Color.RED;
+    private Color LABEL_COLOR = Color.WHITE;
 
     /* based on the given dataset */
     private ObservableList<Double> values = null;
@@ -36,16 +35,17 @@ public class NonNegativeBarGraph {
     private boolean maxMayHaveChanged = true;
     private double storedMax;
 
-    public NonNegativeBarGraph(GraphicsContext gc) {
+    NonNegativeBarGraph(GraphicsContext gc) {
         this.gc = gc;
         gc.setLineCap(StrokeLineCap.BUTT/*?*/);
         this.totalHeight = gc.getCanvas().getHeight();
         this.totalWidth = gc.getCanvas().getWidth();
+        double graphProportion = .8;
         this.graphHeight = totalHeight*graphProportion;
         this.graphWidth = totalWidth*graphProportion;
     }
 
-    public void drawBasedOn(ObservableList<Double> values) {
+    void drawBasedOn(ObservableList<Double> values) {
         this.values = values;
         this.values.addListener(
             (ListChangeListener<? super Double>) c -> {

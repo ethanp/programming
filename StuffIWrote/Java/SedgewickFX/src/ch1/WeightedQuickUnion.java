@@ -96,7 +96,7 @@ public class WeightedQuickUnion implements UnionFind {
                 uf.union(pair.a, pair.b);
             }
         }
-        System.out.println(uf.count() + " should be 2");
+        System.out.println(uf.count() == 2 ? "PASSED" : uf.count() + " should be 2");
     }
 }
 

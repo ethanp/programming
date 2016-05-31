@@ -40,9 +40,7 @@ public class RingBuffer<E> {
                     System.out.println("putting: "+(++next));
                     integerRingBuffer.put(next);
                 }
-                catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                catch (InterruptedException ignored) {}
             }
         };
         Runnable getter = () -> {
@@ -50,9 +48,7 @@ public class RingBuffer<E> {
                 System.out.println("running getter");
                 System.out.println("got: "+integerRingBuffer.get());
             }
-            catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            catch (InterruptedException ignored) {}
         };
         ScheduledExecutorService e = Executors.newScheduledThreadPool(2);
         e.scheduleAtFixedRate(putter, 0, 3, TimeUnit.SECONDS);
