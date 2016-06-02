@@ -7,11 +7,8 @@ import java.util.List;
 
 interface UnionFind {
     void union(int a, int b);
-
-    boolean connected(int a, int b);
-
-    int find(int a);
-
+    boolean areInSameSubset(int a, int b);
+    int findIndexOfRootOfSubsetContaining(int a);
     int count();
 }
 
@@ -22,58 +19,69 @@ interface UnionFind {
  * before looking at their code.
  */
 public class WeightedQuickUnion implements UnionFind {
-    public final int numNodes;
-    private int count;
-    final int id[];
-    final int sizes[]; // I think this only needs to be accurate at the roots
+    private int currentSubsetCount;
+    private final int parentID[];
+    private final int subsetSize[]; // I think this only needs to be accurate at the roots
 
     public WeightedQuickUnion(int numNodes) {
-        this.numNodes = numNodes;
-        this.count = numNodes;
-        this.id = new int[numNodes];
-        this.sizes = new int[numNodes];
+        this.currentSubsetCount = numNodes;
+        this.parentID = new int[numNodes];
+        this.subsetSize = new int[numNodes];
         for (int i = 0; i < numNodes; i++) {
-            id[i] = i;
-            sizes[i] = 1;
+            parentID[i] = i;
+            subsetSize[i] = 1;
         }
     }
 
     @Override public void union(int a, int b) {
-        int aGrp = find(a);
-        int bGrp = find(b);
+        int aGrp = findIndexOfRootOfSubsetContaining(a);
+        int bGrp = findIndexOfRootOfSubsetContaining(b);
         if (aGrp == bGrp) return;
-
-        // figure out who's bigger
-        // fasten the smaller to the larger
-        if (sizes[aGrp] < sizes[bGrp]) {
-            id[aGrp] = bGrp;
-            sizes[bGrp] += sizes[aGrp];
-        } else {
-            id[bGrp] = aGrp;
-            sizes[aGrp] += sizes[bGrp];
-        }
-        count--;
+        attachSmallerSubsetTolarger(aGrp, bGrp);
+        currentSubsetCount--;
+    }
+    
+    private void attachSmallerSubsetTolarger(int group1, int group2) {
+        int smallerSubsetRoot = subsetSize[group1] < subsetSize[group2] ? group1 : group2;
+        int largerSubsetRoot = group1 == smallerSubsetRoot ? group2 : group1;
+        parentID[smallerSubsetRoot] = largerSubsetRoot;
+        subsetSize[largerSubsetRoot] += subsetSize[smallerSubsetRoot];
     }
 
-    @Override public boolean connected(int a, int b) {
-        return find(a) == find(b);
+    @Override public boolean areInSameSubset(int idxA, int idxB) {
+        return findIndexOfRootOfSubsetContaining(idxA)
+            == findIndexOfRootOfSubsetContaining(idxB);
     }
 
-    @Override public int find(int a) {
-        int b = a, c;
-        while (id[a] != a) a = id[a];
-        // path compression
-        // (doesn't help speed in practical scenarios)
-        while (id[b] != a) {
-            c = id[b];
-            id[b] = a;
-            b = c;
+    @Override public int findIndexOfRootOfSubsetContaining(int givenIdx) {
+        int rootIdx = getRootFor(givenIdx);
+        compressPathToRoot(givenIdx, rootIdx);
+        return rootIdx;
+    }
+
+    /** path compression (note: doesn't actually help speed in practical scenarios [why?]) */
+    private void compressPathToRoot(int startIdx, int rootIdx) {
+        int curIdx = startIdx;
+        int parentIdx;
+        while (parentID[curIdx] != rootIdx) {
+            parentIdx = parentID[curIdx];
+            parentID[curIdx] = rootIdx;
+            curIdx = parentIdx;
         }
-        return a;
+    }
+
+    private int getRootFor(int givenIdx) {
+        while (hasParent(givenIdx))
+            givenIdx = parentID[givenIdx];
+        return givenIdx;
+    }
+
+    private boolean hasParent(int a) {
+        return parentID[a] != a;
     }
 
     @Override public int count() {
-        return count;
+        return currentSubsetCount;
     }
 
     public static void main(String[] args) {
@@ -91,7 +99,7 @@ public class WeightedQuickUnion implements UnionFind {
         pairs.add(new Pair<>(1, 0));
         pairs.add(new Pair<>(6, 7));
         for (Pair<Integer> pair : pairs) {
-            if (!uf.connected(pair.a, pair.b)) {
+            if (!uf.areInSameSubset(pair.a, pair.b)) {
                 System.out.println(pair);
                 uf.union(pair.a, pair.b);
             }
