@@ -1,0 +1,19 @@
+{
+  "name": "readit",
+  "version": "0.0.1",
+  "description": "Comment trees",
+  "main": "readit.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "comments"
+  ],
+  "author": "Ethan Petuchowski",
+  "license": "Beerware",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "commander": "^2.9.0",
+    "koa": "^1.2.0"
+  }
+}
