@@ -1,0 +1,10 @@
+doctype html
+html(lang="en")
+  head
+    title Your Web Application
+  body
+    h1 Your Web Application
+    ul
+    - each page in pages
+      li
+        a(href='/#{page._id}')= page.title
