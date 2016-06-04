@@ -23,7 +23,7 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --harmony-generators test.js -u bdd -R spec",
-    "start": "node --harmony index.js"
+    "start": "nodemon --harmony index.js"
   },
   "engines": {
     "node": "0.12.2"

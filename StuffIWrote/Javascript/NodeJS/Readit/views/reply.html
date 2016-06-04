@@ -1,11 +1,11 @@
 {% extends 'layout.html' %}
 
-{% block title %}New Post{% endblock %}
+{% block title %}Replying to Post {{ parent.title }}{% endblock %}
 
 {% block content %}
-  <h1>New Post</h1>
+  <h1>Reply</h1>
   <p>Create a new post.</p>
-  <form action="/post" method="post">
+  <form action="/reply" method="post">
     <p><input type="text" placeholder="Title" name="title"></p>
     <p><textarea placeholder="Contents" name="body"></textarea></p>
     <p><input type="submit" value="Create"></p>

@@ -10,8 +10,9 @@
     {% for post in posts %}
       <li>
         <h2>{{ post.title }}</h2>
-        <p><a href="/post/{{ post._id.toString() }}">Post page</a></p>
         <p>{{ post.body }}</p>
+        <p><a href="/post/{{ post._id.toString() }}">Post page</a></p>
+        <p><a href="/reply/new/{{ post._id.toString() }}">Reply</a></p>
       </li>
     {% endfor %}
   </ul>
