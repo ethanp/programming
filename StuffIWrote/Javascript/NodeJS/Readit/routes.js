@@ -1,20 +1,17 @@
-/**
- * Module dependencies.
- */
 var parse = require('co-body');
 var render = require('./lib/render');
-
-// Set up monk
 var monk = require('monk');
 var wrap = require('co-monk');
+
+// connect to mongo
 var db = monk('localhost/koaBlog');
 
-// Wrap monk in generator goodness
+// enable generators with monk (e.g. `yield posts.insert(object)`)
 var posts = wrap(db.get('posts'));
 
-// And now... the route definitions
+
 /**
- * Post listing.
+ * Show post listing.
  */
 module.exports.list = function *list() {
   var postList = yield posts.find({});
