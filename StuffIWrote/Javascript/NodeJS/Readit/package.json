@@ -1,33 +1,32 @@
 {
-  "name": "readit",
+  "name": "koablog-mongo",
+  "description": "A very simple blog using mongo via monk",
   "version": "0.0.1",
-  "description": "Comment trees",
-  "main": "readit.js",
-  "scripts": {
-    "test": "nodemon --harmony index.js",
-    "start": "node --harmony index.js"
-  },
-  "keywords": [
-    "comments"
-  ],
-  "author": "Ethan Petuchowski",
-  "license": "Beerware",
+  "repository": "https://github.com/marcusoftnet/koablog-mongo",
+  "bugs": "https://github.com/marcusoftnet/koablog-mongo/issues",
   "dependencies": {
-    "co-body": "^4.2.0",
+    "co": "^4.5.4",
+    "co-body": "^2.0.0",
     "co-monk": "^1.0.0",
-    "co-views": "^2.1.0",
-    "colors": "^1.1.2",
-    "commander": "^2.9.0",
-    "koa": "^1.2.0",
-    "koa-logger": "^1.3.0",
+    "co-views": "^1.0.0",
+    "koa": "^0.21.0",
+    "koa-logger": "^1.2.2",
     "koa-route": "^2.4.2",
-    "koa-static": "^2.0.0",
-    "koa-stylus": "0.0.3",
-    "mongodb": "^2.1.21",
+    "mongodb": "^1.4",
     "monk": "^1.0.1",
     "swig": "^1.4.2"
   },
   "devDependencies": {
-    "nodemon": "^1.9.2"
-  }
+    "mocha": "^2.2.5",
+    "should": "^7.0.1",
+    "supertest": "^1.0.1"
+  },
+  "scripts": {
+    "test": "./node_modules/mocha/bin/mocha --harmony-generators test.js -u bdd -R spec",
+    "start": "node --harmony index.js"
+  },
+  "engines": {
+    "node": "0.12.2"
+  },
+  "license": "MIT"
 }
