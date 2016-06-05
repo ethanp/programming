@@ -9,11 +9,11 @@ import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.DataFormat;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
 
 /**
@@ -28,29 +28,13 @@ class Interactive {
         this.root = (Group) scene.getRoot();
         scene.setOnMouseClicked(click -> {
             if (!isDragging()) addNodeAt(new Point2D(click.getX(), click.getY()));
-            click.consume();
-        });
-        scene.setOnDragDropped(dragDrop -> {
-            System.out.println("INFO: cancelling drag");
-            dragSource = null;
-            dragDrop.setDropCompleted(true);
-            dragDrop.consume();
-        });
-        scene.setOnDragDetected(event -> {
-            System.out.println("scene drag detected");
-            ClipboardContent content = new ClipboardContent();
-            content.putString("okey dokey");
-            root.startDragAndDrop(TransferMode.ANY).setContent(content);
-            event.consume();
         });
         scene.setOnDragDone(event -> {
-            System.out.println("drag done in the open");
-            event.consume();
-        });
-        scene.setOnDragDropped(event -> {
-            System.out.println("drag dropped in the open");
-            event.setDropCompleted(true);
-            event.consume();
+            if (isDragging()) {
+                System.out.println("cancelling edge creation");
+                dragSource.setFill(Color.BLUE);
+                dragSource = null;
+            }
         });
     }
 
@@ -62,10 +46,10 @@ class Interactive {
         Circle circle = new Circle(point.getX(), point.getY(), 25);
         circle.setFill(Color.BLUE);
         circle.setOnDragDetected(event -> {
-            System.out.println("circle drag detected");
+            System.out.println("starting edge creation");
             if (!isDragging()) {
                 ClipboardContent content = new ClipboardContent();
-                content.putString("circle drag");
+                content.putString("circle drag"); // this is REQUIRED (and useless!)
                 circle.startDragAndDrop(TransferMode.ANY).setContent(content);
                 circle.setFill(Color.GREEN);
                 dragSource = circle;
@@ -73,43 +57,42 @@ class Interactive {
             else System.err.println("another drag is already in progress");
             event.consume();
         });
-        circle.setOnDragDone(event -> {
-            dragSource = null;
-            System.out.println("circle drag done");
-            circle.setFill(Color.BLUE);
-            event.consume();
-        });
         circle.setOnDragOver(event -> {
-            if (circle != dragSource)
+            if (isDragging() && circle != dragSource) {
                 circle.setFill(Color.CYAN);
-            event.acceptTransferModes(TransferMode.ANY);
-            event.consume();
+                event.acceptTransferModes(TransferMode.ANY);
+            }
         });
         circle.setOnDragExited(event -> {
-            if (circle != dragSource)
+            if (isDragging() && circle != dragSource)
                 circle.setFill(Color.BLUE);
-            event.consume();
         });
         circle.setOnDragDropped(event -> {
             System.out.println("circular drag dropped");
-            Object c = event.getDragboard().getContent(DataFormat.PLAIN_TEXT);
             if (!isDragging()) {
+                // this should not occur
                 System.err.println("ERROR: no drag source found");
                 return;
             }
-            circle.setFill(Color.RED);
-            Line edge = new Line(
-                dragSource.getCenterX(), dragSource.getCenterY(),
-                circle.getCenterX(), circle.getCenterY()
-            );
-            edge.setStroke(Color.AQUA);
-            edge.setStrokeWidth(20);
-            root.getChildren().add(edge);
+            lineBetween(dragSource, circle);
+            dragSource.setFill(Color.BLUE);
+            circle.setFill(Color.BLUE);
             dragSource = null;
             event.setDropCompleted(true);
             event.consume();
         });
         root.getChildren().add(circle);
+    }
+
+    private void lineBetween(Circle source, Circle dest) {
+        Line edge = new Line(
+            source.getCenterX(), source.getCenterY(),
+            dest.getCenterX(), dest.getCenterY()
+        );
+        edge.setStroke(Color.AQUA);
+        edge.setStrokeWidth(10);
+        edge.setStrokeLineCap(StrokeLineCap.ROUND);
+        root.getChildren().add(edge);
     }
 
     void exampleAnimation() {
