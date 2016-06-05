@@ -16,7 +16,11 @@ public class Graph<NodeT extends GraphNode> {
     public Graph() {
     }
 
-    Graph(List<NodeT> nodes, List<GraphEdge> edges) {
+    /**
+     * Given nodes and edges will by _copied_ into an internal list; references to the given lists
+     * will not be saved by this Graph.
+     */
+    public Graph(List<NodeT> nodes, List<GraphEdge> edges) {
         this.nodes.addAll(nodes);
         this.edges.addAll(edges);
     }
@@ -25,6 +29,9 @@ public class Graph<NodeT extends GraphNode> {
         return nodes.get(new Random().nextInt(nodes.size()));
     }
 
+    /**
+     * The adjacency list is always built from scratch and returned by this method
+     */
     private Map<GraphNode, List<GraphNode>> getAdjacencyList() {
         Map<GraphNode, List<GraphNode>> adjList = new HashMap<>();
         for (GraphEdge e : edges) {
@@ -39,9 +46,13 @@ public class Graph<NodeT extends GraphNode> {
     }
 
     public List<GraphNode> neighborsOf(GraphNode node) {
-        return getAdjacencyList().get(node);
+        return new ArrayList<>(getAdjacencyList().get(node));
     }
 
+    /**
+     * Given nodes and edges will by _copied_ into an internal list; references to the given lists
+     * will not be saved by this Graph.
+     */
     public void addNodes(List<NodeT> nodes) {
         this.nodes.addAll(nodes);
     }
@@ -49,16 +60,16 @@ public class Graph<NodeT extends GraphNode> {
     public void addRandomEdges(int numEdges) {
         for (int edgeNum = 0; edgeNum < numEdges; edgeNum++) {
             GraphEdge randomEdge = GraphEdge.from(getRandomNode()).to(getRandomNode());
-            System.out.println("adding edge: "+randomEdge);
+            System.out.println("adding edge: " + randomEdge);
             edges.add(randomEdge);
         }
     }
 
     public List<GraphEdge> getEdges() {
-        return edges;
+        return new ArrayList<>(edges);
     }
 
     public List<NodeT> getNodes() {
-        return nodes;
+        return new ArrayList<>(nodes);
     }
 }
