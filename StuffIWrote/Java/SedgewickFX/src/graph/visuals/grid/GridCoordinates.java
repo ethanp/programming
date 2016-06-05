@@ -1,4 +1,4 @@
-package graph.visuals.gridGraph;
+package graph.visuals.grid;
 
 /**
  * Ethan Petuchowski 5/30/16

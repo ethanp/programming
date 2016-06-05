@@ -1,4 +1,4 @@
-package graph.visuals.gridGraph;
+package graph.visuals.grid;
 
 import graph.algos.PathFinder;
 import graph.core.Graph;

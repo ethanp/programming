@@ -1,4 +1,4 @@
-package graph.visuals.gridGraph;
+package graph.visuals.grid;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

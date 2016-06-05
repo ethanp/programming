@@ -1,4 +1,4 @@
-package graph.visuals.gridGraph;
+package graph.visuals.grid;
 
 import graph.core.GraphEdge;
 import graph.visuals.GraphStyleConfiguration;

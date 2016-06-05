@@ -42,6 +42,7 @@ public class PathFinder {
         }
         return Collections.emptyList();
     }
+
     private List<GraphEdge> dfs(Set<GraphNode> seenSet, GraphNode startNode) {
         seenSet.add(startNode);
         for (GraphEdge edge : graph.edgesOutOf(startNode)) {
