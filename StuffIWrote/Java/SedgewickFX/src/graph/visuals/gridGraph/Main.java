@@ -1,8 +1,6 @@
-package visuals.barGraph;
+package graph.visuals.gridGraph;
 
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -10,44 +8,17 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+/**
+ * Ethan Petuchowski 5/30/16
+ */
 public class Main extends Application {
 
-    /* This class is used to issue draw calls to a Canvas using a buffer.
-     *
-     * Each call pushes the necessary parameters onto the buffer where they will be later rendered
-     * onto the image of the Canvas node by the rendering thread at the end of a pulse.
-     *
-     *  Once a Canvas node is attached to a scene, it must be modified on the JavaFX Application
-     *  Thread.
-     *
-     *  Calling any method on the GraphicsContext is considered modifying its corresponding Canvas
-     *  and is subject to the same threading rules.
-     *
-     *  A GraphicsContext also manages a stack of state objects that can be saved or restored at
-     *  anytime.
-     *
-     * https://docs.oracle.com/javase/8/javafx/api/javafx/scene/canvas/GraphicsContext.html
-     */
-    private static GraphicsContext graphicsContext;
-
     public static void main(String[] args) {
-        // calls start() below I guess
+        // kicks off events that call start() below eventually
         /* The launch method DOES NOT RETURN until the application has exited,
          * either via a call to Platform.exit or all of the application windows
          * have been closed. */
         launch(args);
-    }
-
-    public static void drawStuff() {
-        graphicsContext.setFill(Color.BLUE);
-        graphicsContext.fillRect(10, 10, graphicsContext.getCanvas()
-            .getHeight(), graphicsContext.getCanvas().getWidth());
-    }
-
-    private static void clearCanvas() {
-        graphicsContext.setFill(Color.BLACK);
-        graphicsContext.fillRect(0, 0, graphicsContext.getCanvas()
-            .getHeight(), graphicsContext.getCanvas().getWidth());
     }
 
     /* Eventually (after some stack reflection mumbo-jumbo) called by the framework on
@@ -55,7 +26,7 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setTitle("Non-negative bar graph");
+        primaryStage.setTitle("Grid Graph");
 
         /* The StackPane layout pane places all of the nodes within a single stack with each new
          * node added on top of the previous node. This layout model provides an easy way to
@@ -92,16 +63,17 @@ public class Main extends Application {
         Canvas canvas = new Canvas(WIDTH, HEIGHT);
 
         // get the single graphics context associated with this Canvas
-        graphicsContext = canvas.getGraphicsContext2D();
-        clearCanvas();
-        root.getChildren().addAll(canvas);
-        ObservableList<Double> data = FXCollections.observableArrayList(
-            4.0, 3.0, 5.0, 2.0
-        );
-        NonNegativeBarGraph lineGraph = new NonNegativeBarGraph(graphicsContext);
-        lineGraph.drawBasedOn(data);
+        GraphicsContext graphicsContext = canvas.getGraphicsContext2D();
+
+        // put the canvas on the forefront of the stack pane
+        root.getChildren().add(canvas);
+        GridGraph lineGraph = new GridGraph(graphicsContext);
         primaryStage.setScene(s);
+
+        // Attempts to show this Window by setting visibility to true
         primaryStage.show();
-        primaryStage.show();
+
+        lineGraph.addRandomEdges(5);
     }
 }
+

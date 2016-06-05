@@ -1,4 +1,4 @@
-package visuals.graph;
+package graph.visuals;
 
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;

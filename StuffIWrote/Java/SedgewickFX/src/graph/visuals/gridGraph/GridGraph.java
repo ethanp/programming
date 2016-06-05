@@ -1,11 +1,11 @@
-package visuals.gridGraph;
+package graph.visuals.gridGraph;
 
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
-import visuals.graph.Graph;
-import visuals.graph.GraphAlgos;
-import visuals.graph.GraphEdge;
-import visuals.graph.GraphNode;
+import graph.core.Graph;
+import graph.algos.PathFinder;
+import graph.core.GraphEdge;
+import graph.core.GraphNode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ class GridGraph {
     }
 
     List<GraphEdge> findPath(GraphEdge between) {
-        return GraphAlgos.findPath(between.getFromNode(), between.getToNode(), this.graph);
+        return PathFinder.findPath(between.getFromNode(), between.getToNode(), this.graph);
     }
 
     class GridGraphNode extends GraphNode {

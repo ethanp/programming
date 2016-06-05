@@ -1,4 +1,4 @@
-package visuals.barGraph;
+package charts.barGraph;
 
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;

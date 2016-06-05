@@ -1,4 +1,4 @@
-package visuals.barGraph;
+package charts.barGraph;
 
 import benchmarks.Benchmark;
 import benchmarks.BullMergeBenchmark;

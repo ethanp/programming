@@ -1,4 +1,4 @@
-package visuals.graph;
+package graph.core;
 
 import javafx.geometry.Point2D;
 

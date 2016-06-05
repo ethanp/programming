@@ -1,4 +1,4 @@
-package visuals.graph;
+package graph.core;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,7 @@ public class Graph<NodeT extends GraphNode> {
         }
         return adjList;
     }
-    List<GraphNode> neighborsOf(GraphNode node) {
+    public List<GraphNode> neighborsOf(GraphNode node) {
         return getAdjacencyList().get(node);
     }
 

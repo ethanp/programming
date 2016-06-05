@@ -1,4 +1,4 @@
-package visuals.graph;
+package graph.core;
 
 import javafx.geometry.Point2D;
 
@@ -8,7 +8,7 @@ import javafx.geometry.Point2D;
 public class GraphEdge {
     private GraphNode fromNode;
     private GraphNode toNode;
-    GraphEdge(GraphNode fromNode, GraphNode toNode) {
+    public GraphEdge(GraphNode fromNode, GraphNode toNode) {
         this.fromNode = fromNode;
         this.toNode = toNode;
     }
