@@ -44,7 +44,7 @@ class GridGraph {
     }
 
     List<GraphEdge> findPath(GraphEdge between) {
-        return PathFinder.findPath(between.getFromNode(), between.getToNode(), this.graph);
+        return new PathFinder(between.getFromNode(), between.getToNode(), this.graph).dfs();
     }
 
     class GridGraphNode extends GraphNode {

@@ -16,7 +16,7 @@ public class GraphEdge {
     private GraphNode toNode;
     private double weight;
 
-    private GraphEdge(@NotNull GraphNode fromNode, @NotNull GraphNode toNode, double weight) {
+    private GraphEdge(GraphNode fromNode, @NotNull GraphNode toNode, double weight) {
         this.fromNode = fromNode;
         this.toNode = toNode;
         this.weight = weight;
