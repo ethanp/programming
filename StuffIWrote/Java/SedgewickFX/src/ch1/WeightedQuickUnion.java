@@ -40,7 +40,7 @@ public class WeightedQuickUnion implements UnionFind {
         attachSmallerSubsetTolarger(aGrp, bGrp);
         currentSubsetCount--;
     }
-    
+
     private void attachSmallerSubsetTolarger(int group1, int group2) {
         int smallerSubsetRoot = subsetSize[group1] < subsetSize[group2] ? group1 : group2;
         int largerSubsetRoot = group1 == smallerSubsetRoot ? group2 : group1;
@@ -99,9 +99,9 @@ public class WeightedQuickUnion implements UnionFind {
         pairs.add(new Pair<>(1, 0));
         pairs.add(new Pair<>(6, 7));
         for (Pair<Integer> pair : pairs) {
-            if (!uf.areInSameSubset(pair.a, pair.b)) {
+            if (!uf.areInSameSubset(pair.first, pair.second)) {
                 System.out.println(pair);
-                uf.union(pair.a, pair.b);
+                uf.union(pair.first, pair.second);
             }
         }
         System.out.println(uf.count() == 2 ? "PASSED" : uf.count() + " should be 2");

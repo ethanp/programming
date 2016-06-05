@@ -25,7 +25,10 @@ public class PathFinder {
         class SearchState {
             private final GraphEdge currentEdge;
             private final Queue<GraphEdge> frontier = new ArrayDeque<>();
-            private SearchState(GraphEdge edge) {currentEdge = edge;}
+
+            private SearchState(GraphEdge edge) {
+                currentEdge = edge;
+            }
         }
         List<GraphEdge> edges = new ArrayList<>();
         Stack<SearchState> searchStack = new Stack<>();

@@ -3,7 +3,7 @@ var views = require('co-views');
 /* setup views mapping .html to the swig template engine */
 
 /**
- * This file can be required and then _called_ to render a view (i.e.
+ * This file can be `require`d and then _called_ to render a view (i.e.
  * generate real HTML from a template) like so
  *
  * var render = require('./lib/render');

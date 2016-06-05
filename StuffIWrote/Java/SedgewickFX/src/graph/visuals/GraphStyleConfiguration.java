@@ -16,30 +16,39 @@ public class GraphStyleConfiguration {
     public Paint getBackgroundColor() {
         return backgroundColor;
     }
+
     public void setBackgroundColor(Paint backgroundColor) {
         this.backgroundColor = backgroundColor;
     }
+
     public Paint getNodeColor() {
         return nodeColor;
     }
+
     public void setNodeColor(Paint nodeColor) {
         this.nodeColor = nodeColor;
     }
+
     public Paint getEdgeColor() {
         return edgeColor;
     }
+
     public void setEdgeColor(Paint edgeColor) {
         this.edgeColor = edgeColor;
     }
+
     public int getNodeSize() {
         return nodeSize;
     }
+
     public void setNodeSize(int nodeSize) {
         this.nodeSize = nodeSize;
     }
+
     public double getEdgeWidth() {
         return edgeWidth;
     }
+
     public void setEdgeWidth(double edgeWidth) {
         this.edgeWidth = edgeWidth;
     }

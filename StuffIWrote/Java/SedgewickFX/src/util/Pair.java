@@ -2,18 +2,19 @@ package util;
 
 /** this is just for the testing purpose */
 public class Pair<T> {
-    public final T a;
-    public final T b;
-    public Pair(T a, T b) {
-        this.a = a;
-        this.b = b;
+    public final T first;
+    public final T second;
+
+    public Pair(T first, T second) {
+        this.first = first;
+        this.second = second;
     }
 
     @Override public String toString() {
-        return "Pair{"+a+", "+b+'}';
+        return "Pair{"+first+", "+second+'}';
     }
 
-    public T getB() {
-        return b;
+    public T getSecond() {
+        return second;
     }
 }

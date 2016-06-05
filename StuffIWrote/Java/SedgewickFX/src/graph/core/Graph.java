@@ -12,14 +12,19 @@ import java.util.Random;
 public class Graph<NodeT extends GraphNode> {
     private final List<NodeT> nodes = new ArrayList<>();
     private final List<GraphEdge> edges = new ArrayList<>();
-    public Graph() {}
+
+    public Graph() {
+    }
+
     Graph(List<NodeT> nodes, List<GraphEdge> edges) {
         this.nodes.addAll(nodes);
         this.edges.addAll(edges);
     }
-    GraphNode getRandomNode() {
+
+    private GraphNode getRandomNode() {
         return nodes.get(new Random().nextInt(nodes.size()));
     }
+
     private Map<GraphNode, List<GraphNode>> getAdjacencyList() {
         Map<GraphNode, List<GraphNode>> adjList = new HashMap<>();
         for (GraphEdge e : edges) {
@@ -32,6 +37,7 @@ public class Graph<NodeT extends GraphNode> {
         }
         return adjList;
     }
+
     public List<GraphNode> neighborsOf(GraphNode node) {
         return getAdjacencyList().get(node);
     }
@@ -39,6 +45,7 @@ public class Graph<NodeT extends GraphNode> {
     public void addNodes(List<NodeT> nodes) {
         this.nodes.addAll(nodes);
     }
+
     public void addRandomEdges(int numEdges) {
         for (int edgeNum = 0; edgeNum < numEdges; edgeNum++) {
             GraphEdge randomEdge = GraphEdge.from(getRandomNode()).to(getRandomNode());
@@ -46,9 +53,11 @@ public class Graph<NodeT extends GraphNode> {
             edges.add(randomEdge);
         }
     }
+
     public List<GraphEdge> getEdges() {
         return edges;
     }
+
     public List<NodeT> getNodes() {
         return nodes;
     }

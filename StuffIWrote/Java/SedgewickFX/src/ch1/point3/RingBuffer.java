@@ -35,9 +35,10 @@ public class RingBuffer<E> {
         RingBuffer<Integer> integerRingBuffer = new RingBuffer<>(3);
         Runnable putter = new Runnable() {
             int next = 0;
+
             @Override public void run() {
                 try {
-                    System.out.println("putting: "+(++next));
+                    System.out.println("putting: " + (++next));
                     integerRingBuffer.put(next);
                 }
                 catch (InterruptedException ignored) {}
@@ -46,7 +47,7 @@ public class RingBuffer<E> {
         Runnable getter = () -> {
             try {
                 System.out.println("running getter");
-                System.out.println("got: "+integerRingBuffer.get());
+                System.out.println("got: " + integerRingBuffer.get());
             }
             catch (InterruptedException ignored) {}
         };
@@ -62,7 +63,7 @@ public class RingBuffer<E> {
             // await() _temporarily_ releases the lock
             while (isFull()) full.await();
             buffer[produce] = item;
-            produce = (produce+1)%buffer.length;
+            produce = (produce + 1)%buffer.length;
             size++;
             empty.signal();
         }
@@ -78,7 +79,7 @@ public class RingBuffer<E> {
             while (isEmpty()) empty.await();
             //noinspection unchecked
             E ret = (E) buffer[consume];
-            consume = (consume+1)%buffer.length;
+            consume = (consume + 1)%buffer.length;
             size--;
             full.signal();
             return ret;
@@ -98,6 +99,6 @@ public class RingBuffer<E> {
     }
 
     @Override public String toString() {
-        return "RingBuffer{"+"buffer="+Arrays.toString(buffer)+'}';
+        return "RingBuffer{" + "buffer=" + Arrays.toString(buffer) + '}';
     }
 }

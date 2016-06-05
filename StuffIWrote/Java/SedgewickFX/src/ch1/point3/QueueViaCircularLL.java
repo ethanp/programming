@@ -16,7 +16,7 @@ public class QueueViaCircularLL<E> extends AbstractQueue<E> {
     private int size = 0;
 
     public static void shouldBe(int item, int shouldBe) {
-        System.out.println(item == shouldBe ? "pass" : item+" should be "+shouldBe);
+        System.out.println(item == shouldBe ? "pass" : item + " should be " + shouldBe);
     }
 
     public static void main(String[] args) {
@@ -33,7 +33,7 @@ public class QueueViaCircularLL<E> extends AbstractQueue<E> {
         q.forEach(System.out::println);
         System.out.println("---------------");
         for (int i = 0; i < 5; i++)
-            shouldBe(q.poll(), i+1);
+            shouldBe(q.poll(), i + 1);
         System.out.println("---------------");
         shouldBe(q.size(), 0);
         q.offer(3);

@@ -1,11 +1,11 @@
 package graph.visuals.gridGraph;
 
-import javafx.geometry.Point2D;
-import javafx.scene.canvas.GraphicsContext;
-import graph.core.Graph;
 import graph.algos.PathFinder;
+import graph.core.Graph;
 import graph.core.GraphEdge;
 import graph.core.GraphNode;
+import javafx.geometry.Point2D;
+import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,15 +53,19 @@ class GridGraph {
         private GridGraphNode(int row, int col) {
             this.coordinates = new GridCoordinates(row, col);
         }
+
         @Override public String toString() {
             return "Node("+coordinates+')';
         }
+
         GridCoordinates getCoordinates() {
             return coordinates;
         }
+
         @Override public Point2D getCanvasCoordinates() {
             return gridPainter.canvasLocForGridCoords(coordinates);
         }
+
         @Override public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
@@ -69,6 +73,7 @@ class GridGraph {
             return coordinates.equals(node.coordinates);
 
         }
+
         @Override public int hashCode() {
             return coordinates.hashCode();
         }

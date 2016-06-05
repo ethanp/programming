@@ -82,11 +82,11 @@ class NonNegativeBarGraph {
         double heightIncrement = graphHeight/numTicks;
 
         double tickWidth = graphWidth/100;
-        double leftEnd = getLeftSide()-tickWidth;
-        double rightEnd = getLeftSide()+tickWidth;
+        double leftEnd = getLeftSide() - tickWidth;
+        double rightEnd = getLeftSide() + tickWidth;
 
         for (int tickIdx = 1; tickIdx <= numTicks; tickIdx++) {
-            double tickHeight = getBottomSide()-tickIdx*heightIncrement;
+            double tickHeight = getBottomSide() - tickIdx*heightIncrement;
 
             // draw tick
             gc.setStroke(AXIS_COLOR);
@@ -96,7 +96,7 @@ class NonNegativeBarGraph {
             // draw label
             gc.setFill(LABEL_COLOR);
             String labelText = String.format("%1.2f", valueIncrement*tickIdx);
-            gc.fillText(labelText, leftEnd-20, tickHeight, 20);
+            gc.fillText(labelText, leftEnd - 20, tickHeight, 20);
         }
     }
 
@@ -108,10 +108,10 @@ class NonNegativeBarGraph {
         gc.setLineWidth(lineWidth);
         int idx = 0;
         while (it.hasNext()) {
-            double barX = ++idx*xScale+getLeftSide()-gc.getLineWidth()/2;
+            double barX = ++idx*xScale + getLeftSide() - gc.getLineWidth()/2;
             double barHeight = it.next()*yScale;
             if (barHeight < AXIS_WIDTH) barHeight = AXIS_WIDTH;
-            double barY = getBottomSide()-barHeight;
+            double barY = getBottomSide() - barHeight;
             gc.setStroke(Color.DARKTURQUOISE);
             gc.strokeLine(barX, getBottomSide(), barX, barY);
         }
@@ -124,7 +124,7 @@ class NonNegativeBarGraph {
         drawLine(getLowerLeftCorner(), getTopLeftCorner());
     }
 
-    public double maxValue() {
+    private double maxValue() {
         if (maxMayHaveChanged) {
             maxMayHaveChanged = false;
             if (values.isEmpty()) storedMax = 0;
@@ -133,23 +133,43 @@ class NonNegativeBarGraph {
         return storedMax;
     }
 
-    private void drawLine(Pair<Double> a, Pair<Double> b) { gc.strokeLine(a.a, a.b, b.a, b.b); }
+    private void drawLine(Pair<Double> a, Pair<Double> b) {
+        gc.strokeLine(a.first, a.second, b.first, b.second);
+    }
 
-    private void setXScale() { xScale = graphWidth/values.size(); }
+    private void setXScale() {
+        xScale = graphWidth/values.size();
+    }
 
-    private void setVerticalScale() { yScale = graphHeight/maxValue(); }
+    private void setVerticalScale() {
+        yScale = graphHeight/maxValue();
+    }
 
-    private Double getLeftSide() { return (totalWidth-graphWidth)/2; }
+    private Double getLeftSide() {
+        return (totalWidth - graphWidth)/2;
+    }
 
-    private Double getRightSide() { return (totalWidth+graphWidth)/2; }
+    private Double getRightSide() {
+        return (totalWidth + graphWidth)/2;
+    }
 
-    private Double getTopSide() { return (totalHeight-graphHeight)/2; }
+    private Double getTopSide() {
+        return (totalHeight - graphHeight)/2;
+    }
 
-    private Double getBottomSide() { return (totalHeight+graphHeight)/2; }
+    private Double getBottomSide() {
+        return (totalHeight + graphHeight)/2;
+    }
 
-    private Pair<Double> getLowerLeftCorner() { return new Pair<>(getLeftSide(), getBottomSide()); }
+    private Pair<Double> getLowerLeftCorner() {
+        return new Pair<>(getLeftSide(), getBottomSide());
+    }
 
-    private Pair<Double> getLowerRightCorner() { return new Pair<>(getRightSide(), getBottomSide()); }
+    private Pair<Double> getLowerRightCorner() {
+        return new Pair<>(getRightSide(), getBottomSide());
+    }
 
-    private Pair<Double> getTopLeftCorner() { return new Pair<>(getLeftSide(), getTopSide()); }
+    private Pair<Double> getTopLeftCorner() {
+        return new Pair<>(getLeftSide(), getTopSide());
+    }
 }

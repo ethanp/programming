@@ -84,12 +84,16 @@ module.exports.addReply = function *addReply(parentID) {
 module.exports.createReply = function *createReply(parentID) {
     var newPost = yield parse(this);
     newPost.created_at = new Date;
+    newPost.parent = parentID;
 
-    var parentPost = yield
+    // add child to parent
+    var parentPost = yield posts.findOne({ _id: parentID });
+    parentPost.children = parentPost.children || [];
+    parentPost.children.push(newPost._id.toString());
 
     // parallel updates
     yield [
-        posts.updateById('TODO: parentID', {}, fn);
+        posts.updateById(parentID, parentPost);
         posts.insert(newPost);
     ];
     this.redirect('/');

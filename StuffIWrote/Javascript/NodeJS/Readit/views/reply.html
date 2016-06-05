@@ -5,7 +5,7 @@
 {% block content %}
   <h1>Reply</h1>
   <p>Create a new post.</p>
-  <form action="/reply" method="post">
+  <form action="/reply/{{ parent._id.toString() }}" method="post">
     <p><input type="text" placeholder="Title" name="title"></p>
     <p><textarea placeholder="Contents" name="body"></textarea></p>
     <p><input type="submit" value="Create"></p>

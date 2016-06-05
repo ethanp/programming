@@ -1,10 +1,10 @@
 package graph.visuals.gridGraph;
 
+import graph.core.GraphEdge;
+import graph.visuals.GraphStyleConfiguration;
 import javafx.geometry.Point2D;
 import javafx.scene.canvas.GraphicsContext;
 import org.jetbrains.annotations.Contract;
-import graph.core.GraphEdge;
-import graph.visuals.GraphStyleConfiguration;
 
 import java.util.List;
 
@@ -51,24 +51,45 @@ class GridPainter {
 
     // I think the @Contract is for intellij's static analysis features
 
-    @Contract(pure = true) private double canvasScale() { return .8; }
-    @Contract(pure = true) private double canvasMargin() {return (1-canvasScale())/2;}
+    @Contract(pure = true) private double canvasScale() {
+        return .8;
+    }
+
+    @Contract(pure = true) private double canvasMargin() {
+        return (1-canvasScale())/2;
+    }
 
     @Contract(pure = true) private double canvasWidth() {
         return graphicsContext.getCanvas().getWidth();
     }
+
     @Contract(pure = true) private double canvasHeight() {
         return graphicsContext.getCanvas().getHeight();
     }
 
-    @Contract(pure = true) private double gridHeight() {return canvasHeight()*canvasScale();}
-    @Contract(pure = true) private double gridWidth() {return canvasWidth()*canvasScale();}
+    @Contract(pure = true) private double gridHeight() {
+        return canvasHeight()*canvasScale();
+    }
 
-    @Contract(pure = true) private double rowHeight() { return gridHeight()/numRows; }
-    @Contract(pure = true) private double columnWidth() {return gridWidth()/numCols;}
+    @Contract(pure = true) private double gridWidth() {
+        return canvasWidth()*canvasScale();
+    }
 
-    @Contract(pure = true) private double topRowLoc() { return canvasHeight()*canvasMargin(); }
-    @Contract(pure = true) private double leftColumnLoc() {return canvasWidth()*canvasMargin();}
+    @Contract(pure = true) private double rowHeight() {
+        return gridHeight()/numRows;
+    }
+
+    @Contract(pure = true) private double columnWidth() {
+        return gridWidth()/numCols;
+    }
+
+    @Contract(pure = true) private double topRowLoc() {
+        return canvasHeight()*canvasMargin();
+    }
+
+    @Contract(pure = true) private double leftColumnLoc() {
+        return canvasWidth()*canvasMargin();
+    }
 
     // TODO this should be in a generic graph-painter class
     void drawEdge(GraphEdge edge) {

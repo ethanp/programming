@@ -7,9 +7,11 @@ import javafx.geometry.Point2D;
  */
 public abstract class GraphNode {
     protected abstract Point2D getCanvasCoordinates();
+
     @Override public int hashCode() {
         return getCanvasCoordinates().hashCode();
     }
+
     @Override public boolean equals(Object o) {
         if (o == this) return true;
         if (o == null || getClass() != o.getClass()) return false;

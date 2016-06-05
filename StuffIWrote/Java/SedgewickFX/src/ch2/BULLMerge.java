@@ -56,7 +56,7 @@ public class BULLMerge<T extends Comparable<T>> {
      * @param aLen length of first list
      * @param bLen length of second list
      * @return the beginning and the last node in the list. However the elements of the list come
-     * back rearranged such that it and the "b" list after it (see below) are "merged", as known
+     * back rearranged such that it and the "second" list after it (see below) are "merged", as known
      * from the classic mergesort algorithm.
      */
     private Pair<SingleLLNode<T>> merge(SingleLLNode<T> a, int aLen, int bLen) {
@@ -135,9 +135,9 @@ public class BULLMerge<T extends Comparable<T>> {
             Pair<SingleLLNode<T>> pair;
             for (int frontIdx = 0; frontIdx <= size-sz; frontIdx += Math.min(2*sz, size-frontIdx)) {
                 pair = merge(front, sz, Math.min(sz, size-(frontIdx+sz)));
-                if (last == null) head = pair.a;
-                else last.nxt = pair.a;
-                last = pair.b;
+                if (last == null) head = pair.first;
+                else last.nxt = pair.first;
+                last = pair.second;
                 front = last.nxt;
             }
         }
