@@ -16,4 +16,8 @@ public class BasicGraphNode extends GraphNode {
     @Override protected Point2D getCanvasCoordinates() {
         return canvasCoordinates;
     }
+
+    @Override public String toString() {
+        return "BasicGraphNode{" + canvasCoordinates + '}';
+    }
 }

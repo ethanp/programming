@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Ethan Petuchowski 5/31/16
@@ -43,6 +44,12 @@ public class Graph<NodeT extends GraphNode> {
             adjList.get(fromNode).add(toNode);
         }
         return adjList;
+    }
+
+    public List<GraphEdge> edgesOutOf(GraphNode node) {
+        return edges.stream()
+            .filter(e -> e.getFromNode().equals(node))
+            .collect(Collectors.toList());
     }
 
     public List<GraphNode> neighborsOf(GraphNode node) {
