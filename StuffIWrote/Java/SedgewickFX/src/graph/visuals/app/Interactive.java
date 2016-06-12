@@ -5,10 +5,13 @@ import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -26,16 +29,18 @@ class Interactive {
 
     Interactive(Scene scene) {
         this.root = (Group) scene.getRoot();
-        scene.setOnMouseClicked(click -> {
-            if (!isDragging()) addNodeAt(new Point2D(click.getX(), click.getY()));
-        });
-        scene.setOnDragDone(event -> {
+        EventHandler<DragEvent> cancelCreateEdge = event -> {
             if (isDragging()) {
                 System.out.println("cancelling edge creation");
                 dragSource.setFill(Color.BLUE);
                 dragSource = null;
             }
-        });
+        };
+        EventHandler<MouseEvent> createNode = click -> {
+            if (!isDragging()) addNodeAt(new Point2D(click.getX(), click.getY()));
+        };
+        scene.setOnMouseClicked(createNode);
+        scene.setOnDragDone(cancelCreateEdge);
     }
 
     private boolean isDragging() {
@@ -45,7 +50,12 @@ class Interactive {
     void addNodeAt(Point2D point) {
         Circle circle = new Circle(point.getX(), point.getY(), 25);
         circle.setFill(Color.BLUE);
-        circle.setOnDragDetected(event -> {
+        addEdgeCreationHandlers(circle);
+        root.getChildren().add(circle);
+    }
+
+    private void addEdgeCreationHandlers(Circle circle) {
+        EventHandler<MouseEvent> startCreateEdge = event -> {
             System.out.println("starting edge creation");
             if (!isDragging()) {
                 ClipboardContent content = new ClipboardContent();
@@ -56,35 +66,37 @@ class Interactive {
             }
             else System.err.println("another drag is already in progress");
             event.consume();
-        });
-        circle.setOnDragOver(event -> {
+        };
+        EventHandler<DragEvent> signalEdgeAcceptable = event -> {
             if (isDragging() && circle != dragSource) {
                 circle.setFill(Color.CYAN);
                 event.acceptTransferModes(TransferMode.ANY);
             }
-        });
-        circle.setOnDragExited(event -> {
+        };
+        EventHandler<DragEvent> clearEdgeAcceptabilitySignal = event -> {
             if (isDragging() && circle != dragSource)
                 circle.setFill(Color.BLUE);
-        });
-        circle.setOnDragDropped(event -> {
+        };
+        EventHandler<DragEvent> drawEdge = event -> {
             System.out.println("circular drag dropped");
             if (!isDragging()) {
-                // this should not occur
-                System.err.println("ERROR: no drag source found");
-                return;
+                throw new RuntimeException("ERROR: no drag source found");
             }
-            lineBetween(dragSource, circle);
+            drawLineBetween(dragSource, circle);
             dragSource.setFill(Color.BLUE);
             circle.setFill(Color.BLUE);
             dragSource = null;
             event.setDropCompleted(true);
             event.consume();
-        });
-        root.getChildren().add(circle);
+        };
+
+        circle.setOnDragDetected(startCreateEdge);
+        circle.setOnDragOver(signalEdgeAcceptable);
+        circle.setOnDragExited(clearEdgeAcceptabilitySignal);
+        circle.setOnDragDropped(drawEdge);
     }
 
-    private void lineBetween(Circle source, Circle dest) {
+    private void drawLineBetween(Circle source, Circle dest) {
         Line edge = new Line(
             source.getCenterX(), source.getCenterY(),
             dest.getCenterX(), dest.getCenterY()
