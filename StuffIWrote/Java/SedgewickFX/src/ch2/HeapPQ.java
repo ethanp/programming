@@ -52,7 +52,7 @@ public class HeapPQ<Key extends Comparable<Key>> {
     }
 
     private void increaseCapacity() {
-        Key[] longer = (Key[]) new Object[arr.length*2];
+        Key[] longer = (Key[]) new Comparable[arr.length*2];
         System.arraycopy(arr, 0, longer, 0, size);
         arr = longer;
     }
