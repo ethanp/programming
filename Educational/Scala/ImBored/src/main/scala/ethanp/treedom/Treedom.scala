@@ -32,12 +32,11 @@ case class MutableNode[NodeType](
     var right: Option[MutableNode[NodeType]]
 ) extends Node[NodeType] {
     override def toString: String = toStringMaker(level = 0)
-
-    val indent = "    "
+    val indent = "   "
 
     private def toStringMaker(level: Int): String = {
         val l: Option[String] = left.map(_.toStringMaker(level + 1) + ",\n")
-        val center: Option[String] = Some(("   " * level) + value.toString)
+        val center: Option[String] = Some((indent * level) + value.toString)
         val r: Option[String] = right.map(",\n" + _.toStringMaker(level + 1))
         (l ++ center ++ r).mkString
     }
@@ -62,7 +61,7 @@ object TreeStuff {
             def swapOut(idx: Int): MutableNode[Int] = {
                 val tmp = this (idx)
                 this (idx) = this.last
-                this -= tmp
+                reduceToSize(size-1)
                 tmp
             }
         }
