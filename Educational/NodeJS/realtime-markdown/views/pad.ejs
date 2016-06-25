@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Realtime Markdown Viewer</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="style.css" rel="stylesheet">
+</head>
+
+<!-- .container-fluid is a container that spans the entire width of your viewport, even as that width may change over time or across devices -->
+<body class="container-fluid">
+    <section class="row">
+        <textarea class="col-md-6 full-height" id="pad">Write your text here..</textarea>
+        <div class="col-md-6 full-height" id="markdown"></div>
+    </section>
+
+    <script src="https://cdn.rawgit.com/showdownjs/showdown/1.0.2/dist/showdown.min.js"></script>
+    <script src="/channel/bcsocket.js"></script>
+    <script src="/share/share.uncompressed.js"></script>
+    <script src="/share/textarea.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

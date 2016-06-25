@@ -1,0 +1,25 @@
+{
+  "name": "realtime-markdown",
+  "version": "0.0.1",
+  "description": "based on tutorial at https://scotch.io/tutorials/building-a-real-time-markdown-viewer",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "operational",
+    "transformation"
+  ],
+  "author": "",
+  "license": "Beerware",
+  "dependencies": {
+    "ejs": "^2.3.1",
+    "express": "^4.12.4",
+    "redis": "^0.10.3",
+    "share": "^0.6.3"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.3.x"
+  }
+}

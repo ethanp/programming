@@ -23,7 +23,7 @@ trait Node[NodeType] {
 
     def children: List[Node[NodeType]] = List(left, right).flatten
 
-    def height: Int = children.map(_.height + 1).+:(1).max
+    def height: Int = children.map(_.height + 1).+:(1).max  // dfs
 }
 
 case class MutableNode[NodeType](
@@ -32,14 +32,17 @@ case class MutableNode[NodeType](
     var right: Option[MutableNode[NodeType]]
 ) extends Node[NodeType] {
     override def toString: String = toStringMaker(level = 0)
-    val indent = "   "
 
     private def toStringMaker(level: Int): String = {
         val l: Option[String] = left.map(_.toStringMaker(level + 1) + ",\n")
-        val center: Option[String] = Some((indent * level) + value.toString)
+        val center: Option[String] = Some((PrintStyle.indent * level) + value.toString)
         val r: Option[String] = right.map(",\n" + _.toStringMaker(level + 1))
         (l ++ center ++ r).mkString
     }
+}
+
+object PrintStyle {
+    val indent = "   "
 }
 
 object TreeStuff {
@@ -61,12 +64,12 @@ object TreeStuff {
             def swapOut(idx: Int): MutableNode[Int] = {
                 val tmp = this (idx)
                 this (idx) = this.last
-                reduceToSize(size-1)
+                reduceToSize(size - 1)
                 tmp
             }
         }
         frontier += root
-        for (i ← 1 /*already have root*/ until numNodes) {
+        for (_ ← 1 /*already have root*/ until numNodes) {
             val node = MutableNode(None, numbers.next(), None)
             val index = Random.nextInt(frontier.size)
             val atIdx = frontier(index)
