@@ -91,7 +91,7 @@ class GridPainter {
         return canvasWidth()*canvasMargin();
     }
 
-    // TODO this should be in a generic graph-painter class
+    // XXX: this should be in a generic graph-painter class
     void drawEdge(GraphEdge edge) {
         Point2D g1 = edge.getFromCoords();
         Point2D g2 = edge.getToCoords();

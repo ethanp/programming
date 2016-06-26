@@ -15,6 +15,7 @@
 *.prefs
 *.zip
 *.tsv
+*.rdb
 *.iml
 *.xlsx
 *.xlsm

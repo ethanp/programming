@@ -70,7 +70,7 @@ class NonNegativeBarGraph {
         drawYTicksAndLabels();
     }
 
-    // SOMEDAY support logarithmic scale too
+    // idea: support logarithmic scale too
     private void drawYTicksAndLabels() {
         gc.setFont(Font.font(8));
 

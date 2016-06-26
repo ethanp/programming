@@ -11,33 +11,33 @@ import java.util.List;
 /**
  * Ethan Petuchowski 6/12/16
  */
-public class HeapPQ<Key extends Comparable<Key>> {
+public class MaxHeapPQ<Key extends Comparable<Key>> {
 
     private Key[] arr;
     private int size = 0;
 
-    public HeapPQ(int initialCapacity) {
+    public MaxHeapPQ(int initialCapacity) {
         this.arr = (Key[]) new Comparable[initialCapacity];
     }
 
-    public HeapPQ(Key[] a) {
+    public MaxHeapPQ(Key[] a) {
         this.arr = Arrays.copyOf(a, a.length);
         this.size = a.length;
         heapify();
     }
 
-    public HeapPQ() {
+    public MaxHeapPQ() {
         this(16);
     }
 
     public static void main(String[] args) {
-        HeapPQ<Integer> heap = new HeapPQ<>();
+        MaxHeapPQ<Integer> heap = new MaxHeapPQ<>();
         heap.insertAll(Arrays.asList(3, 1, 5, 57, 15, 4, 2));
         List<Integer> resList = new ArrayList<>();
         while (!heap.isEmpty()) resList.add(heap.delMax());
         System.out.println(Arrays.toString(resList.toArray()));
 
-        HeapPQ<Integer> heap2 = new HeapPQ<>(new Integer[]{3, 2, 1, 5, 22});
+        MaxHeapPQ<Integer> heap2 = new MaxHeapPQ<>(new Integer[]{3, 2, 1, 5, 22});
         List<Integer> resList2 = new ArrayList<>();
         while (!heap2.isEmpty()) resList2.add(heap2.delMax());
         System.out.println(Arrays.toString(resList2.toArray()));
