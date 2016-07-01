@@ -1,4 +1,3 @@
-var earth = new Image()
 function init() {
     window.requestAnimationFrame(draw)
 }
