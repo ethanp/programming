@@ -3,8 +3,15 @@ package ch3;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 /**
  * started 6/30/16
@@ -24,10 +31,14 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
         BinarySearchTree<Integer, Integer> bst = basicTree();
         System.out.println(bst.prettyString());
         System.out.println("--------");
-        printDeleteMinTests();
-        printRanksTests();
-        printSelectsTests();
-        printKeyIntervalTests();
+        printFloorCeilingTests();
+    }
+
+    private static void printFloorCeilingTests() {
+        BinarySearchTree<String, Integer> aliceTree = aliceInWonderlandWordCounts();
+        System.out.println(aliceTree.size());
+        System.out.println(aliceTree.ceiling("stayed").equals("stays"));
+        System.out.println(aliceTree.floor("stayz").equals("stays"));
     }
 
     private static void printDeleteMinTests() {
@@ -54,7 +65,8 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
         try {
             keyRange1.next();
             System.out.println(false);
-        } catch (NoSuchElementException e) {
+        }
+        catch (NoSuchElementException e) {
             System.out.println(true);
         }
     }
@@ -89,6 +101,37 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
         return bst;
     }
 
+    private static BinarySearchTree<String, Integer> aliceInWonderlandWordCounts() {
+        BinarySearchTree<String, Integer> aiwTree = new BinarySearchTree<>();
+        String bookPath = "/Users/Ethan/code/personal_project_use/libraries_to_use/" +
+            "Java/guava-libraries/guava-tests/test/com/google/common/io/testdata/" +
+            "alice_in_wonderland.txt";
+        File bookFile = new File(bookPath);
+        try (BufferedReader bookReader = new BufferedReader(new InputStreamReader(new FileInputStream(bookFile)))) {
+            Stream<String> lines = bookReader.lines();
+            lines.forEach(line -> {
+                String[] words = line.split(" ");
+                for (String word : words) {
+                    String cleanedWord = word.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+                    if (!cleanedWord.isEmpty()) {
+                        if (aiwTree.contains(cleanedWord)) {
+                            aiwTree.put(cleanedWord, aiwTree.get(cleanedWord) + 1);
+                        } else {
+                            aiwTree.put(cleanedWord, 1);
+                        }
+                    }
+                }
+            });
+        }
+        catch (FileNotFoundException e) {
+            System.out.println("the book was not found on your machine");
+        }
+        catch (IOException e) {
+            System.out.println("another exception occurred");
+        }
+        return aiwTree;
+    }
+
     /**
      * put key-value pair into the table (remove key from table if value is null)
      */
@@ -98,7 +141,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
         if (found == null) {
             root = newNode;
         } else if (newNode.equals(found)) {
-            //noinspection UnnecessaryReturnStatement
+            found.value = val;  // this is what the spec says to do
             return;
         } else if (newNode.compareTo(found) < 0) {
             found.left = newNode;
