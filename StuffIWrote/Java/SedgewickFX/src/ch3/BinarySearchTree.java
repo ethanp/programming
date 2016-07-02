@@ -8,7 +8,9 @@ import org.jetbrains.annotations.NotNull;
  *
  * The point here is to do this before reading the Sedgewick chapter, to understand which parts are
  * "trivial" (subjectively), and which are not. I.e. when I read the chapter I should be able to
- * know what I'm actually learning vs. what is actually just review material.
+ * know what I'm actually learning vs. what is actually just review material. Also, it's not just
+ * about whether or not I'm able to implement all the things (bc I probably can), it's also about
+ * how much *better* his approaches are than mine.
  */
 public class BinarySearchTree<Key extends Comparable<Key>, Value> implements SymbolTable<Key, Value> {
 
@@ -20,8 +22,12 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
         System.out.println(bst.prettyString());
         System.out.println("--------");
         bst = basicTree();
-        bst.delete(4);
-        System.out.println(bst.prettyString());
+        System.out.println(bst.rank(0));
+        System.out.println(bst.rank(1));
+        System.out.println(bst.rank(2));
+        System.out.println(bst.rank(3));
+        System.out.println(bst.rank(4));
+        System.out.println(bst.rank(5));
     }
 
     @NotNull private static BinarySearchTree<Integer, Integer> basicTree() {
@@ -78,18 +84,10 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
             if (newNode.equals(curr)) {
                 return curr;
             } else if (newNode.compareTo(curr) < 0) {
-                if (curr.left != null) {
-                    curr = curr.left;
-                } else {
-                    return curr;
-                }
-            } else {
-                if (curr.right != null) {
-                    curr = curr.right;
-                } else {
-                    return curr;
-                }
-            }
+                if (curr.left == null) return curr;
+                else curr = curr.left;
+            } else if (curr.right == null) return curr;
+            else curr = curr.right;
         }
     }
 
@@ -202,12 +200,25 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
 
     /**
      * number of keys less than key
-     */// TODO
+     */
     @Override public int rank(Key key) {
         Node found = findByKeyOrElseParent(key);
         if (found == null || !found.key.equals(key))
             return -1;
-        return -1;
+
+        int sizeOfLeftSubtree = found.sizeOfLeftSubtree();
+
+        // but that's not all, we also must go up the tree and find the less things.
+        // i.e. for each smaller parent, we must add the parent and its left-subtree;
+        Node trav = found;
+        int ancestralLessersCounter = 0;
+        while (trav != null) {
+            if (trav.isLargerThanParent()) {
+                ancestralLessersCounter += 1 + trav.parent.sizeOfLeftSubtree();
+            }
+            trav = trav.parent;
+        }
+        return sizeOfLeftSubtree + ancestralLessersCounter;
     }
 
     /**
@@ -336,6 +347,18 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
         void replaceWith(Node node) {
             key = node.key;
             value = node.value;
+        }
+
+        int sizeOfLeftSubtree() {
+            return left == null ? 0 : left.sizeOfSubtree();
+        }
+
+        int sizeOfRightSubtree() {
+            return right == null ? 0 : right.sizeOfSubtree();
+        }
+
+        int sizeOfSubtree() {
+            return 1 + sizeOfLeftSubtree() + sizeOfRightSubtree();
         }
     }
 }
