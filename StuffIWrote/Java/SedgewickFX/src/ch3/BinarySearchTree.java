@@ -3,6 +3,9 @@ package ch3;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 /**
  * started 6/30/16
  *
@@ -21,13 +24,59 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
         BinarySearchTree<Integer, Integer> bst = basicTree();
         System.out.println(bst.prettyString());
         System.out.println("--------");
-        bst = basicTree();
-        System.out.println(bst.rank(0));
-        System.out.println(bst.rank(1));
-        System.out.println(bst.rank(2));
-        System.out.println(bst.rank(3));
-        System.out.println(bst.rank(4));
-        System.out.println(bst.rank(5));
+        printDeleteMinTests();
+        printRanksTests();
+        printSelectsTests();
+        printKeyIntervalTests();
+    }
+
+    private static void printDeleteMinTests() {
+        BinarySearchTree<Integer, Integer> bst = basicTree();
+        System.out.println(bst.min() == 0);
+        bst.deleteMin();
+        System.out.println(bst.min() == 1);
+        bst.deleteMin();
+        System.out.println(bst.min() == 2);
+        bst.deleteMin();
+        System.out.println(bst.min() == 3);
+        bst.deleteMin();
+        System.out.println(bst.min() == 4);
+        bst.deleteMin();
+        System.out.println(bst.min() == null);
+    }
+
+    private static void printKeyIntervalTests() {
+        BinarySearchTree<Integer, Integer> bst = basicTree();
+        Iterator<Integer> keyRange1 = bst.keys(2, 4).iterator();
+        System.out.println(keyRange1.next() == 2);
+        System.out.println(keyRange1.next() == 3);
+        System.out.println(keyRange1.next() == 4);
+        try {
+            keyRange1.next();
+            System.out.println(false);
+        } catch (NoSuchElementException e) {
+            System.out.println(true);
+        }
+    }
+
+    private static void printSelectsTests() {
+        BinarySearchTree<Integer, Integer> bst = basicTree();
+        System.out.println(bst.select(0) == 0);
+        System.out.println(bst.select(1) == 1);
+        System.out.println(bst.select(2) == 2);
+        System.out.println(bst.select(3) == 3);
+        System.out.println(bst.select(4) == 4);
+        System.out.println(bst.select(5) == null);
+    }
+
+    private static void printRanksTests() {
+        BinarySearchTree<Integer, Integer> bst = basicTree();
+        System.out.println(bst.rank(0) == 0);
+        System.out.println(bst.rank(1) == 1);
+        System.out.println(bst.rank(2) == 2);
+        System.out.println(bst.rank(3) == 3);
+        System.out.println(bst.rank(4) == 4);
+        System.out.println(bst.rank(5) == -1);
     }
 
     @NotNull private static BinarySearchTree<Integer, Integer> basicTree() {
@@ -141,6 +190,20 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
         return trav.parent;  // null if trav == root
     }
 
+    private Node predecessor(Node node) {
+        // first try max of left child
+        if (node.left != null) {
+            return node.left.maxChild();
+        }
+
+        // otw find closest smaller ancestor
+        Node trav = node;  // reassignment is not strictly necessary
+        while (trav.parent != null && trav.isSmallerThanParent()) {
+            trav = trav.parent;
+        }
+        return trav.parent;  // null if trav == root
+    }
+
     /**
      * is there a value paired with key?
      */
@@ -180,22 +243,36 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
 
     /**
      * largest key less than or equal to key
-     */// TODO
+     */
     @Override public Key floor(Key key) {
+        Node floorNode = floorNode(key);
+        return floorNode == null ? null : floorNode.key;
+    }
+
+    private Node floorNode(Key key) {
         Node found = findByKeyOrElseParent(key);
-        if (found == null || !found.key.equals(key))
-            return null;
-        return null;
+        if (found == null) return null;  // empty tree
+            // found is key itself, or "lesser" parent of where key *would* go
+        else if (found.key.compareTo(key) <= 0) return found;
+            // found is a "greater" parent of where key would go
+        else return predecessor(found);
     }
 
     /**
      * smallest key greater than or equal to key
-     */// TODO
+     */
     @Override public Key ceiling(Key key) {
+        Node ceilingNode = ceilingNode(key);
+        return ceilingNode == null ? null : ceilingNode.key;
+    }
+
+    private Node ceilingNode(Key key) {
         Node found = findByKeyOrElseParent(key);
-        if (found == null || !found.key.equals(key))
-            return null;
-        return null;
+        if (found == null) return null;  // empty tree
+            // found is key itself, or "greater" parent of where key *would* go
+        else if (found.key.compareTo(key) >= 0) return found;
+            // found is a "lesser" parent of where key would go
+        else return successor(found);
     }
 
     /**
@@ -223,10 +300,22 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
 
     /**
      * key of rank k
-     */// TODO
+     */
     @Override public Key select(int k) {
         if (isEmpty()) return null;
-        return null;
+        /* binary search -- by rank */
+        Node currNode = root;
+        while (true) {
+            int currRank = rank(currNode.key);
+            if (currRank == k) return currNode.key;
+            else if (currRank < k) {
+                if (currNode.right != null) {
+                    currNode = currNode.right;
+                } else return null;
+            } else if (currNode.left != null) {
+                currNode = currNode.left;
+            } else return null;
+        }
     }
 
     /** delete smallest key */
@@ -241,26 +330,58 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
 
     /**
      * number of keys in [lo..hi]
-     */// TODO
+     */
     @Override public int size(Key lo, Key hi) {
-        if (isEmpty()) return 0;
-        return 0;
+        int a = 0;
+        for (Key ignored : keys(lo, hi)) a++;
+        return a;
     }
 
     /**
      * keys in [lo..hi], in sorted order
-     */// TODO
+     */
     @Override public Iterable<Key> keys(Key lo, Key hi) {
-        if (isEmpty()) return null;
-        return null;
+        return () -> new KeyIterator() {
+            @Override Node initialize() {
+                return ceilingNode(lo);
+            }
+
+            @Override public boolean hasNext() {
+                return next != null && next.key.compareTo(hi) <= 0;
+            }
+        };
     }
 
-    /** all keys in the table, in sorted order */// TODO
+    /** all keys in the table, in sorted order */
     @Override public Iterable<Key> keys() {
-        if (isEmpty()) return null;
-        return null;
+        return () -> new KeyIterator() {
+            @Override Node initialize() {
+                return minNode();
+            }
+
+            @Override public boolean hasNext() {
+                return next != null;
+            }
+        };
     }
 
+    private abstract class KeyIterator implements Iterator<Key> {
+        Node next = initialize();
+
+        abstract Node initialize();
+
+        @Override public Key next() {
+            if (!hasNext()) throw new NoSuchElementException();
+            Node ret = next;
+            next = successor(next);
+            return ret.key;
+        }
+    }
+
+    /**
+     * It seems like this class must be non-static if we want to use the type parameters of the
+     * outer class?
+     */
     private class Node implements Comparable<Node> {
 
         Key key;
