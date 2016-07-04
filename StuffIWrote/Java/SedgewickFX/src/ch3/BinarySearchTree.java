@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
@@ -112,7 +113,7 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
             lines.forEach(line -> {
                 String[] words = line.split(" ");
                 for (String word : words) {
-                    String cleanedWord = word.replaceAll("[^a-zA-Z0-9]", "").toLowerCase();
+                    String cleanedWord = word.replaceAll("[^a-zA-Z0-9]", " ").toLowerCase();
                     if (!cleanedWord.isEmpty()) {
                         if (aiwTree.contains(cleanedWord)) {
                             aiwTree.put(cleanedWord, aiwTree.get(cleanedWord) + 1);
@@ -127,7 +128,8 @@ public class BinarySearchTree<Key extends Comparable<Key>, Value> implements Sym
             System.out.println("the book was not found on your machine");
         }
         catch (IOException e) {
-            System.out.println("another exception occurred");
+            System.out.println(e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
         }
         return aiwTree;
     }
