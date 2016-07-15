@@ -63,7 +63,7 @@ public class Graph {
     @SuppressWarnings("StringConcatenationInsideStringBufferAppend")
     @Override public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("V = " + V() + ", E = " + E()).append('\n');
+        sb.append("V = " + V() + ", E = " + E() +"\n");
         for (int i = 0; i < V(); i++) {
             sb.append(i+":");
             for (int nbr : adj(i)) {

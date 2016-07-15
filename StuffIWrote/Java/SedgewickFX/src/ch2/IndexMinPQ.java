@@ -7,6 +7,10 @@ import java.util.List;
 
 /**
  * Ethan Petuchowski 6/25/16
+ *
+ * This thing is a binary heap priority queue, but it also maintains a user-specified "index"
+ * for each item. This means we can always lookup the item in O(1). This is implemented by
+ * maintaining a map from given-index to real-index in the heap.
  */
 public class IndexMinPQ<Item extends Comparable<Item>> {
 
@@ -102,6 +106,7 @@ public class IndexMinPQ<Item extends Comparable<Item>> {
     /** change the item associated with k to item */
     void change(int k, Item item) {
         items[reverseIndex[k]] = item;
+        /* TODO sink and swim this item */
     }
 
     /** is k associated with some item? */

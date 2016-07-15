@@ -2,7 +2,6 @@ package ch4;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.Scanner;
@@ -19,7 +18,7 @@ public class PrimMST {
 
     public static void main(String[] args) {
         Collection<ReversibleWeightedDirectedEdge> edges = new ArrayList<>();
-        String tineEWGtxt = "" +
+        String tinyEWGtxt = "" +
             "8\n" +
             "16\n" +
             "4 5 0.35\n" +
@@ -39,7 +38,7 @@ public class PrimMST {
             "6 0 0.58\n" +
             "6 4 0.93";
 
-        Scanner rdr = new Scanner(tineEWGtxt);
+        Scanner rdr = new Scanner(tinyEWGtxt);
         int numNodes = rdr.nextInt();
         int numEdges = rdr.nextInt();
         for (int i = 0; i < numEdges; i++)
@@ -63,12 +62,12 @@ public class PrimMST {
         System.out.println(expectedOutput.equals(actualOutput));
     }
 
-    private String getPrintString() {
+    String getPrintString() {
         StringBuilder sb = new StringBuilder();
         Collection<ReversibleWeightedDirectedEdge> mst = build();
         double totalWeight = 0;
         for (ReversibleWeightedDirectedEdge edge : mst) {
-            sb.append(edge.toString()).append('\n');
+            sb.append(edge.toString().replace(">", "")).append('\n');
             totalWeight += edge.weight;
         }
         String weightString = String.format("%.2f", totalWeight);
@@ -95,73 +94,3 @@ public class PrimMST {
     }
 }
 
-class ReversibleWeightedDirectedEdge {
-    final int from;
-    final int to;
-    final double weight;
-    final boolean isReversed;
-
-    private ReversibleWeightedDirectedEdge(int from, int to, double weight, boolean isReversed) {
-        this.from = from;
-        this.to = to;
-        this.weight = weight;
-        this.isReversed = isReversed;
-    }
-
-    public ReversibleWeightedDirectedEdge(int from, int to, double weight) {
-        this(from, to, weight, false);
-    }
-
-    @Override public String toString() {
-        String fromTo = isReversed ? (to + "-" + from) : (from + "-" + to);
-        return String.format(fromTo + " %.2f", weight);
-    }
-
-    public ReversibleWeightedDirectedEdge reverse() {
-        return new ReversibleWeightedDirectedEdge(to, from, weight, !isReversed);
-    }
-}
-
-class WeightedIndirectGraph {
-    private final Collection<ReversibleWeightedDirectedEdge>[] adjList;
-
-    WeightedIndirectGraph(int numNodes, Collection<ReversibleWeightedDirectedEdge> edges) {
-        adjList = new Collection[numNodes];
-        for (int i = 0; i < numNodes; i++)
-            adjList[i] = new LinkedList<>();
-        for (ReversibleWeightedDirectedEdge edge : edges) {
-            adjList[edge.from].add(edge);
-            adjList[edge.to].add(edge.reverse());
-        }
-    }
-
-    public int V() {
-        return adjList.length;
-    }
-
-    public Collection<ReversibleWeightedDirectedEdge> adj(int node) {
-        return adjList[node];
-    }
-}
-
-class Forest {
-    final boolean[] hasBeenSeen;
-    private int nextIdx = 0;
-
-    public Forest(int numNodes) {
-        hasBeenSeen = new boolean[numNodes];
-    }
-
-    public boolean mark(int idx) {
-        if (hasBeenSeen[idx]) return false;
-        hasBeenSeen[idx] = true;
-        if (idx == nextIdx) {
-            while (++nextIdx < hasBeenSeen.length && hasBeenSeen[nextIdx]) ;
-        }
-        return true;
-    }
-
-    public boolean hasNext() {
-        return nextIdx < hasBeenSeen.length;
-    }
-}
