@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * 7/15/16 10:23 AM
  *
- * This prints the right output, not exactly in the same order as the printout in the book
+ * This prints the right output, but not exactly in the same order as the printout in the book
  * because the sorting is not unique.
  */
 public class TopologicalSort {

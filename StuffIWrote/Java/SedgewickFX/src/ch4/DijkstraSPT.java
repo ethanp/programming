@@ -85,11 +85,8 @@ public class DijkstraSPT {
             int node = nodeQueue.remove();
             for (ReversibleWeightedDirectedEdge edge : graph.adj(node)) {
                 // if we've never seen this node before, we should explore it at some point
-                // in this case, since we're expanding in order of distance, if I'm not mistaken,
-                // we know that this is the best way to get to this node.
                 if (distTo[edge.to] == Double.POSITIVE_INFINITY) nodeQueue.add(edge.to);
                 double candyTotal = distTo[edge.from] + edge.weight;
-                // I think this will only happen once bc of comment above?
                 if (candyTotal < distTo[edge.to]) {
                     distTo[edge.to] = candyTotal;
                     parentLink[edge.to] = edge;

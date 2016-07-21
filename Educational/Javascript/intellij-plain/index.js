@@ -1,8 +1,20 @@
-function init() {
-    window.requestAnimationFrame(draw)
+const Tree = (treeNodes) => {
+    return {
+        treeBelow: () => {
+
+        }
+    }
 }
 
-const TreeNode = (value) => {
+const TreeNode = (value, p, pc, ch, con) => {
+    const id = value
+    const parent = p
+    const relativePath = pc
+    const children = ch || [{
+            isSymbolic: true,
+            nodeId:     "asdf"
+        }]
+    const content = con || {}
     return {
         draw: () => {
             return value
@@ -10,7 +22,7 @@ const TreeNode = (value) => {
     }
 }
 
-const root = TreeNode(6)
+const root = TreeNode(6, null, "")
 console.log(root.draw())
 
 function draw() {
@@ -27,5 +39,9 @@ function draw() {
 
     // start animation loop (we're not currently using it though,
     // so no further rendering will happen)
+    window.requestAnimationFrame(draw)
+}
+
+function init() {
     window.requestAnimationFrame(draw)
 }
