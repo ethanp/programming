@@ -29,6 +29,21 @@ public class TernarySearchTree {
         System.out.println(tst.get("she") == 1);
         System.out.println(tst.get("by") == 5);
         System.out.println(tst.get("the") == 6);
+        String sells = tst.longestPrefixOf("sells_p");
+        System.out.println(sells);
+        System.out.println(sells.equals("sells"));
+    }
+
+    private String longestPrefixOf(String string) {
+        if (c == 0 || string.isEmpty()) return "";
+        else if (c == string.charAt(0)) {
+            if (string.length() == 1 || center == null) return ""+c;
+            return c + center.longestPrefixOf(string.substring(1));
+        } else if (c > string.charAt(0)) {
+            if (left == null) return "";
+            else return left.longestPrefixOf(string);
+        } else if (right == null) return "";
+        else return right.longestPrefixOf(string);
     }
 
     private int get(String string) {
