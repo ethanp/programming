@@ -1,14 +1,14 @@
-package algorithms.graphTheory.medium;
+package algorithms.graphTheory;
 
 /**
  * 8/10/16 11:09 AM
  */
-class WeightedEdge implements Comparable<WeightedEdge> {
-    final int u;
-    final int v;
-    final int weight;
+public class WeightedEdge implements Comparable<WeightedEdge> {
+    public final int u;
+    public final int v;
+    public final int weight;
 
-    WeightedEdge(int u, int v, int weight) {
+    public WeightedEdge(int u, int v, int weight) {
         this.u = u;
         this.v = v;
         this.weight = weight;
