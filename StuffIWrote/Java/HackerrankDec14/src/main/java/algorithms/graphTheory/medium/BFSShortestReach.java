@@ -1,4 +1,4 @@
-package algorithms.graphTheory.moderate;
+package algorithms.graphTheory.medium;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
