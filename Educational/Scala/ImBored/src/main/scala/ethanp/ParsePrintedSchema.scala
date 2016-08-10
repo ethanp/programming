@@ -22,7 +22,7 @@ object CaseClassGenerator {
             .stripMargin
 
     def printObj(start: Line, it: Iterator[Line]): Line = {
-        val cc = CaseClass(start.name)
+        val cc = CaseClass(start.name.capitalize)
         for (l <- it) {
             cc.elements += Element(l.name, l.tipo.name)
             if (l.indent == start.indent + 1) {
@@ -65,11 +65,12 @@ object Line {
         if (indent == 0) {
             Line("Root", indent, Obj("Root"))
         } else {
+            val name = findMatch("-\\ (.*):", s)
             Line(
-                name = findMatch("-\\ (.*):", s),
+                name = name,
                 indent = indent,
                 tipo = findMatch(":\\ ([^ ]+)", s) match {
-                    case "struct" => Obj("Something")
+                    case "struct" => Obj(name.capitalize)
                     case "string" => Str
                     case "long" => Num
                 }
