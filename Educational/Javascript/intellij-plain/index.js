@@ -8,33 +8,43 @@ const TreeNode = (node_id, node_parents, node_pathComponent, node_children, node
         }]
     const content = node_content || {}
     return {
+        getParents: () => parents,
         draw: () => {
             return node_id
         }
     }
 }
 
-const VisualNode = (xCoord, yCoord, baseNode) => {
+const VisualNode = (xCoord, yCoord, baseNode, optRadius) => {
     const x = xCoord
     const y = yCoord
+    const r = optRadius || 5
     const treeNode = baseNode
     return {
+        coords: () => { return {'x': x, 'y': y, 'r': r} },
         draw: () => {
+            // LowPriorityTODO perhaps this should be a react component or something (no idea)
+            treeNode.getParents().map(link => nodes.findById(link.nodeId).coords())
+            // TODO this should have a click-and-drag handler
+            // that puts us into either "moveNode" or "addEdge" mode
             return x
         }
     }
 }
 
-var nodes = []
-const clickHandler = (evt) => {
+const nodes = []
+const createNodeFromClick = (evt) => {
     console.log(evt.x, evt.y)
     nodes.push(VisualNode(evt.x, evt.y, TreeNode("asdf")))
-    console.log(nodes.map((node) => node.draw()))
+    console.log(nodes.map(node => node.draw()))
 }
 
-function draw() {
+function drawScreen() {
+    // TODO use svg elements instead
+    // see http://tutorials.jenkov.com/svg/scripting.html
+    // or snap.js or svg.js
     const ctx = document.getElementById('canvas').getContext('2d')
-    document.getElementById('body').onclick = clickHandler
+    document.getElementById('body').onclick = createNodeFromClick
     // Sets all pixels in the rectangle defined by
     // starting point (x, y) and size (width, height)
     // to transparent black, erasing any previously drawn content.
@@ -47,9 +57,9 @@ function draw() {
 
     // start animation loop (we're not currently using it though,
     // so no further rendering will happen)
-    window.requestAnimationFrame(draw)
+    window.requestAnimationFrame(drawScreen)
 }
 
 function init() {
-    window.requestAnimationFrame(draw)
+    window.requestAnimationFrame(drawScreen)
 }
