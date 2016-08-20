@@ -1,5 +1,7 @@
 package algorithms.graphTheory.difficult;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -14,6 +16,9 @@ import java.util.Scanner;
  * 3) Assuming neither of the above cases (which are non-trivial to verify), I think we can do
  * a DFS and add up for each node, the number of paths from each of its adj nodes that are
  * on paths to N.
+ *
+ * Apparently this is not a good way to go about it. Better to find the right way online. It was
+ * worth a shot, but I'm not there yet I guess.
  */
 public class KingdomConnectivity {
     final List<Integer>[] adj;
@@ -68,7 +73,7 @@ public class KingdomConnectivity {
 
     /** IIRC a cycle means we're doing a DFS and we come across a node we've seen before? */
     private boolean lookForCycleInNodesWeCareAbout() {
-
+        throw new NotImplementedException();
     }
 
     /** we only care about nodes that are BOTH reachable from 1 and reach N */
