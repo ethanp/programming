@@ -2,23 +2,20 @@ const pathObj = (str) => {
     let value = str
     return {
         parent: () => value.substring(0, value.lastIndexOf("/")),
-        basename: () => value.substring(value.lastIndexOf("/")+1, value.length)
+        basename: () => value.substring(value.lastIndexOf("/") + 1, value.length)
     }
 }
 
 const tree = () => {
-    console.log("message")
     const root = node("")
     return {
         getNode: (path) => {
-            const pieces = path.split("/")
-            pieces.shift() // skip root node
-            let cur = root
-            for (const piece in pieces) {
-                cur = cur.getChild(piece)
-                if (cur == null) return null
-            }
-            return cur
+            return path.split("/") // get array of path components
+            .filter(s => s != "") // remove the root
+            .reduce( // travel down tree
+                (cur, next) => cur != null ? cur.getChild(next) : null,
+                root
+            )
         },
         /** returns the parent node*/
         addNode: (node, parentPath) => {
@@ -28,13 +25,16 @@ const tree = () => {
             return parent.addChild(node)
         },
         deleteNode: (path) => {
-            const parentPath = pathObj(path).parent()
-            const basename = pathObj(path).basename()
-            const n = this.getNode(parentPath)
-            if (n == null) return null
-            return n.removeChild(basename)
+            const pathObj = pathObj(path)
+            const parentNode = this.getNode(pathObj.parent())
+            if (parentNode == null) return null
+            return parentNode.removeChild(pathObj.basename())
         },
-        moveNode: (oldPath, newPath) => {},
+        moveNode: (component, oldDir, newDir) => {
+            const node = oldDir.getChild(component)
+            oldDir.removeChild(component)
+            newDir.addChild(node)
+        },
         treeString: () => root.treeString()
     }
 }
