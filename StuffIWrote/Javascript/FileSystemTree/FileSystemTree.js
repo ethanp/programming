@@ -1,15 +1,3 @@
-/**
- * Created by Ethan on 8/19/16.
- *
- * API
- * ================================================
- * getNode(id)
- * addNode(node, directory a.k.a."parent")
- * deleteNode(id)
- * moveNode(id, new path)
- * get/SetAttribute/Field(id, fieldName, newValue)
- * getPath(path)
- */
 const tree = () => {
     console.log("message")
     const root = node("")
@@ -27,7 +15,7 @@ const tree = () => {
         /** returns the parent node*/
         addNode: (node, parentPath) => {
             if (parentPath == null || parentPath == "") return root.addChild(node)
-            const parent = this.getNode(parentPath)
+            const parent = this.getNode(parentPath)  // crashes here: this.getNode is not a function (wat?)
             if (parent == null) return null
             return parent.addChild(node)
         },
@@ -40,26 +28,28 @@ const tree = () => {
 const node = (pathPiece) => {
     let children = []
     let pathComponent = pathPiece
+    Array.prototype.flatMap = function (lambda) {
+        return Array.prototype.concat.apply([], this.map(lambda));
+    };
     return {
         getPathComponent: () => pathComponent,
         addChild: (child) => {
             children.push(child)
             return this
         },
-        removeChild: (id) => {
-            children = children.filter(c => c.id != id)
+        removeChild: (pathPiece) => {
+            children = children.filter(c => c.getPathComponent() != pathPiece)
         },
-        getChild: (pathPiece) => {
-            return children.find(c => c.getPathComponent() == pathPiece)
-        },
-        treeString: () => {
-            const stringArray = children.map(c => c.treeString().map(line => "\t" + line))
-            stringArray.unshift(pathComponent)
-            return stringArray
-        }
+        getChild: (pathPiece) => children.find(c => c.getPathComponent() == pathPiece),
+        treeString: () => [pathComponent].concat(children.flatMap(c => c.treeString().map(line => "\t" + line)))
     }
 }
 
 const t = tree()
-t.addNode(node("asdf"), null)
-console.log(t.treeString())
+var node1 = node("1st")
+const node2 = node("2nd")
+const node3 = node("3rd")
+t.addNode(node1, null)
+t.addNode(node2, null)
+t.addNode(node3, node2)
+t.treeString().forEach(line => console.log(line))
