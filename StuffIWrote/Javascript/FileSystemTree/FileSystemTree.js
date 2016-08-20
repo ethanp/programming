@@ -29,7 +29,7 @@ class tree {
     /** returns the parent node*/
     addNode(node, parentPath) {
         if (parentPath == null || parentPath == "") return this.root.addChild(node)
-        const parent = this.getNode(parentPath)  // crashes here: this.getNode is not a function (wat?)
+        const parent = this.getNode(parentPath)
         if (parent == null) return null
         return parent.addChild(node)
     }
@@ -57,6 +57,7 @@ class tree {
 class node {
     constructor(pathPiece) {
         this.children = []
+        this.parent = null
         this.pathComponent = pathPiece
     }
 
@@ -64,11 +65,23 @@ class node {
         return this.pathComponent
     }
 
+    getAbsolutePath() {
+        return this.parent != null
+            ? this.parent.getAbsolutePath() + "/" + this.pathComponent
+            : this.pathComponent
+    }
+
     addChild(child) {
         this.children.push(child)
+        child.setParent(this)
         return this
     }
 
+    setParent(node) {
+        this.parent = node
+    }
+
+    /** returns true if a node was removed */
     removeChild(pathPiece) {
         const preLen = this.children.length
         this.children = this.children.filter(c => c.getPathComponent() != pathPiece)
@@ -82,7 +95,7 @@ class node {
     treeString() {
         let first = [this.pathComponent]
         // javascript has no "flatMap" so we do it by hand
-        for (var i = 0; i < this.children.length; i++) {
+        for (let i = 0; i < this.children.length; i++) {
             first = first.concat(this.children[i].treeString().map(l => "\t" + l))
         }
         return first
@@ -96,4 +109,5 @@ const node3 = new node("3rd")
 t.addNode(node1, null)
 t.addNode(node2, null)
 t.addNode(node3, "/2nd")
+console.log(node3.getAbsolutePath())
 t.treeString().forEach(line => console.log(line))
