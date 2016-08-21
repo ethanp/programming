@@ -11,13 +11,8 @@ class pathObj {
         this.value = str
     }
 
-    parent() {
-        return this.value.substring(0, this.value.lastIndexOf("/"))
-    }
-
-    basename() {
-        return this.value.substring(this.value.lastIndexOf("/") + 1, this.value.length)
-    }
+    parent = () => this.value.substring(0, this.value.lastIndexOf("/"))
+    basename = () => this.value.substring(this.value.lastIndexOf("/") + 1, this.value.length)
 }
 
 class tree {
@@ -25,15 +20,18 @@ class tree {
         this.root = new node("")
     }
 
-    allNodes() {
-        return this.root.getSubtree()
-    }
+    /**
+     * get all the nodes in this tree as an array
+     * (depth-first)
+     */
+    allNodes = () => this.root.getSubtree()
 
-    getNodeByID(id) {
-        return this.root.findByID(id)
-    }
+    getNodeByID = (id) => this.root.findByID(id)
 
-    getNodeByPath(path) {
+    /** returns a simple string visualization of the entire tree */
+    treeString = () => this.root.treeString()
+
+    getNodeByAbsolutePath(path) {
         return path.split("/") // get array of path components
             .filter(s => s != "") // remove the root and any trailing slash
             .reduce( // travel down tree
@@ -45,35 +43,30 @@ class tree {
     /** returns the parent node*/
     addNode(node, parentPath) {
         if (parentPath == null || parentPath == "") return this.root.addChild(node)
-        const parent = this.getNodeByPath(parentPath)
-        if (parent == null) return null
+        const parent = this.getNodeByAbsolutePath(parentPath)
         return {
-            success: parent.addChild(node),
+            success: parent == null ? false : parent.addChild(node),
             tree: this
         }
     }
 
     deleteNode(path) {
         const pathObj = new pathObj(path)
-        const parentNode = this.getNodeByPath(pathObj.parent())
-        if (parentNode == null) return null
+        const parentNode = this.getNodeByAbsolutePath(pathObj.parent())
         return {
-            success: parentNode.removeChild(pathObj.basename()),
+            success: parentNode == null ? null : parentNode.removeChild(pathObj.basename()),
             tree: this
         }
     }
 
+    /** move node "component" from "oldDir" to "newDir" */
     moveNode(component, oldDir, newDir) {
-        const oldParent = this.getNodeByPath(oldDir)
+        const oldParent = this.getNodeByAbsolutePath(oldDir)
         const node = oldParent.getChild(component)
         oldParent.removeChild(component)
-        const newParent = this.getNodeByPath(newDir)
+        const newParent = this.getNodeByAbsolutePath(newDir)
         newParent.addChild(node)
         return this
-    }
-
-    treeString() {
-        return this.root.treeString()
     }
 }
 
@@ -86,20 +79,16 @@ class node {
         this.data = new Map()
     }
 
-    getPathComponent() {
-        return this.pathComponent
-    }
+    getPathComponent = () => this.pathComponent
 
-    isRoot() {
-        return this.parent == null
-    }
+    isRoot = () => this.parent == null
+
+    findByID = (id) => this.uid == id ? this : this.children.find(c => c.findByID(id));
 
     getAbsolutePath() {
-        if (this.isRoot()) {
-            return this.pathComponent
-        } else {
-            return this.parent.getAbsolutePath() + "/" + this.pathComponent
-        }
+        return this.isRoot()
+            ? this.pathComponent
+            : this.parent.getAbsolutePath() + "/" + this.pathComponent;
     }
 
     addChild(child) {
@@ -110,41 +99,40 @@ class node {
 
     setParent(node) {
         this.parent = node
+        return this
     }
 
     /** returns true if a node was removed */
     removeChild(pathPiece) {
-        const preLen = this.children.length
+        const oldNumChildren = this.numChildren()
         this.children = this.children.filter(c => c.getPathComponent() != pathPiece)
-        return preLen != this.children.length
+        return this.numChildren() < oldNumChildren
     }
 
+    numChildren = () => this.children.length
+
+    /** returns undefined if the child doesn't exist */
     getChild(pathPiece) {
+        if (pathPiece.split("/") > 1) {
+            alert("unforeseen usecase: complex path pieces in getChild are not supported")
+        }
         return this.children.find(c => c.getPathComponent() == pathPiece)
     }
 
-    treeString() {
-        let first = [this.pathComponent]
-        // javascript has no "flatMap" so we do it by hand
-        for (let i = 0; i < this.children.length; i++) {
-            first = first.concat(this.children[i].treeString().map(l => "\t" + l))
-        }
-        return first
-    }
+    /** create a simple string visualization of this node and its descendents */
+    treeString = () => this.children.reduce(
+        (prev, cur) => prev.concat(
+            cur.treeString().map(l => "\t" + l)),
+        [this.pathComponent]
+    )
 
-    getSubtree() {
-        return this.children.reduce(
-            (prev, cur) => prev.concat(cur.getSubtree()), [this]
-        )
-    }
-
-    findByID(id) {
-        if (this.uid == id) {
-            return this
-        } else {
-            return this.children.find(c => c.findByID(id))
-        }
-    }
+    /**
+     * get an array that starts with this node, and contains all its descendents
+     * (pre-order, depth-first)
+     */
+    getSubtree = () => this.children.reduce(
+        (prev, cur) => prev.concat(cur.getSubtree()), [this]
+    )
 }
 
 const t = new tree()
@@ -161,7 +149,7 @@ const t2 = new tree();
 ["a", "b", "c"].forEach(p => t2.addNode(new node(p)))
 console.log(t2.allNodes())
 
-//console.log(t2.getNodeByPath("/").children.map(c => c.pathComponent))
+//console.log(t2.getNodeByAbsolutePath("/").children.map(c => c.pathComponent))
 //t2.treeString().forEach(line => console.log(line))
 
 const em = new EventEmitter()
