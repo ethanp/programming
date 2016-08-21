@@ -25,19 +25,27 @@ class tree {
         this.root = new node("")
     }
 
-    getNode(path) {
+    allNodes() {
+        return this.root.getSubtree()
+    }
+
+    getNodeByID(id) {
+        return this.root.findByID(id)
+    }
+
+    getNodeByPath(path) {
         return path.split("/") // get array of path components
-        .filter(s => s != "") // remove the root and any trailing slash
-        .reduce( // travel down tree
-            (cur, next) => cur != null ? cur.getChild(next) : null,
-            this.root
-        )
+            .filter(s => s != "") // remove the root and any trailing slash
+            .reduce( // travel down tree
+                (cur, next) => cur == null ? null : cur.getChild(next),
+                this.root
+            )
     }
 
     /** returns the parent node*/
     addNode(node, parentPath) {
         if (parentPath == null || parentPath == "") return this.root.addChild(node)
-        const parent = this.getNode(parentPath)
+        const parent = this.getNodeByPath(parentPath)
         if (parent == null) return null
         return {
             success: parent.addChild(node),
@@ -47,7 +55,7 @@ class tree {
 
     deleteNode(path) {
         const pathObj = new pathObj(path)
-        const parentNode = this.getNode(pathObj.parent())
+        const parentNode = this.getNodeByPath(pathObj.parent())
         if (parentNode == null) return null
         return {
             success: parentNode.removeChild(pathObj.basename()),
@@ -56,10 +64,10 @@ class tree {
     }
 
     moveNode(component, oldDir, newDir) {
-        const oldParent = this.getNode(oldDir)
+        const oldParent = this.getNodeByPath(oldDir)
         const node = oldParent.getChild(component)
         oldParent.removeChild(component)
-        const newParent = this.getNode(newDir)
+        const newParent = this.getNodeByPath(newDir)
         newParent.addChild(node)
         return this
     }
@@ -73,6 +81,7 @@ class node {
     constructor(pathPiece) {
         this.children = []
         this.parent = null
+        this.uid = Symbol()
         this.pathComponent = pathPiece
         this.data = new Map()
     }
@@ -81,10 +90,16 @@ class node {
         return this.pathComponent
     }
 
+    isRoot() {
+        return this.parent == null
+    }
+
     getAbsolutePath() {
-        return this.parent != null
-            ? this.parent.getAbsolutePath() + "/" + this.pathComponent
-            : this.pathComponent
+        if (this.isRoot()) {
+            return this.pathComponent
+        } else {
+            return this.parent.getAbsolutePath() + "/" + this.pathComponent
+        }
     }
 
     addChild(child) {
@@ -116,6 +131,20 @@ class node {
         }
         return first
     }
+
+    getSubtree() {
+        return this.children.reduce(
+            (prev, cur) => prev.concat(cur.getSubtree()), [this]
+        )
+    }
+
+    findByID(id) {
+        if (this.uid == id) {
+            return this
+        } else {
+            return this.children.find(c => c.findByID(id))
+        }
+    }
 }
 
 const t = new tree()
@@ -130,7 +159,9 @@ t.addNode(node3, "/2nd")
 
 const t2 = new tree();
 ["a", "b", "c"].forEach(p => t2.addNode(new node(p)))
-//console.log(t2.getNode("/").children.map(c => c.pathComponent))
+console.log(t2.allNodes())
+
+//console.log(t2.getNodeByPath("/").children.map(c => c.pathComponent))
 //t2.treeString().forEach(line => console.log(line))
 
 const em = new EventEmitter()
@@ -151,5 +182,5 @@ mapped.onValue(val => console.log("inside onValue"))
 
 userCreatedConnection.onValue((val) => console.log("got value"))
 
-em.emit("userCreatedConnection", "the string we emitted")
+//em.emit("userCreatedConnection", "the string we emitted")
 
