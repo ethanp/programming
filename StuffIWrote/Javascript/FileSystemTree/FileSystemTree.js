@@ -20,7 +20,7 @@ class pathObj {
     }
 }
 
-class tree {
+module.exports = class tree {
     constructor() {
         this.root = new node("")
     }
@@ -157,7 +157,7 @@ class node {
         )
     }
 }
-
+/*
 const t = new tree()
 const node1 = new node("1st")
 const node2 = new node("2nd")
@@ -177,7 +177,7 @@ console.log(t2.allNodes())
 
 const em = new EventEmitter()
 
-var userCreatedConnection = kefir.fromEvents(em, "userCreatedConnection")
+const userCreatedConnection = kefir.fromEvents(em, "userCreatedConnection");
 
 em.on("userCreatedConnection", evt => console.log(evt + ": from em.on"))
 
@@ -194,3 +194,4 @@ mapped.onValue(val => console.log("inside onValue"))
 userCreatedConnection.onValue((val) => console.log("got value"))
 
 //em.emit("userCreatedConnection", "the string we emitted")
+*/
