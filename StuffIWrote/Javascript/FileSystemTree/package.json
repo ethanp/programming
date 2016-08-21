@@ -10,5 +10,11 @@
   "license": "ISC",
   "dependencies": {
     "kefir": "^3.4.0"
+  },
+  "devDependencies": {
+    "jasmine": "^2.4.1",
+    "karma": "^1.2.0",
+    "karma-chrome-launcher": "^2.0.0",
+    "karma-jasmine": "^1.0.2"
   }
 }

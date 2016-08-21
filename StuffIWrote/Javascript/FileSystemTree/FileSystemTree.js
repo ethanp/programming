@@ -11,8 +11,13 @@ class pathObj {
         this.value = str
     }
 
-    parent = () => this.value.substring(0, this.value.lastIndexOf("/"))
-    basename = () => this.value.substring(this.value.lastIndexOf("/") + 1, this.value.length)
+    parent() {
+        return this.value.substring(0, this.value.lastIndexOf("/"))
+    }
+
+    basename() {
+        return this.value.substring(this.value.lastIndexOf("/") + 1, this.value.length)
+    }
 }
 
 class tree {
@@ -24,12 +29,18 @@ class tree {
      * get all the nodes in this tree as an array
      * (depth-first)
      */
-    allNodes = () => this.root.getSubtree()
+    allNodes() {
+        return this.root.getSubtree()
+    }
 
-    getNodeByID = (id) => this.root.findByID(id)
+    getNodeByID(id) {
+        return this.root.findByID(id)
+    }
 
     /** returns a simple string visualization of the entire tree */
-    treeString = () => this.root.treeString()
+    treeString() {
+        return this.root.treeString()
+    }
 
     getNodeByAbsolutePath(path) {
         return path.split("/") // get array of path components
@@ -79,11 +90,17 @@ class node {
         this.data = new Map()
     }
 
-    getPathComponent = () => this.pathComponent
+    getPathComponent() {
+        return this.pathComponent
+    }
 
-    isRoot = () => this.parent == null
+    isRoot() {
+        return this.parent == null
+    }
 
-    findByID = (id) => this.uid == id ? this : this.children.find(c => c.findByID(id));
+    findByID(id) {
+        return this.uid == id ? this : this.children.find(c => c.findByID(id));
+    }
 
     getAbsolutePath() {
         return this.isRoot()
@@ -109,7 +126,9 @@ class node {
         return this.numChildren() < oldNumChildren
     }
 
-    numChildren = () => this.children.length
+    numChildren() {
+        return this.children.length
+    }
 
     /** returns undefined if the child doesn't exist */
     getChild(pathPiece) {
@@ -120,19 +139,23 @@ class node {
     }
 
     /** create a simple string visualization of this node and its descendents */
-    treeString = () => this.children.reduce(
-        (prev, cur) => prev.concat(
-            cur.treeString().map(l => "\t" + l)),
-        [this.pathComponent]
-    )
+    treeString() {
+        return this.children.reduce(
+            (prev, cur) => prev.concat(
+                cur.treeString().map(l => "\t" + l)),
+            [this.pathComponent]
+        )
+    }
 
     /**
      * get an array that starts with this node, and contains all its descendents
      * (pre-order, depth-first)
      */
-    getSubtree = () => this.children.reduce(
-        (prev, cur) => prev.concat(cur.getSubtree()), [this]
-    )
+    getSubtree() {
+        return this.children.reduce(
+            (prev, cur) => prev.concat(cur.getSubtree()), [this]
+        )
+    }
 }
 
 const t = new tree()
@@ -171,4 +194,3 @@ mapped.onValue(val => console.log("inside onValue"))
 userCreatedConnection.onValue((val) => console.log("got value"))
 
 //em.emit("userCreatedConnection", "the string we emitted")
-
