@@ -24,7 +24,7 @@ class CSVReader(override val path: String) extends base.CSVReader {
 
     protected def createLineStream: Iterator[String] = io.Source.fromFile(path).getLines()
 
-    protected def parseValues(values: Array[String]): Array[Any] = values map parseValue
+    protected def parseValues(values: Iterable[String]): Iterable[Any] = values map parseValue
 
     protected def parseLine(line: String): Line = {
         val values = line split this.separator

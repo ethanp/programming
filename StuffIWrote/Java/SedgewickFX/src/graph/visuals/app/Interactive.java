@@ -37,14 +37,22 @@ class Interactive {
             }
         };
         EventHandler<MouseEvent> createNode = click -> {
-            if (!isDragging()) addNodeAt(new Point2D(click.getX(), click.getY()));
+            if (notDragging()) addNodeAt(locationOf(click));
         };
         scene.setOnMouseClicked(createNode);
         scene.setOnDragDone(cancelCreateEdge);
     }
 
+    private Point2D locationOf(MouseEvent click) {
+        return new Point2D(click.getX(), click.getY());
+    }
+
     private boolean isDragging() {
         return dragSource != null;
+    }
+
+    private boolean notDragging() {
+        return !isDragging();
     }
 
     void addNodeAt(Point2D point) {
