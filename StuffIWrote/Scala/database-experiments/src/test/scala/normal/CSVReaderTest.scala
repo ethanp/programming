@@ -34,4 +34,10 @@ class CSVReaderTest extends FlatSpec with Matchers {
         result should not be empty
         result.get shouldEqual firstLine
     }
+
+    it should "not see what is not there" in {
+        val reader = makeReader
+        val result = reader.query("file_id", 23)
+        result should be(empty)
+    }
 }
