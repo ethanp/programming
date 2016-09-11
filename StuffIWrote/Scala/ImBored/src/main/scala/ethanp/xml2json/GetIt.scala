@@ -11,24 +11,21 @@ object GetIt extends App {
 
         import ethanp.xml2json.Tokens._
 
-        def hasNextToken = inputStream.hasNext
+        def hasNextToken = curChar.nonEmpty
 
         def isWordChar(char: Char) = char.isLetterOrDigit || char == '_'
 
-        var curChar: Option[Char] = None
+        var curChar: Option[Char] = moveToNextChar()
 
-        def advance(): Unit = {
-            curChar =
-                if (inputStream.hasNext)
-                    Some(inputStream.next())
-                else None
-        }
+        def advance(): Unit = {curChar = moveToNextChar()}
+
+        def moveToNextChar(): Option[Char] =
+            if (inputStream.hasNext)
+                Some(inputStream.next())
+            else None
 
         def nextToken(): Token = {
-            if (!inputStream.hasNext) return EOF
-            if (curChar.isEmpty) {
-                curChar = Some(inputStream.next())
-            }
+            if (curChar.isEmpty) return EOF
             val ret = curChar.get match {
                 case x if x.isWhitespace =>
                     advance()
