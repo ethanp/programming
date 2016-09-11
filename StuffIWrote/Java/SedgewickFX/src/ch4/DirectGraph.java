@@ -1,5 +1,6 @@
 package ch4;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -23,5 +24,11 @@ class DirectGraph {
 
     public Collection<DirectedEdge> adj(int node) {
         return adjList[node];
+    }
+
+    public DirectGraph copyGraph() {
+        Collection<DirectedEdge> edges = new ArrayList<>();
+        for (Collection<DirectedEdge> lst : adjList) edges.addAll(lst);
+        return new DirectGraph(adjList.length, edges);
     }
 }

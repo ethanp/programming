@@ -225,7 +225,7 @@ int scp_init(int argc, char *argv[]) {
     return 0;
 }
 
- void scp_shutdown() {
+void scp_shutdown() {
     log_msg("shutting down ssh session\n");
     libssh2_session_disconnect(session, "Normal Shutdown, Thank you for playing");
     libssh2_session_free(session);
