@@ -5,24 +5,11 @@ import scala.collection.mutable
 /**
   * 9/11/16 12:08 PM
   */
-class Tokenizer(inputStream: Iterator[Char]) {
-
-    import ethanp.xml2json.Tokens._
+private class Tokenizer(inputStream: Iterator[Char]) {
 
     def hasNextToken = curChar.nonEmpty
 
-    def isWordChar(char: Char) = char.isLetterOrDigit || char == '_'
-
-    var curChar: Option[Char] = moveToNextChar()
-
-    def advance(): Unit = {curChar = moveToNextChar()}
-
-    def moveToNextChar(): Option[Char] =
-        if (inputStream.hasNext)
-            Some(inputStream.next())
-        else None
-
-    def nextToken(): Token = {
+    def nextToken(): XMLToken = {
         if (curChar.isEmpty) return EOF
         val ret = curChar.get match {
             case x if x.isWhitespace =>
@@ -51,9 +38,34 @@ class Tokenizer(inputStream: Iterator[Char]) {
         ret
     }
 
-    def extractAllTokens(): Seq[Token] = {
-        val arr = mutable.ArrayBuffer.empty[Token]
+    def extractAllTokens(): Seq[XMLToken] = {
+        val arr = mutable.ArrayBuffer.empty[XMLToken]
         while (hasNextToken) arr += nextToken()
         arr.toVector
     }
+
+    private def isWordChar(char: Char) = char.isLetterOrDigit || char == '_'
+
+    private var curChar: Option[Char] = moveToNextChar()
+
+    private def advance(): Unit = {curChar = moveToNextChar()}
+
+    private def moveToNextChar(): Option[Char] =
+        if (inputStream.hasNext)
+            Some(inputStream.next())
+        else None
 }
+
+object Tokenizer {
+    def tokenize(iterator: Iterator[Char]): Seq[XMLToken] =
+        new Tokenizer(iterator).extractAllTokens()
+}
+
+sealed trait XMLToken
+case object EOF extends XMLToken
+case object LeftBracket extends XMLToken
+case object RightBracket extends XMLToken
+case object Equals extends XMLToken
+case object Slash extends XMLToken
+case class Name(name: String) extends XMLToken
+case class Value(value: String) extends XMLToken
