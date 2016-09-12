@@ -8,4 +8,5 @@ object Main extends App {
     val tokenString = tokens mkString "\n"
     assert(tokenString equals Test.expectedTokenString, "tokenization")
     val parsed: ASTNode = Parser parse tokens
+    println(parsed)
 }
