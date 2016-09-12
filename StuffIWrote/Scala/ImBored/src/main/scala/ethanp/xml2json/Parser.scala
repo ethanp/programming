@@ -39,8 +39,11 @@ class Parser(tokens: Iterator[XMLToken]) {
                         nodeCreationStack.push(newDomElem)
                     } else if (previousToken == Slash) {
                         popNodeOff(expectedName = Some(name))
+                    } else if (previousToken == RightBracket) {
+                        /* it's some text between the chidren */
+                        nodeCreationStack.head.addText(name)
                     } else {
-                        /* ignore (its the name of a `Value` which is coming next) */
+                        /* ignore (it's the name of a `Value` which is coming next) */
                     }
                 case RightBracket =>
                     if (previousToken == Slash) {
@@ -95,5 +98,7 @@ case class DOMElem(
     // interspersed text sequences and child nodes
     textAndChildren: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer.empty
 ) extends ASTNode {
+    def addText(name: String) = textAndChildren append TextElem(name)
+
     def addChild(child: DOMElem) = textAndChildren append child
 }
