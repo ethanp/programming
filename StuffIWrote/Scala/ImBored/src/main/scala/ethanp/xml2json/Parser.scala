@@ -11,36 +11,60 @@ class Parser(tokens: Iterator[XMLToken]) {
         if (!tokens.hasNext) return DOMElem("<NO one=\"home\">")
         val nodeCreationStack = new mutable.Stack[DOMElem]()
         var previousToken: XMLToken = null
-        while (tokens.hasNext) {
-            val cur = tokens.next()
+        /**
+          * @param expectedName when this is passed in, a warning is issued if it doesn't match
+          *                     the name of the node being popped off the stack
+          */
+        def popNodeOff(expectedName: Option[String] = None): Unit = {
+            /* its a CLOSE tag, so we just pop off the stack */
+            val node = nodeCreationStack.pop()
+            /* warn if the name is wrong (but move on) */
+            if (expectedName.nonEmpty && expectedName.get != node.name) {
+                System.err.println(s"WARNING: invalid close-tag ${node.name}; continuing")
+            }
+        }
+        tokens foreach { cur =>
             cur match {
-                case EOF => /* ignore */
-                case LeftBracket => /* ignore */
+                case Name(name: String) =>
+                    if (previousToken == LeftBracket) {
+                        /* this is an OPEN tag, so initialize a new DOM node */
+                        val newDomElem = DOMElem(name)
+                        if (nodeCreationStack.nonEmpty) {
+                            nodeCreationStack.head.addChild(newDomElem)
+                        }
+                        nodeCreationStack.push(newDomElem)
+                    } else if (previousToken == Slash) {
+                        popNodeOff(expectedName = Some(name))
+                    } else {
+                        /* ignore (its the name of a `Value` which is coming next) */
+                    }
                 case RightBracket =>
                     if (previousToken == Slash) {
-                        /* TODO this element has no children; we can finish now */
+                        /* this element has no children; we can finish now */
+                        popNodeOff()
                     } else {
                         /* TODO this element is open until some subsequent CLOSE tag */
                     }
-                case Equals => /* ignore */
                 case Slash =>
                     if (previousToken == LeftBracket) {
                         /* TODO this is a CLOSE tag */
                     } else {
                         /* ignore (handled by `RightBracket`) */
                     }
-                case Name(name) =>
-                    if (previousToken == LeftBracket) {
-                        /* TODO this is an OPEN tag, so initialize a new DOM node */
-                        nodeCreationStack push DOMElem(name)
-                    } else if (previousToken == Slash) {
-                        /* TODO its a CLOSE tag, so I guess we can pop off the stack */
-                        /* TODO verify that it is the right name (i.e. type-check it?) */
-                    } else {
-                        /* TODO its the name of a `Value` which is coming next */
+                case Value(value: String) =>
+                    /* add it with a name */
+                    def tryDouble: Any = {
+                        try value.toDouble
+                        catch {case NumberFormatException => value}
                     }
-                case Value(value) =>
-                    /* TODO add it with a name */
+                    def tryParseLongOrDouble: Any = {
+                        try value.toLong
+                        catch {case NumberFormatException => tryDouble}
+                    }
+                    val parsedValue = tryParseLongOrDouble
+                    val associatedName = previousToken.asInstanceOf[Name].name
+                    nodeCreationStack.head.simpleFields += (associatedName -> parsedValue)
+                case EOF | LeftBracket | Equals => /* ignore */
             }
             previousToken = cur
         }
@@ -63,5 +87,7 @@ case class DOMElem(
     // attribute name-value pairs (TODO anything else?)
     simpleFields: mutable.Map[String, Any] = mutable.Map.empty,
     // interspersed text sequences and child nodes
-    textAndChildren: mutable.Seq[ASTNode] = mutable.Seq.empty
-) extends ASTNode
+    textAndChildren: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer.empty
+) extends ASTNode {
+    def addChild(child: DOMElem) = textAndChildren append child
+}
