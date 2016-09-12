@@ -57,8 +57,8 @@ private class Tokenizer(inputStream: Iterator[Char]) {
 }
 
 object Tokenizer {
-    def tokenize(iterator: Iterator[Char]): Seq[XMLToken] =
-        new Tokenizer(iterator).extractAllTokens()
+    def tokenize(iterable: Iterable[Char]): Seq[XMLToken] =
+        new Tokenizer(iterable.iterator).extractAllTokens()
 }
 
 sealed trait XMLToken

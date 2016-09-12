@@ -36,7 +36,7 @@ object Test {
       |   </ASSIGN>
       |</COMPOUND>""".stripMargin
 
-    val expectedTokenization =
+    val expectedTokenString =
         """LeftBracket
           |Name(COMPOUND)
           |Name(line)
