@@ -8,7 +8,8 @@ object Main extends App {
     val tokenString = tokens mkString "\n"
     assert(tokenString equals Test.expectedTokenString, "tokenization")
     val parsed: ASTNode = Parser parse tokens
-    val json: JsonObj = JsonGenerator generateFrom parsed
-    val jsonString: String = JsonPrinter print json
-    println(json)
+    val json: JsonObj = JsonObjectGenerator fromAST parsed
+    val jsonString: String = JsonPrinter compactPrint json
+    println("\njson string:")
+    println(jsonString)
 }

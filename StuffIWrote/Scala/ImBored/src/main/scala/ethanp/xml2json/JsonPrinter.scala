@@ -1,44 +1,41 @@
 package ethanp.xml2json
 
-import scala.collection.mutable
-
 /**
   * 9/11/16 10:32 PM
   */
 object JsonPrinter {
-    def print(json: JsonObj): Seq[String] = {
-        def arrInnerString(arr: JsonArr): Seq[String] = {
-            arr.arr.flatMap { (arrayElem: Json) =>
-                /* there's a separate format for when the object is part of an array
-                           rather than a field */
-                arrayElem match {
-                    case j: JsonObj => print(j)
-                    case a: JsonArr => arrInnerString(a)
-                    case JsonName(name) => Seq("")
-                    case JsonField(jsonName, jsonValue) => Seq("")
-                    case JsonValueElem(valueElem) => Seq("")
-                }
-            }
-        }
-        val seq: Seq[String] = json.pairs.flatMap { x: JsonField =>
-            // TODO I NEED TO SWITCH THE APPROACH INSTEAD OF DOING THIS
-            // there's probably a simpler (though more object-y) way to do it instead
-            // of building up the string directly which is leaving me with spaghetti
-            val lines = mutable.ArrayBuffer.empty[String]
-            x.jsonValue match {
-                case y: JsonObj =>
-                    lines += x.jsonName.name + ": {"
-                    lines ++= print(y)
-                case arr: JsonArr =>
-                    lines += x.jsonName.name + ": ["
-                    lines ++= arrInnerString(arr)
 
-                case JsonName(name) =>
-                case JsonField(jsonName, jsonValue) =>
-                case JsonValueElem(valueElem) =>
-            }
-            lines
+    def compactPrint(arr: JsonArr): String = {
+        "[" + (arr.arr map printJson mkString ",") + "]"
+    }
+
+    def printJson(json: Json): String = json match {
+        case obj: JsonObj => compactPrint(obj)
+        case arr: JsonArr => compactPrint(arr)
+        case JsonName(name) => "\"%s\"".format(name)
+        case JsonField(jsonName, jsonValue) =>
+            throw new RuntimeException("shouldn't have a field here")
+        case JsonValue(value) => value match {
+            case s: String => "\"%s\"".format(s)
+            case x => x.toString
         }
-        ???
+    }
+
+    def compactPrint(json: JsonObj): String = {
+        val fieldStrings: Seq[String] = json.pairs.map { field =>
+            "\"%s\":%s".format(field.jsonName.name, printJson(field.jsonValue))
+        }
+        "{" + (fieldStrings mkString ",") + "}"
+    }
+
+    def prettyPrint(json: JsonObj): String = {
+        // TODO finish beautifying it
+        val compact: Iterator[Char] = compactPrint(json).iterator
+        while (compact.hasNext) {
+            val next = compact.next()
+            next match {
+                case '{' => println("hello world")
+            }
+        }
     }
 }
