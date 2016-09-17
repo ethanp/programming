@@ -9,7 +9,7 @@ object Main extends App {
     assert(tokenString equals Test.expectedTokenString, "tokenization")
     val parsed: ASTNode = Parser parse tokens
     val json: JsonObj = JsonObjectGenerator fromAST parsed
-    val jsonString: String = JsonPrinter compactPrint json
-    println("\njson string:")
-    println(jsonString)
+    val compactString: String = JsonPrinter compactPrint json
+    val prettyString: String = JsonPrinter prettyPrint json
+    println(s"\njson string:\n$compactString\n\nnow pretty:\n$prettyString")
 }
