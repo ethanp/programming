@@ -12,7 +12,7 @@ import javafx.scene.input.MouseEvent;
 /**
  * Ethan Petuchowski 6/5/16
  */
-class Interactive {
+public class Interactive {
 
     private final Scene scene;
     private final VisualGraph visualGraph;
