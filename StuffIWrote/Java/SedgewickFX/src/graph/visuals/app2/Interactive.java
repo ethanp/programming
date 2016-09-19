@@ -19,7 +19,7 @@ public class Interactive {
 
     Interactive(Scene scene) {
         this.scene = scene;
-        visualGraph = new VisualGraph(rootGroup());
+        visualGraph = new VisualGraph(this);
         createNodeOnSceneClick();
         addAlgoButtons();
     }
@@ -28,7 +28,7 @@ public class Interactive {
         return (Group) scene.getRoot();
     }
 
-    private ObservableList<Node> visualChildren() {
+    public ObservableList<Node> visualChildren() {
         return rootGroup().getChildren();
     }
 

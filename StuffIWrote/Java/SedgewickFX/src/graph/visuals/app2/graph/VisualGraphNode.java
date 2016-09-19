@@ -1,6 +1,5 @@
 package graph.visuals.app2.graph;
 
-import graph.visuals.app2.Interactive;
 import javafx.geometry.Point2D;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -10,21 +9,30 @@ import javafx.scene.shape.Circle;
 
 /** representation of a user-created graph node */
 class VisualGraphNode {
+    // is there a better place for this??
+    private static VisualGraphNode draggedFrom = null;
     private final Circle circle;
+    private final VisualGraph visualGraph;
 
-    VisualGraphNode(Point2D location) {
+    VisualGraphNode(Point2D location, VisualGraph visualGraph) {
+        this.visualGraph = visualGraph;
         circle = new Circle(location.getX(), location.getY(), 25, Color.BLUE);
         circle.setOnDragDetected(event -> {
             System.out.println("starting edge creation");
+
+            // set static state
+            draggedFrom = this;
+
+            // I think for some reason there needs to be actual content transmitted
             ClipboardContent content = new ClipboardContent();
-            content.putString("circle drag"); // this is REQUIRED (and useless!)
+            content.putString("circle drag"); // I think this is REQUIRED too
 
             // Confirms a potential drag and drop gesture that is recognized over this Node.
             // `ANY` indicates that we'll support the copying, linking, or moving of data.
             Dragboard dragboard = circle.startDragAndDrop(TransferMode.ANY);
 
             // dragboard is used to transfer data during the drag and drop gesture.
-            // TODO Placing this Node's data on the Dragboard also identifies this Node
+            // LowPriorityTodo Placing this Node's data on the Dragboard also identifies this Node
             // as the source of the drag and drop gesture. Maybe that would help us
             // cleanly get all the references we need for rendering the edge into one place.
             dragboard.setContent(content);
@@ -38,17 +46,22 @@ class VisualGraphNode {
             setColorActive();
             event.acceptTransferModes(TransferMode.ANY);
         });
-        circle.setOnDragExited(event -> setColorInactive());
 
-        // TODO there must a better place for this
-        // I'd like to find a non-hacky way to pull this off
+        // the drag exited this node
+        circle.setOnDragExited(event -> {
+            System.out.println("drag exited node");
+            setColorInactive();
+        });
+
+        // A click was released on this Node during drag and drop gesture.
+        // Transfer of data from the DragEvent's dragboard should happen in this function.
         circle.setOnDragDropped(event -> {
-            System.out.println("circular drag dropped");
-            VisualGraphNode from = null;
-            VisualGraphNode to = this;
-            Interactive interactive = null;
-            // TODO something like this:
-            // interactive.drawEdge(from, to);
+            if (draggedFrom != null) {
+                System.out.println("creating node");
+                visualGraph.addEdge(draggedFrom, this);
+            } else {
+                System.out.println("couldn't create node: didn't drag from anywhere?");
+            }
             setColorInactive();
             event.setDropCompleted(true);
             event.consume();
