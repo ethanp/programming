@@ -1,4 +1,4 @@
-package algorithms.search.moderate;
+package algorithms.search.medium;
 
 import java.util.PriorityQueue;
 import java.util.Queue;

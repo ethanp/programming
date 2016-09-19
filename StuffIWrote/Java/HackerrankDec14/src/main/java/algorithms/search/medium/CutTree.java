@@ -1,4 +1,4 @@
-package algorithms.search.moderate;
+package algorithms.search.medium;
 
 import java.util.ArrayList;
 import java.util.List;

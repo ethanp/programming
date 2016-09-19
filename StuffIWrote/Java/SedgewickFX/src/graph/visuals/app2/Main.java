@@ -1,4 +1,4 @@
-package graph.visuals.app;
+package graph.visuals.app2;
 
 import javafx.application.Application;
 import javafx.scene.Group;
@@ -18,6 +18,7 @@ public class Main extends Application {
     // The start() method is called when the system is ready for
     // the application to begin running.
     @Override public void start(Stage primaryStage) throws Exception {
+
         // A Group node contains an ObservableList of children that are
         // rendered in order whenever this node is rendered.
         Group root = new Group();
@@ -26,7 +27,7 @@ public class Main extends Application {
         // Its size and fill are initialized during construction.
         Scene scene = new Scene(root, 500, 500, Color.BLACK);
         Interactive interactive = new Interactive(scene);
-        primaryStage.setTitle("Interactive Graph Application");
+        primaryStage.setTitle("Graph Algo Runner");
 
         // sceneProperty: The Scene to be rendered on this Stage.
         // There can only be one Scene on the Stage at a time,
