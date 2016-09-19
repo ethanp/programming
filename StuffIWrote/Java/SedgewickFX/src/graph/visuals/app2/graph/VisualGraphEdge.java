@@ -29,4 +29,8 @@ class VisualGraphEdge {
     public Line getLine() {
         return line;
     }
+
+    public VisualGraphNode getTo() {
+        return to;
+    }
 }

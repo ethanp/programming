@@ -9,6 +9,9 @@ import javafx.collections.ObservableMap;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /** representation of the whole user-created graph container */
 public class VisualGraph {
     private final ObservableMap<VisualGraphNode, ObservableList<VisualGraphEdge>> adjList =
@@ -76,5 +79,22 @@ public class VisualGraph {
     public void addEdge(VisualGraphNode from, VisualGraphNode to) {
         // this'll trigger the callback above that'll render the line to the screen
         adjList.get(from).add(new VisualGraphEdge(from, to));
+    }
+
+    public void setOnlyTheseNodesActive(Iterable<VisualGraphNode> nodes) {
+        adjList.keySet().forEach(VisualGraphNode::setColorInactive);
+        if (nodes != null) {
+            nodes.forEach(VisualGraphNode::setColorActive);
+        }
+    }
+
+    public List<VisualGraphNode> getActiveNodes() {
+        return adjList.keySet().stream()
+              .filter(VisualGraphNode::isActive)
+              .collect(Collectors.toList());
+    }
+
+    public Iterable<? extends VisualGraphNode> adj(VisualGraphNode node) {
+        return adjList.get(node).stream().map(VisualGraphEdge::getTo).collect(Collectors.toList());
     }
 }

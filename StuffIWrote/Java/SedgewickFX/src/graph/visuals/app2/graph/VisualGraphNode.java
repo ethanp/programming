@@ -8,7 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 /** representation of a user-created graph node */
-class VisualGraphNode {
+public class VisualGraphNode {
     // is there a better place for this??
     private static VisualGraphNode draggedFrom = null;
     private final Circle circle;
@@ -17,6 +17,10 @@ class VisualGraphNode {
     VisualGraphNode(Point2D location, VisualGraph visualGraph) {
         this.visualGraph = visualGraph;
         circle = new Circle(location.getX(), location.getY(), 25, Color.BLUE);
+        setDragToCreateEdge();
+    }
+
+    private void setDragToCreateEdge() {
         circle.setOnDragDetected(event -> {
             System.out.println("starting edge creation");
 
@@ -57,10 +61,11 @@ class VisualGraphNode {
         // Transfer of data from the DragEvent's dragboard should happen in this function.
         circle.setOnDragDropped(event -> {
             if (draggedFrom != null) {
-                System.out.println("creating node");
+                System.out.println("creating undirected edge");
                 visualGraph.addEdge(draggedFrom, this);
+                visualGraph.addEdge(this, draggedFrom);
             } else {
-                System.out.println("couldn't create node: didn't drag from anywhere?");
+                System.err.println("couldn't create node: didn't drag from anywhere?");
             }
             setColorInactive();
             event.setDropCompleted(true);
@@ -86,5 +91,9 @@ class VisualGraphNode {
 
     public double yLoc() {
         return circle.getCenterY();
+    }
+
+    public boolean isActive() {
+        return circle.getFill() == Color.BLUE;
     }
 }
