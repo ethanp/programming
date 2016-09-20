@@ -82,9 +82,9 @@ public class VisualGraph {
     }
 
     public void setOnlyTheseNodesActive(Iterable<VisualGraphNode> nodes) {
-        adjList.keySet().forEach(VisualGraphNode::setColorInactive);
+        adjList.keySet().forEach(n -> n.setIsActive(false));
         if (nodes != null) {
-            nodes.forEach(VisualGraphNode::setColorActive);
+            nodes.forEach(n -> n.setIsActive(true));
         }
     }
 

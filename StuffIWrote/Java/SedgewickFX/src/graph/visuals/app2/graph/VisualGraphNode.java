@@ -15,11 +15,22 @@ public class VisualGraphNode {
     private final VisualGraph visualGraph;
     // probably best to use ints in practice
     private double weight = 0;
+    private boolean active = false;
+    private boolean tempActive = false;
 
     VisualGraphNode(Point2D location, VisualGraph visualGraph) {
         this.visualGraph = visualGraph;
         circle = new Circle(location.getX(), location.getY(), 25, Color.BLUE);
         setDragToCreateEdge();
+        setClickToActivate();
+    }
+
+    private void setClickToActivate() {
+        circle.setOnMouseClicked(event -> {
+            active = !active;
+            computeColor();
+            event.consume();
+        });
     }
 
     private void setDragToCreateEdge() {
@@ -43,20 +54,20 @@ public class VisualGraphNode {
             // cleanly get all the references we need for rendering the edge into one place.
             dragboard.setContent(content);
 
-            setColorActive();
+            setTemporarilyActive(true);
 
             // prevent further event propagation
             event.consume();
         });
         circle.setOnDragOver(event -> {
-            setColorActive();
+            setTemporarilyActive(true);
             event.acceptTransferModes(TransferMode.ANY);
         });
 
         // the drag exited this node
         circle.setOnDragExited(event -> {
             System.out.println("drag exited node");
-            setColorInactive();
+            setTemporarilyActive(false);
         });
 
         // A click was released on this Node during drag and drop gesture.
@@ -69,18 +80,30 @@ public class VisualGraphNode {
             } else {
                 System.err.println("couldn't create node: didn't drag from anywhere?");
             }
-            setColorInactive();
+            setTemporarilyActive(false);
             event.setDropCompleted(true);
             event.consume();
         });
     }
 
-    public void setColorInactive() {
-        circle.setFill(Color.BLUE);
+    public void setIsActive(boolean b) {
+        isActive();
+        computeColor();
     }
 
-    public void setColorActive() {
-        circle.setFill(Color.RED);
+    private void computeColor() {
+        if (isTempActive()) {
+            circle.setFill(Color.DARKSALMON);
+        } else if (isActive()) {
+            circle.setFill(Color.RED);
+        } else {
+            circle.setFill(Color.BLUE);
+        }
+    }
+
+    public void setTemporarilyActive(boolean b) {
+        tempActive = b;
+        computeColor();
     }
 
     public Circle getCircle() {
@@ -96,6 +119,10 @@ public class VisualGraphNode {
     }
 
     public boolean isActive() {
-        return circle.getFill() == Color.BLUE;
+        return active;
+    }
+
+    public boolean isTempActive() {
+        return tempActive;
     }
 }

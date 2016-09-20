@@ -23,8 +23,7 @@ public class Main extends Application {
         // rendered in order whenever this node is rendered.
         // Group root = new Group();
         Pane root = new Pane();
-        root.setMinWidth(500);
-        root.setMinHeight(500);
+        root.setMinSize(500, 500);
         // seems like we have to use CSS here, not the Color.BLACK constant
         root.setStyle("-fx-background-color: black;");
 
