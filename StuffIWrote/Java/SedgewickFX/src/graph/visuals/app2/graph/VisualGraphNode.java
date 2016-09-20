@@ -3,6 +3,7 @@ package graph.visuals.app2.graph;
 import javafx.geometry.Point2D;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -22,14 +23,24 @@ public class VisualGraphNode {
         this.visualGraph = visualGraph;
         circle = new Circle(location.getX(), location.getY(), 25, Color.BLUE);
         setDragToCreateEdge();
-        setClickToActivate();
+        setClickHandlers();
     }
 
-    private void setClickToActivate() {
+    @SuppressWarnings("UnnecessaryReturnStatement") private void setClickHandlers() {
         circle.setOnMouseClicked(event -> {
-            active = !active;
-            computeColor();
-            event.consume();
+            // on left-click, toggle activation
+            if (event.getButton() == MouseButton.PRIMARY) {
+                active = !active;
+                computeColor();
+                event.consume();
+                return;
+            }
+            // on right-click, delete the node
+            if (event.getButton() == MouseButton.SECONDARY) {
+                visualGraph.removeNode(this);
+                event.consume();
+                return;
+            }
         });
     }
 
@@ -87,7 +98,7 @@ public class VisualGraphNode {
     }
 
     public void setIsActive(boolean b) {
-        isActive();
+        active = b;
         computeColor();
     }
 

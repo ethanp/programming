@@ -6,8 +6,10 @@ import graph.visuals.app2.graph.VisualGraphNode;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
+import java.util.Set;
 
 /**
  * 9/19/16 2:21 AM
@@ -21,7 +23,8 @@ class ShortestPath {
     ShortestPath(VisualGraph graph) {
         List<VisualGraphNode> activeNodes = graph.getActiveNodes();
         if (activeNodes.size() != 2) {
-            System.err.println("there must be only 2 active nodes for this algorithm");
+            throw new IllegalArgumentException(
+                  "there must be exactly 2 active nodes for this algorithm");
         }
         this.from = activeNodes.get(0);
         this.to = activeNodes.get(1);
@@ -48,6 +51,8 @@ class ShortestPath {
         }
         // TODO once we add weights, we can't bfs. I think one option is that we Dijkstra's.
         Queue<BFSNode> frontier = new ArrayDeque<>();
+        Set<VisualGraphNode> seen = new HashSet<>();
+        seen.add(from);
         frontier.add(new BFSNode(from, null));
         while (!frontier.isEmpty()) {
             BFSNode curr = frontier.poll();
@@ -59,9 +64,11 @@ class ShortestPath {
                     for (BFSNode b = curr; b.previous != null; b = b.previous) {
                         ret.add(b.node);
                     }
+                    ret.add(from);
                     Collections.reverse(ret);
                     return ret;
-                } else {
+                } else if (!seen.contains(nbr)) {
+                    seen.add(nbr);
                     frontier.add(new BFSNode(nbr, curr));
                 }
             }

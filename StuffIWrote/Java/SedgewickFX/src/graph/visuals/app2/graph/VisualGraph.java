@@ -9,6 +9,7 @@ import javafx.collections.ObservableMap;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,5 +97,20 @@ public class VisualGraph {
 
     public Iterable<? extends VisualGraphNode> adj(VisualGraphNode node) {
         return adjList.get(node).stream().map(VisualGraphEdge::getTo).collect(Collectors.toList());
+    }
+
+    public void removeNode(VisualGraphNode node) {
+        ObservableList<VisualGraphEdge> nbrs = adjList.remove(node);
+        // explicitly delete all the edges leaving us so the graphics will update
+        nbrs.clear();
+        // delete all edges pointing to us too
+        for (ObservableList<VisualGraphEdge> list : adjList.values()) {
+            List<VisualGraphEdge> copy = new ArrayList<>(list);
+            for (VisualGraphEdge e : copy) {
+                if (e.getTo() == node) {
+                    list.remove(e);
+                }
+            }
+        }
     }
 }

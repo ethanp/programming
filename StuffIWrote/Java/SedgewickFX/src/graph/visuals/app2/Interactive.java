@@ -31,7 +31,11 @@ public class Interactive {
         Button shortestPathButton = new Button("Shortest Paths");
         shortestPathButton.setOnMouseClicked(event -> {
             System.out.println("shortest paths button clicked");
-            new ShortestPath(visualGraph).highlightPath();
+            try {
+                new ShortestPath(visualGraph).highlightPath();
+            } catch (IllegalArgumentException e) {
+                System.err.println(e.getMessage());
+            }
         });
         visualChildren().add(shortestPathButton);
     }
