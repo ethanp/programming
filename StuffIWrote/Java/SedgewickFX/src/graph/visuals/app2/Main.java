@@ -1,8 +1,8 @@
 package graph.visuals.app2;
 
 import javafx.application.Application;
-import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -21,12 +21,19 @@ public class Main extends Application {
 
         // A Group node contains an ObservableList of children that are
         // rendered in order whenever this node is rendered.
-        Group root = new Group();
+        // Group root = new Group();
+        Pane root = new Pane();
+        root.setMinWidth(500);
+        root.setMinHeight(500);
+        // seems like we have to use CSS here, not the Color.BLACK constant
+        root.setStyle("-fx-background-color: black;");
 
         // Scene is the container for all content in a scene graph.
         // Its size and fill are initialized during construction.
         Scene scene = new Scene(root, 500, 500, Color.BLACK);
-        Interactive interactive = new Interactive(scene);
+
+        // Interactive is the prime mover of app-specific activity
+        Interactive interactive = new Interactive(root);
         primaryStage.setTitle("Graph Algo Runner");
 
         // sceneProperty: The Scene to be rendered on this Stage.

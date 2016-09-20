@@ -9,10 +9,12 @@ import javafx.scene.shape.Circle;
 
 /** representation of a user-created graph node */
 public class VisualGraphNode {
-    // is there a better place for this??
+    // is there a better place for this?
     private static VisualGraphNode draggedFrom = null;
     private final Circle circle;
     private final VisualGraph visualGraph;
+    // probably best to use ints in practice
+    private double weight = 0;
 
     VisualGraphNode(Point2D location, VisualGraph visualGraph) {
         this.visualGraph = visualGraph;
