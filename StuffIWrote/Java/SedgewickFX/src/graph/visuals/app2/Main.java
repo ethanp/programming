@@ -7,7 +7,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 /**
- * Ethan Petuchowski 5/30/16
+ * Ethan Petuchowski 9/18/16
  */
 public class Main extends Application {
 

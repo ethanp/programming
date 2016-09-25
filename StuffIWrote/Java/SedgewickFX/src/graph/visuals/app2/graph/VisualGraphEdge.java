@@ -11,11 +11,18 @@ class VisualGraphEdge {
     private final Line line;
     private final VisualGraphNode from;
     private final VisualGraphNode to;
+    // probably best to use ints in practice
+    private double weight;
 
-    public VisualGraphEdge(VisualGraphNode from, VisualGraphNode to) {
+    public VisualGraphEdge(VisualGraphNode from, VisualGraphNode to, double weight) {
         this.from = from;
         this.to = to;
+        this.weight = weight;
         this.line = createLine();
+    }
+
+    public VisualGraphEdge(VisualGraphNode from, VisualGraphNode to) {
+        this(from, to, 1);
     }
 
     private Line createLine() {

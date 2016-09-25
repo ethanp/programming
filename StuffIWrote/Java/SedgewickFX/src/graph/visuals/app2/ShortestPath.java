@@ -57,16 +57,17 @@ class ShortestPath {
         while (!frontier.isEmpty()) {
             BFSNode curr = frontier.poll();
             for (VisualGraphNode nbr : visualGraph.adj(curr.node)) {
-                // intentional reference equality comparison
+                /* if we found the target */
                 if (nbr == to) {
-                    List<VisualGraphNode> ret = new ArrayList<>();
-                    ret.add(nbr);
+                    /* return the path */
+                    List<VisualGraphNode> path = new ArrayList<>();
+                    path.add(nbr);
                     for (BFSNode b = curr; b.previous != null; b = b.previous) {
-                        ret.add(b.node);
+                        path.add(b.node);
                     }
-                    ret.add(from);
-                    Collections.reverse(ret);
-                    return ret;
+                    path.add(from);
+                    Collections.reverse(path);
+                    return path;
                 } else if (!seen.contains(nbr)) {
                     seen.add(nbr);
                     frontier.add(new BFSNode(nbr, curr));

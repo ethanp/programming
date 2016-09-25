@@ -9,7 +9,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 /**
- * Ethan Petuchowski 6/5/16
+ * Ethan Petuchowski 9/18/16
  */
 public class Interactive {
 
@@ -41,9 +41,6 @@ public class Interactive {
     }
 
     private void setOnBackgroundClickCreateNode() {
-        // Setting onMouseClicked on the rootGroup() instead doesn't work.
-        // This is probably because "a Group will take on the collective bounds of its children",
-        // so when there are no children, the Group gives you no area on the Scene to click on.
         sceneRoot.setOnMouseClicked(click -> visualGraph.addNodeAt(locationOf(click)));
     }
 

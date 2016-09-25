@@ -14,8 +14,6 @@ public class VisualGraphNode {
     private static VisualGraphNode draggedFrom = null;
     private final Circle circle;
     private final VisualGraph visualGraph;
-    // probably best to use ints in practice
-    private double weight = 0;
     private boolean active = false;
     private boolean tempActive = false;
 
