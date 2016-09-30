@@ -4,7 +4,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.Pane;
-import scrabble.ScrabbleScene;
 
 public class ViewController {
 

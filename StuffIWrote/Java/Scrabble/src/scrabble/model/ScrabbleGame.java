@@ -26,4 +26,8 @@ public class ScrabbleGame {
     public void addLetterToBoard(Letter letter, int row, int col) {
         board.placeLetter(letter, row, col);
     }
+
+    public Board getBoard() {
+        return board;
+    }
 }
