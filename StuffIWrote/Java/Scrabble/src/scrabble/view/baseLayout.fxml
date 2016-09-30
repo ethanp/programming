@@ -32,9 +32,6 @@
       </menus>
     </MenuBar>
   </top>
-  <bottom>
-    <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
-  </bottom>
   <center>
     <Pane fx:id="midPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
   </center>

@@ -1,7 +1,5 @@
 package scrabble.model;
 
-import scrabble.view.ScrabbleBoardView;
-
 import java.util.function.BiConsumer;
 
 /**
@@ -9,8 +7,8 @@ import java.util.function.BiConsumer;
  */
 public class RowsAndColumns {
     public static void each(BiConsumer<Integer, Integer> biConsumer) {
-        for (int row = 0; row < ScrabbleBoardView.NUM_ROWS; row++) {
-            for (int col = 0; col < ScrabbleBoardView.NUM_COLS; col++) {
+        for (int row = 0; row < BoardModel.NUM_ROWS; row++) {
+            for (int col = 0; col < BoardModel.NUM_COLS; col++) {
                 biConsumer.accept(row, col);
             }
         }

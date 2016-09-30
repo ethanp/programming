@@ -37,6 +37,10 @@ public class TileModel {
         return occupantLetterModel;
     }
 
+    public void setOccupantLetterModel(LetterModel occupantLetterModel) {
+        this.occupantLetterModel = occupantLetterModel;
+    }
+
     public void placeLetter(LetterModel letterModel) {
         if (occupantLetterModel != null) {
             System.err.println("there's already a letter there!");

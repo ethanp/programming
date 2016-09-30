@@ -6,13 +6,14 @@ import scrabble.model.LetterModel;
 import scrabble.model.RowsAndColumns;
 import scrabble.model.TileModel;
 
+import static scrabble.model.BoardModel.NUM_COLS;
+import static scrabble.model.BoardModel.NUM_ROWS;
+
 
 /**
  * 9/30/16 2:33 AM
  */
-public class ScrabbleBoardView extends GridPane {
-    public static final int NUM_ROWS = 15;
-    public static final int NUM_COLS = 15;
+class ScrabbleBoardView extends GridPane {
     private final BoardModel boardModel;
     private double rowHeight;
     private double colWidth;

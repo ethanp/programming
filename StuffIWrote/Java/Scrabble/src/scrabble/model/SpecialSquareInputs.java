@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static scrabble.model.BoardModel.NUM_COLS;
+import static scrabble.model.BoardModel.NUM_ROWS;
+
 /**
  * 9/29/16 10:25 PM
  */
@@ -42,11 +45,11 @@ class SpecialSquareInputs {
               // lower-left
               new Point2D(row, col),
               // lower-right
-              new Point2D(row, 15 - col),
+              new Point2D(row, NUM_COLS - col - 1),
               // upper-left
-              new Point2D(15 - row, col),
+              new Point2D(NUM_ROWS - row - 1, col),
               // upper-right
-              new Point2D(15 - row, 15 - col)
+              new Point2D(NUM_ROWS - row - 1, NUM_COLS - col - 1)
         };
     }
 

@@ -3,7 +3,7 @@ package scrabble.model;
 /**
  * 9/29/16 10:27 PM
  */
-class Player {
+public class Player {
 
     private final ScrabbleGame game;
     private final String name;
@@ -22,5 +22,9 @@ class Player {
         }
         letterRack.remove(letterModel);
         game.addLetterToBoard(letterModel, row, col);
+    }
+
+    public LetterRack getLetterRack() {
+        return letterRack;
     }
 }

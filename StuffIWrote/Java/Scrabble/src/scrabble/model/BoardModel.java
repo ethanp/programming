@@ -1,12 +1,12 @@
 package scrabble.model;
 
-import scrabble.view.ScrabbleBoardView;
-
 /**
  * 9/29/16 10:24 PM
  */
 public class BoardModel {
-    TileModel[][] tileModels = new TileModel[ScrabbleBoardView.NUM_ROWS][ScrabbleBoardView.NUM_COLS];
+    public static final int NUM_COLS = 15;
+    public static final int NUM_ROWS = 15;
+    TileModel[][] tileModels = new TileModel[NUM_ROWS][NUM_COLS];
     private ScrabbleGame game;
 
     BoardModel(ScrabbleGame game) {

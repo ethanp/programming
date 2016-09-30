@@ -1,12 +1,13 @@
 package scrabble.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * 9/29/16 10:27 PM
  */
-class LetterRack {
+public class LetterRack implements Iterable<LetterModel> {
     private final List<LetterModel> letterModels = new ArrayList<>();
     private final LetterBag letterBag;
 
@@ -23,5 +24,9 @@ class LetterRack {
 
     public void remove(LetterModel l) {
         letterModels.remove(l);
+    }
+
+    @Override public Iterator<LetterModel> iterator() {
+        return letterModels.iterator();
     }
 }
