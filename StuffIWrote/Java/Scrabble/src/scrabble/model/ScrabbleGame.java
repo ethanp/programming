@@ -9,7 +9,7 @@ import java.util.List;
 public class ScrabbleGame {
     private final List<Player> players = new ArrayList<>();
     private final LetterBag letterBag = new LetterBag();
-    private final Board board = new Board(this);
+    private final BoardModel boardModel = new BoardModel(this);
 
     void addPlayer(String name) {
         players.add(new Player(name, this));
@@ -24,10 +24,10 @@ public class ScrabbleGame {
     }
 
     public void addLetterToBoard(Letter letter, int row, int col) {
-        board.placeLetter(letter, row, col);
+        boardModel.placeLetter(letter, row, col);
     }
 
-    public Board getBoard() {
-        return board;
+    public BoardModel getBoardModel() {
+        return boardModel;
     }
 }

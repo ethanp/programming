@@ -23,7 +23,7 @@ public class ScrabbleScene extends Scene {
 
     private void paintTheBoard() {
         ScrabbleBoard scrabbleBoard = new ScrabbleBoard(
-              scrabbleGame.getBoard(), getWidth() - 50, getHeight() - 100);
+              scrabbleGame.getBoardModel(), getWidth() - 50, getHeight() - 100);
         midPane.getChildren().add(scrabbleBoard);
     }
 

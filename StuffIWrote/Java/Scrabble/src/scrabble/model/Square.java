@@ -7,11 +7,11 @@ class Square {
     final int row;
     final int col;
     private final Bonus bonus;
-    private final Board board;
+    private final BoardModel boardModel;
     private Letter occupantLetter;
 
-    public Square(Board board, Bonus bonus, int row, int col) {
-        this.board = board;
+    public Square(BoardModel boardModel, Bonus bonus, int row, int col) {
+        this.boardModel = boardModel;
         this.bonus = bonus;
         this.row = row;
         this.col = col;

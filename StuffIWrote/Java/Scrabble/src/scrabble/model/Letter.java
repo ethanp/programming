@@ -3,9 +3,9 @@ package scrabble.model;
 /**
  * 9/29/16 10:27 PM
  */
-class Letter {
-    final char charLetter;
-    final int points;
+public class Letter {
+    public final char charLetter;
+    public final int points;
 
     public Letter(char charLetter, int points) {
         this.charLetter = charLetter;

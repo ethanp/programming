@@ -1,10 +1,10 @@
 package scrabble.view;
 
 import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import scrabble.model.Board;
+import scrabble.model.BoardModel;
+import scrabble.model.Letter;
 import scrabble.model.RowsAndColumns;
+
 
 /**
  * 9/30/16 2:33 AM
@@ -12,21 +12,23 @@ import scrabble.model.RowsAndColumns;
 public class ScrabbleBoard extends GridPane {
     public static final int NUM_ROWS = 10;
     public static final int NUM_COLS = 10;
-    private final Board board;
+    private final BoardModel boardModel;
     private double rowHeight;
     private double colWidth;
 
-    ScrabbleBoard(Board board, double width, double height) {
-        this.board = board;
+    ScrabbleBoard(BoardModel boardModel, double width, double height) {
+        this.boardModel = boardModel;
         colWidth = width/NUM_COLS;
         rowHeight = height/NUM_ROWS;
         RowsAndColumns.each((row, col) -> add(blankTile(), row, col));
+        setLetter(2, 3, new Letter('C', 5));
     }
 
-    private Rectangle blankTile() {
-        Rectangle ret = new Rectangle(colWidth, rowHeight, Color.BURLYWOOD);
-        ret.setStrokeWidth(4);
-        ret.setStroke(Color.BLACK);
-        return ret;
+    private Tile blankTile() {
+        return new Tile(colWidth, rowHeight);
+    }
+
+    private void setLetter(int row, int col, Letter letter) {
+        ((Tile) getChildren().get(NUM_COLS*row + col)).setLetter(letter);
     }
 }

@@ -5,11 +5,11 @@ import scrabble.view.ScrabbleBoard;
 /**
  * 9/29/16 10:24 PM
  */
-public class Board {
+public class BoardModel {
     Square[][] squares = new Square[ScrabbleBoard.NUM_ROWS][ScrabbleBoard.NUM_COLS];
     private ScrabbleGame game;
 
-    Board(ScrabbleGame game) {
+    BoardModel(ScrabbleGame game) {
         this.game = game;
         SpecialSquareInputs specialSquareInputs = SpecialSquareInputs.readFromConfig();
         assert specialSquareInputs != null;
