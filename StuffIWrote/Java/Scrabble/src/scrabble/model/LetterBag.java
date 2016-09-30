@@ -15,7 +15,7 @@ class LetterBag {
     private final List<Letter> availableLetters = new ArrayList<>();
 
     LetterBag() {
-        try (FileReader fileReader = new FileReader("letterConfig.csv");
+        try (FileReader fileReader = new FileReader("src/scrabble/model/letterConfig.csv");
              BufferedReader bufferedReader = new BufferedReader(fileReader)) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {

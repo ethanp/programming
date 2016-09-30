@@ -3,11 +3,20 @@ package scrabble.view;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.MenuItem;
+import javafx.scene.layout.Pane;
+import scrabble.ScrabbleScene;
 
 public class ViewController {
-    @FXML private MenuItem closeButton;
 
-    @FXML public void closeApp(ActionEvent event) {
+    @FXML public Pane midPane;
+    @FXML private MenuItem closeMenuItem;
+    private ScrabbleScene scrabbleScene;
+
+    public void closeMenuItemClicked(ActionEvent event) {
         System.exit(0);
+    }
+
+    public void setScrabbleScene(ScrabbleScene scrabbleScene) {
+        this.scrabbleScene = scrabbleScene;
     }
 }
