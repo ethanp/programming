@@ -15,12 +15,12 @@ class Player {
         letterRack = game.getLetterBag().drawInitialSet();
     }
 
-    void playLetterAtSquare(Letter letter, int row, int col) {
-        if (!letterRack.contains(letter)) {
-            System.err.println("you don't have the letter " + letter + ". cancelling");
+    void playLetterAtSquare(LetterModel letterModel, int row, int col) {
+        if (!letterRack.contains(letterModel)) {
+            System.err.println("you don't have the letter " + letterModel + ". cancelling");
             return;
         }
-        letterRack.remove(letter);
-        game.addLetterToBoard(letter, row, col);
+        letterRack.remove(letterModel);
+        game.addLetterToBoard(letterModel, row, col);
     }
 }

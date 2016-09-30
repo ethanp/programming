@@ -3,6 +3,7 @@ package scrabble.view;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import scrabble.model.BoardModel;
 import scrabble.model.ScrabbleGame;
 
 /**
@@ -22,9 +23,10 @@ public class ScrabbleScene extends Scene {
     }
 
     private void paintTheBoard() {
-        ScrabbleBoard scrabbleBoard = new ScrabbleBoard(
-              scrabbleGame.getBoardModel(), getWidth() - 50, getHeight() - 100);
-        midPane.getChildren().add(scrabbleBoard);
+        BoardModel model = scrabbleGame.getBoardModel();
+        double width = getWidth() - 50;
+        double height = getHeight() - 100;
+        ScrabbleBoardView scrabbleBoardView = new ScrabbleBoardView(model, width, height);
+        midPane.getChildren().add(scrabbleBoardView);
     }
-
 }

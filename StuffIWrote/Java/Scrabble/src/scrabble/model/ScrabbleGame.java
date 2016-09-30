@@ -23,8 +23,8 @@ public class ScrabbleGame {
         return letterBag;
     }
 
-    public void addLetterToBoard(Letter letter, int row, int col) {
-        boardModel.placeLetter(letter, row, col);
+    public void addLetterToBoard(LetterModel letterModel, int row, int col) {
+        boardModel.placeLetter(letterModel, row, col);
     }
 
     public BoardModel getBoardModel() {

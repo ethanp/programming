@@ -12,7 +12,7 @@ import java.util.Random;
  */
 class LetterBag {
     static Random random = new Random();
-    private final List<Letter> availableLetters = new ArrayList<>();
+    private final List<LetterModel> availableLetterModels = new ArrayList<>();
 
     LetterBag() {
         try (FileReader fileReader = new FileReader("src/scrabble/model/letterConfig.csv");
@@ -24,7 +24,7 @@ class LetterBag {
                 for (int i = 0; i < count; i++) {
                     char letter = csvLine[0].charAt(0);
                     int points = Integer.parseInt(csvLine[2]);
-                    availableLetters.add(new Letter(letter, points));
+                    availableLetterModels.add(new LetterModel(letter, points));
                 }
             }
         } catch (IOException e) {
@@ -37,8 +37,8 @@ class LetterBag {
         return new LetterRack(this);
     }
 
-    public Letter drawLetter() {
-        int randomIndex = random.nextInt(availableLetters.size());
-        return availableLetters.remove(randomIndex);
+    public LetterModel drawLetter() {
+        int randomIndex = random.nextInt(availableLetterModels.size());
+        return availableLetterModels.remove(randomIndex);
     }
 }

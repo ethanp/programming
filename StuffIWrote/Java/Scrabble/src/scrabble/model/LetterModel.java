@@ -3,11 +3,11 @@ package scrabble.model;
 /**
  * 9/29/16 10:27 PM
  */
-public class Letter {
+public class LetterModel {
     public final char charLetter;
     public final int points;
 
-    public Letter(char charLetter, int points) {
+    public LetterModel(char charLetter, int points) {
         this.charLetter = charLetter;
         this.points = points;
     }
@@ -21,8 +21,8 @@ public class Letter {
     @Override public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Letter letter = (Letter) o;
-        return charLetter == letter.charLetter;
+        LetterModel letterModel = (LetterModel) o;
+        return charLetter == letterModel.charLetter;
 
     }
 }
