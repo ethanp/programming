@@ -17,6 +17,10 @@ public class BoardModel {
               new TileModel(this, specialSquareInputs.get(row, col), row, col));
     }
 
+    public ScrabbleGame getGame() {
+        return game;
+    }
+
     public void placeLetter(LetterModel letterModel, int row, int col) {
         tileModels[row][col].placeLetter(letterModel);
     }

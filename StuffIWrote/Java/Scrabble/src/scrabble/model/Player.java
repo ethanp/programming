@@ -15,7 +15,7 @@ public class Player {
         letterRack = game.getLetterBag().drawInitialSet();
     }
 
-    void playLetterAtSquare(LetterModel letterModel, int row, int col) {
+    public void playLetterAtSquare(LetterModel letterModel, int row, int col) {
         if (!letterRack.contains(letterModel)) {
             System.err.println("you don't have the letter " + letterModel + ". cancelling");
             return;

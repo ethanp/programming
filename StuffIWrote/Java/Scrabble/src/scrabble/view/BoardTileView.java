@@ -8,10 +8,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import scrabble.model.LetterModel;
+import scrabble.model.Player;
+import scrabble.model.ScrabbleGame;
 import scrabble.model.TileModel;
 
 /**
  * 9/30/16 3:06 AM
+ *
+ * Each tile on the board is one of these. The underlying TileModel state
+ * may or may not have an "occupantLetterModel".
  */
 class BoardTileView extends StackPane {
     /** underlying model */
@@ -36,18 +41,17 @@ class BoardTileView extends StackPane {
         this.setOnDragDropped(dragEvent -> {
             LetterModel letterModel = LetterModel.extractFromDragEvent(dragEvent);
 
-            System.out.printf(
-                  "drag was dropped on me %d %d with data %s%n",
-                  tileModel.row,
-                  tileModel.col,
-                  letterModel);
-
+            /* add letter to this tile, if one is not already present */
             if (setLetterModel(letterModel)) {
-                // TODO We shouldn't just delete the visual node like this.
-                // What we should do instead is remove from the LetterRack object
-                // (which maybe we should access from a different route than the RackTileView),
-                // and get an array-changed-notification-event and call this from there.
-                RackTileView.removePlacedNodeFromRack();
+                // go to far sights to get the game
+                ScrabbleGame game = tileModel.getBoardModel().getGame();
+
+                /* add dropped letter to the list of nodes that may be "reset" at player's whim */
+                game.setPendingConfirmation(tileModel);
+
+                /* add dropped letter to the game board, and remove it from the player's rack */
+                Player currentPlayer = game.getCurrentPlayer();
+                currentPlayer.playLetterAtSquare(letterModel, tileModel.row, tileModel.col);
             }
             dragEvent.setDropCompleted(true);
             dragEvent.consume();
@@ -67,7 +71,7 @@ class BoardTileView extends StackPane {
             System.out.println("there's already a letter here");
             return false;
         }
-        tileModel.setOccupantLetterModel(letterModel);
+        tileModel.placeLetter(letterModel);
 
         // TODO this should be a method, because it's duplicated in the rack view
         Label letterLabel = new Label(" " + letterModel.charLetter);

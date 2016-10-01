@@ -17,12 +17,12 @@ import scrabble.model.LetterModel;
  */
 class RackTileView extends StackPane {
 
-    static RackTileView dragOriginator;
+    private static RackTileView dragOriginator;
     private LetterModel letter;
     private Rectangle rectangle;
     private HBox hBox = new HBox();
 
-    public RackTileView(int width, int height, LetterModel letter) {
+    RackTileView(int width, int height, LetterModel letter) {
         this.letter = letter;
         addRectangle(width, height);
         getChildren().add(hBox);

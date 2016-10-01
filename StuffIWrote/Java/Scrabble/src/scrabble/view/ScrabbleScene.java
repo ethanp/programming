@@ -15,12 +15,7 @@ public class ScrabbleScene extends Scene {
 
     /** this is the "model" (like MVC) for the game */
     private final ScrabbleGame scrabbleGame;
-
     private final Pane midPane;
-
-    public Pane getMidPane() {
-        return midPane;
-    }
 
     /** initialize the board's visual and backend aspects */
     public ScrabbleScene(Parent root, int width, int height, ViewController viewController) {
@@ -42,5 +37,13 @@ public class ScrabbleScene extends Scene {
         LetterRack currentRack = scrabbleGame.getCurrentPlayer().getLetterRack();
         LetterRackView rackView = new LetterRackView(currentRack);
         ((BorderPane) getRoot()).setBottom(rackView);
+    }
+
+    public ScrabbleGame getScrabbleGame() {
+        return scrabbleGame;
+    }
+
+    public Pane getMidPane() {
+        return midPane;
     }
 }

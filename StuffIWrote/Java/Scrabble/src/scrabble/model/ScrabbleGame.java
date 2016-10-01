@@ -12,6 +12,12 @@ public class ScrabbleGame {
     private final BoardModel boardModel = new BoardModel(this);
     private Player currentPlayer;
 
+    /**
+     * These are the tiles that have been placed on the board, but haven't
+     * been confirmed as the player's move yet.
+     */
+    private final List<TileModel> tilesPendingConfirmation = new ArrayList<>();
+
     public ScrabbleGame() {
         addPlayer("1st player");
     }
@@ -22,6 +28,10 @@ public class ScrabbleGame {
         if (currentPlayer == null) {
             currentPlayer = player;
         }
+    }
+
+    public void setPendingConfirmation(TileModel tileModel) {
+        tilesPendingConfirmation.add(tileModel);
     }
 
     void removePlayer(Player player) {
@@ -42,5 +52,12 @@ public class ScrabbleGame {
 
     public Player getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public void resetPendingTiles() {
+        for (TileModel tile : tilesPendingConfirmation) {
+            tile.placeLetter();
+        }
+        tilesPendingConfirmation.clear();
     }
 }

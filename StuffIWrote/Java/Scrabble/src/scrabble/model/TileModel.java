@@ -1,5 +1,7 @@
 package scrabble.model;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.scene.paint.Color;
 
 /**
@@ -10,13 +12,17 @@ public class TileModel {
     public final int col;
     private final Bonus bonus;
     private final BoardModel boardModel;
-    private LetterModel occupantLetterModel;
+    private ObjectProperty<LetterModel> occupantLetterModel = new SimpleObjectProperty<>(null);
 
     public TileModel(BoardModel boardModel, Bonus bonus, int row, int col) {
         this.boardModel = boardModel;
         this.bonus = bonus;
         this.row = row;
         this.col = col;
+    }
+
+    public BoardModel getBoardModel() {
+        return boardModel;
     }
 
     public Bonus getBonus() {
@@ -34,17 +40,22 @@ public class TileModel {
     }
 
     public LetterModel getOccupantLetterModel() {
-        return occupantLetterModel;
-    }
-
-    public void setOccupantLetterModel(LetterModel occupantLetterModel) {
-        this.occupantLetterModel = occupantLetterModel;
+        return occupantLetterModel.get();
     }
 
     public void placeLetter(LetterModel letterModel) {
-        if (occupantLetterModel != null) {
+        if (occupantLetterModel.get() != null) {
             System.err.println("there's already a letter there!");
+            return;
         }
-        occupantLetterModel = letterModel;
+        occupantLetterModel.set(letterModel);
+    }
+
+    public void removeLetter() {
+        if (occupantLetterModel.get() == null) {
+            System.err.printf("there's no letter here row=%d col=%d%n", row, col);
+            return;
+        }
+        occupantLetterModel.set(null);
     }
 }

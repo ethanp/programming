@@ -19,5 +19,6 @@ public class ViewController {
 
     @FXML void resetLettersPressed(ActionEvent event) {
         System.out.println("reset letters pressed " + event);
+        scrabbleScene.getScrabbleGame().resetPendingTiles();
     }
 }
