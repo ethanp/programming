@@ -1,8 +1,8 @@
 package scrabble.view;
 
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -13,7 +13,7 @@ import scrabble.model.TileModel;
  * 9/30/16 3:06 AM
  */
 class TileView extends StackPane {
-    /* underlying model */
+    /** underlying model */
     private final TileModel tileModel;
 
     /* view parameters */
@@ -23,17 +23,22 @@ class TileView extends StackPane {
     /* view elements */
     private Rectangle rectangle;
 
-    public TileView(double width, double height, TileModel tileModel) {
+    TileView(double width, double height, TileModel tileModel) {
         this.width = width;
         this.height = height;
         this.tileModel = tileModel;
-        this.rectangle = new Rectangle(width, height, tileModel.getColor());
+        renderBaseRectangle();
+    }
+
+    private void renderBaseRectangle() {
+        this.rectangle = new Rectangle(width, height);
+        rectangle.setFill(tileModel.getColor());
         rectangle.setStrokeWidth(4);
         rectangle.setStroke(Color.BLACK);
         getChildren().add(rectangle);
     }
 
-    public void setLetterModel(LetterModel letterModel) {
+    void setLetterModel(LetterModel letterModel) {
         if (tileModel.getOccupantLetterModel() != null) {
             System.err.println("there's already a letter here");
             return;
@@ -44,10 +49,9 @@ class TileView extends StackPane {
         letterLabel.setFont(new Font(height/2));
         pointsLabel.setFont(new Font(height/4));
 
-        // this is a pretty sloppy-looking way to do it
-        VBox vBox = new VBox();
-        vBox.getChildren().addAll(letterLabel, pointsLabel);
-        getChildren().add(vBox);
+        HBox hBox = new HBox();
+        hBox.getChildren().addAll(letterLabel, pointsLabel);
+        getChildren().add(hBox);
 
         rectangle.setFill(Color.LIGHTYELLOW);
     }

@@ -22,7 +22,10 @@ class ScrabbleBoardView extends GridPane {
         this.boardModel = boardModel;
         colWidth = width/NUM_COLS;
         rowHeight = height/NUM_ROWS;
-        RowsAndColumns.each((row, col) -> add(blankTile(boardModel.getSquare(row, col)), row, col));
+        RowsAndColumns.each((row, col) -> {
+            TileModel squareData = boardModel.getSquare(row, col);
+            this.add(blankTile(squareData), row, col);
+        });
     }
 
     private TileView blankTile(TileModel tileModel) {
