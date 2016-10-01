@@ -56,7 +56,7 @@ public class ScrabbleGame {
 
     public void resetPendingTiles() {
         for (TileModel tile : tilesPendingConfirmation) {
-            tile.placeLetter();
+            tile.removeLetter();
         }
         tilesPendingConfirmation.clear();
     }

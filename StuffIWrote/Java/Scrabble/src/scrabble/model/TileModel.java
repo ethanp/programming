@@ -2,6 +2,7 @@ package scrabble.model;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.paint.Color;
 
 /**
@@ -13,6 +14,7 @@ public class TileModel {
     private final Bonus bonus;
     private final BoardModel boardModel;
     private ObjectProperty<LetterModel> occupantLetterModel = new SimpleObjectProperty<>(null);
+    private boolean empty;
 
     public TileModel(BoardModel boardModel, Bonus bonus, int row, int col) {
         this.boardModel = boardModel;
@@ -30,7 +32,7 @@ public class TileModel {
     }
 
     public Color getColor() {
-        if (occupantLetterModel != null) {
+        if (!isEmpty()) {
             return Color.LIGHTYELLOW;
         } else if (bonus != null) {
             return bonus.color;
@@ -39,20 +41,28 @@ public class TileModel {
         }
     }
 
+    public void addLetterChangeListener(ChangeListener<LetterModel> listener) {
+        occupantLetterModel.addListener(listener);
+    }
+
     public LetterModel getOccupantLetterModel() {
         return occupantLetterModel.get();
     }
 
     public void placeLetter(LetterModel letterModel) {
-        if (occupantLetterModel.get() != null) {
+        if (!isEmpty()) {
             System.err.println("there's already a letter there!");
             return;
         }
         occupantLetterModel.set(letterModel);
     }
 
+    public boolean isEmpty() {
+        return occupantLetterModel.get() == null;
+    }
+
     public void removeLetter() {
-        if (occupantLetterModel.get() == null) {
+        if (isEmpty()) {
             System.err.printf("there's no letter here row=%d col=%d%n", row, col);
             return;
         }
