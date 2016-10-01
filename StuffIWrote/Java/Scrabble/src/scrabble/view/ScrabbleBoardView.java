@@ -28,11 +28,11 @@ class ScrabbleBoardView extends GridPane {
         });
     }
 
-    private TileView blankTile(TileModel tileModel) {
-        return new TileView(colWidth, rowHeight, tileModel);
+    private BoardTileView blankTile(TileModel tileModel) {
+        return new BoardTileView(colWidth, rowHeight, tileModel);
     }
 
     private void setLetter(int row, int col, LetterModel letterModel) {
-        ((TileView) getChildren().get(NUM_COLS*row + col)).setLetterModel(letterModel);
+        ((BoardTileView) getChildren().get(NUM_COLS*row + col)).setLetterModel(letterModel);
     }
 }

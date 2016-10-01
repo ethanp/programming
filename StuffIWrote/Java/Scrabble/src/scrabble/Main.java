@@ -25,6 +25,8 @@ public class Main extends Application {
         scrabbleScene = new ScrabbleScene(rootDomNode, 900, 900, viewController);
         viewController.setScrabbleScene(scrabbleScene);
         mainWindow.setScene(scrabbleScene);
+        // remove resizability so we can exert more control over the user
+        mainWindow.setResizable(false);
         mainWindow.setTitle("Make Words");
         mainWindow.show();
     }

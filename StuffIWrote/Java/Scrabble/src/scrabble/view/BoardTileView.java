@@ -1,6 +1,8 @@
 package scrabble.view;
 
 import javafx.scene.control.Label;
+import javafx.scene.input.Dragboard;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -12,7 +14,7 @@ import scrabble.model.TileModel;
 /**
  * 9/30/16 3:06 AM
  */
-class TileView extends StackPane {
+class BoardTileView extends StackPane {
     /** underlying model */
     private final TileModel tileModel;
 
@@ -23,11 +25,31 @@ class TileView extends StackPane {
     /* view elements */
     private Rectangle rectangle;
 
-    TileView(double width, double height, TileModel tileModel) {
+    BoardTileView(double width, double height, TileModel tileModel) {
         this.width = width;
         this.height = height;
         this.tileModel = tileModel;
         renderBaseRectangle();
+        setOnDragDetected(dragEvent -> {
+            System.out.printf("drag was detected on me %d %d%n", tileModel.row, tileModel.col);
+        });
+        setOnDragOver(dragEvent -> {
+            dragEvent.acceptTransferModes(TransferMode.ANY);
+            System.out.printf("dragged over on me %d %d%n", tileModel.row, tileModel.col);
+        });
+        setOnDragDropped(dragEvent -> {
+            Dragboard db = dragEvent.getDragboard();
+            String transferredString = db.getString();
+            LetterModel letterModel = LetterModel.deserializeFromString(transferredString);
+            System.out.printf(
+                  "drag was dropped on me %d %d with data %s%n",
+                  tileModel.row,
+                  tileModel.col,
+                  letterModel);
+            RackTileView.removePlacedNodeFromRack();
+            dragEvent.setDropCompleted(true);
+            dragEvent.consume();
+        });
     }
 
     private void renderBaseRectangle() {

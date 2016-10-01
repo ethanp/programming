@@ -32,6 +32,11 @@ public class LetterModel {
         return charLetter == letterModel.charLetter;
     }
 
+    /** just for general purpose printing, use serializeToString() for serialization */
+    @Override public String toString() {
+        return "LetterModel{" + "charLetter=" + charLetter + ", points=" + points + '}';
+    }
+
     // NOTE: used for serialization
     public String serializeToString() {
         return String.format("%s,%d", charLetter, points);

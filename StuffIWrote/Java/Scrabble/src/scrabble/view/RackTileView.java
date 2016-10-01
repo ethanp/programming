@@ -17,7 +17,7 @@ import scrabble.model.LetterModel;
  */
 class RackTileView extends StackPane {
 
-    private static RackTileView dragOriginator;
+    static RackTileView dragOriginator;
     private final LetterModel letter;
     private Rectangle rectangle;
 
@@ -87,17 +87,9 @@ class RackTileView extends StackPane {
         this.setOnDragExited(event -> {
             System.out.println("drag exited node");
         });
-
-        // A click was released on this Node during drag and drop gesture.
-        // Transfer of data from the DragEvent's dragboard should happen in this function.
-        this.setOnDragDropped(event -> {
-            removePlacedNodeFromRack();
-            event.setDropCompleted(true);
-            event.consume();
-        });
     }
 
-    private static void removePlacedNodeFromRack() {
+    static void removePlacedNodeFromRack() {
         if (dragOriginator != null) {
             System.out.println("removing tile from rack");
             // I think it must be a Pane to let us modify its children (no pun intended)

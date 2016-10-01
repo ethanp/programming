@@ -6,8 +6,8 @@ import javafx.scene.paint.Color;
  * 9/29/16 10:24 PM
  */
 public class TileModel {
-    final int row;
-    final int col;
+    public final int row;
+    public final int col;
     private final Bonus bonus;
     private final BoardModel boardModel;
     private LetterModel occupantLetterModel;
