@@ -18,12 +18,14 @@ import scrabble.model.LetterModel;
 class RackTileView extends StackPane {
 
     static RackTileView dragOriginator;
-    private final LetterModel letter;
+    private LetterModel letter;
     private Rectangle rectangle;
+    private HBox hBox = new HBox();
 
     public RackTileView(int width, int height, LetterModel letter) {
         this.letter = letter;
         addRectangle(width, height);
+        getChildren().add(hBox);
         drawLetter();
         add_DragToPlace_Handler();
     }
@@ -40,20 +42,20 @@ class RackTileView extends StackPane {
             return;
         }
         rectangle.setFill(Color.BURLYWOOD);
-        HBox hBox = new HBox();
+        /* maybe this is a bit sloppy */
         Label ch = new Label(String.valueOf(letter.charLetter));
         Label points = new Label(String.valueOf(letter.points));
         ch.setFont(new Font(rectangle.getHeight()/1.3));
         points.setFont(new Font(rectangle.getHeight()/2.3));
         ch.setTextFill(Color.BLACK);
         points.setTextFill(Color.BLACK);
+        hBox.getChildren().clear();
         hBox.getChildren().addAll(ch, points);
-        getChildren().add(hBox);
     }
 
     private void add_DragToPlace_Handler() {
         this.setOnDragDetected(event -> {
-            System.out.println("starting edge creation");
+            System.out.println("dragging " + letter);
 
             // set static state
             dragOriginator = this;
@@ -77,15 +79,24 @@ class RackTileView extends StackPane {
             event.consume();
         });
 
-        // the ongoing drag entered this node
-        this.setOnDragOver(event -> {
-            System.out.println("drag entered node");
-            event.acceptTransferModes(TransferMode.ANY);
-        });
+        /* mark this node as eligible for dropping on */
+        this.setOnDragOver(e -> e.acceptTransferModes(TransferMode.ANY));
 
-        // the drag exited this node
-        this.setOnDragExited(event -> {
-            System.out.println("drag exited node");
+        // ignore that the drag exited this node
+        // this.setOnDragExited(event -> {
+        //    System.out.println("drag exited node");
+        // });
+
+        /* swap content with the node that was dropped */
+        this.setOnDragDropped(event -> {
+            LetterModel tmp = dragOriginator.letter;
+            dragOriginator.letter = letter;
+            letter = tmp;
+            dragOriginator.drawLetter();
+            drawLetter();
+            dragOriginator = null;
+            event.setDropCompleted(true);
+            event.consume();
         });
     }
 

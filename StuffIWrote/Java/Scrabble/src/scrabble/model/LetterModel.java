@@ -1,5 +1,8 @@
 package scrabble.model;
 
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
+
 /**
  * 9/29/16 10:27 PM
  */
@@ -19,6 +22,12 @@ public class LetterModel {
         return new LetterModel(charLetter, points);
     }
 
+    public static LetterModel extractFromDragEvent(DragEvent dragEvent) {
+        Dragboard db = dragEvent.getDragboard();
+        String transferredString = db.getString();
+        return LetterModel.deserializeFromString(transferredString);
+    }
+
     @Override public int hashCode() {
         int result = (int) charLetter;
         result = 31*result + points;
@@ -32,7 +41,10 @@ public class LetterModel {
         return charLetter == letterModel.charLetter;
     }
 
-    /** just for general purpose printing, use serializeToString() for serialization */
+    /**
+     * This is just for general purpose printing.
+     * For serialization, use serializeToString() instead.
+     */
     @Override public String toString() {
         return "LetterModel{" + "charLetter=" + charLetter + ", points=" + points + '}';
     }

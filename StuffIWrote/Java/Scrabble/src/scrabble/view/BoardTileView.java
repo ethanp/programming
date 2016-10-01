@@ -1,7 +1,6 @@
 package scrabble.view;
 
 import javafx.scene.control.Label;
-import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -30,22 +29,20 @@ class BoardTileView extends StackPane {
         this.height = height;
         this.tileModel = tileModel;
         renderBaseRectangle();
-        setOnDragDetected(dragEvent -> {
-            System.out.printf("drag was detected on me %d %d%n", tileModel.row, tileModel.col);
-        });
-        setOnDragOver(dragEvent -> {
-            dragEvent.acceptTransferModes(TransferMode.ANY);
-            System.out.printf("dragged over on me %d %d%n", tileModel.row, tileModel.col);
-        });
-        setOnDragDropped(dragEvent -> {
-            Dragboard db = dragEvent.getDragboard();
-            String transferredString = db.getString();
-            LetterModel letterModel = LetterModel.deserializeFromString(transferredString);
+
+        /* mark this node as eligible for dropping on (required to receive dropped event) */
+        this.setOnDragOver(e -> e.acceptTransferModes(TransferMode.ANY));
+
+        this.setOnDragDropped(dragEvent -> {
+            LetterModel letterModel = LetterModel.extractFromDragEvent(dragEvent);
+
             System.out.printf(
                   "drag was dropped on me %d %d with data %s%n",
                   tileModel.row,
                   tileModel.col,
                   letterModel);
+
+            setLetterModel(letterModel);
             RackTileView.removePlacedNodeFromRack();
             dragEvent.setDropCompleted(true);
             dragEvent.consume();
@@ -66,11 +63,12 @@ class BoardTileView extends StackPane {
             return;
         }
         tileModel.setOccupantLetterModel(letterModel);
-        Label letterLabel = new Label(letterModel.charLetter + "");
-        Label pointsLabel = new Label(letterModel.points + "");
-        letterLabel.setFont(new Font(height/2));
-        pointsLabel.setFont(new Font(height/4));
 
+        // TODO this should be a method, because it's duplicated in the rack view
+        Label letterLabel = new Label(" " + letterModel.charLetter);
+        Label pointsLabel = new Label("" + letterModel.points);
+        letterLabel.setFont(new Font(height/1.3));
+        pointsLabel.setFont(new Font(height/(letterModel.points < 10 ? 2.3 : 3)));
         HBox hBox = new HBox();
         hBox.getChildren().addAll(letterLabel, pointsLabel);
         getChildren().add(hBox);
