@@ -34,7 +34,7 @@ public class ScrabbleScene extends Scene {
     private void paintTheBoard() {
         BoardModel model = scrabbleGame.getBoardModel();
         double width = getWidth() - 150;
-        double height = getHeight() - 200;
+        double height = getHeight() - 225;
         midPane.getChildren().add(new ScrabbleBoardView(model, width, height));
     }
 
@@ -43,5 +43,4 @@ public class ScrabbleScene extends Scene {
         LetterRackView rackView = new LetterRackView(currentRack);
         ((BorderPane) getRoot()).setBottom(rackView);
     }
-
 }

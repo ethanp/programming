@@ -11,7 +11,7 @@ import java.util.Random;
  * 9/29/16 10:28 PM
  */
 class LetterBag {
-    static Random random = new Random();
+    private static Random random = new Random();
     private final List<LetterModel> availableLetterModels = new ArrayList<>();
 
     LetterBag() {
@@ -22,7 +22,7 @@ class LetterBag {
                 String[] csvLine = line.split(",");
                 int count = Integer.parseInt(csvLine[1]);
                 for (int i = 0; i < count; i++) {
-                    char letter = csvLine[0].charAt(0);
+                    char letter = csvLine[0].equalsIgnoreCase("blank") ? ' ' : csvLine[0].charAt(0);
                     int points = Integer.parseInt(csvLine[2]);
                     availableLetterModels.add(new LetterModel(letter, points));
                 }
@@ -33,11 +33,11 @@ class LetterBag {
         }
     }
 
-    public LetterRack drawInitialSet() {
+    LetterRack drawInitialSet() {
         return new LetterRack(this);
     }
 
-    public LetterModel drawLetter() {
+    LetterModel drawLetter() {
         int randomIndex = random.nextInt(availableLetterModels.size());
         return availableLetterModels.remove(randomIndex);
     }

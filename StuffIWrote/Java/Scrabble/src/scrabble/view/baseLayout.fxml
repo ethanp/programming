@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import java.lang.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -11,28 +12,24 @@
 <?import javafx.scene.layout.Pane?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="400.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.view.ViewController">
-  <top>
-    <MenuBar BorderPane.alignment="CENTER">
-      <menus>
-        <Menu mnemonicParsing="false" text="File">
-          <items>
-            <MenuItem fx:id="closeMenuItem" mnemonicParsing="false" onAction="#closeMenuItemClicked" text="Close" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Edit">
-          <items>
-            <MenuItem mnemonicParsing="false" text="Delete" />
-          </items>
-        </Menu>
-        <Menu mnemonicParsing="false" text="Help">
-          <items>
-            <MenuItem mnemonicParsing="false" text="About" />
-          </items>
-        </Menu>
-      </menus>
-    </MenuBar>
-  </top>
   <center>
-    <Pane fx:id="midPane" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+    <Pane fx:id="midPane" BorderPane.alignment="CENTER" />
   </center>
+   <top>
+      <HBox fillHeight="false" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#makeMovePressed" prefHeight="40.0" prefWidth="150.0" text="Make Move">
+               <HBox.margin>
+                  <Insets bottom="10.0" left="10.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+            <Separator prefWidth="200.0" />
+            <Button mnemonicParsing="false" onAction="#resetLettersPressed" prefHeight="40.0" prefWidth="150.0" text="Reset Letters">
+               <HBox.margin>
+                  <Insets bottom="10.0" right="10.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+      </HBox>
+   </top>
 </BorderPane>

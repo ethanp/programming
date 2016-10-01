@@ -42,8 +42,13 @@ class BoardTileView extends StackPane {
                   tileModel.col,
                   letterModel);
 
-            setLetterModel(letterModel);
-            RackTileView.removePlacedNodeFromRack();
+            if (setLetterModel(letterModel)) {
+                // TODO We shouldn't just delete the visual node like this.
+                // What we should do instead is remove from the LetterRack object
+                // (which maybe we should access from a different route than the RackTileView),
+                // and get an array-changed-notification-event and call this from there.
+                RackTileView.removePlacedNodeFromRack();
+            }
             dragEvent.setDropCompleted(true);
             dragEvent.consume();
         });
@@ -57,10 +62,10 @@ class BoardTileView extends StackPane {
         getChildren().add(rectangle);
     }
 
-    void setLetterModel(LetterModel letterModel) {
+    boolean setLetterModel(LetterModel letterModel) {
         if (tileModel.getOccupantLetterModel() != null) {
-            System.err.println("there's already a letter here");
-            return;
+            System.out.println("there's already a letter here");
+            return false;
         }
         tileModel.setOccupantLetterModel(letterModel);
 
@@ -70,9 +75,11 @@ class BoardTileView extends StackPane {
         letterLabel.setFont(new Font(height/1.3));
         pointsLabel.setFont(new Font(height/(letterModel.points < 10 ? 2.3 : 3)));
         HBox hBox = new HBox();
+        // hBox.setAlignment(Pos.CENTER);
         hBox.getChildren().addAll(letterLabel, pointsLabel);
         getChildren().add(hBox);
 
         rectangle.setFill(Color.LIGHTYELLOW);
+        return true;
     }
 }

@@ -9,11 +9,15 @@ public class ViewController {
     @FXML public Pane midPane;
     private ScrabbleScene scrabbleScene;
 
-    public void closeMenuItemClicked(ActionEvent event) {
-        System.exit(0);
-    }
-
     public void setScrabbleScene(ScrabbleScene scrabbleScene) {
         this.scrabbleScene = scrabbleScene;
+    }
+
+    @FXML void makeMovePressed(ActionEvent event) {
+        System.out.println("make move pressed " + event);
+    }
+
+    @FXML void resetLettersPressed(ActionEvent event) {
+        System.out.println("reset letters pressed " + event);
     }
 }
