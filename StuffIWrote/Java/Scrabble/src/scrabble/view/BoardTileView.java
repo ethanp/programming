@@ -93,7 +93,7 @@ class BoardTileView extends StackPane {
     }
 
     boolean setLetterModel(LetterModel letterModel) {
-        if (tileModel.getOccupantLetterModel() != null) {
+        if (tileModel.getLetter() != null) {
             System.out.println("there's already a letter here");
             return false;
         }

@@ -5,7 +5,6 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -98,16 +97,5 @@ class RackTileView extends StackPane {
             event.setDropCompleted(true);
             event.consume();
         });
-    }
-
-    static void removePlacedNodeFromRack() {
-        if (dragOriginator != null) {
-            System.out.println("removing tile from rack");
-            // I think it must be a Pane to let us modify its children (no pun intended)
-            ((Pane) dragOriginator.getParent()).getChildren().remove(dragOriginator);
-            dragOriginator = null;
-        } else {
-            System.err.println("couldn't create node: didn't drag from anywhere?");
-        }
     }
 }

@@ -56,8 +56,19 @@ public class ScrabbleGame {
 
     public void resetPendingTiles() {
         for (TileModel tile : tilesPendingConfirmation) {
+            currentPlayer.addLetterToRack(tile.getLetter());
             tile.removeLetter();
         }
         tilesPendingConfirmation.clear();
+    }
+
+    public void confirmPendingTiles() {
+        tilesPendingConfirmation.clear();
+    }
+
+    public void nextPlayersTurn() {
+        int curIdx = players.indexOf(currentPlayer);
+        int nextIdx = (curIdx + 1)%players.size();
+        currentPlayer = players.get(nextIdx);
     }
 }

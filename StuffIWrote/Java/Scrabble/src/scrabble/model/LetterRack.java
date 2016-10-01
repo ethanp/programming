@@ -1,14 +1,16 @@
 package scrabble.model;
 
-import java.util.ArrayList;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * 9/29/16 10:27 PM
  */
 public class LetterRack implements Iterable<LetterModel> {
-    private final List<LetterModel> letterModels = new ArrayList<>();
+    private final ObservableList<LetterModel> letterModels = FXCollections.observableArrayList();
     private final LetterBag letterBag;
 
     LetterRack(LetterBag letterBag) {
@@ -16,6 +18,10 @@ public class LetterRack implements Iterable<LetterModel> {
         for (int i = 0; i < 7; i++) {
             letterModels.add(letterBag.drawLetter());
         }
+    }
+
+    public void registerChangeListener(ListChangeListener<LetterModel> listener) {
+        letterModels.addListener(listener);
     }
 
     boolean contains(LetterModel l) {
@@ -28,5 +34,15 @@ public class LetterRack implements Iterable<LetterModel> {
 
     @Override public Iterator<LetterModel> iterator() {
         return letterModels.iterator();
+    }
+
+    public void addLetter(LetterModel letterModel) {
+        letterModels.add(letterModel);
+    }
+
+    public void refillFromBag() {
+        while (!letterBag.isEmpty() && letterModels.size() < 7) {
+            letterModels.add(letterBag.drawLetter());
+        }
     }
 }

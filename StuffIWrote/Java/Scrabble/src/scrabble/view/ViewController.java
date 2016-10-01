@@ -3,6 +3,7 @@ package scrabble.view;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
+import scrabble.model.ScrabbleGame;
 
 public class ViewController {
 
@@ -15,6 +16,11 @@ public class ViewController {
 
     @FXML void makeMovePressed(ActionEvent event) {
         System.out.println("make move pressed " + event);
+        ScrabbleGame game = scrabbleScene.getScrabbleGame();
+        game.confirmPendingTiles();
+        game.getCurrentPlayer().refillRackFromBag();
+        game.nextPlayersTurn();
+        // TODO render the new player's letters to the screen
     }
 
     @FXML void resetLettersPressed(ActionEvent event) {

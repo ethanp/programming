@@ -9,7 +9,7 @@ public class Player {
     private final String name;
     private final LetterRack letterRack;
 
-    public Player(String name, ScrabbleGame game) {
+    Player(String name, ScrabbleGame game) {
         this.name = name;
         this.game = game;
         letterRack = game.getLetterBag().drawInitialSet();
@@ -26,5 +26,13 @@ public class Player {
 
     public LetterRack getLetterRack() {
         return letterRack;
+    }
+
+    void addLetterToRack(LetterModel letter) {
+        letterRack.addLetter(letter);
+    }
+
+    public void refillRackFromBag() {
+        letterRack.refillFromBag();
     }
 }

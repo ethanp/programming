@@ -45,7 +45,7 @@ public class TileModel {
         occupantLetterModel.addListener(listener);
     }
 
-    public LetterModel getOccupantLetterModel() {
+    public LetterModel getLetter() {
         return occupantLetterModel.get();
     }
 

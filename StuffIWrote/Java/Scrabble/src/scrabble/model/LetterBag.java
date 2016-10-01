@@ -41,4 +41,8 @@ class LetterBag {
         int randomIndex = random.nextInt(availableLetterModels.size());
         return availableLetterModels.remove(randomIndex);
     }
+
+    boolean isEmpty() {
+        return availableLetterModels.isEmpty();
+    }
 }
