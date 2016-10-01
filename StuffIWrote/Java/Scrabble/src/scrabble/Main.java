@@ -9,6 +9,8 @@ import scrabble.view.ViewController;
 
 public class Main extends Application {
 
+    public static ScrabbleScene scrabbleScene;
+
     /** Application entry point */
     public static void main(String[] args) {
         // leads to start() [below] being called
@@ -20,7 +22,7 @@ public class Main extends Application {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("view/baseLayout.fxml"));
         BorderPane rootDomNode = loader.load();
         ViewController viewController = loader.getController();
-        ScrabbleScene scrabbleScene = new ScrabbleScene(rootDomNode, 900, 900, viewController);
+        scrabbleScene = new ScrabbleScene(rootDomNode, 900, 900, viewController);
         viewController.setScrabbleScene(scrabbleScene);
         mainWindow.setScene(scrabbleScene);
         mainWindow.setTitle("Make Words");

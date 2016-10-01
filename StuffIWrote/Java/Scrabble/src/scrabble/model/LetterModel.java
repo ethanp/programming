@@ -12,6 +12,13 @@ public class LetterModel {
         this.points = points;
     }
 
+    public static LetterModel deserializeFromString(String serializedLetter) {
+        String[] components = serializedLetter.split(",");
+        char charLetter = components[0].charAt(0);
+        int points = Integer.parseInt(components[1]);
+        return new LetterModel(charLetter, points);
+    }
+
     @Override public int hashCode() {
         int result = (int) charLetter;
         result = 31*result + points;
@@ -23,6 +30,10 @@ public class LetterModel {
         if (o == null || getClass() != o.getClass()) return false;
         LetterModel letterModel = (LetterModel) o;
         return charLetter == letterModel.charLetter;
+    }
 
+    // NOTE: used for serialization
+    public String serializeToString() {
+        return String.format("%s,%d", charLetter, points);
     }
 }

@@ -18,6 +18,10 @@ public class ScrabbleScene extends Scene {
 
     private final Pane midPane;
 
+    public Pane getMidPane() {
+        return midPane;
+    }
+
     /** initialize the board's visual and backend aspects */
     public ScrabbleScene(Parent root, int width, int height, ViewController viewController) {
         super(root, width, height);
