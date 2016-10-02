@@ -12,6 +12,7 @@ import java.util.Iterator;
 public class LetterRack implements Iterable<LetterModel> {
     private final ObservableList<LetterModel> letterModels = FXCollections.observableArrayList();
     private final LetterBag letterBag;
+    private ListChangeListener<LetterModel> currentListener;
 
     LetterRack(LetterBag letterBag) {
         this.letterBag = letterBag;
@@ -21,7 +22,12 @@ public class LetterRack implements Iterable<LetterModel> {
     }
 
     public void registerChangeListener(ListChangeListener<LetterModel> listener) {
+        currentListener = listener;
         letterModels.addListener(listener);
+    }
+
+    public void removeChangeListener() {
+        letterModels.removeListener(currentListener);
     }
 
     boolean contains(LetterModel l) {
@@ -36,11 +42,11 @@ public class LetterRack implements Iterable<LetterModel> {
         return letterModels.iterator();
     }
 
-    public void addLetter(LetterModel letterModel) {
+    void addLetter(LetterModel letterModel) {
         letterModels.add(letterModel);
     }
 
-    public void refillFromBag() {
+    void refillFromBag() {
         while (!letterBag.isEmpty() && letterModels.size() < 7) {
             letterModels.add(letterBag.drawLetter());
         }

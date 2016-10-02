@@ -20,7 +20,6 @@ public class ViewController {
         game.confirmPendingTiles();
         game.getCurrentPlayer().refillRackFromBag();
         game.nextPlayersTurn();
-        // TODO render the new player's letters to the screen
     }
 
     @FXML void resetLettersPressed(ActionEvent event) {

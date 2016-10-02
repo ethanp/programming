@@ -1,5 +1,9 @@
 package scrabble.model;
 
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,23 +14,23 @@ public class ScrabbleGame {
     private final List<Player> players = new ArrayList<>();
     private final LetterBag letterBag = new LetterBag();
     private final BoardModel boardModel = new BoardModel(this);
-    private Player currentPlayer;
-
     /**
      * These are the tiles that have been placed on the board, but haven't
      * been confirmed as the player's move yet.
      */
     private final List<TileModel> tilesPendingConfirmation = new ArrayList<>();
+    private ObjectProperty<Player> currentPlayer = new SimpleObjectProperty<>();
 
     public ScrabbleGame() {
         addPlayer("1st player");
+        addPlayer("2nd player");
     }
 
-    void addPlayer(String name) {
+    private void addPlayer(String name) {
         Player player = new Player(name, this);
         players.add(player);
-        if (currentPlayer == null) {
-            currentPlayer = player;
+        if (currentPlayer.get() == null) {
+            currentPlayer.set(player);
         }
     }
 
@@ -34,15 +38,11 @@ public class ScrabbleGame {
         tilesPendingConfirmation.add(tileModel);
     }
 
-    void removePlayer(Player player) {
-        players.remove(player);
-    }
-
-    public LetterBag getLetterBag() {
+    LetterBag getLetterBag() {
         return letterBag;
     }
 
-    public void addLetterToBoard(LetterModel letterModel, int row, int col) {
+    void addLetterToBoard(LetterModel letterModel, int row, int col) {
         boardModel.placeLetter(letterModel, row, col);
     }
 
@@ -51,12 +51,12 @@ public class ScrabbleGame {
     }
 
     public Player getCurrentPlayer() {
-        return currentPlayer;
+        return currentPlayer.get();
     }
 
     public void resetPendingTiles() {
         for (TileModel tile : tilesPendingConfirmation) {
-            currentPlayer.addLetterToRack(tile.getLetter());
+            currentPlayer.get().addLetterToRack(tile.getLetter());
             tile.removeLetter();
         }
         tilesPendingConfirmation.clear();
@@ -67,8 +67,12 @@ public class ScrabbleGame {
     }
 
     public void nextPlayersTurn() {
-        int curIdx = players.indexOf(currentPlayer);
+        int curIdx = players.indexOf(currentPlayer.get());
         int nextIdx = (curIdx + 1)%players.size();
-        currentPlayer = players.get(nextIdx);
+        currentPlayer.set(players.get(nextIdx));
+    }
+
+    public void addPlayerChangeListener(ChangeListener<Player> listener) {
+        currentPlayer.addListener(listener);
     }
 }

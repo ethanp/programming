@@ -2,7 +2,7 @@ package scrabble.view;
 
 import javafx.scene.layout.HBox;
 import scrabble.model.LetterModel;
-import scrabble.model.LetterRack;
+import scrabble.model.ScrabbleGame;
 
 import java.util.Iterator;
 
@@ -11,18 +11,29 @@ import java.util.Iterator;
  */
 class LetterRackView extends HBox {
 
-    private final LetterRack letterRack;
+    private final ScrabbleGame scrabbleGame;
 
-    LetterRackView(LetterRack letterRack) {
-        this.letterRack = letterRack;
+    LetterRackView(ScrabbleGame scrabbleGame) {
+        this.scrabbleGame = scrabbleGame;
         setSpacing(3);
         renderLetters();
-        letterRack.registerChangeListener(c -> renderLetters());
+
+        // register for initial player
+        scrabbleGame.getCurrentPlayer()
+              .getLetterRack()
+              .registerChangeListener(c -> renderLetters());
+
+        // stay bound to (only) whomever the current player is
+        scrabbleGame.addPlayerChangeListener((observable, oldValue, newValue) -> {
+            oldValue.getLetterRack().removeChangeListener();
+            renderLetters();
+            newValue.getLetterRack().registerChangeListener(c -> renderLetters());
+        });
     }
 
     private void renderLetters() {
         getChildren().clear();
-        Iterator<LetterModel> it = letterRack.iterator();
+        Iterator<LetterModel> it = scrabbleGame.getCurrentPlayer().getLetterRack().iterator();
         for (int i = 0; i < 7; i++) {
             LetterModel nextLetter = it.hasNext() ? it.next() : null;
             RackTileView tileView = new RackTileView(90, 90, nextLetter);

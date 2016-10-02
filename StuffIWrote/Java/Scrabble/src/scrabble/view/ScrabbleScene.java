@@ -5,7 +5,6 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import scrabble.model.BoardModel;
-import scrabble.model.LetterRack;
 import scrabble.model.ScrabbleGame;
 
 /**
@@ -34,16 +33,11 @@ public class ScrabbleScene extends Scene {
     }
 
     private void paintCurrentRack() {
-        LetterRack currentRack = scrabbleGame.getCurrentPlayer().getLetterRack();
-        LetterRackView rackView = new LetterRackView(currentRack);
+        LetterRackView rackView = new LetterRackView(scrabbleGame);
         ((BorderPane) getRoot()).setBottom(rackView);
     }
 
-    public ScrabbleGame getScrabbleGame() {
+    ScrabbleGame getScrabbleGame() {
         return scrabbleGame;
-    }
-
-    public Pane getMidPane() {
-        return midPane;
     }
 }
