@@ -35,6 +35,10 @@
 *submit.m
 *.swo
 *.swn
+*.class
+*.jar
+*.idea
+*.bin
 
 # files and directories I happen to be ignoring for convenience
 Patents/.idea

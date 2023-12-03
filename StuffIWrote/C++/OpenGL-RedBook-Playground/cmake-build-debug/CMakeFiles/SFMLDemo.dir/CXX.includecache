@@ -1,0 +1,18 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/Ethan/code/my-code/ProgrammingGit/StuffIWrote/C++/OpenGL-RedBook-Playground/main.cpp
+iostream
+-
+SFML/Graphics.hpp
+-
+SFML/Window.hpp
+-
+SFML/OpenGL.hpp
+-
+

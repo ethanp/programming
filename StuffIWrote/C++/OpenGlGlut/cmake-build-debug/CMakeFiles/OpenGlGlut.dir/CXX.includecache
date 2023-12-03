@@ -1,0 +1,16 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/Ethan/code/my-code/ProgrammingGit/StuffIWrote/C++/OpenGlGlut/main.cpp
+iostream
+-
+GL/glew.h
+-
+GLUT/glut.h
+-
+

@@ -1,0 +1,3 @@
+/Users/Ethan/code/my-code/ProgrammingGit/StuffIWrote/C++/OpenGL-RedBook-Playground/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/Ethan/code/my-code/ProgrammingGit/StuffIWrote/C++/OpenGL-RedBook-Playground/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/Ethan/code/my-code/ProgrammingGit/StuffIWrote/C++/OpenGL-RedBook-Playground/cmake-build-debug/CMakeFiles/SFMLOpenGL.dir
