@@ -58,7 +58,6 @@ def solve1():
                 print('did not find ' + number)
     print(acc)
 
-# TODO(ethan): Finish implementing this one.
 def solve2():
     acc = 0
     with open(REAL, 'r') as f:
